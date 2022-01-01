@@ -68,7 +68,7 @@ public class DeathListener implements Listener {
             double finalDMG = e.getFinalDamage();
             double currentHP = p.getHealth();
 
-            if (zl.playerCheck(p) && e.getCause() != DamageCause.FALL && (currentHP - finalDMG <= 0)) {
+            if (e.getCause() != DamageCause.FALL && (currentHP - finalDMG <= 0)) {
                 double maxHealth = p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 
                 e.setCancelled(true);
