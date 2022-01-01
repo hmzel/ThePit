@@ -2,6 +2,7 @@ package me.zelha.thepit;
 
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
@@ -10,7 +11,8 @@ import java.text.DecimalFormat;
 
 public class ZelLogic {//zel
 
-    public boolean playerCheck(Player p) {return p != null && p.isValid();}
+    public boolean playerCheck(Player player) {return player != null && player.isValid();}
+    public boolean playerCheck(Entity entity) {return entity != null && entity.isValid() && entity instanceof Player;}
 
     public String getFancyGoldString(double gold) {
         BigDecimal roundedGold = BigDecimal.valueOf(gold).setScale(2, RoundingMode.DOWN);

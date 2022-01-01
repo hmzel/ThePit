@@ -5,6 +5,7 @@ import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -69,21 +70,26 @@ public class KillListener implements Listener {
 
     @EventHandler
     public void onPlayerDeath(EntityDamageByEntityEvent e) {
-        Player damaged = (Player) e.getEntity();
-        Player damager = (Player) e.getDamager();
-        double finalDMG = e.getFinalDamage();
-        double currentHP = damaged.getHealth();
+        Entity damagedEntity = e.getEntity();
+        Entity damagerEntity = e.getDamager();
 
-        if (zl.playerCheck(damaged) && zl.playerCheck(damager) && e.getCause() != DamageCause.FALL && (currentHP - finalDMG) <= 0) {
-            String uuid = damaged.getUniqueId().toString();
-            PlayerData damagerData = Main.getInstance().getStorage().getPlayerData(damager.getUniqueId().toString());
-            double calculatedGold = calculateGold(damaged, damager);
+        if (zl.playerCheck(damagedEntity) && zl.playerCheck(damagerEntity)) {
+            Player damaged = (Player) e.getEntity();
+            Player damager = (Player) e.getDamager();
+            double finalDMG = e.getFinalDamage();
+            double currentHP = damaged.getHealth();
 
-            damager.sendMessage("§a§lKILL! §7on " + zl.getColorBracketAndLevel(uuid) + " §7" + damaged.getName()
-            + " §b+" + calculateEXP(damaged, damager) + "§bXP §6+" + zl.getFancyGoldString(calculatedGold) + "§6g");
+            if (e.getCause() != DamageCause.FALL && (currentHP - finalDMG) <= 0) {
+                String uuid = damaged.getUniqueId().toString();
+                PlayerData damagerData = Main.getInstance().getStorage().getPlayerData(damager.getUniqueId().toString());
+                double calculatedGold = calculateGold(damaged, damager);
 
-            damagerData.setExp(damagerData.getExp() - calculateEXP(damaged, damager));
-            damagerData.setGold(damagerData.getGold() + calculatedGold);
+                damager.sendMessage("§a§lKILL! §7on " + zl.getColorBracketAndLevel(uuid) + " §7" + damaged.getName()
+                        + " §b+" + calculateEXP(damaged, damager) + "§bXP §6+" + zl.getFancyGoldString(calculatedGold) + "§6g");
+
+                damagerData.setExp(damagerData.getExp() - calculateEXP(damaged, damager));
+                damagerData.setGold(damagerData.getGold() + calculatedGold);
+            }
         }
     }
 }

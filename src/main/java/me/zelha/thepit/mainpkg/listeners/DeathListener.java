@@ -4,6 +4,7 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -60,41 +61,45 @@ public class DeathListener implements Listener {
 
     @EventHandler
     public void onPlayerDeath(EntityDamageEvent e) {
-        Player p = (Player) e.getEntity();
-        double finalDMG = e.getFinalDamage();
-        double currentHP = p.getHealth();
+        Entity entity = e.getEntity();
 
-        if (zl.playerCheck(p) && e.getCause() != DamageCause.FALL && (currentHP - finalDMG <= 0)) {
-            double maxHealth = p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+        if (zl.playerCheck(entity)) {
+            Player p = (Player) e.getEntity();
+            double finalDMG = e.getFinalDamage();
+            double currentHP = p.getHealth();
 
-            e.setCancelled(true);
-            p.setFireTicks(0);
+            if (zl.playerCheck(p) && e.getCause() != DamageCause.FALL && (currentHP - finalDMG <= 0)) {
+                double maxHealth = p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    p.setHealth(maxHealth);
+                e.setCancelled(true);
+                p.setFireTicks(0);
+
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        p.setHealth(maxHealth);
+                    }
+                }.runTaskLater(Main.getInstance(), 1);
+
+                if (p.getWorld().getName().equals("Elementals")) {
+                    teleportToSpawnMethod(p, 82, 114, 11.5, 14.5, -9.5, 10.5, -8.5, -8.5, 12.5, -12.5, -7.5, 8.5);
                 }
-            }.runTaskLater(Main.getInstance(), 1);
 
-            if (p.getWorld().getName().equals("Elementals")) {
-                teleportToSpawnMethod(p, 82, 114, 11.5, 14.5, -9.5, 10.5, -8.5, -8.5, 12.5, -12.5, -7.5, 8.5);
-            }
+                if (p.getWorld().getName().equals("Corals")) {
+                    teleportToSpawnMethod(p, 82, 114, 11.5, 14.5, -9.5, 10.5, -8.5, -8.5, 12.5, -12.5, -7.5, 8.5);
+                }
 
-            if (p.getWorld().getName().equals("Corals")) {
-                teleportToSpawnMethod(p, 82, 114, 11.5, 14.5, -9.5, 10.5, -8.5, -8.5, 12.5, -12.5, -7.5, 8.5);
-            }
+                if (p.getWorld().getName().equals("Seasons")) {
+                    teleportToSpawnMethod(p, 82, 114, 12.5, 13.5, -9.5, 10.5, -9.5, -9.5, 12.5, -12.5, -7.5, 8.5);
+                }
 
-            if (p.getWorld().getName().equals("Seasons")) {
-                teleportToSpawnMethod(p, 82, 114, 12.5, 13.5, -9.5, 10.5, -9.5, -9.5, 12.5, -12.5, -7.5, 8.5);
-            }
+                if (p.getWorld().getName().equals("Castle")) {
+                    teleportToSpawnMethod(p, 71, 95, 12.5, 12.5, -11.5, 12.5, -11.5, -11.5, 12.5, -11.5, -7.5, 8.5);
+                }
 
-            if (p.getWorld().getName().equals("Castle")) {
-                teleportToSpawnMethod(p, 71, 95, 12.5, 12.5, -11.5, 12.5, -11.5, -11.5, 12.5, -11.5, -7.5, 8.5);
-            }
-
-            if (p.getWorld().getName().equals("Genesis")) {
-                teleportToSpawnMethod(p, 43, 86, 17.5, 15.5, -14.5, 16.5, -15.5, -14.5, 15.5, -15.5, -8.5, 9.5);
+                if (p.getWorld().getName().equals("Genesis")) {
+                    teleportToSpawnMethod(p, 43, 86, 17.5, 15.5, -14.5, 16.5, -15.5, -14.5, 15.5, -15.5, -8.5, 9.5);
+                }
             }
         }
     }
