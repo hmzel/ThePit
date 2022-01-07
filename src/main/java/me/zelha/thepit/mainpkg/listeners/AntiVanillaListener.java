@@ -27,7 +27,7 @@ public class AntiVanillaListener implements Listener {
     @EventHandler
     public void onGrassChange(BlockPhysicsEvent e) {
 
-        if (e.getChangedType() == DIRT) {
+        if (e.getSourceBlock().getType() == GRASS_BLOCK) {
             e.setCancelled(true);
         }
     }
