@@ -1,0 +1,32 @@
+name: ThePit
+version: '${project.version}'
+main: me.zelha.thepit.Main
+api-version: 1.17
+authors: [ hmzel ]
+description: Recreation of Minikloon's The Pit
+website: E
+commands:
+  setprestige:
+    description: sets your or the specified player's prestige
+    usage: /<command>
+  setlevel:
+    description: sets your or the specified player's level
+    usage: /<command>
+  setgold:
+    description: sets your or the specified player's gold
+    usage: /<command>
+  setexp:
+    description: sets your or the specified player's exp
+    usage: /<command>
+  setstatus:
+    description: sets your or the specified player's status
+    usage: /<command>
+  setbounty:
+    description: sets your or the specified player's bounty
+    usage: /<command>
+  setstreak:
+    description: sets your or the specified player's streak
+    usage: /<command>
+  letmeplaceblocksplease:
+    description: lets you place blocks because you asked nicely
+    usage: /<command>
