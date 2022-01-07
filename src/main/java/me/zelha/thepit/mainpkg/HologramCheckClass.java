@@ -18,7 +18,7 @@ public class HologramCheckClass {//the coordinates are different for every map s
 
     public void HologramCheck() {//pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class
 
-        if (Bukkit.getWorld("Elementals") != null) {
+        if (Bukkit.getWorld("Elementals") != null) {//
             World elementals = Bukkit.getWorld("Elementals");
 
             spawnIfAbsent("§e§lUNLOCKED FEATURES", new Location(elementals, -6.5, 116.9, 11.6));
