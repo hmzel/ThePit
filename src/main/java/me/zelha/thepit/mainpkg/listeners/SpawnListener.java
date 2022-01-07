@@ -13,11 +13,11 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.util.BoundingBox;
 
 public class SpawnListener implements Listener {
-    private final BoundingBox elementalsSpawn = BoundingBox.of(new Location(Bukkit.getWorld("Elementals"), 0, 101, 0), 25, 25, 25);
-    private final BoundingBox coralsSpawn = BoundingBox.of(new Location(Bukkit.getWorld("Corals"), 0, 101, 0), 25, 25, 25);
-    private final BoundingBox seasonsSpawn = BoundingBox.of(new Location(Bukkit.getWorld("Seasons"), 0, 101, 0), 25, 25, 25);
-    private final BoundingBox castleSpawn = BoundingBox.of(new Location(Bukkit.getWorld("Castle"), 0, 90, 0), 25, 25, 25);
-    private final BoundingBox genesisSpawn = BoundingBox.of(new Location(Bukkit.getWorld("Genesis"), 0, 80, 0), 25, 25, 25);
+    private final BoundingBox elementalsSpawn = BoundingBox.of(new Location(Bukkit.getWorld("Elementals"), 0, 113, 0), 25, 15, 25);
+    private final BoundingBox coralsSpawn = BoundingBox.of(new Location(Bukkit.getWorld("Corals"), 0, 113, 0), 25, 15, 25);
+    private final BoundingBox seasonsSpawn = BoundingBox.of(new Location(Bukkit.getWorld("Seasons"), 0, 113, 0), 25, 15, 25);
+    private final BoundingBox castleSpawn = BoundingBox.of(new Location(Bukkit.getWorld("Castle"), 0, 105, 0), 25, 15, 25);
+    private final BoundingBox genesisSpawn = BoundingBox.of(new Location(Bukkit.getWorld("Genesis"), 0, 90, 0), 25, 15, 25);
 
     @EventHandler
     public void onDamage(EntityDamageEvent e) {
