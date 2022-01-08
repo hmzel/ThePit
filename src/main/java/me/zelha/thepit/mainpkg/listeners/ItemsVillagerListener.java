@@ -138,9 +138,9 @@ public class ItemsVillagerListener implements Listener {
         PlayerData pData = Main.getInstance().getStorage().getPlayerData(p.getUniqueId().toString());
 
         if ((pData.getGold() - cost) >= 0) {
-            p.getInventory().addItem(item);
+            HashMap<Integer, ItemStack> invFullCheck = p.getInventory().addItem(item);
 
-            if (p.getInventory().contains(item)) {
+            if (!invFullCheck.containsValue(item)) {
                 pData.setGold(pData.getGold() - cost);
                 p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
             } else {
@@ -158,8 +158,7 @@ public class ItemsVillagerListener implements Listener {
     private void itemPurchase(Player p, ItemStack item, int cost, EquipmentSlot slot) {
         PlayerData pData = Main.getInstance().getStorage().getPlayerData(p.getUniqueId().toString());
 
-        if (p.getInventory().getItem(slot) == null || p.getInventory().getItem(slot).getType() == Material.AIR
-           || p.getInventory().getItem(slot).getType() != item.getType()) {
+        if (!zl.itemCheck(p.getInventory().getItem(slot)) || p.getInventory().getItem(slot).getType() != item.getType()) {
 
             if ((pData.getGold() - cost) >= 0) {
                 p.getInventory().setItem(slot, item);
@@ -181,15 +180,8 @@ public class ItemsVillagerListener implements Listener {
 
         if ((pData.getGold() - cost) >= 0) {
             p.getInventory().setItem(slot, item);
-
-            if (p.getInventory().contains(item)) {
-                pData.setGold(pData.getGold() - cost);
-                p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
-            } else {
-                p.sendMessage("§cYour inventory is full!");
-                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-                p.closeInventory();
-            }
+            pData.setGold(pData.getGold() - cost);
+            p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
         } else {
             p.sendMessage("§cNot enough gold!");
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
