@@ -3,11 +3,14 @@ package me.zelha.thepit;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -19,6 +22,8 @@ public class ZelLogic {//zel
 
     public boolean playerCheck(Player player) {return player != null && player.isValid();}
     public boolean playerCheck(Entity entity) {return entity != null && entity.isValid() && entity instanceof Player;}
+    public boolean blockCheck(Block block) {return block != null && block.getType() != Material.AIR;}
+    public boolean itemCheck(ItemStack item) {return item != null && item.getType() != Material.AIR;}
 
     public void spawnHologram(String name, Location location) {
         ArmorStand hologram = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);

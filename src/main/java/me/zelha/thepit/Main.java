@@ -41,6 +41,7 @@ public final class Main extends JavaPlugin {
         zelLogic = new ZelLogic();
         storage = new StorageListener();
 
+
         new HologramCheckClass().HologramCheck();
         new NPCCheckClass().NPCCheck();
 
@@ -53,6 +54,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new CombatListener(), this);
         getServer().getPluginManager().registerEvents(new SpawnListener(), this);
         getServer().getPluginManager().registerEvents(new ItemsVillagerListener(), this);
+        getServer().getPluginManager().registerEvents(new GoldenPickaxeListener(), this);
 
         getCommand("setprestige").setExecutor(new SetPrestigeCommand());
         getCommand("setlevel").setExecutor(new SetLevelCommand());

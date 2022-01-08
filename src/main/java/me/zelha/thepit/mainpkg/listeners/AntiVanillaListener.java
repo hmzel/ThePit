@@ -7,17 +7,22 @@ import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.bukkit.Material.*;
 
 public class AntiVanillaListener implements Listener {
+
+    public final static List<Block> placedBlocks = new ArrayList<>();
+    //is it okay to use static here??? this is the only thing i need to access outside of this class so it feels
+    //weird to go through Main to access this
+    //but it also feels really weird using static ever lol
 
     @EventHandler
     public void onHungerLoss(FoodLevelChangeEvent e) {
@@ -57,36 +62,40 @@ public class AntiVanillaListener implements Listener {
 
         if (blockType == OBSIDIAN) {
             new BlockGoPoof(e.getBlock(), 120).runTaskTimer(Main.getInstance(), 0, 1);
+            placedBlocks.add(e.getBlock());
         }
     }
-}
 
 
-class BlockGoPoof extends BukkitRunnable {
+    class BlockGoPoof extends BukkitRunnable {
 
-    private final Block block;
-    private final int timer;
-    private final Material type;
-    private int countdown = 0;
+        private final Block block;
+        private final int timer;
+        private final Material type;
+        private int countdown = 0;
 
-    public BlockGoPoof(Block block, int timer) {
-        this.block = block;
-        this.timer = timer * 20;
-        this.type = block.getType();
-    }
-
-    @Override
-    public void run() {
-
-        if (block.getType() != type) {
-            cancel();
+        public BlockGoPoof(Block block, int timer) {
+            this.block = block;
+            this.timer = timer * 20;
+            this.type = block.getType();
         }
 
-        if (countdown >= timer) {
-            block.setType(AIR);
-            block.getWorld().spawnParticle(Particle.CLOUD, block.getLocation(), 5, 0.5, 0.5, 0.5, 0);
+        @Override
+        public void run() {
+
+            if (block.getType() != type) {
+                placedBlocks.remove(block);
+                cancel();
+            }
+
+            if (countdown >= timer) {
+                block.setType(AIR);
+                block.getWorld().spawnParticle(Particle.CLOUD, block.getLocation(), 5, 0.5, 0.5, 0.5, 0);
+                placedBlocks.remove(block);
+                cancel();
+            }
+            countdown++;
         }
-        countdown++;
     }
 }
 
