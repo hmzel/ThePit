@@ -30,3 +30,8 @@ commands:
   letmeplaceblocksplease:
     description: lets you place blocks because you asked nicely
     usage: /<command>
+  respawn:
+    description: sends you to spawn
+    usage: /<command>
+    aliases:
+      - spawn

@@ -20,7 +20,7 @@ public class SpawnListener implements Listener {
     private final BoundingBox castleSpawn = BoundingBox.of(new Location(Bukkit.getWorld("Castle"), 0.0, 105.0, 0.0), 25.0, 15.0, 25.0);
     private final BoundingBox genesisSpawn = BoundingBox.of(new Location(Bukkit.getWorld("Genesis"), 0.0, 90.0, 0.0), 25.0, 15.0, 25.0);
 
-    private boolean spawnCheck(String worldName, double x, double y, double z) {
+    public boolean spawnCheck(String worldName, double x, double y, double z) {
 
         if (worldName.equals("Elementals") && elementalsSpawn.contains(x, y, z)) {
             return true;

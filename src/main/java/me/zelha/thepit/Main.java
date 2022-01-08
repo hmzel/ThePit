@@ -7,6 +7,7 @@ import com.mongodb.client.MongoDatabase;
 import me.zelha.thepit.admin.commands.*;
 import me.zelha.thepit.mainpkg.HologramCheckClass;
 import me.zelha.thepit.mainpkg.NPCCheckClass;
+import me.zelha.thepit.mainpkg.commands.RespawnCommand;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.mainpkg.data.StorageListener;
 import me.zelha.thepit.mainpkg.listeners.*;
@@ -23,6 +24,8 @@ public final class Main extends JavaPlugin {
 
     public ZelLogic zelLogic;
     public StorageListener storage;
+    public DeathListener deathListener;
+    public SpawnListener spawnListener;
 
     public MongoCollection<Document> playerDataCollection;
     public MongoClient mongoClient;
@@ -40,6 +43,8 @@ public final class Main extends JavaPlugin {
         instance = this;
         zelLogic = new ZelLogic();
         storage = new StorageListener();
+        deathListener = new DeathListener();
+        spawnListener = new SpawnListener();
 
 
         new HologramCheckClass().HologramCheck();
@@ -64,6 +69,7 @@ public final class Main extends JavaPlugin {
         getCommand("setbounty").setExecutor(new SetBountyCommand());
         getCommand("setstreak").setExecutor(new SetStreakCommand());
         getCommand("letmeplaceblocksplease").setExecutor(new AllowBlockEventsCommand());
+        getCommand("respawn").setExecutor(new RespawnCommand());
 
         mongoClient = MongoClients.create("mongodb+srv://zelhagodis:KuroHanaRokuNiSanRei1019@zelcluster.epcte.mongodb.net/endmysuffering?retryWrites=true&w=majority");
         MongoDatabase mongoDatabase = mongoClient.getDatabase("zelhadb");
