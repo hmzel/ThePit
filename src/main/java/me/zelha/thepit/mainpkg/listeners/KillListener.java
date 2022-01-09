@@ -57,7 +57,7 @@ public class KillListener implements Listener {
             percentageModifier = percentageModifier - 0.09;
         }
 
-        if (damagerData.getStreak() <= 3) {
+        if (damagerData.getStreak() <= 3 && damagerData.getLevel() <= 30) {
             baseModifier = baseModifier + 4;
         }
 
@@ -152,7 +152,7 @@ public class KillListener implements Listener {
             percentageModifier = percentageModifier - 0.09;
         }
 
-        if (damagerData.getStreak() <= 3) {
+        if (damagerData.getStreak() <= 3 && damagerData.getLevel() <= 30) {
             baseModifier = baseModifier + 4;
         }
 
