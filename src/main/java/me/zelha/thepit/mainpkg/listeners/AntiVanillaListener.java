@@ -58,7 +58,7 @@ public class AntiVanillaListener implements Listener {
         }
 
         if (blockType == OBSIDIAN) {
-            new BlockGoPoof(e.getBlock(), 120).runTaskTimer(Main.getInstance(), 0, 1);
+            new BlockGoPoof(e.getBlock(), e.getBlockReplacedState().getType(), 120).runTaskTimer(Main.getInstance(), 0, 1);
             placedBlocks.add(e.getBlock());
         }
     }
@@ -67,26 +67,21 @@ public class AntiVanillaListener implements Listener {
     private class BlockGoPoof extends BukkitRunnable {
 
         private final Block block;
+        private final Material previousBlock;
         private final int timer;
-        private final Material type;
         private int countdown = 0;
 
-        private BlockGoPoof(Block block, int timer) {
+        private BlockGoPoof(Block block, Material previousBlock, int timer) {
             this.block = block;
+            this.previousBlock = previousBlock;
             this.timer = timer * 20;
-            this.type = block.getType();
         }
 
         @Override
         public void run() {
 
-            if (block.getType() != type) {
-                placedBlocks.remove(block);
-                cancel();
-            }
-
             if (countdown >= timer) {
-                block.setType(AIR);
+                block.setType(previousBlock);
                 block.getWorld().spawnParticle(Particle.CLOUD, block.getLocation(), 5, 0.5, 0.5, 0.5, 0);
                 placedBlocks.remove(block);
                 cancel();
