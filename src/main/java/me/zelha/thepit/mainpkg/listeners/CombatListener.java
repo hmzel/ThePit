@@ -62,7 +62,7 @@ public class CombatListener implements Listener {
         }
 
         private int calculateTimer(PlayerData pData) {
-            return 15;
+            return 15 + (int) Math.floor(pData.getBounty() / 100);
         }
 
         @Override
