@@ -15,6 +15,8 @@ import java.util.List;
 
 public class StorageListener implements Listener {
 
+    private final MongoCollection<Document> pDataCol = Main.getInstance().getPlayerDataCollection();
+
     private final static Map<String, PlayerData> playerDataMap = new HashMap<>();
     private final static List<String> playerUUIDList = new ArrayList<>();
 
@@ -22,72 +24,67 @@ public class StorageListener implements Listener {
         return playerDataMap.get(uuid);
     }
 
-    public List<String> getPlayerUUIDList() {return playerUUIDList;}
-
     public void runDataSaver() {
         new SaveDataPeriodically().runTaskTimerAsynchronously(Main.getInstance(),0, 1200);
         System.out.println("ThePit: Successfully started data saver");
     }
 
-    boolean dataCheck(Document document) {
-        return
-        document.get("prestige")     != null
-        && document.get("level")     != null
-        && document.get("exp")       != null
-        && document.get("gold")      != null
-        && document.get("bounty")    != null;
+    private boolean dataCheck(Document document) {
+        return document.get("prestige") != null
+                && document.get("level") != null
+                && document.get("exp") != null
+                && document.get("gold") != null
+                && document.get("bounty") != null;
     }
 
-    Document updateDocument(Document document) {
-        if (document.get("prestige") == null)  {document.append("prestige", 0);}
-        if (document.get("level") == null)     {document.append("level", 1);}
-        if (document.get("exp") == null)       {document.append("exp", 15);}
-        if (document.get("gold") == null)      {document.append("gold", 0.0);}
-        if (document.get("bounty") == null)    {document.append("bounty", 0);}
+    private Document updateDocument(Document document) {
+        if (document.get("prestige") == null) document.append("prestige", 0);
+        if (document.get("level") == null) document.append("level", 1);
+        if (document.get("exp") == null) document.append("exp", 15);
+        if (document.get("gold") == null) document.append("gold", 0.0);
+        if (document.get("bounty") == null) document.append("bounty", 0);
 
         return document;
     }
 
     @EventHandler
     public void assignDataDocument(PlayerJoinEvent e) {
-        UUID uuid = e.getPlayer().getUniqueId();
-        String uuidString = uuid.toString();
-        Document pDoc = Main.getInstance().getPlayerDataCollection().find(new Document("uuid", uuidString)).first();
+        String uuid = e.getPlayer().getUniqueId().toString();
+        Document filter = new Document("uuid", uuid);
+        Document pDoc = pDataCol.find(filter).first();
 
-        if (Main.getInstance().getPlayerDataCollection().countDocuments(new Document("uuid", uuidString)) < 1) {
-            Main.getInstance().getPlayerDataCollection().insertOne(new Document("uuid", uuidString)
+        if (pDataCol.countDocuments(filter) < 1) {
+            pDataCol.insertOne(filter
                     .append("prestige", 0)
                     .append("level", 1)
                     .append("exp", 15)
                     .append("gold", 0.0)
                     .append("bounty", 0));
 
-            pDoc = Main.getInstance().getPlayerDataCollection().find(new Document("uuid", uuidString)).first();
+            pDoc = pDataCol.find(filter).first();
 
-            System.out.println("Created new player data document assigned to" + uuidString);
-        }else if (!dataCheck(pDoc)) {
+            System.out.println("Created new player data document assigned to" + uuid);
+        } else if (!dataCheck(pDoc)) {
             pDoc = updateDocument(pDoc);
 
-            System.out.println("Successfully updated player data document assigned to " + uuidString);
+            System.out.println("Successfully updated player data document assigned to " + uuid);
         }
 
         if (pDoc != null) {
-            playerDataMap.put(uuidString, Main.getInstance().getPlayerData(pDoc));
-            playerUUIDList.add(uuidString);
-        }else {
-            System.out.println(ChatColor.DARK_RED + "HALL OF FAILURE.");
+            playerDataMap.put(uuid, new PlayerData(pDoc));
+            playerUUIDList.add(uuid);
+        } else {
+            System.out.println("BEPIS.");
             System.out.println("Did something go wrong inserting the document?");
         }
 
     }
 
     @EventHandler
-    public void unassignDataDocument(PlayerQuitEvent e) {
-        UUID uuid = e.getPlayer().getUniqueId();
-
-        MongoCollection<Document> pDataCol = Main.getInstance().getPlayerDataCollection();
-        PlayerData pData = Main.getInstance().getStorage().getPlayerData(uuid.toString());
-        Document pDoc = pDataCol.find(new Document("uuid", uuid.toString())).first();
+    public void saveDataDocument(PlayerQuitEvent e) {
+        String uuid = e.getPlayer().getUniqueId().toString();
+        PlayerData pData = getPlayerData(uuid);
+        Document pDoc = pDataCol.find(new Document("uuid", uuid)).first();
 
         pDoc.put("prestige", pData.getPrestige());
         pDoc.put("level", pData.getLevel());
@@ -95,39 +92,36 @@ public class StorageListener implements Listener {
         pDoc.put("gold", pData.getGold());
         pDoc.put("bounty", pData.getBounty());
 
-        pDataCol.replaceOne(new Document("uuid", uuid.toString()), pDoc);
+        pDataCol.replaceOne(new Document("uuid", uuid), pDoc);
 
-        playerDataMap.remove(uuid.toString());
-        playerUUIDList.remove(uuid.toString());
+        playerDataMap.remove(uuid);
+        playerUUIDList.remove(uuid);
     }
-}
 
 
-class SaveDataPeriodically extends BukkitRunnable {
+    private class SaveDataPeriodically extends BukkitRunnable {
 
-    MongoCollection<Document> pDataCol = Main.getInstance().getPlayerDataCollection();
+        @Override
+        public void run() {
 
-    public SaveDataPeriodically() {}
+            for (String uuid : playerUUIDList) {
+                PlayerData pData = getPlayerData(uuid);
+                Document pDoc = pDataCol.find(new Document("uuid", uuid)).first();
 
-    @Override
-    public void run() {
+                pDoc.put("prestige", pData.getPrestige());
+                pDoc.put("level", pData.getLevel());
+                pDoc.put("exp", pData.getExp());
+                pDoc.put("gold", pData.getGold());
+                pDoc.put("bounty", pData.getBounty());
 
-        List<String> pUUIDList = Main.getInstance().getStorage().getPlayerUUIDList();
-
-        for (String uuid : pUUIDList) {
-            PlayerData pData = Main.getInstance().getStorage().getPlayerData(uuid);
-            Document pDoc = pDataCol.find(new Document("uuid", uuid)).first();
-
-            pDoc.put("prestige", pData.getPrestige());
-            pDoc.put("level", pData.getLevel());
-            pDoc.put("exp", pData.getExp());
-            pDoc.put("gold", pData.getGold());
-            pDoc.put("bounty", pData.getBounty());
-
-            pDataCol.replaceOne(new Document("uuid", uuid), pDoc);
+                pDataCol.replaceOne(new Document("uuid", uuid), pDoc);
+            }
         }
     }
 }
+
+
+
 
 
 

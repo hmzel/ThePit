@@ -15,7 +15,6 @@ public class PlayerData {
     private boolean hideTimer;
     private int multikill;
 
-
     public PlayerData(Document document) {
         prestige = document.getInteger("prestige");
         level = document.getInteger("level");
@@ -29,7 +28,7 @@ public class PlayerData {
 
         if (bounty != 0) {
             status = "bountied";
-        }else {
+        } else {
             status = "idling";
         }
     }
@@ -96,11 +95,17 @@ public class PlayerData {
         this.status = status;
     }
 
-    public void setBounty(int bounty) {this.bounty = bounty;}
+    public void setBounty(int bounty) {
+        this.bounty = bounty;
+    }
 
-    public void setCombatTimer(int Timer) {this.combatTimer = Timer;}
+    public void setCombatTimer(int Timer) {
+        this.combatTimer = Timer;
+    }
 
-    public void setHideTimer(boolean setBoolean) {this.hideTimer = setBoolean;}
+    public void setHideTimer(boolean setBoolean) {
+        this.hideTimer = setBoolean;
+    }
 
     public void setStreak(double streak) {
         this.streak = streak;
@@ -110,3 +115,20 @@ public class PlayerData {
         this.multikill = multikill;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

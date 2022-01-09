@@ -19,26 +19,30 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public final class Main extends JavaPlugin {
 
-    public ZelLogic zelLogic;
-    public StorageListener storage;
-    public DeathListener deathListener;
-    public SpawnListener spawnListener;
+    private ZelLogic zelLogic;
+    private StorageListener storage;
+    private DeathListener deathListener;
+    private SpawnListener spawnListener;
 
-    public MongoCollection<Document> playerDataCollection;
-    public MongoClient mongoClient;
+    private MongoCollection<Document> playerDataCollection;
+    private MongoClient mongoClient;
 
     public List<Player> blockPriviledges = new ArrayList<>();
 
-    public static Main instance;
+    private static Main instance;
 
 
     @Override
     public void onEnable() {
         //Plugin startup logic
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "minecraft:kick @a");
+        mongoClient = MongoClients.create("mongodb+srv://zelhagodis:KuroHanaRokuNiSanRei1019@zelcluster.epcte.mongodb.net/endmysuffering?retryWrites=true&w=majority");
+        MongoDatabase mongoDatabase = mongoClient.getDatabase("zelhadb");
+        playerDataCollection = mongoDatabase.getCollection("playerdata");
 
         instance = this;
         zelLogic = new ZelLogic();
@@ -46,18 +50,17 @@ public final class Main extends JavaPlugin {
         deathListener = new DeathListener();
         spawnListener = new SpawnListener();
 
+        new HologramCheckClass().hologramCheck();
+        new NPCCheckClass().npcCheck();
 
-        new HologramCheckClass().HologramCheck();
-        new NPCCheckClass().NPCCheck();
-
-        getServer().getPluginManager().registerEvents(new StorageListener(), this);
+        getServer().getPluginManager().registerEvents(storage, this);
         getServer().getPluginManager().registerEvents(new LevelUpListener(), this);
         getServer().getPluginManager().registerEvents(new ScoreboardListener(), this);
         getServer().getPluginManager().registerEvents(new KillListener(), this);
-        getServer().getPluginManager().registerEvents(new DeathListener(), this);
+        getServer().getPluginManager().registerEvents(deathListener, this);
         getServer().getPluginManager().registerEvents(new AntiVanillaListener(), this);
         getServer().getPluginManager().registerEvents(new CombatListener(), this);
-        getServer().getPluginManager().registerEvents(new SpawnListener(), this);
+        getServer().getPluginManager().registerEvents(spawnListener, this);
         getServer().getPluginManager().registerEvents(new ItemsVillagerListener(), this);
         getServer().getPluginManager().registerEvents(new GoldenPickaxeListener(), this);
 
@@ -71,25 +74,45 @@ public final class Main extends JavaPlugin {
         getCommand("letmeplaceblocksplease").setExecutor(new AllowBlockEventsCommand());
         getCommand("respawn").setExecutor(new RespawnCommand());
 
-        mongoClient = MongoClients.create("mongodb+srv://zelhagodis:KuroHanaRokuNiSanRei1019@zelcluster.epcte.mongodb.net/endmysuffering?retryWrites=true&w=majority");
-        MongoDatabase mongoDatabase = mongoClient.getDatabase("zelhadb");
-        playerDataCollection = mongoDatabase.getCollection("playerdata");
-
         storage.runDataSaver();
         new ParticipationRunnable().runTaskTimerAsynchronously(this, 0, 1);
     }
 
 
     @Override
-    public void onDisable() {mongoClient.close();}
+    public void onDisable() {
+        mongoClient.close();
+    }
 
 
-    public static Main getInstance() {return instance;}
+    public static Main getInstance() {
+        return instance;
+    }
 
-    public MongoCollection<Document> getPlayerDataCollection() {return playerDataCollection;}
+    public MongoCollection<Document> getPlayerDataCollection() {//i should clean this up later
+        return playerDataCollection;
+    }
 
-    public ZelLogic getZelLogic() {return zelLogic;}
-    public StorageListener getStorage() {return storage;}
-    public PlayerData getPlayerData(Document document) {return new PlayerData(document);}
-    public RunMethods getRunMethods() {return new RunMethods();}
+    public ZelLogic getZelLogic() {
+        return zelLogic;
+    }
+    public DeathListener getDeathListener() {
+        return deathListener;
+    }
+    public SpawnListener getSpawnListener() {
+        return spawnListener;
+    }
+    public RunMethods generateRunMethods() {
+        return new RunMethods();
+    }
+
+    public PlayerData getPlayerData(String uuid) {
+        return storage.getPlayerData(uuid);
+    }
+    public PlayerData getPlayerData(UUID uuid) {
+        return storage.getPlayerData(uuid.toString());
+    }
+    public PlayerData getPlayerData(Player player) {
+        return storage.getPlayerData(player.getUniqueId().toString());
+    }
 }

@@ -10,17 +10,17 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-public class RespawnCommand implements CommandExecutor {//taking a break
+public class RespawnCommand implements CommandExecutor {
 
-    private final List<Player> cooldown = new ArrayList<>();
+    private final List<UUID> cooldown = new ArrayList<>();
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-
         if (sender instanceof Player) {
             Player p = (Player) sender;
-            PlayerData pData = Main.getInstance().getStorage().getPlayerData(p.getUniqueId().toString());
+            PlayerData pData = Main.getInstance().getPlayerData(p);
 
             if (!pData.getStatus().equals("fighting")) {
                 String worldName = p.getWorld().getName();
@@ -28,16 +28,16 @@ public class RespawnCommand implements CommandExecutor {//taking a break
                 double y = p.getLocation().getY();
                 double z = p.getLocation().getZ();
 
-                if (!Main.getInstance().spawnListener.spawnCheck(worldName, x, y, z)) {
+                if (!Main.getInstance().getSpawnListener().spawnCheck(worldName, x, y, z)) {
 
-                    if (!cooldown.contains(p)) {
-                        Main.getInstance().deathListener.teleportToSpawnMethod(p);
-                        cooldown.add(p);
+                    if (!cooldown.contains(p.getUniqueId())) {
+                        Main.getInstance().getDeathListener().teleportToSpawnMethod(p);
+                        cooldown.add(p.getUniqueId());
 
                         new BukkitRunnable() {
                             @Override
                             public void run() {
-                                cooldown.remove(p);
+                                cooldown.remove(p.getUniqueId());
                             }
                         }.runTaskLater(Main.getInstance(), 200);
                     } else {

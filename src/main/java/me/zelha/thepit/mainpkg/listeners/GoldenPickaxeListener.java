@@ -19,10 +19,13 @@ import static org.bukkit.Material.AIR;
 
 public class GoldenPickaxeListener implements Listener {
 
-    ZelLogic zl = Main.getInstance().getZelLogic();
+    private final ZelLogic zl = Main.getInstance().getZelLogic();
 
     private final Map<Player, Integer> hitCount = new HashMap<>();
-    private boolean isPlacedBlock(Block block) {return AntiVanillaListener.placedBlocks.contains(block);}
+
+    private boolean isPlacedBlock(Block block) {
+        return AntiVanillaListener.placedBlocks.contains(block);
+    }
 
     private void stylishlyRemoveBlock(Block block) {
         block.setType(AIR);
@@ -33,24 +36,25 @@ public class GoldenPickaxeListener implements Listener {
     @EventHandler
     public void onClick(PlayerInteractEvent e) {
         Player p = e.getPlayer();
+        Block clicked = e.getClickedBlock();
 
         if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
 
-            if (hitCount.containsKey(p) && isPlacedBlock(e.getClickedBlock())) {
+            if (hitCount.containsKey(p) && isPlacedBlock(clicked)) {
                 hitCount.put(p, hitCount.get(p) + 1);
-            }else {
+            } else {
                 hitCount.put(p, 0);
             }
 
             if (hitCount.get(p) >= 2) {
                 hitCount.put(p, 0);
 
-                if (zl.blockCheck(e.getClickedBlock()) && isPlacedBlock(e.getClickedBlock())) {
-                    World world = e.getClickedBlock().getWorld();
-                    double x = e.getClickedBlock().getX();
-                    double y = e.getClickedBlock().getY();
-                    double z = e.getClickedBlock().getZ();
-                    stylishlyRemoveBlock(e.getClickedBlock());
+                if (zl.blockCheck(clicked) && isPlacedBlock(clicked)) {
+                    World world = clicked.getWorld();
+                    double x = clicked.getX();
+                    double y = clicked.getY();
+                    double z = clicked.getZ();
+                    stylishlyRemoveBlock(clicked);
 
                     for (int i = 1; i < 5; i++) {
                         Block extra = world.getBlockAt(new Location(world, x, y + i, z));

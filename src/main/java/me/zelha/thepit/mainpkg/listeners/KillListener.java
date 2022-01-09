@@ -21,16 +21,12 @@ import java.util.UUID;
 
 public class KillListener implements Listener {
 
-    ZelLogic zl = Main.getInstance().getZelLogic();
-    RunMethods methods = Main.getInstance().getRunMethods();
-    RunMethods methods2 = Main.getInstance().getRunMethods();
+    private final ZelLogic zl = Main.getInstance().getZelLogic();
+    private final RunMethods methods = Main.getInstance().generateRunMethods();
+    private final RunMethods methods2 = Main.getInstance().generateRunMethods();
 
-    private boolean itemCheck(ItemStack itemStack) {
-        return itemStack != null && itemStack.getType() != Material.AIR;
-    }
-
-    public String calculateKillMessage(Player damager) {
-        PlayerData pData = Main.getInstance().getStorage().getPlayerData(damager.getUniqueId().toString());
+    private String calculateKillMessage(Player damager) {
+        PlayerData pData = Main.getInstance().getPlayerData(damager);
 
         switch (pData.getMultiKill()) {
             case 1:
@@ -48,14 +44,14 @@ public class KillListener implements Listener {
         }
     }
 
-    public int calculateEXP(Player damaged, Player damager) {
+    private int calculateEXP(Player damaged, Player damager) {
         int exp = 5;
         int baseModifier = 0;
         double percentageModifier = 1;
         int streakModifier = 0;
 
-        PlayerData damagedData = Main.getInstance().getStorage().getPlayerData(damaged.getUniqueId().toString());
-        PlayerData damagerData = Main.getInstance().getStorage().getPlayerData(damager.getUniqueId().toString());
+        PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
+        PlayerData damagerData = Main.getInstance().getPlayerData(damager);
 
         if (damagedData.getPrestige() == 0) {
             percentageModifier = percentageModifier - 0.09;
@@ -69,7 +65,7 @@ public class KillListener implements Listener {
 
             if (damagedData.getStreak() <= 25) {
                 baseModifier = baseModifier + (int) Math.round(damagedData.getStreak());
-            }else {
+            } else {
                 baseModifier = baseModifier + 25;
             }
         }
@@ -80,45 +76,45 @@ public class KillListener implements Listener {
 
         if (damagerData.getStreak() < 5) {
             streakModifier = streakModifier + 3;
-        }else if (damagerData.getStreak() < 20) {
+        } else if (damagerData.getStreak() < 20) {
             streakModifier = streakModifier + 5;
-        }else if (damagerData.getStreak() < 30) {
+        } else if (damagerData.getStreak() < 30) {
             streakModifier = streakModifier + 6;
-        }else if (damagerData.getStreak() < 40) {
+        } else if (damagerData.getStreak() < 40) {
             streakModifier = streakModifier + 9;
-        }else if (damagerData.getStreak() < 50) {
+        } else if (damagerData.getStreak() < 50) {
             streakModifier = streakModifier + 12;
-        }else if (damagerData.getStreak() < 60) {
+        } else if (damagerData.getStreak() < 60) {
             streakModifier = streakModifier + 15;
-        }else if (damagerData.getStreak() < 70) {
+        } else if (damagerData.getStreak() < 70) {
             streakModifier = streakModifier + 18;
-        }else if (damagerData.getStreak() < 80) {
+        } else if (damagerData.getStreak() < 80) {
             streakModifier = streakModifier + 21;
-        }else if (damagerData.getStreak() < 90) {
+        } else if (damagerData.getStreak() < 90) {
             streakModifier = streakModifier + 24;
-        }else if (damagerData.getStreak() < 100) {
+        } else if (damagerData.getStreak() < 100) {
             streakModifier = streakModifier + 27;
-        }else if (damagerData.getStreak() < 110) {
+        } else if (damagerData.getStreak() < 110) {
             streakModifier = streakModifier + 30;
-        }else if (damagerData.getStreak() < 120) {
+        } else if (damagerData.getStreak() < 120) {
             streakModifier = streakModifier + 33;
-        }else if (damagerData.getStreak() < 130) {
+        } else if (damagerData.getStreak() < 130) {
             streakModifier = streakModifier + 36;
-        }else if (damagerData.getStreak() < 140) {
+        } else if (damagerData.getStreak() < 140) {
             streakModifier = streakModifier + 39;
-        }else if (damagerData.getStreak() < 150) {
+        } else if (damagerData.getStreak() < 150) {
             streakModifier = streakModifier + 42;
-        }else if (damagerData.getStreak() < 160) {
+        } else if (damagerData.getStreak() < 160) {
             streakModifier = streakModifier + 45;
-        }else if (damagerData.getStreak() < 170) {
+        } else if (damagerData.getStreak() < 170) {
             streakModifier = streakModifier + 48;
-        }else if (damagerData.getStreak() < 180) {
+        } else if (damagerData.getStreak() < 180) {
             streakModifier = streakModifier + 51;
-        }else if (damagerData.getStreak() < 190) {
+        } else if (damagerData.getStreak() < 190) {
             streakModifier = streakModifier + 54;
-        }else if (damagerData.getStreak() < 200) {
+        } else if (damagerData.getStreak() < 200) {
             streakModifier = streakModifier + 57;
-        }else {
+        } else {
             streakModifier = streakModifier + 60;
         }
 
@@ -127,27 +123,27 @@ public class KillListener implements Listener {
         return Math.toIntExact(Math.round((exp + baseModifier) * percentageModifier));
     }
 
-    double calculateGold(Player damaged, Player damager) {
+    private double calculateGold(Player damaged, Player damager) {
         int gold = 10;
         int baseModifier = 0;
         double percentageModifier = 1;
 
-        PlayerData damagedData = Main.getInstance().getStorage().getPlayerData(damaged.getUniqueId().toString());
-        PlayerData damagerData = Main.getInstance().getStorage().getPlayerData(damager.getUniqueId().toString());
+        PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
+        PlayerData damagerData = Main.getInstance().getPlayerData(damager);
 
-        if (itemCheck(damaged.getInventory().getHelmet())
+        if (zl.itemCheck(damaged.getInventory().getHelmet())
            && damaged.getInventory().getHelmet().getType() == Material.DIAMOND_HELMET) {
             baseModifier++;
         }
-        if (itemCheck(damaged.getInventory().getChestplate())
+        if (zl.itemCheck(damaged.getInventory().getChestplate())
            && damaged.getInventory().getChestplate().getType() == Material.DIAMOND_CHESTPLATE) {
             baseModifier++;
         }
-        if (itemCheck(damaged.getInventory().getLeggings())
+        if (zl.itemCheck(damaged.getInventory().getLeggings())
            && damaged.getInventory().getLeggings().getType() == Material.DIAMOND_LEGGINGS) {
             baseModifier++;
         }
-        if (itemCheck(damaged.getInventory().getBoots())
+        if (zl.itemCheck(damaged.getInventory().getBoots())
            && damaged.getInventory().getBoots().getType() == Material.DIAMOND_BOOTS) {
             baseModifier++;
         }
@@ -164,7 +160,7 @@ public class KillListener implements Listener {
 
             if (damagedData.getStreak() <= 25) {
                 baseModifier = baseModifier + (int) Math.round(damagedData.getStreak());
-            }else {
+            } else {
                 baseModifier = baseModifier + 25;
             }
         }
@@ -191,12 +187,12 @@ public class KillListener implements Listener {
                 methods2.stop(damager.getUniqueId());
             }
 
-            new MultiKillRunnable(damager, methods2).runTaskTimer(Main.getInstance(),0, 1);
+            new MultiKillRunnable(damager).runTaskTimer(Main.getInstance(),0, 1);
 
             if (e.getCause() != DamageCause.FALL && (currentHP - finalDMG) <= 0) {
                 String uuid = damaged.getUniqueId().toString();
-                PlayerData damagedData = Main.getInstance().getStorage().getPlayerData(damaged.getUniqueId().toString());
-                PlayerData damagerData = Main.getInstance().getStorage().getPlayerData(damager.getUniqueId().toString());
+                PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
+                PlayerData damagerData = Main.getInstance().getPlayerData(damager);
                 double calculatedGold = calculateGold(damaged, damager);
 
                 damagerData.setExp(damagerData.getExp() - calculateEXP(damaged, damager));
@@ -221,7 +217,7 @@ public class KillListener implements Listener {
                 + " §b+" + calculateEXP(damaged, damager) + "§bXP §6+" + zl.getFancyGoldString(calculatedGold) + "§6g");
 
                 if (!methods.hasID(damager.getUniqueId())) {
-                    new BountyRunnable(damager, methods).runTaskTimer(Main.getInstance(),0, 1);
+                    new BountyRunnable(damager).runTaskTimer(Main.getInstance(),0, 1);
                 }
             }
         }
@@ -235,145 +231,136 @@ public class KillListener implements Listener {
             methods.stop(uuid);
         }
     }
-}
 
 
-class BountyRunnable extends BukkitRunnable {
+    private class BountyRunnable extends BukkitRunnable {
 
-    private final Player player;
-    private final UUID uuid;
-    private final RunMethods methods;
-    private int ticksBetweenKills;
-    private int secondsBetweenKills;
-    private double streak;
+        private final Player player;
+        private final UUID uuid;
+        private int ticksBetweenKills;
+        private int secondsBetweenKills;
+        private double streak;
 
-    ZelLogic zl = Main.getInstance().getZelLogic();
-
-    public BountyRunnable(Player player, RunMethods methods) {
-        this.player = player;
-        this.uuid = player.getUniqueId();
-        this.methods = methods;
-        this.ticksBetweenKills = 0;
-        this.secondsBetweenKills = 0;
-        this.streak = Main.getInstance().getStorage().getPlayerData(uuid.toString()).getStreak();
-    }
-
-    boolean randomBounty() {
-        int rng = (new Random().nextInt((int) Math.round(streak)) + 1) - (int) Math.round(secondsBetweenKills * 0.1);
-
-        if (rng <= 0) {
-            return false;
+        private BountyRunnable(Player player) {
+            this.player = player;
+            this.uuid = player.getUniqueId();
+            this.ticksBetweenKills = 0;
+            this.secondsBetweenKills = 0;
+            this.streak = Main.getInstance().getPlayerData(uuid).getStreak();
         }
 
-        switch (rng) {
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
+        private boolean randomBounty() {
+            int rng = (new Random().nextInt((int) Math.round(streak)) + 1) - (int) Math.round(secondsBetweenKills * 0.1);
+
+            if (rng <= 0) {
                 return false;
-            default:
-                return true;
-        }
-    }
+            }
 
-    int calculateBounty() {
-
-        if (randomBounty()) {
-
-            if (streak < 10 && secondsBetweenKills < 5) {
-                return 50;
-            }else if (streak < 25 && secondsBetweenKills > 10) {
-                return 100;
-            }else if (streak < 25 && secondsBetweenKills < 5) {
-                return 150;
-            }else if (streak < 50) {
-                return 200;
-            }else {
-                return 250;
+            switch (rng) {
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    return false;
+                default:
+                    return true;
             }
         }
 
-        return 0;
-    }
+        private int calculateBounty() {
 
-    @Override
-    public void run() {
-        PlayerData pData = Main.getInstance().getStorage().getPlayerData(uuid.toString());
+            if (randomBounty()) {
 
-        if (!methods.hasID(uuid)) {
-            methods.setID(uuid, super.getTaskId());
-        }
-
-        if (streak != pData.getStreak()) {
-            streak = pData.getStreak();
-            int calculatedBounty = calculateBounty();
-
-            if (calculatedBounty != 0) {
-
-                if (pData.getBounty() == 0) {
-                    pData.setBounty(calculatedBounty);
-                    Bukkit.broadcastMessage("§6§lBOUNTY! §7of §6§l " + calculatedBounty + "g §7on " + zl.getColorBracketAndLevel(uuid.toString())
-                    + " §7" + player.getName() + " for high streak");
-                } else if (pData.getBounty() + calculatedBounty <= 5000) {
-                    pData.setBounty(pData.getBounty() + calculatedBounty);
-                    Bukkit.broadcastMessage("§6§lBOUNTY! §7bump §6§l " + calculatedBounty + "g §7on " + zl.getColorBracketAndLevel(uuid.toString())
-                    + " §7" + player.getName() + " for high streak");
-                } else if (pData.getBounty() < 5000) {
-                    Bukkit.broadcastMessage("§6§lBOUNTY! §7bump §6§l " + (5000 - pData.getBounty()) + "g §7on "
-                    + zl.getColorBracketAndLevel(uuid.toString()) + " §7" + player.getName() + " for high streak");
-                    pData.setBounty(5000);
+                if (streak < 10 && secondsBetweenKills < 5) {
+                    return 50;
+                } else if (streak < 25 && secondsBetweenKills > 10) {
+                    return 100;
+                } else if (streak < 25 && secondsBetweenKills < 5) {
+                    return 150;
+                } else if (streak < 50) {
+                    return 200;
+                } else {
+                    return 250;
                 }
             }
 
-            secondsBetweenKills = 0;
-            ticksBetweenKills = 0;
+            return 0;
         }
 
-        ticksBetweenKills++;
+        @Override
+        public void run() {
+            PlayerData pData = Main.getInstance().getPlayerData(uuid);
 
-        if (ticksBetweenKills == 20) {
-            secondsBetweenKills++;
-            ticksBetweenKills = 0;
+            if (!methods.hasID(uuid)) {
+                methods.setID(uuid, super.getTaskId());
+            }
+
+            if (streak != pData.getStreak()) {
+                streak = pData.getStreak();
+                int calculatedBounty = calculateBounty();
+
+                if (calculatedBounty != 0) {
+
+                    if (pData.getBounty() == 0) {
+                        pData.setBounty(calculatedBounty);
+                        Bukkit.broadcastMessage("§6§lBOUNTY! §7of §6§l " + calculatedBounty + "g §7on " + zl.getColorBracketAndLevel(uuid.toString())
+                                + " §7" + player.getName() + " for high streak");
+                    } else if (pData.getBounty() + calculatedBounty <= 5000) {
+                        pData.setBounty(pData.getBounty() + calculatedBounty);
+                        Bukkit.broadcastMessage("§6§lBOUNTY! §7bump §6§l " + calculatedBounty + "g §7on " + zl.getColorBracketAndLevel(uuid.toString())
+                                + " §7" + player.getName() + " for high streak");
+                    } else if (pData.getBounty() < 5000) {
+                        Bukkit.broadcastMessage("§6§lBOUNTY! §7bump §6§l " + (5000 - pData.getBounty()) + "g §7on "
+                                + zl.getColorBracketAndLevel(uuid.toString()) + " §7" + player.getName() + " for high streak");
+                        pData.setBounty(5000);
+                    }
+                }
+
+                secondsBetweenKills = 0;
+                ticksBetweenKills = 0;
+            }
+
+            ticksBetweenKills++;
+
+            if (ticksBetweenKills == 20) {
+                secondsBetweenKills++;
+                ticksBetweenKills = 0;
+            }
+        }
+    }
+
+
+    private class MultiKillRunnable extends BukkitRunnable {
+
+        private final UUID uuid;
+        private int ticksBetweenKills;
+
+        private MultiKillRunnable(Player player) {
+            this.uuid = player.getUniqueId();
+            this.ticksBetweenKills = 0;
+        }
+
+        @Override
+        public void run() {
+            PlayerData pData = Main.getInstance().getPlayerData(uuid);
+
+            if (!methods2.hasID(uuid)) {
+                methods2.setID(uuid, super.getTaskId());
+            }
+
+            ticksBetweenKills++;
+
+            if (ticksBetweenKills == 60) {
+                pData.setMultiKill(0);
+                cancel();
+            }
         }
     }
 }
 
 
-class MultiKillRunnable extends BukkitRunnable {
 
-    private final Player player;
-    private final UUID uuid;
-    private final RunMethods methods;
-    private int ticksBetweenKills;
-
-    ZelLogic zl = Main.getInstance().getZelLogic();
-
-    public MultiKillRunnable(Player player, RunMethods methods) {
-        this.player = player;
-        this.uuid = player.getUniqueId();
-        this.methods = methods;
-        this.ticksBetweenKills = 0;
-    }
-
-    @Override
-    public void run() {
-        PlayerData pData = Main.getInstance().getStorage().getPlayerData(uuid.toString());
-
-        if (!methods.hasID(uuid)) {
-            methods.setID(uuid, super.getTaskId());
-        }
-
-        ticksBetweenKills++;
-
-
-
-        if (ticksBetweenKills == 60) {
-            pData.setMultiKill(0);
-            cancel();
-        }
-    }
-}
 
 
 

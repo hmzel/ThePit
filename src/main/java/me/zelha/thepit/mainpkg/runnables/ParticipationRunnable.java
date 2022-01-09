@@ -11,8 +11,8 @@ import java.util.Collection;
 
 public class ParticipationRunnable extends BukkitRunnable {
 
-    int noRedos = 0;
-    int EXP = 10;
+    private int noRedos = 0;
+    private int EXP = 10;
 
     @Override
     public void run() {
@@ -21,7 +21,7 @@ public class ParticipationRunnable extends BukkitRunnable {
             Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
 
             for (Player p : onlinePlayers) {
-                PlayerData pData = Main.getInstance().getStorage().getPlayerData(p.getUniqueId().toString());
+                PlayerData pData = Main.getInstance().getPlayerData(p);
 
                 p.sendMessage("§a§lFREE XP! §7for participation §b+" + EXP + "XP");
                 pData.setExp(pData.getExp() - EXP);

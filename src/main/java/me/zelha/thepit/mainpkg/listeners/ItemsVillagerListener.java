@@ -11,12 +11,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.BoundingBox;
@@ -26,59 +26,54 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import static org.bukkit.Material.*;
+
 
 public class ItemsVillagerListener implements Listener {
 
-    ZelLogic zl = Main.getInstance().getZelLogic();
+    private final ZelLogic zl = Main.getInstance().getZelLogic();
 
     private BoundingBox noObstructions(World world) {
         if (world.getName().equals("Elementals") || world.getName().equals("Corals") || world.getName().equals("Seasons")) {
             return BoundingBox.of(new Location(world, 2.5, 114, 12.5), 1, 2.5, 1);
-        }
-        if (world.getName().equals("Castle")) {
+        } else if (world.getName().equals("Castle")) {
             return BoundingBox.of(new Location(world, 2.5, 95, 12.5), 1, 2.5, 1);
-        }
-        if (world.getName().equals("Genesis")) {
+        } else if (world.getName().equals("Genesis")) {
             return BoundingBox.of(new Location(world, 2.5, 86, 16.5), 1, 2.5, 1);
         }
+
         return new BoundingBox();
     }
 
-    private List<String> loreBuilder(Player p, ItemStack item) {
+    private List<String> loreBuilder(Player p, Material material) {
         List<String> lore = new ArrayList<>();
-        PlayerData pData = Main.getInstance().getStorage().getPlayerData(p.getUniqueId().toString());
+        PlayerData pData = Main.getInstance().getPlayerData(p);
         int cost = 0;
 
-        if (item.getType() == Material.DIAMOND_SWORD) {
+        if (material == DIAMOND_SWORD) {
             lore.add("§9+20% damage vs bountied");
-        }
-        if (item.getType() == Material.OBSIDIAN) {
+        } else if (material == OBSIDIAN) {
             lore.add("§7Remains for 120 seconds.");
-        }
-        if (item.getType() == Material.GOLDEN_PICKAXE) {
+        } else if (material == GOLDEN_PICKAXE) {
             lore.add("§7Breaks a 5-high pillar of");
             lore.add("§7obsidian when 2-tapping it.");
-        }
-        if (item.getType() == Material.DIAMOND_CHESTPLATE || item.getType() == Material.DIAMOND_BOOTS) {
+        } else if (material == DIAMOND_CHESTPLATE || material == DIAMOND_BOOTS) {
             lore.add("§7Auto-equips on buy!");
         }
 
         lore.add("\n");
         lore.add("§7§oLost on death.");
 
-        if (item.getType() == Material.DIAMOND_SWORD) {
+        if (material == DIAMOND_SWORD) {
             lore.add("§7Cost: §6150g");
             cost = 150;
-        }
-        if (item.getType() == Material.OBSIDIAN) {
+        } else if (material == OBSIDIAN) {
             lore.add("§7Cost: §640g");
             cost = 40;
-        }
-        if (item.getType() == Material.GOLDEN_PICKAXE || item.getType() == Material.DIAMOND_CHESTPLATE) {
+        } else if (material == GOLDEN_PICKAXE || material == DIAMOND_CHESTPLATE) {
             lore.add("§7Cost: §6500g");
             cost = 500;
-        }
-        if (item.getType() == Material.DIAMOND_BOOTS) {
+        } else if (material == DIAMOND_BOOTS) {
             lore.add("§7Cost: §6300g");
             cost = 300;
         }
@@ -95,47 +90,17 @@ public class ItemsVillagerListener implements Listener {
     private void openGUI(Player p) {
         Inventory itemsGUI = Bukkit.createInventory(p, 27, "Non-permanent items");
 
-        ItemStack dSword = new ItemStack(Material.DIAMOND_SWORD);
-        ItemMeta dSwordMeta = dSword.getItemMeta();
-        dSwordMeta.setDisplayName("§eDiamond Sword");
-        dSwordMeta.setLore(loreBuilder(p, dSword));
-        dSword.setItemMeta(dSwordMeta);
-
-        ItemStack obby = new ItemStack(Material.OBSIDIAN, 8);
-        ItemMeta obbyMeta = obby.getItemMeta();
-        obbyMeta.setDisplayName("§eObsidian");
-        obbyMeta.setLore(loreBuilder(p, obby));
-        obby.setItemMeta(obbyMeta);
-
-        ItemStack gPickaxe = new ItemStack(Material.GOLDEN_PICKAXE);
-        ItemMeta gPickaxeMeta = gPickaxe.getItemMeta();
-        gPickaxeMeta.setDisplayName("§eGolden Pickaxe");
-        gPickaxeMeta.setLore(loreBuilder(p, gPickaxe));
-        gPickaxe.setItemMeta(gPickaxeMeta);
-
-        ItemStack dChest = new ItemStack(Material.DIAMOND_CHESTPLATE);
-        ItemMeta dChestMeta = dChest.getItemMeta();
-        dChestMeta.setDisplayName("§eDiamond Chestplate");
-        dChestMeta.setLore(loreBuilder(p, dChest));
-        dChest.setItemMeta(dChestMeta);
-
-        ItemStack dBoot = new ItemStack(Material.DIAMOND_BOOTS);
-        ItemMeta dBootMeta = dBoot.getItemMeta();
-        dBootMeta.setDisplayName("§eDiamond Boots");
-        dBootMeta.setLore(loreBuilder(p, dBoot));
-        dBoot.setItemMeta(dBootMeta);
-
-        itemsGUI.setItem(11, dSword);
-        itemsGUI.setItem(12, obby);
-        itemsGUI.setItem(13, gPickaxe);
-        itemsGUI.setItem(14, dChest);
-        itemsGUI.setItem(15, dBoot);
+        itemsGUI.setItem(11, itemBuilder(DIAMOND_SWORD, 1, "§eDiamond Sword", loreBuilder(p, DIAMOND_SWORD)));
+        itemsGUI.setItem(12, itemBuilder(OBSIDIAN, 8, "§eObsidian", loreBuilder(p, OBSIDIAN)));
+        itemsGUI.setItem(13, itemBuilder(GOLDEN_PICKAXE, 1, "§eGolden Pickaxe", loreBuilder(p, GOLDEN_PICKAXE)));
+        itemsGUI.setItem(14, itemBuilder(DIAMOND_CHESTPLATE, 1, "§eDiamond Chestplate", loreBuilder(p, DIAMOND_CHESTPLATE)));
+        itemsGUI.setItem(15, itemBuilder(DIAMOND_BOOTS, 1, "§eDiamond Boots", loreBuilder(p, DIAMOND_BOOTS)));
 
         p.openInventory(itemsGUI);
     }
 
     private void itemPurchase(Player p, ItemStack item, int cost) {
-        PlayerData pData = Main.getInstance().getStorage().getPlayerData(p.getUniqueId().toString());
+        PlayerData pData = Main.getInstance().getPlayerData(p);
 
         if ((pData.getGold() - cost) >= 0) {
             HashMap<Integer, ItemStack> invFullCheck = p.getInventory().addItem(item);
@@ -156,7 +121,7 @@ public class ItemsVillagerListener implements Listener {
     }
 
     private void itemPurchase(Player p, ItemStack item, int cost, EquipmentSlot slot) {
-        PlayerData pData = Main.getInstance().getStorage().getPlayerData(p.getUniqueId().toString());
+        PlayerData pData = Main.getInstance().getPlayerData(p);
 
         if (!zl.itemCheck(p.getInventory().getItem(slot)) || p.getInventory().getItem(slot).getType() != item.getType()) {
 
@@ -164,7 +129,6 @@ public class ItemsVillagerListener implements Listener {
                 p.getInventory().setItem(slot, item);
                 pData.setGold(pData.getGold() - cost);
                 p.playSound(p.getLocation(), Sound.ITEM_ARMOR_EQUIP_DIAMOND, 1, 1);
-
             } else {
                 p.sendMessage("§cNot enough gold!");
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
@@ -176,7 +140,7 @@ public class ItemsVillagerListener implements Listener {
     }
 
     private void itemPurchase(Player p, ItemStack item, int cost, int slot) {
-        PlayerData pData = Main.getInstance().getStorage().getPlayerData(p.getUniqueId().toString());
+        PlayerData pData = Main.getInstance().getPlayerData(p);
 
         if ((pData.getGold() - cost) >= 0) {
             p.getInventory().setItem(slot, item);
@@ -187,6 +151,26 @@ public class ItemsVillagerListener implements Listener {
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             p.closeInventory();
         }
+    }
+
+    private ItemStack itemBuilder(Material material, int count) {
+        ItemStack item = new ItemStack(material, count);
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setUnbreakable(true);
+        item.setItemMeta(itemMeta);
+
+        return item;
+    }
+
+    private ItemStack itemBuilder(Material material, int count, String name, List<String> lore) {
+        ItemStack item = new ItemStack(material, count);
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setUnbreakable(true);
+        itemMeta.setDisplayName(name);
+        itemMeta.setLore(lore);
+        item.setItemMeta(itemMeta);
+
+        return item;
     }
 
     @EventHandler
@@ -241,63 +225,44 @@ public class ItemsVillagerListener implements Listener {
     public void itemsGUIInteract(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
 
-        if(e.getView().getTitle().equals("Non-permanent items") && e.getClickedInventory() != e.getView().getBottomInventory()) {
+        if (e.getView().getTitle().equals("Non-permanent items") && e.getClickedInventory() != e.getView().getBottomInventory()) {
             e.setCancelled(true);
 
-            if(e.getCurrentItem() != null) {
+            if (e.getCurrentItem() != null) {
                 switch (e.getSlot()) {
                     case 11:
-                        ItemStack dSword = new ItemStack(Material.DIAMOND_SWORD);
-                        ItemMeta dSwordMeta = dSword.getItemMeta();
-                        dSwordMeta.setUnbreakable(true);
-                        dSword.setItemMeta(dSwordMeta);
-
-                        if (p.getInventory().contains(Material.IRON_SWORD)) {
-                            itemPurchase(p, dSword, 150, p.getInventory().first(Material.IRON_SWORD));
-                            p.getInventory().remove(Material.IRON_SWORD);
+                        if (p.getInventory().contains(IRON_SWORD)) {
+                            itemPurchase(p, itemBuilder(DIAMOND_SWORD, 1), 150, p.getInventory().first(IRON_SWORD));
+                            p.getInventory().remove(IRON_SWORD);
                         } else {
-                            itemPurchase(p, dSword, 150);
+                            itemPurchase(p, itemBuilder(DIAMOND_SWORD, 1), 150);
                         }
                         break;
                     case 12:
-                        ItemStack obby = new ItemStack(Material.OBSIDIAN, 8);
-                        ItemMeta obbyMeta = obby.getItemMeta();
-                        obbyMeta.setUnbreakable(true);
-                        obby.setItemMeta(obbyMeta);
-
-                        itemPurchase(p, obby, 40);
+                        itemPurchase(p, itemBuilder(OBSIDIAN, 8), 40);
                         break;
                     case 13:
-                        ItemStack gPickaxe = new ItemStack(Material.GOLDEN_PICKAXE);
-                        ItemMeta gPickaxeMeta = gPickaxe.getItemMeta();
-                        gPickaxeMeta.setUnbreakable(true);
-                        gPickaxeMeta.setDisplayName("§6Golden Pickaxe");
-                        gPickaxeMeta.setLore(Arrays.asList(
+                        itemPurchase(p, itemBuilder(GOLDEN_PICKAXE, 1, "§6Golden Pickaxe", Arrays.asList(
                                 "§7Breaks a 5-high pillar of",
                                 "§7Obsidian when 2-tapping it."
-                        ));
-                        gPickaxe.setItemMeta(gPickaxeMeta);
-
-                        itemPurchase(p, gPickaxe, 500);
+                        )), 500);
                         break;
                     case 14:
-                        ItemStack dChest = new ItemStack(Material.DIAMOND_CHESTPLATE);
-                        ItemMeta dChestMeta = dChest.getItemMeta();
-                        dChestMeta.setUnbreakable(true);
-                        dChest.setItemMeta(dChestMeta);
-
-                        itemPurchase(p, dChest, 500, EquipmentSlot.CHEST);
+                        itemPurchase(p, itemBuilder(DIAMOND_CHESTPLATE, 1), 500, EquipmentSlot.CHEST);
                         break;
                     case 15:
-                        ItemStack dBoot = new ItemStack(Material.DIAMOND_BOOTS);
-                        ItemMeta dBootMeta = dBoot.getItemMeta();
-                        dBootMeta.setUnbreakable(true);
-                        dBoot.setItemMeta(dBootMeta);
-
-                        itemPurchase(p, dBoot, 300, EquipmentSlot.FEET);
+                        itemPurchase(p, itemBuilder(DIAMOND_BOOTS, 1), 300, EquipmentSlot.FEET);
                         break;
                 }
             }
+        }
+    }
+
+    @EventHandler
+    public void onDrag(InventoryDragEvent e) {
+
+        if (e.getView().getTitle().equals("Non-permanent items") && e.getInventory() != e.getView().getBottomInventory()) {
+        e.setCancelled(true);
         }
     }
 }

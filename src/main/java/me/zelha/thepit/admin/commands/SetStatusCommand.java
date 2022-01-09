@@ -12,21 +12,20 @@ public class SetStatusCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        Player p = (Player) sender;
         Player p2 = Bukkit.getPlayer(args[0]);
 
-        PlayerData pData = Main.getInstance().getStorage().getPlayerData(p.getUniqueId().toString());
-
         if (args.length == 1) {
-            pData.setStatus(args[0]);
-
+            if (sender instanceof Player) {
+                Player p = (Player) sender;
+                PlayerData pData = Main.getInstance().getPlayerData(p);
+                pData.setStatus(args[0]);
+            }
         } else if (args.length == 2 && p2 != null && p2.isValid()) {
-            PlayerData pData2 = Main.getInstance().getStorage().getPlayerData(p2.getUniqueId().toString());
+            PlayerData pData2 = Main.getInstance().getPlayerData(p2);
 
             pData2.setPrestige(Integer.parseInt(args[1]));
-
         } else {
-            p.sendMessage("§5Wrong args");
+            sender.sendMessage("§5Wrong args");
         }
 
         return true;

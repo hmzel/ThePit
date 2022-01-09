@@ -17,10 +17,11 @@ import java.util.Random;
 
 public class DeathListener implements Listener {
 
-    boolean getThemPlayers(Player p, double x, double y, double z, double ax, double ay, double az)
-    {return p.getWorld().getNearbyEntities(new Location(p.getWorld(), x, y, z), ax, ay, az).contains(p);}
+    private final ZelLogic zl = Main.getInstance().getZelLogic();
 
-    ZelLogic zl = Main.getInstance().getZelLogic();
+    private boolean getThemPlayers(Player p, double x, double y, double z, double ax, double ay, double az) {
+        return p.getWorld().getNearbyEntities(new Location(p.getWorld(), x, y, z), ax, ay, az).contains(p);
+    }
 
     private void randomMidSpawn(Player p, double y, double neg, double pos) {
         Random rng = new Random();
@@ -43,7 +44,7 @@ public class DeathListener implements Listener {
     }
 
 
-    private void teleportToMidSpawnMethod(Player p, double baseY, double spawnY, double pSpawnX, double pSpawnZ, double npSpawnX, double npSpawnZ, double nSpawnX, double nSpawnZ, double pnSpawnX, double pnSpawnZ, double neg, double pos) {
+    private void teleportBasedOnLocation(Player p, double baseY, double spawnY, double pSpawnX, double pSpawnZ, double npSpawnX, double npSpawnZ, double nSpawnX, double nSpawnZ, double pnSpawnX, double pnSpawnZ, double neg, double pos) {
         // p = positive, n = negative (coordinates) ^
         //dont blame me for the janky way this is set up its the builder's fault for being inconsistent with the maps
 
@@ -63,7 +64,7 @@ public class DeathListener implements Listener {
 
     public void teleportToSpawnMethod(Player p) {
         double maxHealth = p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-        PlayerData pData = Main.getInstance().getStorage().getPlayerData(p.getUniqueId().toString());
+        PlayerData pData = Main.getInstance().getPlayerData(p);
 
         p.setFireTicks(0);
         pData.setStreak(0);
@@ -76,23 +77,23 @@ public class DeathListener implements Listener {
         }.runTaskLater(Main.getInstance(), 1);
 
         if (p.getWorld().getName().equals("Elementals")) {
-            teleportToMidSpawnMethod(p, 82, 114, 11.5, 14.5, -9.5, 10.5, -8.5, -8.5, 12.5, -12.5, -7.5, 8.5);
+            teleportBasedOnLocation(p, 82, 114, 11.5, 14.5, -9.5, 10.5, -8.5, -8.5, 12.5, -12.5, -7.5, 8.5);
         }
 
         if (p.getWorld().getName().equals("Corals")) {
-            teleportToMidSpawnMethod(p, 82, 114, 11.5, 14.5, -9.5, 10.5, -8.5, -8.5, 12.5, -12.5, -7.5, 8.5);
+            teleportBasedOnLocation(p, 82, 114, 11.5, 14.5, -9.5, 10.5, -8.5, -8.5, 12.5, -12.5, -7.5, 8.5);
         }
 
         if (p.getWorld().getName().equals("Seasons")) {
-            teleportToMidSpawnMethod(p, 82, 114, 12.5, 13.5, -9.5, 10.5, -9.5, -9.5, 12.5, -12.5, -7.5, 8.5);
+            teleportBasedOnLocation(p, 82, 114, 12.5, 13.5, -9.5, 10.5, -9.5, -9.5, 12.5, -12.5, -7.5, 8.5);
         }
 
         if (p.getWorld().getName().equals("Castle")) {
-            teleportToMidSpawnMethod(p, 71, 95, 12.5, 12.5, -11.5, 12.5, -11.5, -11.5, 12.5, -11.5, -7.5, 8.5);
+            teleportBasedOnLocation(p, 71, 95, 12.5, 12.5, -11.5, 12.5, -11.5, -11.5, 12.5, -11.5, -7.5, 8.5);
         }
 
         if (p.getWorld().getName().equals("Genesis")) {
-            teleportToMidSpawnMethod(p, 43, 86, 17.5, 15.5, -14.5, 16.5, -15.5, -14.5, 15.5, -15.5, -8.5, 9.5);
+            teleportBasedOnLocation(p, 43, 86, 17.5, 15.5, -14.5, 16.5, -15.5, -14.5, 15.5, -15.5, -8.5, 9.5);
         }
     }
 

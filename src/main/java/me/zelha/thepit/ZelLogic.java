@@ -4,7 +4,6 @@ import me.zelha.thepit.mainpkg.data.PlayerData;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -42,7 +41,6 @@ public class ZelLogic {//zel
         List<Entity> entityList = location.getWorld().getEntities();
 
         for (Entity entity : entityList) {
-
             if (entity.getLocation().equals(location) && entity.isValid()
                && entity.getName().equals(name)) {
                 return true;
@@ -62,14 +60,14 @@ public class ZelLogic {//zel
         romanizer.putIfAbsent(50, "L");
         romanizer.putIfAbsent(40, "XL");
         romanizer.putIfAbsent(10, "X");
-        romanizer.putIfAbsent(9, "vX");
+        romanizer.putIfAbsent(9, "VX");
         romanizer.putIfAbsent(5, "V");
         romanizer.putIfAbsent(4, "IV");
         romanizer.putIfAbsent(1, "I");
 
         int nearestRoman = romanizer.floorKey(number);
 
-        if ( number == nearestRoman ) {
+        if (number == nearestRoman) {
             return romanizer.get(number);
         }
 
@@ -88,13 +86,13 @@ public class ZelLogic {//zel
 
     public String getColorStatus(String uuid) {
 
-        PlayerData pData = Main.getInstance().getStorage().getPlayerData(uuid);
+        PlayerData pData = Main.getInstance().getPlayerData(uuid);
 
         if (pData.getStatus().equals("idling")) {
             return "§aIdling";
-        }else if (pData.getStatus().equals("fighting")) {
+        } else if (pData.getStatus().equals("fighting")) {
             return "§cFighting";
-        }else if (pData.getStatus().equals("bountied")) {
+        } else if (pData.getStatus().equals("bountied")) {
             return "§cBountied";
         }
         return ChatColor.translateAlternateColorCodes('&', pData.getStatus());
@@ -102,31 +100,31 @@ public class ZelLogic {//zel
 
     public String getColorBracketAndLevel(String uuid) {
 
-        PlayerData pData = Main.getInstance().getStorage().getPlayerData(uuid);
+        PlayerData pData = Main.getInstance().getPlayerData(uuid);
 
-        if(pData.getPrestige() < 1) {
+        if (pData.getPrestige() < 1) {
             return "§7[" + getColorLevel(uuid) + "§7]";
-        }else if(pData.getPrestige() < 5) {
+        } else if (pData.getPrestige() < 5) {
             return "§9[" + getColorLevel(uuid) + "§9]";
-        }else if(pData.getPrestige() < 10) {
+        } else if (pData.getPrestige() < 10) {
             return "§e[" + getColorLevel(uuid) + "§e]";
-        }else if(pData.getPrestige() < 15) {
+        } else if (pData.getPrestige() < 15) {
             return "§6[" + getColorLevel(uuid) + "§6]";
-        }else if(pData.getPrestige() < 20) {
+        } else if (pData.getPrestige() < 20) {
             return "§c[" + getColorLevel(uuid) + "§c]";
-        }else if(pData.getPrestige() < 25) {
+        } else if (pData.getPrestige() < 25) {
             return "§5[" + getColorLevel(uuid) + "§5]";
-        }else if(pData.getPrestige() < 30) {
+        } else if (pData.getPrestige() < 30) {
             return "§d[" + getColorLevel(uuid) + "§d]";
-        }else if(pData.getPrestige() < 35) {
+        } else if (pData.getPrestige() < 35) {
             return "§f[" + getColorLevel(uuid) + "§f]";
-        }else if(pData.getPrestige() < 40) {
+        } else if (pData.getPrestige() < 40) {
             return "§b[" + getColorLevel(uuid) + "§b]";
-        }else if(pData.getPrestige() < 45) {
+        } else if (pData.getPrestige() < 45) {
             return "§2[" + getColorLevel(uuid) + "§2]";
-        }else if(pData.getPrestige() < 50) {
+        } else if (pData.getPrestige() < 50) {
             return "§3[" + getColorLevel(uuid) + "§3]";
-        }else if(pData.getPrestige() == 50){
+        } else if (pData.getPrestige() == 50) {
             return "§4[" + getColorLevel(uuid) + "§4]";
         }
         return "§5§l[§5§k|" + getColorLevel(uuid) + "§5§k|§5§l]";
@@ -134,9 +132,9 @@ public class ZelLogic {//zel
 
     public int maxXPReq(String uuid) {//PAIN SWITCH
 
-        PlayerData pData = Main.getInstance().getStorage().getPlayerData(uuid);
+        PlayerData pData = Main.getInstance().getPlayerData(uuid);
 
-        switch(pData.getPrestige()) {
+        switch (pData.getPrestige()) {
             case 0:
                 return baseMaxXPReq(uuid);
             case 1:
@@ -232,7 +230,7 @@ public class ZelLogic {//zel
 
     private String getColorLevel(String uuid) {
 
-        PlayerData pData = Main.getInstance().getStorage().getPlayerData(uuid);
+        PlayerData pData = Main.getInstance().getPlayerData(uuid);
 
         if (pData.getLevel() < 10) {
             return "§7" + pData.getLevel();
@@ -266,31 +264,31 @@ public class ZelLogic {//zel
 
     private int baseMaxXPReq(String uuid) {
 
-        PlayerData pData = Main.getInstance().getStorage().getPlayerData(uuid);
+        PlayerData pData = Main.getInstance().getPlayerData(uuid);
 
-        if(pData.getLevel() < 10) {
+        if (pData.getLevel() < 10) {
             return 15;
-        }else if(pData.getLevel() < 20) {
+        } else if (pData.getLevel() < 20) {
             return 30;
-        }else if(pData.getLevel() < 30) {
+        } else if (pData.getLevel() < 30) {
             return 50;
-        }else if(pData.getLevel() < 40) {
+        } else if (pData.getLevel() < 40) {
             return 75;
-        }else if(pData.getLevel() < 50) {
+        } else if (pData.getLevel() < 50) {
             return 125;
-        }else if(pData.getLevel() < 60) {
+        } else if (pData.getLevel() < 60) {
             return 300;
-        }else if(pData.getLevel() < 70) {
+        } else if (pData.getLevel() < 70) {
             return 600;
-        }else if(pData.getLevel() < 80) {
+        } else if (pData.getLevel() < 80) {
             return 800;
-        }else if(pData.getLevel() < 90) {
+        } else if (pData.getLevel() < 90) {
             return 900;
-        }else if(pData.getLevel() < 100) {
+        } else if (pData.getLevel() < 100) {
             return 1000;
-        }else if(pData.getLevel() < 110) {
+        } else if (pData.getLevel() < 110) {
             return 1200;
-        }else if(pData.getLevel() < 120) {
+        } else if (pData.getLevel() < 120) {
             return 1500;
         }
         return 0;

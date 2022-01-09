@@ -8,7 +8,7 @@ import org.bukkit.World;
 
 public class HologramCheckClass {//the coordinates are different for every map so i had to make this 4x longer than i wanted. ugh.
 
-    ZelLogic zl = Main.getInstance().getZelLogic();
+    private final ZelLogic zl = Main.getInstance().getZelLogic();
 
     private void spawnIfAbsent(String name, Location location) {
         if (!zl.hologramExists(name, location)) {
@@ -16,7 +16,7 @@ public class HologramCheckClass {//the coordinates are different for every map s
         }
     }
 
-    public void HologramCheck() {//pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class
+    public void hologramCheck() {//pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class
 
         if (Bukkit.getWorld("Elementals") != null) {
             World elementals = Bukkit.getWorld("Elementals");

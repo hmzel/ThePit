@@ -11,11 +11,10 @@ import java.util.List;
 
 public class NPCCheckClass {
 
-    private boolean NPCExists(Location location) {
+    private boolean npcExists(Location location) {
         List<Entity> entityList = location.getWorld().getEntities();
 
         for (Entity entity : entityList) {
-
             if (entity.getLocation().equals(location)) {
                 return true;
             }
@@ -34,13 +33,13 @@ public class NPCCheckClass {
         }
     }
 
-    public void NPCCheck() {//at least this is easier than the hologram check.
+    public void npcCheck() {//at least this is easier than the hologram check.
 
         if (Bukkit.getWorld("Elementals") != null) {
             World elementals = Bukkit.getWorld("Elementals");
             Location itemsVillagerLocation = new Location(elementals, 2.5, 114, 12.5, -180.0F, 0.0F);
 
-            if (!NPCExists(itemsVillagerLocation)) {
+            if (!npcExists(itemsVillagerLocation)) {
                 spawnVillager(itemsVillagerLocation, "items");
             }
         }
@@ -49,7 +48,7 @@ public class NPCCheckClass {
             World elementals = Bukkit.getWorld("Corals");
             Location itemsVillagerLocation = new Location(elementals, 2.5, 114, 12.5, -180.0F, 0.0F);
 
-            if (!NPCExists(itemsVillagerLocation)) {
+            if (!npcExists(itemsVillagerLocation)) {
                 spawnVillager(itemsVillagerLocation, "items");
             }
         }
@@ -58,7 +57,7 @@ public class NPCCheckClass {
             World elementals = Bukkit.getWorld("Seasons");
             Location itemsVillagerLocation = new Location(elementals, 2.5, 114, 12.5, -180.0F, 0.0F);
 
-            if (!NPCExists(itemsVillagerLocation)) {
+            if (!npcExists(itemsVillagerLocation)) {
                 spawnVillager(itemsVillagerLocation, "items");
             }
         }
@@ -67,7 +66,7 @@ public class NPCCheckClass {
             World elementals = Bukkit.getWorld("Castle");
             Location itemsVillagerLocation = new Location(elementals, 2.5, 95, 12.5, -180.0F, 0.0F);
 
-            if (!NPCExists(itemsVillagerLocation)) {
+            if (!npcExists(itemsVillagerLocation)) {
                 spawnVillager(itemsVillagerLocation, "items");
             }
         }
@@ -76,7 +75,7 @@ public class NPCCheckClass {
             World elementals = Bukkit.getWorld("Genesis");
             Location itemsVillagerLocation = new Location(elementals, 2.5, 86, 16.5, -180.0F, 0.0F);
 
-            if (!NPCExists(itemsVillagerLocation)) {
+            if (!npcExists(itemsVillagerLocation)) {
                 spawnVillager(itemsVillagerLocation, "items");
             }
         }

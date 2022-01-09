@@ -20,9 +20,6 @@ import static org.bukkit.Material.*;
 public class AntiVanillaListener implements Listener {
 
     public final static List<Block> placedBlocks = new ArrayList<>();
-    //is it okay to use static here??? this is the only thing i need to access outside of this class so it feels
-    //weird to go through Main to access this
-    //but it also feels really weird using static ever lol
 
     @EventHandler
     public void onHungerLoss(FoodLevelChangeEvent e) {
@@ -67,14 +64,14 @@ public class AntiVanillaListener implements Listener {
     }
 
 
-    class BlockGoPoof extends BukkitRunnable {
+    private class BlockGoPoof extends BukkitRunnable {
 
         private final Block block;
         private final int timer;
         private final Material type;
         private int countdown = 0;
 
-        public BlockGoPoof(Block block, int timer) {
+        private BlockGoPoof(Block block, int timer) {
             this.block = block;
             this.timer = timer * 20;
             this.type = block.getType();

@@ -16,8 +16,8 @@ import java.util.UUID;
 
 public class CombatListener implements Listener {
 
-    ZelLogic zl = Main.getInstance().getZelLogic();
-    RunMethods methods = Main.getInstance().getRunMethods();
+    private final ZelLogic zl = Main.getInstance().getZelLogic();
+    private final RunMethods methods = Main.getInstance().generateRunMethods();
 
     @EventHandler
     public void onAttack(EntityDamageByEntityEvent e) {
@@ -36,8 +36,8 @@ public class CombatListener implements Listener {
                 methods.stop(damager.getUniqueId());
             }
 
-            new CombatTimerRunnable(damaged.getUniqueId(), methods).runTaskTimer(Main.getInstance(),0, 20);
-            new CombatTimerRunnable(damager.getUniqueId(), methods).runTaskTimer(Main.getInstance(),0, 20);
+            new CombatTimerRunnable(damaged.getUniqueId()).runTaskTimer(Main.getInstance(),0, 20);
+            new CombatTimerRunnable(damager.getUniqueId()).runTaskTimer(Main.getInstance(),0, 20);
         }
     }
 
@@ -45,65 +45,64 @@ public class CombatListener implements Listener {
     public void onLeave(PlayerQuitEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
 
-        if(methods.hasID(uuid)) {
+        if (methods.hasID(uuid)) {
             methods.stop(uuid);
         }
     }
-}
 
 
-class CombatTimerRunnable extends BukkitRunnable {
+    private class CombatTimerRunnable extends BukkitRunnable {
 
-    private final UUID uuid;
-    private final RunMethods methods;
-    private int hideTimer;
+        private final UUID uuid;
+        private int hideTimer;
 
-    ZelLogic zl = Main.getInstance().getZelLogic();
-
-    public CombatTimerRunnable(UUID uuid, RunMethods methods) {
-        this.uuid = uuid;
-        this.methods = methods;
-        this.hideTimer = 1;
-    }
-
-    public int calculateTimer(PlayerData pData) {
-        return 15;
-    }
-
-    @Override
-    public void run() {
-        PlayerData pData = Main.getInstance().getStorage().getPlayerData(uuid.toString());
-
-        if (!methods.hasID(uuid)) {
-            methods.setID(uuid, super.getTaskId());
+        private CombatTimerRunnable(UUID uuid) {
+            this.uuid = uuid;
+            this.hideTimer = 1;
         }
 
-        if (pData.getStatus().equals("idling") || pData.getStatus().equals("bountied")) {
-            pData.setCombatTimer(calculateTimer(pData));
-            pData.setStatus("fighting");
-        }else if (pData.getCombatTimer() > 1) {
-            pData.setCombatTimer(pData.getCombatTimer() - 1);
-        }else {
-            pData.setCombatTimer(pData.getCombatTimer() - 1);
+        private int calculateTimer(PlayerData pData) {
+            return 15;
+        }
 
-            if (pData.getBounty() != 0) {
-                pData.setStatus("bountied");
-            }else {
-                pData.setStatus("idling");
+        @Override
+        public void run() {
+            PlayerData pData = Main.getInstance().getPlayerData(uuid);
+
+            if (!methods.hasID(uuid)) {
+                methods.setID(uuid, super.getTaskId());
             }
 
-            cancel();
-        }
+            if (pData.getStatus().equals("idling") || pData.getStatus().equals("bountied")) {
+                pData.setCombatTimer(calculateTimer(pData));
+                pData.setStatus("fighting");
+            } else if (pData.getCombatTimer() > 1) {
+                pData.setCombatTimer(pData.getCombatTimer() - 1);
+            } else {
+                pData.setCombatTimer(pData.getCombatTimer() - 1);
 
-        if (hideTimer < 10 && !pData.hideTimer()) {
-            pData.setHideTimer(true);
-        }else if (hideTimer > 10) {
-            pData.setHideTimer(pData.getCombatTimer() == 0);
-        }
+                if (pData.getBounty() != 0) {
+                    pData.setStatus("bountied");
+                } else {
+                    pData.setStatus("idling");
+                }
 
-        hideTimer++;
+                cancel();
+            }
+
+            if (hideTimer < 10 && !pData.hideTimer()) {
+                pData.setHideTimer(true);
+            } else if (hideTimer > 10) {
+                pData.setHideTimer(pData.getCombatTimer() == 0);
+            }
+
+            hideTimer++;
+        }
     }
 }
+
+
+
 
 
 

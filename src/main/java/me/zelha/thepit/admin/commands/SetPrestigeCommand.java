@@ -13,30 +13,29 @@ public class SetPrestigeCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        Player p = (Player) sender;
         Player p2 = Bukkit.getPlayer(args[0]);
 
-        PlayerData pData = Main.getInstance().getStorage().getPlayerData(p.getUniqueId().toString());
-
         if (args.length == 1) {
+            if (sender instanceof Player) {
+                Player p = (Player) sender;
+                PlayerData pData = Main.getInstance().getPlayerData(p);
 
-            if (NumberUtils.isNumber(args[0])) {
-                pData.setPrestige(Integer.parseInt(args[0]));
-            } else {
-                p.sendMessage("§5Must be a number");
+                if (NumberUtils.isNumber(args[0])) {
+                    pData.setPrestige(Integer.parseInt(args[0]));
+                } else {
+                    sender.sendMessage("§5Must be a number");
+                }
             }
-
         } else if (args.length == 2 && p2 != null && p2.isValid()) {
-            PlayerData pData2 = Main.getInstance().getStorage().getPlayerData(p2.getUniqueId().toString());
+            PlayerData pData2 = Main.getInstance().getPlayerData(p2);
 
             if (NumberUtils.isNumber(args[1])) {
                 pData2.setPrestige(Integer.parseInt(args[1]));
             } else {
-                p.sendMessage("§5Must be a number");
+                sender.sendMessage("§5Must be a number");
             }
-
         } else {
-            p.sendMessage("§5Wrong args");
+            sender.sendMessage("§5Wrong args");
         }
 
         return true;
