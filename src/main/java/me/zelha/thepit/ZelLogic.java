@@ -131,7 +131,7 @@ public class ZelLogic {//zel
         return "§5§l[§5§k|" + getColorLevel(uuid) + "§5§k|§5§l]";
     }
 
-    public int maxXPReq(String uuid) {//PAIN SWITCH
+    public int maxXPReq(String uuid) {
 
         PlayerData pData = Main.getInstance().getPlayerData(uuid);
 

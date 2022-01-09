@@ -36,7 +36,7 @@ public class NPCCheckClass {
         }
     }
 
-    public void npcCheck() {//at least this is easier than the hologram check.
+    public void npcCheck() {
 
         new BukkitRunnable() {
             @Override

@@ -17,7 +17,7 @@ public class HologramCheckClass {//the coordinates are different for every map s
         }
     }
 
-    public void hologramCheck() {//pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class pain class
+    public void hologramCheck() {
 
         new BukkitRunnable() {
             @Override
