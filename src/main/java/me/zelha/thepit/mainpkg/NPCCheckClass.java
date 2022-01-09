@@ -1,11 +1,13 @@
 package me.zelha.thepit.mainpkg;
 
+import me.zelha.thepit.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
 
@@ -30,55 +32,62 @@ public class NPCCheckClass {
             itemsVillager.setPersistent(true);
             itemsVillager.setSilent(true);
             itemsVillager.setRotation(-180.0F, 0.0F);
+            itemsVillager.addScoreboardTag("z-entity");
         }
     }
 
     public void npcCheck() {//at least this is easier than the hologram check.
 
-        if (Bukkit.getWorld("Elementals") != null) {
-            World elementals = Bukkit.getWorld("Elementals");
-            Location itemsVillagerLocation = new Location(elementals, 2.5, 114, 12.5, -180.0F, 0.0F);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
 
-            if (!npcExists(itemsVillagerLocation)) {
-                spawnVillager(itemsVillagerLocation, "items");
+                if (Bukkit.getWorld("Elementals") != null) {
+                    World elementals = Bukkit.getWorld("Elementals");
+                    Location itemsVillagerLocation = new Location(elementals, 2.5, 114, 12.5, -180.0F, 0.0F);
+
+                    if (!npcExists(itemsVillagerLocation)) {
+                        spawnVillager(itemsVillagerLocation, "items");
+                    }
+                }
+
+                if (Bukkit.getWorld("Corals") != null) {
+                    World elementals = Bukkit.getWorld("Corals");
+                    Location itemsVillagerLocation = new Location(elementals, 2.5, 114, 12.5, -180.0F, 0.0F);
+
+                    if (!npcExists(itemsVillagerLocation)) {
+                        spawnVillager(itemsVillagerLocation, "items");
+                    }
+                }
+
+                if (Bukkit.getWorld("Seasons") != null) {
+                    World elementals = Bukkit.getWorld("Seasons");
+                    Location itemsVillagerLocation = new Location(elementals, 2.5, 114, 12.5, -180.0F, 0.0F);
+
+                    if (!npcExists(itemsVillagerLocation)) {
+                        spawnVillager(itemsVillagerLocation, "items");
+                    }
+                }
+
+                if (Bukkit.getWorld("Castle") != null) {
+                    World elementals = Bukkit.getWorld("Castle");
+                    Location itemsVillagerLocation = new Location(elementals, 2.5, 95, 12.5, -180.0F, 0.0F);
+
+                    if (!npcExists(itemsVillagerLocation)) {
+                        spawnVillager(itemsVillagerLocation, "items");
+                    }
+                }
+
+                if (Bukkit.getWorld("Genesis") != null) {
+                    World elementals = Bukkit.getWorld("Genesis");
+                    Location itemsVillagerLocation = new Location(elementals, 2.5, 86, 16.5, -180.0F, 0.0F);
+
+                    if (!npcExists(itemsVillagerLocation)) {
+                        spawnVillager(itemsVillagerLocation, "items");
+                    }
+                }
             }
-        }
-
-        if (Bukkit.getWorld("Corals") != null) {
-            World elementals = Bukkit.getWorld("Corals");
-            Location itemsVillagerLocation = new Location(elementals, 2.5, 114, 12.5, -180.0F, 0.0F);
-
-            if (!npcExists(itemsVillagerLocation)) {
-                spawnVillager(itemsVillagerLocation, "items");
-            }
-        }
-
-        if (Bukkit.getWorld("Seasons") != null) {
-            World elementals = Bukkit.getWorld("Seasons");
-            Location itemsVillagerLocation = new Location(elementals, 2.5, 114, 12.5, -180.0F, 0.0F);
-
-            if (!npcExists(itemsVillagerLocation)) {
-                spawnVillager(itemsVillagerLocation, "items");
-            }
-        }
-
-        if (Bukkit.getWorld("Castle") != null) {
-            World elementals = Bukkit.getWorld("Castle");
-            Location itemsVillagerLocation = new Location(elementals, 2.5, 95, 12.5, -180.0F, 0.0F);
-
-            if (!npcExists(itemsVillagerLocation)) {
-                spawnVillager(itemsVillagerLocation, "items");
-            }
-        }
-
-        if (Bukkit.getWorld("Genesis") != null) {
-            World elementals = Bukkit.getWorld("Genesis");
-            Location itemsVillagerLocation = new Location(elementals, 2.5, 86, 16.5, -180.0F, 0.0F);
-
-            if (!npcExists(itemsVillagerLocation)) {
-                spawnVillager(itemsVillagerLocation, "items");
-            }
-        }
+        }.runTaskLater(Main.getInstance(), 200);
     }
 }
 

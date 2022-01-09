@@ -35,6 +35,7 @@ public class ZelLogic {//zel
         hologram.setSilent(true);
         hologram.setPersistent(true);
         hologram.setGravity(false);
+        hologram.addScoreboardTag("z-entity");
     }
 
     public boolean hologramExists(String name, Location location) {
