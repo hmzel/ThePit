@@ -1,6 +1,7 @@
 package me.zelha.thepit.mainpkg;
 
 import me.zelha.thepit.Main;
+import me.zelha.thepit.zelenums.NPCs;
 import me.zelha.thepit.zelenums.Worlds;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -25,33 +26,33 @@ public class NPCCheckClass {
         return false;
     }
 
-    private Location villagerLocation(Worlds world, String type) {
+    private Location villagerLocation(Worlds world, NPCs type) {
 
         switch (world) {
             case ELEMENTALS:
             case CORALS:
             case SEASONS:
                 switch (type) {
-                    case "items":
+                    case ITEMS:
                         return new Location(Bukkit.getWorld(world.getName()), 2.5, 114, 12.5, -180.0F, 0.0F);
-                    case "upgrades":
+                    case UPGRADES:
                         return new Location(Bukkit.getWorld(world.getName()), -1.5, 114, 12.5, -180.0F, 0.0F);
 
                 }
                 break;
             case CASTLE:
                 switch (type) {
-                    case "items":
+                    case ITEMS:
                         return new Location(Bukkit.getWorld(world.getName()), 2.5, 95, 12.5, -180.0F, 0.0F);
-                    case "upgrades":
+                    case UPGRADES:
                         return new Location(Bukkit.getWorld(world.getName()), -1.5, 95, 12.5, -180.0F, 0.0F);
                 }
                 break;
             case GENESIS:
                 switch (type) {
-                    case "items":
+                    case ITEMS:
                         return new Location(Bukkit.getWorld(world.getName()), 2.5, 86, 16.5, -180.0F, 0.0F);
-                    case "upgrades":
+                    case UPGRADES:
                         return new Location(Bukkit.getWorld(world.getName()), -1.5, 86, 16.5, -180.0F, 0.0F);
                 }
                 break;
@@ -59,15 +60,15 @@ public class NPCCheckClass {
         return null;
     }
 
-    private void spawnVillager(Location location, String type) {
-        if (type.equals("items")) {
+    private void spawnVillager(Location location, NPCs type) {
+        if (type == NPCs.ITEMS) {
             Villager itemsVillager = (Villager) location.getWorld().spawnEntity(location, EntityType.VILLAGER);
             itemsVillager.setAI(false);
             itemsVillager.setProfession(Villager.Profession.WEAPONSMITH);
             itemsVillager.setPersistent(true);
             itemsVillager.setSilent(true);
             itemsVillager.addScoreboardTag("z-entity");
-        }else if (type.equals("upgrades")) {
+        }else if (type == NPCs.UPGRADES) {
             Villager upgradesVillager = (Villager) location.getWorld().spawnEntity(location, EntityType.VILLAGER);
             upgradesVillager.setAI(false);
             upgradesVillager.setProfession(Villager.Profession.NONE);
@@ -84,47 +85,47 @@ public class NPCCheckClass {
             public void run() {
 
                 if (Bukkit.getWorld("Elementals") != null) {
-                    if (!npcExists(villagerLocation(Worlds.ELEMENTALS, "items"))) {
-                        spawnVillager(villagerLocation(Worlds.ELEMENTALS, "items"), "items");
+                    if (!npcExists(villagerLocation(Worlds.ELEMENTALS, NPCs.ITEMS))) {
+                        spawnVillager(villagerLocation(Worlds.ELEMENTALS, NPCs.ITEMS), NPCs.ITEMS);
                     }
-                    if (!npcExists(villagerLocation(Worlds.ELEMENTALS, "upgrades"))) {
-                        spawnVillager(villagerLocation(Worlds.ELEMENTALS, "upgrades"), "upgrades");
+                    if (!npcExists(villagerLocation(Worlds.ELEMENTALS, NPCs.UPGRADES))) {
+                        spawnVillager(villagerLocation(Worlds.ELEMENTALS, NPCs.UPGRADES), NPCs.UPGRADES);
                     }
                 }
 
                 if (Bukkit.getWorld("Corals") != null) {
-                    if (!npcExists(villagerLocation(Worlds.CORALS, "items"))) {
-                        spawnVillager(villagerLocation(Worlds.CORALS, "items"), "items");
+                    if (!npcExists(villagerLocation(Worlds.CORALS, NPCs.ITEMS))) {
+                        spawnVillager(villagerLocation(Worlds.CORALS, NPCs.ITEMS), NPCs.ITEMS);
                     }
-                    if (!npcExists(villagerLocation(Worlds.CORALS, "upgrades"))) {
-                        spawnVillager(villagerLocation(Worlds.CORALS, "upgrades"), "upgrades");
+                    if (!npcExists(villagerLocation(Worlds.CORALS, NPCs.UPGRADES))) {
+                        spawnVillager(villagerLocation(Worlds.CORALS, NPCs.UPGRADES), NPCs.UPGRADES);
                     }
                 }
 
                 if (Bukkit.getWorld("Seasons") != null) {
-                    if (!npcExists(villagerLocation(Worlds.SEASONS, "items"))) {
-                        spawnVillager(villagerLocation(Worlds.SEASONS, "items"), "items");
+                    if (!npcExists(villagerLocation(Worlds.SEASONS, NPCs.ITEMS))) {
+                        spawnVillager(villagerLocation(Worlds.SEASONS, NPCs.ITEMS), NPCs.ITEMS);
                     }
-                    if (!npcExists(villagerLocation(Worlds.SEASONS, "upgrades"))) {
-                        spawnVillager(villagerLocation(Worlds.SEASONS, "upgrades"), "upgrades");
+                    if (!npcExists(villagerLocation(Worlds.SEASONS, NPCs.UPGRADES))) {
+                        spawnVillager(villagerLocation(Worlds.SEASONS, NPCs.UPGRADES), NPCs.UPGRADES);
                     }
                 }
 
                 if (Bukkit.getWorld("Castle") != null) {
-                    if (!npcExists(villagerLocation(Worlds.CASTLE, "items"))) {
-                        spawnVillager(villagerLocation(Worlds.CASTLE, "items"), "items");
+                    if (!npcExists(villagerLocation(Worlds.CASTLE, NPCs.ITEMS))) {
+                        spawnVillager(villagerLocation(Worlds.CASTLE, NPCs.ITEMS), NPCs.ITEMS);
                     }
-                    if (!npcExists(villagerLocation(Worlds.CASTLE, "upgrades"))) {
-                        spawnVillager(villagerLocation(Worlds.CASTLE, "upgrades"), "upgrades");
+                    if (!npcExists(villagerLocation(Worlds.CASTLE, NPCs.UPGRADES))) {
+                        spawnVillager(villagerLocation(Worlds.CASTLE, NPCs.UPGRADES), NPCs.UPGRADES);
                     }
                 }
 
                 if (Bukkit.getWorld("Genesis") != null) {
-                    if (!npcExists(villagerLocation(Worlds.GENESIS, "items"))) {
-                        spawnVillager(villagerLocation(Worlds.GENESIS, "items"), "items");
+                    if (!npcExists(villagerLocation(Worlds.GENESIS, NPCs.ITEMS))) {
+                        spawnVillager(villagerLocation(Worlds.GENESIS, NPCs.ITEMS), NPCs.ITEMS);
                     }
-                    if (!npcExists(villagerLocation(Worlds.GENESIS, "upgrades"))) {
-                        spawnVillager(villagerLocation(Worlds.GENESIS, "upgrades"), "upgrades");
+                    if (!npcExists(villagerLocation(Worlds.GENESIS, NPCs.UPGRADES))) {
+                        spawnVillager(villagerLocation(Worlds.GENESIS, NPCs.UPGRADES), NPCs.UPGRADES);
                     }
                 }
             }
