@@ -116,8 +116,7 @@ public class ZelLogic {//zel
         List<Entity> entityList = location.getWorld().getEntities();
 
         for (Entity entity : entityList) {
-            if (entity.getLocation().equals(location) && entity.isValid()
-               && entity.getName().equals(name)) {
+            if (entity.getLocation().equals(location) && entity.getName().equals(name)) {
                 return true;
             }
         }

@@ -7,7 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class HologramCheckClass {//the coordinates are different for every map so i had to make this 4x longer than i wanted. ugh.
+public class HologramCheckClass {//unfinished. i cant be bothered to get every single coordinate for every single map rn
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
 

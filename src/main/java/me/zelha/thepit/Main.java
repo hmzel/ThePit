@@ -51,8 +51,8 @@ public final class Main extends JavaPlugin {
         deathListener = new DeathListener();
         spawnListener = new SpawnListener();
 
-        //new HologramCheckClass().hologramCheck();
-        //new NPCCheckClass().npcCheck();
+        new HologramCheckClass().hologramCheck();
+        new NPCCheckClass().npcCheck();
 
         getServer().getPluginManager().registerEvents(storage, this);
         getServer().getPluginManager().registerEvents(new LevelUpListener(), this);
