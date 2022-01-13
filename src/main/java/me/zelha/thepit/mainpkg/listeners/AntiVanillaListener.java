@@ -1,6 +1,8 @@
 package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
+import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.zelenums.Passives;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
@@ -49,6 +51,7 @@ public class AntiVanillaListener implements Listener {
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent e) {
         Material blockType = e.getBlock().getType();
+        PlayerData pData = Main.getInstance().getPlayerData(e.getPlayer());
 
         if (blockType != OBSIDIAN && blockType != COBBLESTONE && blockType != OAK_WOOD) {
 
@@ -58,7 +61,7 @@ public class AntiVanillaListener implements Listener {
         }
 
         if (blockType == OBSIDIAN) {
-            new BlockGoPoof(e.getBlock(), e.getBlockReplacedState().getType(), 120).runTaskTimer(Main.getInstance(), 0, 1);
+            new BlockGoPoof(e.getBlock(), e.getBlockReplacedState().getType(), (int) Math.round(120 * (1 + (pData.getPassiveTier(Passives.BUILD_BATTLER) * 0.6)))).runTaskTimer(Main.getInstance(), 0, 1);
             placedBlocks.add(e.getBlock());
         }
     }

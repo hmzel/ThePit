@@ -1,6 +1,10 @@
 package me.zelha.thepit.mainpkg.data;
 
+import me.zelha.thepit.zelenums.Passives;
 import org.bson.Document;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class PlayerData {
 
@@ -14,6 +18,7 @@ public class PlayerData {
     private double streak;
     private boolean hideTimer;
     private int multikill;
+    private final Map<Passives, Integer> passivesMap = new HashMap<>();
 
     public PlayerData(Document document) {
         prestige = document.getInteger("prestige");
@@ -25,6 +30,10 @@ public class PlayerData {
         combatTimer = 0;
         hideTimer = true;
         multikill = 0;
+
+        for (Passives passive : Passives.values()) {
+            passivesMap.put(passive, document.getInteger(passive.getID()));
+        }
 
         if (bounty != 0) {
             status = "bountied";
@@ -73,6 +82,10 @@ public class PlayerData {
         return multikill;
     }
 
+    public int getPassiveTier(Passives passive) {
+        return passivesMap.get(passive);
+    }
+
     //setters
 
     public void setPrestige(int prestige) {
@@ -113,6 +126,10 @@ public class PlayerData {
 
     public void setMultiKill(int multikill) {
         this.multikill = multikill;
+    }
+
+    public void setPassiveTier(Passives passive, int tier) {
+        passivesMap.put(passive, tier);//wait i forgot to write what im doing down
     }
 }
 

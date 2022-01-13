@@ -4,6 +4,7 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.RunMethods;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.zelenums.Passives;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -59,6 +60,14 @@ public class KillListener implements Listener {
 
         if (damagerData.getStreak() <= 3 && damagerData.getLevel() <= 30) {
             baseModifier = baseModifier + 4;
+        }
+
+        if (damagerData.getStreak() <= damagerData.getPassiveTier(Passives.EL_GATO)) {
+            baseModifier = baseModifier + 5;
+        }
+
+        if (damagerData.getPassiveTier(Passives.XP_BOOST) > 0) {
+            percentageModifier = percentageModifier + (damagerData.getPassiveTier(Passives.XP_BOOST) / 10.0);
         }
 
         if (damagedData.getStreak() > 5) {
@@ -154,6 +163,14 @@ public class KillListener implements Listener {
 
         if (damagerData.getStreak() <= 3 && damagerData.getLevel() <= 30) {
             baseModifier = baseModifier + 4;
+        }
+
+        if (damagerData.getStreak() <= damagerData.getPassiveTier(Passives.EL_GATO)) {
+            baseModifier = baseModifier + 5;
+        }
+
+        if (damagerData.getPassiveTier(Passives.GOLD_BOOST) > 0) {
+            percentageModifier = percentageModifier + (damagerData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
         }
 
         if (damagedData.getStreak() > 5) {

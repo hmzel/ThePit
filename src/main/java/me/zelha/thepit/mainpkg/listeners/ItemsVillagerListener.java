@@ -3,6 +3,8 @@ package me.zelha.thepit.mainpkg.listeners;
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.zelenums.NPCs;
+import me.zelha.thepit.zelenums.Worlds;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -18,8 +20,6 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.util.BoundingBox;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,18 +32,6 @@ import static org.bukkit.Material.*;
 public class ItemsVillagerListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-
-    private BoundingBox noObstructions(World world) {
-        if (world.getName().equals("Elementals") || world.getName().equals("Corals") || world.getName().equals("Seasons")) {
-            return BoundingBox.of(new Location(world, 2.5, 114, 12.5), 1, 2.5, 1);
-        } else if (world.getName().equals("Castle")) {
-            return BoundingBox.of(new Location(world, 2.5, 95, 12.5), 1, 2.5, 1);
-        } else if (world.getName().equals("Genesis")) {
-            return BoundingBox.of(new Location(world, 2.5, 86, 16.5), 1, 2.5, 1);
-        }
-
-        return new BoundingBox();
-    }
 
     private List<String> loreBuilder(Player p, Material material) {
         List<String> lore = new ArrayList<>();
@@ -90,11 +78,11 @@ public class ItemsVillagerListener implements Listener {
     private void openGUI(Player p) {
         Inventory itemsGUI = Bukkit.createInventory(p, 27, "Non-permanent items");
 
-        itemsGUI.setItem(11, itemBuilder(DIAMOND_SWORD, 1, "§eDiamond Sword", loreBuilder(p, DIAMOND_SWORD)));
-        itemsGUI.setItem(12, itemBuilder(OBSIDIAN, 8, "§eObsidian", loreBuilder(p, OBSIDIAN)));
-        itemsGUI.setItem(13, itemBuilder(GOLDEN_PICKAXE, 1, "§eGolden Pickaxe", loreBuilder(p, GOLDEN_PICKAXE)));
-        itemsGUI.setItem(14, itemBuilder(DIAMOND_CHESTPLATE, 1, "§eDiamond Chestplate", loreBuilder(p, DIAMOND_CHESTPLATE)));
-        itemsGUI.setItem(15, itemBuilder(DIAMOND_BOOTS, 1, "§eDiamond Boots", loreBuilder(p, DIAMOND_BOOTS)));
+        itemsGUI.setItem(11, zl.itemBuilder(DIAMOND_SWORD, 1, "§eDiamond Sword", loreBuilder(p, DIAMOND_SWORD)));
+        itemsGUI.setItem(12, zl.itemBuilder(OBSIDIAN, 8, "§eObsidian", loreBuilder(p, OBSIDIAN)));
+        itemsGUI.setItem(13, zl.itemBuilder(GOLDEN_PICKAXE, 1, "§eGolden Pickaxe", loreBuilder(p, GOLDEN_PICKAXE)));
+        itemsGUI.setItem(14, zl.itemBuilder(DIAMOND_CHESTPLATE, 1, "§eDiamond Chestplate", loreBuilder(p, DIAMOND_CHESTPLATE)));
+        itemsGUI.setItem(15, zl.itemBuilder(DIAMOND_BOOTS, 1, "§eDiamond Boots", loreBuilder(p, DIAMOND_BOOTS)));
 
         p.openInventory(itemsGUI);
     }
@@ -153,39 +141,19 @@ public class ItemsVillagerListener implements Listener {
         }
     }
 
-    private ItemStack itemBuilder(Material material, int count) {
-        ItemStack item = new ItemStack(material, count);
-        ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setUnbreakable(true);
-        item.setItemMeta(itemMeta);
-
-        return item;
-    }
-
-    private ItemStack itemBuilder(Material material, int count, String name, List<String> lore) {
-        ItemStack item = new ItemStack(material, count);
-        ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setUnbreakable(true);
-        itemMeta.setDisplayName(name);
-        itemMeta.setLore(lore);
-        item.setItemMeta(itemMeta);
-
-        return item;
-    }
-
     @EventHandler
     public void onDirectRightClick(InventoryOpenEvent e) {
         if (e.getView().getTopInventory().getType() == InventoryType.MERCHANT) {
             Player p = (Player) e.getPlayer();
             Villager villager = (Villager) e.getInventory().getHolder();
-            World world = e.getPlayer().getWorld();
+            String worldName = e.getPlayer().getWorld().getName();
             double x = villager.getLocation().getX();
             double y = villager.getLocation().getY();
             double z = villager.getLocation().getZ();
 
             e.setCancelled(true);
 
-            if (noObstructions(world).contains(x, y, z)) {
+            if (zl.noObstructions(Worlds.valueOfName(worldName), NPCs.ITEMS).contains(x, y, z)) {
                 openGUI(p);
             }
         }
@@ -193,12 +161,12 @@ public class ItemsVillagerListener implements Listener {
 
     @EventHandler
     public void onRightClick(PlayerInteractEntityEvent e) {//yes
-        World world = e.getPlayer().getWorld();
+        String worldName = e.getPlayer().getWorld().getName();
         double x = e.getRightClicked().getLocation().getX();
         double y = e.getRightClicked().getLocation().getY();
         double z = e.getRightClicked().getLocation().getZ();
 
-        if (noObstructions(world).contains(x, y, z)) {
+        if (zl.noObstructions(Worlds.valueOfName(worldName), NPCs.ITEMS).contains(x, y, z)) {
             openGUI(e.getPlayer());
         }
     }
@@ -210,12 +178,12 @@ public class ItemsVillagerListener implements Listener {
 
         if (zl.playerCheck(damagerEntity)) {
             Player damager = (Player) e.getDamager();
-            World world = damager.getWorld();
+            String worldName = damager.getWorld().getName();
             double x = damaged.getLocation().getX();
             double y = damaged.getLocation().getY();
             double z = damaged.getLocation().getZ();
 
-            if (noObstructions(world).contains(x, y, z)) {
+            if (zl.noObstructions(Worlds.valueOfName(worldName), NPCs.ITEMS).contains(x, y, z)) {
                 openGUI(damager);
             }
         }
@@ -229,29 +197,29 @@ public class ItemsVillagerListener implements Listener {
             e.setCancelled(true);
 
             if (e.getCurrentItem() != null) {
-                switch (e.getSlot()) {
-                    case 11:
+                switch (e.getCurrentItem().getType()) {
+                    case DIAMOND_SWORD:
                         if (p.getInventory().contains(IRON_SWORD)) {
-                            itemPurchase(p, itemBuilder(DIAMOND_SWORD, 1), 150, p.getInventory().first(IRON_SWORD));
+                            itemPurchase(p, zl.itemBuilder(DIAMOND_SWORD, 1), 150, p.getInventory().first(IRON_SWORD));
                             p.getInventory().remove(IRON_SWORD);
                         } else {
-                            itemPurchase(p, itemBuilder(DIAMOND_SWORD, 1), 150);
+                            itemPurchase(p, zl.itemBuilder(DIAMOND_SWORD, 1), 150);
                         }
                         break;
-                    case 12:
-                        itemPurchase(p, itemBuilder(OBSIDIAN, 8), 40);
+                    case OBSIDIAN:
+                        itemPurchase(p, zl.itemBuilder(OBSIDIAN, 8), 40);
                         break;
-                    case 13:
-                        itemPurchase(p, itemBuilder(GOLDEN_PICKAXE, 1, "§6Golden Pickaxe", Arrays.asList(
+                    case GOLDEN_PICKAXE:
+                        itemPurchase(p, zl.itemBuilder(GOLDEN_PICKAXE, 1, "§6Golden Pickaxe", Arrays.asList(
                                 "§7Breaks a 5-high pillar of",
                                 "§7Obsidian when 2-tapping it."
                         )), 500);
                         break;
-                    case 14:
-                        itemPurchase(p, itemBuilder(DIAMOND_CHESTPLATE, 1), 500, EquipmentSlot.CHEST);
+                    case DIAMOND_CHESTPLATE:
+                        itemPurchase(p, zl.itemBuilder(DIAMOND_CHESTPLATE, 1), 500, EquipmentSlot.CHEST);
                         break;
-                    case 15:
-                        itemPurchase(p, itemBuilder(DIAMOND_BOOTS, 1), 300, EquipmentSlot.FEET);
+                    case DIAMOND_BOOTS:
+                        itemPurchase(p, zl.itemBuilder(DIAMOND_BOOTS, 1), 300, EquipmentSlot.FEET);
                         break;
                 }
             }

@@ -12,6 +12,7 @@ import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.mainpkg.data.StorageListener;
 import me.zelha.thepit.mainpkg.listeners.*;
 import me.zelha.thepit.mainpkg.runnables.ParticipationRunnable;
+import me.zelha.thepit.upgrades.villager.UpgradesVillagerListener;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -50,8 +51,8 @@ public final class Main extends JavaPlugin {
         deathListener = new DeathListener();
         spawnListener = new SpawnListener();
 
-        new HologramCheckClass().hologramCheck();
-        new NPCCheckClass().npcCheck();
+        //new HologramCheckClass().hologramCheck();
+        //new NPCCheckClass().npcCheck();
 
         getServer().getPluginManager().registerEvents(storage, this);
         getServer().getPluginManager().registerEvents(new LevelUpListener(), this);
@@ -63,6 +64,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(spawnListener, this);
         getServer().getPluginManager().registerEvents(new ItemsVillagerListener(), this);
         getServer().getPluginManager().registerEvents(new GoldenPickaxeListener(), this);
+        getServer().getPluginManager().registerEvents(new UpgradesVillagerListener(), this);
 
         getCommand("setprestige").setExecutor(new SetPrestigeCommand());
         getCommand("setlevel").setExecutor(new SetLevelCommand());

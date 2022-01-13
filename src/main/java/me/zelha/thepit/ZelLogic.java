@@ -1,15 +1,17 @@
 package me.zelha.thepit;
 
 import me.zelha.thepit.mainpkg.data.PlayerData;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import me.zelha.thepit.zelenums.NPCs;
+import me.zelha.thepit.zelenums.Worlds;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.BoundingBox;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -23,6 +25,78 @@ public class ZelLogic {//zel
     public boolean playerCheck(Entity entity) {return entity != null && entity.isValid() && entity instanceof Player;}
     public boolean blockCheck(Block block) {return block != null && block.getType() != Material.AIR;}
     public boolean itemCheck(ItemStack item) {return item != null && item.getType() != Material.AIR;}
+
+    public ItemStack itemBuilder(Material material, int count) {
+        ItemStack item = new ItemStack(material, count);
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setUnbreakable(true);
+        item.setItemMeta(itemMeta);
+
+        return item;
+    }
+
+    public ItemStack itemBuilder(Material material, int count, String name, List<String> lore) {
+        ItemStack item = new ItemStack(material, count);
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setUnbreakable(true);
+        itemMeta.setDisplayName(name);
+        itemMeta.setLore(lore);
+        item.setItemMeta(itemMeta);
+
+        return item;
+    }
+
+    public BoundingBox noObstructions(Worlds world, NPCs type) {//nested switch statements are so cursed. i love them.
+
+        switch(world) {
+            case ELEMENTALS:
+            case CORALS:
+            case SEASONS:
+                switch (type) {
+                    case ITEMS:
+                        return BoundingBox.of(new Location(Bukkit.getWorld(world.toString()), 2.5, 114, 12.5), 1, 2.5, 1);
+                    case UPGRADES:
+                        return BoundingBox.of(new Location(Bukkit.getWorld(world.toString()), -1.5, 114, 12.5), 1, 2.5, 1);
+                    case PRESTIGE://below not added yet
+                        break;
+                    case QUEST:
+                        break;
+                    case STATS:
+                        break;
+                }
+                break;
+            case CASTLE:
+                switch (type) {
+                    case ITEMS:
+                        return BoundingBox.of(new Location(Bukkit.getWorld(world.toString()), 2.5, 95, 12.5), 1, 2.5, 1);
+                    case UPGRADES:
+                        return BoundingBox.of(new Location(Bukkit.getWorld(world.toString()), -1.5, 95, 12.5), 1, 2.5, 1);
+                    case PRESTIGE://below not added yet
+                        break;
+                    case QUEST:
+                        break;
+                    case STATS:
+                        break;
+                }
+                break;
+            case GENESIS:
+                switch (type) {
+                    case ITEMS:
+                        return BoundingBox.of(new Location(Bukkit.getWorld(world.toString()), 2.5, 86, 16.5), 1, 2.5, 1);
+                    case UPGRADES:
+                        return BoundingBox.of(new Location(Bukkit.getWorld(world.toString()), -1.5, 86, 16.5), 1, 2.5, 1);
+                    case PRESTIGE://below not added yet
+                        break;
+                    case QUEST:
+                        break;
+                    case STATS:
+                        break;
+                }
+                break;
+        }
+
+        return new BoundingBox();
+    }
 
     public void spawnHologram(String name, Location location) {
         ArmorStand hologram = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);

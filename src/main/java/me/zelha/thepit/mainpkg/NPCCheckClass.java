@@ -24,6 +24,41 @@ public class NPCCheckClass {
         return false;
     }
 
+    private Location villagerLocation(String worldName, String type) {//oh this isnt using the enusm msdfkasbnlkfjsd
+        //whatever ill deal with that later
+
+        switch (worldName) {
+            case "Elementals":
+            case "Corals":
+            case "Seasons":
+                switch (type) {
+                    case "items":
+                        return new Location(Bukkit.getWorld(worldName), 2.5, 114, 12.5, -180.0F, 0.0F);
+                    case "upgrades":
+                        return new Location(Bukkit.getWorld(worldName), -1.5, 114, 12.5, -180.0F, 0.0F);
+
+                }
+                break;
+            case "Castle":
+                switch (type) {
+                    case "items":
+                        return new Location(Bukkit.getWorld(worldName), 2.5, 95, 12.5, -180.0F, 0.0F);
+                    case "upgrades":
+                        return new Location(Bukkit.getWorld(worldName), -1.5, 95, 12.5, -180.0F, 0.0F);
+                }
+                break;
+            case "Genesis":
+                switch (type) {
+                    case "items":
+                        return new Location(Bukkit.getWorld(worldName), 2.5, 86, 16.5, -180.0F, 0.0F);
+                    case "upgrades":
+                        return new Location(Bukkit.getWorld(worldName), -1.5, 86, 16.5, -180.0F, 0.0F);
+                }
+                break;
+        }
+        return null;
+    }
+
     private void spawnVillager(Location location, String type) {
         if (type.equals("items")) {
             Villager itemsVillager = (Villager) location.getWorld().spawnEntity(location, EntityType.VILLAGER);
@@ -31,8 +66,14 @@ public class NPCCheckClass {
             itemsVillager.setProfession(Villager.Profession.WEAPONSMITH);
             itemsVillager.setPersistent(true);
             itemsVillager.setSilent(true);
-            itemsVillager.setRotation(-180.0F, 0.0F);
             itemsVillager.addScoreboardTag("z-entity");
+        }else if (type.equals("upgrades")) {
+            Villager upgradesVillager = (Villager) location.getWorld().spawnEntity(location, EntityType.VILLAGER);
+            upgradesVillager.setAI(false);
+            upgradesVillager.setProfession(Villager.Profession.NONE);
+            upgradesVillager.setPersistent(true);
+            upgradesVillager.setSilent(true);
+            upgradesVillager.addScoreboardTag("z-entity");
         }
     }
 
@@ -43,47 +84,47 @@ public class NPCCheckClass {
             public void run() {
 
                 if (Bukkit.getWorld("Elementals") != null) {
-                    World elementals = Bukkit.getWorld("Elementals");
-                    Location itemsVillagerLocation = new Location(elementals, 2.5, 114, 12.5, -180.0F, 0.0F);
-
-                    if (!npcExists(itemsVillagerLocation)) {
-                        spawnVillager(itemsVillagerLocation, "items");
+                    if (!npcExists(villagerLocation("Elementals", "items"))) {
+                        spawnVillager(villagerLocation("Elementals", "items"), "items");
+                    }
+                    if (!npcExists(villagerLocation("Elementals", "upgrades"))) {
+                        spawnVillager(villagerLocation("Elementals", "upgrades"), "upgrades");
                     }
                 }
 
                 if (Bukkit.getWorld("Corals") != null) {
-                    World elementals = Bukkit.getWorld("Corals");
-                    Location itemsVillagerLocation = new Location(elementals, 2.5, 114, 12.5, -180.0F, 0.0F);
-
-                    if (!npcExists(itemsVillagerLocation)) {
-                        spawnVillager(itemsVillagerLocation, "items");
+                    if (!npcExists(villagerLocation("Corals", "items"))) {
+                        spawnVillager(villagerLocation("Corals", "items"), "items");
+                    }
+                    if (!npcExists(villagerLocation("Corals", "upgrades"))) {
+                        spawnVillager(villagerLocation("Corals", "upgrades"), "upgrades");
                     }
                 }
 
                 if (Bukkit.getWorld("Seasons") != null) {
-                    World elementals = Bukkit.getWorld("Seasons");
-                    Location itemsVillagerLocation = new Location(elementals, 2.5, 114, 12.5, -180.0F, 0.0F);
-
-                    if (!npcExists(itemsVillagerLocation)) {
-                        spawnVillager(itemsVillagerLocation, "items");
+                    if (!npcExists(villagerLocation("Seasons", "items"))) {
+                        spawnVillager(villagerLocation("Seasons", "items"), "items");
+                    }
+                    if (!npcExists(villagerLocation("Seasons", "upgrades"))) {
+                        spawnVillager(villagerLocation("Seasons", "upgrades"), "upgrades");
                     }
                 }
 
                 if (Bukkit.getWorld("Castle") != null) {
-                    World elementals = Bukkit.getWorld("Castle");
-                    Location itemsVillagerLocation = new Location(elementals, 2.5, 95, 12.5, -180.0F, 0.0F);
-
-                    if (!npcExists(itemsVillagerLocation)) {
-                        spawnVillager(itemsVillagerLocation, "items");
+                    if (!npcExists(villagerLocation("Castle", "items"))) {
+                        spawnVillager(villagerLocation("Castle", "items"), "items");
+                    }
+                    if (!npcExists(villagerLocation("Castle", "upgrades"))) {
+                        spawnVillager(villagerLocation("Castle", "upgrades"), "upgrades");
                     }
                 }
 
                 if (Bukkit.getWorld("Genesis") != null) {
-                    World elementals = Bukkit.getWorld("Genesis");
-                    Location itemsVillagerLocation = new Location(elementals, 2.5, 86, 16.5, -180.0F, 0.0F);
-
-                    if (!npcExists(itemsVillagerLocation)) {
-                        spawnVillager(itemsVillagerLocation, "items");
+                    if (!npcExists(villagerLocation("Genesis", "items"))) {
+                        spawnVillager(villagerLocation("Genesis", "items"), "items");
+                    }
+                    if (!npcExists(villagerLocation("Genesis", "upgrades"))) {
+                        spawnVillager(villagerLocation("Genesis", "upgrades"), "upgrades");
                     }
                 }
             }

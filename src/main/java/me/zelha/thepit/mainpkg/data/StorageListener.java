@@ -2,7 +2,9 @@ package me.zelha.thepit.mainpkg.data;
 
 import com.mongodb.client.MongoCollection;
 import me.zelha.thepit.Main;
+import me.zelha.thepit.zelenums.Passives;
 import org.bson.Document;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,11 +32,19 @@ public class StorageListener implements Listener {
     }
 
     private boolean dataCheck(Document document) {
+
         return document.get("prestige") != null
                 && document.get("level") != null
                 && document.get("exp") != null
                 && document.get("gold") != null
-                && document.get("bounty") != null;
+                && document.get("bounty") != null
+                && document.get("passive_xp_boost") != null
+                && document.get("passive_gold_boost") != null
+                && document.get("passive_melee_damage") != null
+                && document.get("passive_bow_damage") != null
+                && document.get("passive_damage_reduction") != null
+                && document.get("passive_build_battler") != null
+                && document.get("passive_el_gato") != null;
     }
 
     private Document updateDocument(Document document) {
@@ -43,6 +53,12 @@ public class StorageListener implements Listener {
         if (document.get("exp") == null) document.append("exp", 15);
         if (document.get("gold") == null) document.append("gold", 0.0);
         if (document.get("bounty") == null) document.append("bounty", 0);
+
+        for (Passives passive : Passives.values()) {
+            if (document.get(passive.getID()) == null) {
+                document.append(passive.getID(), 0);
+            }
+        }
 
         return document;
     }
@@ -59,7 +75,14 @@ public class StorageListener implements Listener {
                     .append("level", 1)
                     .append("exp", 15)
                     .append("gold", 0.0)
-                    .append("bounty", 0));
+                    .append("bounty", 0)
+                    .append("passive_xp_boost", 0)
+                    .append("passive_gold_boost", 0)
+                    .append("passive_melee_damage", 0)
+                    .append("passive_bow_damage", 0)
+                    .append("passive_damage_reduction", 0)
+                    .append("passive_build_battler", 0)
+                    .append("passive_el_gato", 0));
 
             pDoc = pDataCol.find(filter).first();
 
@@ -92,6 +115,11 @@ public class StorageListener implements Listener {
         pDoc.put("gold", pData.getGold());
         pDoc.put("bounty", pData.getBounty());
 
+        for (Passives passive : Passives.values()) {
+            pDoc.put(passive.getID(), pData.getPassiveTier(passive));
+        }
+
+
         pDataCol.replaceOne(new Document("uuid", uuid), pDoc);
 
         playerDataMap.remove(uuid);
@@ -113,6 +141,10 @@ public class StorageListener implements Listener {
                 pDoc.put("exp", pData.getExp());
                 pDoc.put("gold", pData.getGold());
                 pDoc.put("bounty", pData.getBounty());
+
+                for (Passives passive : Passives.values()) {
+                    pDoc.put(passive.getID(), pData.getPassiveTier(passive));
+                }
 
                 pDataCol.replaceOne(new Document("uuid", uuid), pDoc);
             }
