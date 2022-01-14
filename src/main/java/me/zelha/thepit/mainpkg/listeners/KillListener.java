@@ -62,7 +62,7 @@ public class KillListener implements Listener {
             baseModifier = baseModifier + 4;
         }
 
-        if (damagerData.getStreak() <= damagerData.getPassiveTier(Passives.EL_GATO)) {
+        if (damagerData.getStreak() <= (damagerData.getPassiveTier(Passives.EL_GATO) - 1)) {
             baseModifier = baseModifier + 5;
         }
 
@@ -212,9 +212,9 @@ public class KillListener implements Listener {
                 PlayerData damagerData = Main.getInstance().getPlayerData(damager);
                 double calculatedGold = calculateGold(damaged, damager);
 
+                damagerData.setStreak(damagerData.getStreak() + 1);
                 damagerData.setExp(damagerData.getExp() - calculateEXP(damaged, damager));
                 damagerData.setGold(damagerData.getGold() + calculatedGold);
-                damagerData.setStreak(damagerData.getStreak() + 1);
                 damagerData.setMultiKill(damagerData.getMultiKill() + 1);
 
                 if ((Math.floor(damagerData.getStreak()) % 10 == 0)
