@@ -172,38 +172,6 @@ public class ZelLogic {//zel
         return ChatColor.translateAlternateColorCodes('&', pData.getStatus());
     }
 
-    public String getColorBracketAndLevel(String uuid) {
-
-        PlayerData pData = Main.getInstance().getPlayerData(uuid);
-
-        if (pData.getPrestige() < 1) {
-            return "§7[" + getColorLevel(uuid) + "§7]";
-        } else if (pData.getPrestige() < 5) {
-            return "§9[" + getColorLevel(uuid) + "§9]";
-        } else if (pData.getPrestige() < 10) {
-            return "§e[" + getColorLevel(uuid) + "§e]";
-        } else if (pData.getPrestige() < 15) {
-            return "§6[" + getColorLevel(uuid) + "§6]";
-        } else if (pData.getPrestige() < 20) {
-            return "§c[" + getColorLevel(uuid) + "§c]";
-        } else if (pData.getPrestige() < 25) {
-            return "§5[" + getColorLevel(uuid) + "§5]";
-        } else if (pData.getPrestige() < 30) {
-            return "§d[" + getColorLevel(uuid) + "§d]";
-        } else if (pData.getPrestige() < 35) {
-            return "§f[" + getColorLevel(uuid) + "§f]";
-        } else if (pData.getPrestige() < 40) {
-            return "§b[" + getColorLevel(uuid) + "§b]";
-        } else if (pData.getPrestige() < 45) {
-            return "§2[" + getColorLevel(uuid) + "§2]";
-        } else if (pData.getPrestige() < 50) {
-            return "§3[" + getColorLevel(uuid) + "§3]";
-        } else if (pData.getPrestige() == 50) {
-            return "§4[" + getColorLevel(uuid) + "§4]";
-        }
-        return "§5§l[§5§k|" + getColorLevel(uuid) + "§5§k|§5§l]";
-    }
-
     public int maxXPReq(String uuid) {
 
         PlayerData pData = Main.getInstance().getPlayerData(uuid);
@@ -300,6 +268,98 @@ public class ZelLogic {//zel
             default:
                 return 1313131313;//fun
         }
+    }
+
+    public String getColorBracketAndLevel(int prestige, int level) {
+        if (prestige < 1) {
+            return "§7[" + getColorLevel(level) + "§7]";
+        } else if (prestige < 5) {
+            return "§9[" + getColorLevel(level) + "§9]";
+        } else if (prestige < 10) {
+            return "§e[" + getColorLevel(level) + "§e]";
+        } else if (prestige < 15) {
+            return "§6[" + getColorLevel(level) + "§6]";
+        } else if (prestige < 20) {
+            return "§c[" + getColorLevel(level) + "§c]";
+        } else if (prestige < 25) {
+            return "§5[" + getColorLevel(level) + "§5]";
+        } else if (prestige < 30) {
+            return "§d[" + getColorLevel(level) + "§d]";
+        } else if (prestige < 35) {
+            return "§f[" + getColorLevel(level) + "§f]";
+        } else if (prestige < 40) {
+            return "§b[" + getColorLevel(level) + "§b]";
+        } else if (prestige < 45) {
+            return "§2[" + getColorLevel(level) + "§2]";
+        } else if (prestige < 50) {
+            return "§3[" + getColorLevel(level) + "§3]";
+        } else if (prestige == 50) {
+            return "§4[" + getColorLevel(level) + "§4]";
+        }
+        return "§5§l[§5§k|" + getColorLevel(level) + "§5§k|§5§l]";
+    }
+
+    private String getColorLevel(int level) {
+        if (level < 10) {
+            return "§7" + level;
+        } else if (level < 20) {
+            return "§9" + level;
+        } else if (level < 30) {
+            return "§3" + level;
+        } else if (level < 40) {
+            return "§2" + level;
+        } else if (level < 50) {
+            return "§a" + level;
+        } else if (level < 60) {
+            return "§e" + level;
+        } else if (level < 70) {
+            return "§6§l" + level;
+        } else if (level < 80) {
+            return "§c§l" + level;
+        } else if (level < 90) {
+            return "§4§l" + level;
+        } else if (level < 100) {
+            return "§5§l" + level;
+        } else if (level < 110) {
+            return "§d§l" + level;
+        } else if (level < 120) {
+            return "§f§l" + level;
+        } else if (level == 120) {
+            return "§b§l" + level;
+        }
+        return "§5§l" + level;
+    }
+
+    public String getColorBracketAndLevel(String uuid) {
+
+        PlayerData pData = Main.getInstance().getPlayerData(uuid);
+
+        if (pData.getPrestige() < 1) {
+            return "§7[" + getColorLevel(uuid) + "§7]";
+        } else if (pData.getPrestige() < 5) {
+            return "§9[" + getColorLevel(uuid) + "§9]";
+        } else if (pData.getPrestige() < 10) {
+            return "§e[" + getColorLevel(uuid) + "§e]";
+        } else if (pData.getPrestige() < 15) {
+            return "§6[" + getColorLevel(uuid) + "§6]";
+        } else if (pData.getPrestige() < 20) {
+            return "§c[" + getColorLevel(uuid) + "§c]";
+        } else if (pData.getPrestige() < 25) {
+            return "§5[" + getColorLevel(uuid) + "§5]";
+        } else if (pData.getPrestige() < 30) {
+            return "§d[" + getColorLevel(uuid) + "§d]";
+        } else if (pData.getPrestige() < 35) {
+            return "§f[" + getColorLevel(uuid) + "§f]";
+        } else if (pData.getPrestige() < 40) {
+            return "§b[" + getColorLevel(uuid) + "§b]";
+        } else if (pData.getPrestige() < 45) {
+            return "§2[" + getColorLevel(uuid) + "§2]";
+        } else if (pData.getPrestige() < 50) {
+            return "§3[" + getColorLevel(uuid) + "§3]";
+        } else if (pData.getPrestige() == 50) {
+            return "§4[" + getColorLevel(uuid) + "§4]";
+        }
+        return "§5§l[§5§k|" + getColorLevel(uuid) + "§5§k|§5§l]";
     }
 
     private String getColorLevel(String uuid) {
