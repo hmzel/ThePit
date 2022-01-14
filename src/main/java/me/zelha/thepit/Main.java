@@ -75,6 +75,7 @@ public final class Main extends JavaPlugin {
         getCommand("setstreak").setExecutor(new SetStreakCommand());
         getCommand("letmeplaceblocksplease").setExecutor(new AllowBlockEventsCommand());
         getCommand("respawn").setExecutor(new RespawnCommand());
+        getCommand("setpassive").setExecutor(new SetPassiveCommand());
 
         storage.runDataSaver();
         new ParticipationRunnable().runTaskTimerAsynchronously(this, 0, 1);
