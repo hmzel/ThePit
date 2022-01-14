@@ -59,7 +59,7 @@ public class HologramCheckClass {//unfinished. i cant be bothered to get every s
                     spawnIfAbsent("§7Gain levels to unlock more", new Location(corals, -6.0, 114.1, 11.5));
                 }
             }//fuck this shite
-        }.runTaskLater(Main.getInstance(), 6000);
+        }.runTaskLater(Main.getInstance(), 3600);
     }
 }
 

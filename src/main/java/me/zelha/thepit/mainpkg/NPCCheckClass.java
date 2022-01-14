@@ -129,7 +129,7 @@ public class NPCCheckClass {
                     }
                 }
             }
-        }.runTaskLater(Main.getInstance(), 6000);
+        }.runTaskLater(Main.getInstance(), 3600);
     }
 }
 
