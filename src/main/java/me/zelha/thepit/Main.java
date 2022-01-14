@@ -5,7 +5,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import me.zelha.thepit.admin.commands.*;
-import me.zelha.thepit.mainpkg.HologramCheckClass;
+import me.zelha.thepit.admin.commands.HologramCheckCommand;
 import me.zelha.thepit.admin.commands.NPCCheckCommand;
 import me.zelha.thepit.mainpkg.commands.RespawnCommand;
 import me.zelha.thepit.mainpkg.data.PlayerData;
@@ -51,8 +51,6 @@ public final class Main extends JavaPlugin {
         deathListener = new DeathListener();
         spawnListener = new SpawnListener();
 
-        new HologramCheckClass().hologramCheck();
-
         getServer().getPluginManager().registerEvents(storage, this);
         getServer().getPluginManager().registerEvents(new LevelUpListener(), this);
         getServer().getPluginManager().registerEvents(new ScoreboardListener(), this);
@@ -76,6 +74,7 @@ public final class Main extends JavaPlugin {
         getCommand("respawn").setExecutor(new RespawnCommand());
         getCommand("setpassive").setExecutor(new SetPassiveCommand());
         getCommand("npccheck").setExecutor(new NPCCheckCommand());
+        getCommand("hologramcheck").setExecutor(new HologramCheckCommand());
 
         storage.runDataSaver();
         new ParticipationRunnable().runTaskTimerAsynchronously(this, 0, 1);

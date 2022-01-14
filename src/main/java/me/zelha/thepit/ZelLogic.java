@@ -103,7 +103,7 @@ public class ZelLogic {//zel
 
         for (Entity entity : entityList) {
             if (entity.getLocation().equals(location) && entity.getName().equals(name)) {
-                player.sendMessage("§cHologram " + name + " §ais not absent.");
+                player.sendMessage("§cHologram " + name + " §cis not absent.");
                 return;
             }
         }

@@ -41,3 +41,6 @@ commands:
   npccheck:
     description: spawns npcs if theyre absent
     usage: /<command>
+  hologramcheck:
+    description: spawns holograms if theyre absent
+    usage: /<command>
