@@ -98,7 +98,14 @@ public class ZelLogic {//zel
         return new BoundingBox();
     }
 
-    public void spawnHologram(String name, Location location) {
+    public void spawnHologramIfAbsent(String name, Location location) {
+        List<Entity> entityList = location.getWorld().getEntities();
+
+        for (Entity entity : entityList) {
+            if (entity.getLocation().equals(location) && entity.getName().equals(name)) {
+                return;
+            }
+        }
         ArmorStand hologram = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
         hologram.setVisible(false);
         hologram.setBasePlate(false);
@@ -110,17 +117,6 @@ public class ZelLogic {//zel
         hologram.setPersistent(true);
         hologram.setGravity(false);
         hologram.addScoreboardTag("z-entity");
-    }
-
-    public boolean hologramExists(String name, Location location) {
-        List<Entity> entityList = location.getWorld().getEntities();
-
-        for (Entity entity : entityList) {
-            if (entity.getLocation().equals(location) && entity.getName().equals(name)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public String toRoman(int number) {
