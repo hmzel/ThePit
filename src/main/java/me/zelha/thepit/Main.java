@@ -6,7 +6,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import me.zelha.thepit.admin.commands.*;
 import me.zelha.thepit.mainpkg.HologramCheckClass;
-import me.zelha.thepit.mainpkg.NPCCheckClass;
+import me.zelha.thepit.admin.commands.NPCCheckCommand;
 import me.zelha.thepit.mainpkg.commands.RespawnCommand;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.mainpkg.data.StorageListener;
@@ -52,7 +52,6 @@ public final class Main extends JavaPlugin {
         spawnListener = new SpawnListener();
 
         new HologramCheckClass().hologramCheck();
-        new NPCCheckClass().npcCheck();
 
         getServer().getPluginManager().registerEvents(storage, this);
         getServer().getPluginManager().registerEvents(new LevelUpListener(), this);
@@ -76,6 +75,7 @@ public final class Main extends JavaPlugin {
         getCommand("letmeplaceblocksplease").setExecutor(new AllowBlockEventsCommand());
         getCommand("respawn").setExecutor(new RespawnCommand());
         getCommand("setpassive").setExecutor(new SetPassiveCommand());
+        getCommand("npccheck").setExecutor(new NPCCheckCommand());
 
         storage.runDataSaver();
         new ParticipationRunnable().runTaskTimerAsynchronously(this, 0, 1);
