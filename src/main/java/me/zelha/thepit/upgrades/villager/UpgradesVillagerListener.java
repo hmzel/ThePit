@@ -248,9 +248,11 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 }
             } else {
                 p.sendMessage("§cYou don't have enough gold to afford this!");
+                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             }
         } else {
             p.sendMessage("§aYou already unlocked the last upgrade!");
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
         }
     }
 
