@@ -4,7 +4,7 @@ public enum Passives {
     XP_BOOST("passive_xp_boost", "XP Boost", "§bXP Boost"),
     GOLD_BOOST("passive_gold_boost", "Gold Boost", "§6Gold Boost"),
     MELEE_DAMAGE("passive_melee_damage", "Melee Damage", "§cMelee Damage"),
-    BOW_DAMAGE("passive_bow_damage", "Bow Damage", "§7Bow Damage"),
+    BOW_DAMAGE("passive_bow_damage", "Bow Damage", "§eBow Damage"),
     DAMAGE_REDUCTION("passive_damage_reduction", "Damage Reduction", "§9Damage Reduction"),
     BUILD_BATTLER("passive_build_battler", "Build Battler", "§aBuild Battler"),
     EL_GATO("passive_el_gato", "El Gato", "§dEl Gato");
