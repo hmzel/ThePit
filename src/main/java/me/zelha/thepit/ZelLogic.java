@@ -98,11 +98,12 @@ public class ZelLogic {//zel
         return new BoundingBox();
     }
 
-    public void spawnHologramIfAbsent(String name, Location location) {
+    public void spawnHologramIfAbsent(String name, Location location, Player player) {
         List<Entity> entityList = location.getWorld().getEntities();
 
         for (Entity entity : entityList) {
             if (entity.getLocation().equals(location) && entity.getName().equals(name)) {
+                player.sendMessage("§cHologram " + name + " §ais not absent.");
                 return;
             }
         }
@@ -117,6 +118,7 @@ public class ZelLogic {//zel
         hologram.setPersistent(true);
         hologram.setGravity(false);
         hologram.addScoreboardTag("z-entity");
+        player.sendMessage("§aHologram " + name + " §asuccessfully spawned!");
     }
 
     public String toRoman(int number) {
