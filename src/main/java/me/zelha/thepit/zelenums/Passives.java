@@ -30,5 +30,17 @@ public enum Passives {
     public String getColorfulName() {
         return colorfulName;
     }
+
+    public static Passives findByName(String name) {
+        Passives result = null;
+
+        for (Passives passive : values()) {
+            if (passive.name().equalsIgnoreCase(name)) {
+                result = passive;
+                break;
+            }
+        }
+        return result;
+    }
 }
 
