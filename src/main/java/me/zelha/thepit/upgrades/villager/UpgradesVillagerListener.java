@@ -29,6 +29,18 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     private final Map<UUID, String> backHandler = new HashMap<>();
     private final Map<UUID, Passives> passivesHandler = new HashMap<>();
 
+    private String getPassivesNameColor(Player p, Passives passive, double cost) {
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+
+        if ((pData.getPassiveTier(passive) > 0 && pData.getGold() - cost >= 0) || pData.getPassiveTier(passive) == 5) {
+            return "§a" + passive.getName();
+        } else if (pData.getGold() - cost >= 0) {
+            return "§e" + passive.getName();
+        } else {
+            return "§c" + passive.getName();
+        }
+    }
+
     private List<String> passivesLoreBuilder(Player p, Material material, Passives passive) {
         List<String> lore = new ArrayList<>();
         PlayerData pData = Main.getInstance().getPlayerData(p);
@@ -183,13 +195,13 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     private void openMainGUI(Player p) {
         Inventory mainGUI = Bukkit.createInventory(p, 45, "Permanent upgrades");
 
-        mainGUI.setItem(28, zl.itemBuilder(LIGHT_BLUE_DYE, 1, "§cXP Boost", passivesLoreBuilder(p, LIGHT_BLUE_DYE, Passives.XP_BOOST)));
-        mainGUI.setItem(29, zl.itemBuilder(ORANGE_DYE, 1, "§cGold Boost", passivesLoreBuilder(p, ORANGE_DYE, Passives.GOLD_BOOST)));
-        mainGUI.setItem(30, zl.itemBuilder(RED_DYE, 1, "§cMelee Damage", passivesLoreBuilder(p, RED_DYE, Passives.MELEE_DAMAGE)));
-        mainGUI.setItem(31, zl.itemBuilder(YELLOW_DYE, 1, "§cBow Damage", passivesLoreBuilder(p, YELLOW_DYE, Passives.BOW_DAMAGE)));
-        mainGUI.setItem(32, zl.itemBuilder(CYAN_DYE, 1, "§cDamage Reduction", passivesLoreBuilder(p, CYAN_DYE, Passives.DAMAGE_REDUCTION)));
-        mainGUI.setItem(33, zl.itemBuilder(BONE_MEAL, 1, "§cBuild Battler", passivesLoreBuilder(p, BONE_MEAL, Passives.BUILD_BATTLER)));
-        mainGUI.setItem(34, zl.itemBuilder(CAKE, 1, "§cEl Gato", passivesLoreBuilder(p, CAKE, Passives.EL_GATO)));
+        mainGUI.setItem(28, zl.itemBuilder(LIGHT_BLUE_DYE, 1, getPassivesNameColor(p, Passives.XP_BOOST, determineCost(p, Passives.XP_BOOST)), passivesLoreBuilder(p, LIGHT_BLUE_DYE, Passives.XP_BOOST)));
+        mainGUI.setItem(29, zl.itemBuilder(ORANGE_DYE, 1, getPassivesNameColor(p, Passives.GOLD_BOOST, determineCost(p, Passives.GOLD_BOOST)), passivesLoreBuilder(p, ORANGE_DYE, Passives.GOLD_BOOST)));
+        mainGUI.setItem(30, zl.itemBuilder(RED_DYE, 1, getPassivesNameColor(p, Passives.MELEE_DAMAGE, determineCost(p, Passives.MELEE_DAMAGE)), passivesLoreBuilder(p, RED_DYE, Passives.MELEE_DAMAGE)));
+        mainGUI.setItem(31, zl.itemBuilder(YELLOW_DYE, 1, getPassivesNameColor(p, Passives.BOW_DAMAGE, determineCost(p, Passives.BOW_DAMAGE)), passivesLoreBuilder(p, YELLOW_DYE, Passives.BOW_DAMAGE)));
+        mainGUI.setItem(32, zl.itemBuilder(CYAN_DYE, 1, getPassivesNameColor(p, Passives.DAMAGE_REDUCTION, determineCost(p, Passives.DAMAGE_REDUCTION)), passivesLoreBuilder(p, CYAN_DYE, Passives.DAMAGE_REDUCTION)));
+        mainGUI.setItem(33, zl.itemBuilder(BONE_MEAL, 1, getPassivesNameColor(p, Passives.BUILD_BATTLER, determineCost(p, Passives.BUILD_BATTLER)), passivesLoreBuilder(p, BONE_MEAL, Passives.BUILD_BATTLER)));
+        mainGUI.setItem(34, zl.itemBuilder(CAKE, 1, getPassivesNameColor(p, Passives.EL_GATO, determineCost(p, Passives.EL_GATO)), passivesLoreBuilder(p, CAKE, Passives.EL_GATO)));
 
         p.openInventory(mainGUI);
     }
