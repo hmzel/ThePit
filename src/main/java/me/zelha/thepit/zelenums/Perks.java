@@ -279,6 +279,18 @@ public enum Perks {
     public int getPrestige() {
         return prestige;
     }
+
+    public static Perks findByName(String name) {
+        Perks result = null;
+
+        for (Perks perk : values()) {
+            if (perk.getName().equals(name)) {
+                result = perk;
+                break;
+            }
+        }
+        return result;
+    }
 }
 
 
