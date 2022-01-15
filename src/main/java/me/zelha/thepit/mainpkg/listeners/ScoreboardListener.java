@@ -20,12 +20,15 @@ import java.util.*;
 public class ScoreboardListener implements Listener {
 
     private final RunMethods methods = Main.getInstance().generateRunMethods();
+    private final RunMethods methods2 = Main.getInstance().generateRunMethods();
+    private final RunMethods methods3 = Main.getInstance().generateRunMethods();
 
     @EventHandler
     public void addOnJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
 
         new UpdateAndAnimation(p).runTaskTimer(Main.getInstance(),0, 1);
+        new UpdateTab(p).runTaskTimer(Main.getInstance(),0, 20);
     }
 
     @EventHandler
@@ -35,10 +38,13 @@ public class ScoreboardListener implements Listener {
         if (methods.hasID(p.getUniqueId())) {
             methods.stop(p.getUniqueId());
         }
+        if (methods2.hasID(p.getUniqueId())) {
+            methods2.stop(p.getUniqueId());
+        }
     }
 
 
-    private class UpdateAndAnimation extends BukkitRunnable {
+    private class UpdateAndAnimation extends BukkitRunnable {//i would have no clue what to make
 
         private final Player p;
         int ticks = 0;
@@ -195,6 +201,34 @@ public class ScoreboardListener implements Listener {
             }
 
             ticks++;
+        }
+    }
+
+
+    private class UpdateTab extends BukkitRunnable {
+
+        private final Player p;
+        private final PlayerData pData;
+
+        private final ZelLogic zl = Main.getInstance().getZelLogic();
+
+        public UpdateTab(Player player) {
+            this.p = player;
+            this.pData = Main.getInstance().getPlayerData(player);
+        }
+
+        @Override
+        public void run() {
+
+            if (!methods2.hasID(p.getUniqueId())) {
+                methods2.setID(p.getUniqueId(), super.getTaskId());
+            }
+
+            if (pData.getBounty() == 0) {
+                p.setPlayerListName(zl.getColorBracketAndLevel(p.getUniqueId().toString()) + " §7" + p.getName());
+            } else {
+                p.setPlayerListName(zl.getColorBracketAndLevel(p.getUniqueId().toString()) + " §7" + p.getName() + " §6§l" + zl.getFancyGoldString(pData.getBounty()) + "g");
+            }
         }
     }
 }
