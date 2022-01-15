@@ -5,6 +5,7 @@ import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.NPCs;
 import me.zelha.thepit.zelenums.Passives;
+import me.zelha.thepit.zelenums.Perks;
 import me.zelha.thepit.zelenums.Worlds;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
@@ -193,8 +194,32 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         return lore;
     }
 
+    private List<String> otherLoreBuilder(Perks perk) {
+        List<String> lore = new ArrayList<>();
+
+        if (perk != Perks.UNSET) {
+            lore.add("§Selected: §a" + perk.getName());
+            lore.add("\n");
+        }
+
+        lore.addAll(perk.getLore());
+        lore.add("\n");
+        lore.add("§eClick to choose perk!");
+
+        return lore;
+    }
+
     private void openMainGUI(Player p) {
         Inventory mainGUI = Bukkit.createInventory(p, 45, "Permanent upgrades");
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+
+        if (pData.getPerkAtSlot(1) != Perks.UNSET) {
+
+        } else if (pData.getLevel() >= 10) {
+            mainGUI.setItem(12, zl.itemBuilder(DIAMOND_BLOCK, 1, "§aPerk Slot #1", )));
+        } else {
+
+        }
 
         mainGUI.setItem(28, zl.itemBuilder(LIGHT_BLUE_DYE, 1, getPassivesNameColor(p, XP_BOOST, determineCost(p, XP_BOOST)), passivesLoreBuilder(p, LIGHT_BLUE_DYE, XP_BOOST)));
         mainGUI.setItem(29, zl.itemBuilder(ORANGE_DYE, 1, getPassivesNameColor(p, GOLD_BOOST, determineCost(p, GOLD_BOOST)), passivesLoreBuilder(p, ORANGE_DYE, GOLD_BOOST)));
