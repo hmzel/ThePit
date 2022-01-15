@@ -44,7 +44,12 @@ public class StorageListener implements Listener {
                 && document.get("passive_bow_damage") != null
                 && document.get("passive_damage_reduction") != null
                 && document.get("passive_build_battler") != null
-                && document.get("passive_el_gato") != null;
+                && document.get("passive_el_gato") != null
+                && document.get("perk_slot_1") != null
+                && document.get("perk_slot_2") != null
+                && document.get("perk_slot_3") != null
+                && document.get("perk_slot_4") != null;
+
     }
 
     private Document updateDocument(Document document) {
@@ -59,6 +64,11 @@ public class StorageListener implements Listener {
                 document.append(passive.getID(), 0);
             }
         }
+
+        if (document.get("perk_slot_1") == null) document.append("perk_slot_1", "unset");
+        if (document.get("perk_slot_2") == null) document.append("perk_slot_2", "unset");
+        if (document.get("perk_slot_3") == null) document.append("perk_slot_3", "unset");
+        if (document.get("perk_slot_4") == null) document.append("perk_slot_4", "unset");
 
         return document;
     }
@@ -82,7 +92,11 @@ public class StorageListener implements Listener {
                     .append("passive_bow_damage", 0)
                     .append("passive_damage_reduction", 0)
                     .append("passive_build_battler", 0)
-                    .append("passive_el_gato", 0));
+                    .append("passive_el_gato", 0)
+                    .append("perk_slot_1", "unset")
+                    .append("perk_slot_2", "unset")
+                    .append("perk_slot_3", "unset")
+                    .append("perk_slot_4", "unset"));
 
             pDoc = pDataCol.find(filter).first();
 
@@ -145,6 +159,11 @@ public class StorageListener implements Listener {
                 for (Passives passive : Passives.values()) {
                     pDoc.put(passive.getID(), pData.getPassiveTier(passive));
                 }
+
+                pDoc.put("perk_slot_1", pData.getPerkAtSlot(1));
+                pDoc.put("perk_slot_2", pData.getPerkAtSlot(2));
+                pDoc.put("perk_slot_3", pData.getPerkAtSlot(3));
+                pDoc.put("perk_slot_4", pData.getPerkAtSlot(4));
 
                 pDataCol.replaceOne(new Document("uuid", uuid), pDoc);
             }
