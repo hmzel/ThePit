@@ -44,3 +44,6 @@ commands:
   hologramcheck:
     description: spawns holograms if theyre absent
     usage: /<command>
+  setperk:
+    description: sets your or the specified player's perk at the given slot
+    usage: /<command> (slot) (perk)

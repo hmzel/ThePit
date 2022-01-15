@@ -75,6 +75,7 @@ public final class Main extends JavaPlugin {
         getCommand("setpassive").setExecutor(new SetPassiveCommand());
         getCommand("npccheck").setExecutor(new NPCCheckCommand());
         getCommand("hologramcheck").setExecutor(new HologramCheckCommand());
+        getCommand("setperk").setExecutor(new SetPerkCommand());
 
         storage.runDataSaver();
         new ParticipationRunnable().runTaskTimerAsynchronously(this, 0, 1);
