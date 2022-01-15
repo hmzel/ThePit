@@ -210,17 +210,23 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         return lore;
     }
 
+    private void determinePerkSlotItem(Inventory inventory, PlayerData pData, int slot, int level) {
+        if (pData.getPerkAtSlot(1) != UNSET) {
+            inventory.setItem(11 + slot, zl.itemBuilder(pData.getPerkAtSlot(1).getMaterial(), 1, "§ePerk Slot #1", otherLoreBuilder(pData.getPerkAtSlot(1))));
+        } else if (pData.getLevel() >= 10) {
+            inventory.setItem(11+ slot, zl.itemBuilder(DIAMOND_BLOCK, 1, "§aPerk Slot #1", otherLoreBuilder(UNSET)));
+        } else {
+            inventory.setItem(11+ slot, zl.itemBuilder(BEDROCK, 1, "§cPerk Slot #1", Collections.singletonList(
+                    "§7Required level: " + zl.getColorBracketAndLevel(0, level)
+            )));
+        }
+    }
+
     private void openMainGUI(Player p) {
         Inventory mainGUI = Bukkit.createInventory(p, 45, "Permanent upgrades");
         PlayerData pData = Main.getInstance().getPlayerData(p);
 
-        if (pData.getPerkAtSlot(1) != UNSET) {
 
-        } else if (pData.getLevel() >= 10) {
-            mainGUI.setItem(12, zl.itemBuilder(DIAMOND_BLOCK, 1, "§aPerk Slot #1", otherLoreBuilder(UNSET)));
-        } else {
-
-        }
 
         mainGUI.setItem(28, zl.itemBuilder(LIGHT_BLUE_DYE, 1, getPassivesNameColor(p, XP_BOOST, determineCost(p, XP_BOOST)), passivesLoreBuilder(p, LIGHT_BLUE_DYE, XP_BOOST)));
         mainGUI.setItem(29, zl.itemBuilder(ORANGE_DYE, 1, getPassivesNameColor(p, GOLD_BOOST, determineCost(p, GOLD_BOOST)), passivesLoreBuilder(p, ORANGE_DYE, GOLD_BOOST)));
