@@ -1,57 +1,61 @@
 package me.zelha.thepit.zelenums;
 
+import org.bukkit.Material;
+
+import static org.bukkit.Material.*;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public enum Perks {
-    GOLDEN_HEADS("Golden Heads", Arrays.asList(
+    GOLDEN_HEADS("Golden Heads", PLAYER_HEAD, Arrays.asList(
             "§7Golden apples you earn turn into",
             "§6Golden Heads§7."
     )
             , 500
             , 10
             , 0),
-    FISHING_ROD("Fishing Rod", Collections.singletonList(
+    FISHING_ROD("Fishing Rod", Material.FISHING_ROD, Collections.singletonList(
             "§7Spawn with a fishing rod."
     )
             , 1000
             , 10
             , 0),
-    LAVA_BUCKET("Lava Bucket", Collections.singletonList(
+    LAVA_BUCKET("Lava Bucket", Material.LAVA_BUCKET, Collections.singletonList(
             "§7Spawn with a lava bucket."
     )
             , 1000
             , 10
             , 0),
-    STRENGTH_CHAINING("Strength-Chaining", Arrays.asList(
+    STRENGTH_CHAINING("Strength-Chaining", REDSTONE_WIRE, Arrays.asList(
             "§c+8% damage §7for 7s stacking",
             "§7on kill."
     )
             , 2000
             , 20
             , 0),
-    SAFETY_FIRST("Safety First", Collections.singletonList(
+    SAFETY_FIRST("Safety First", CHAINMAIL_HELMET, Collections.singletonList(
             "§7Spawn with a helmet."
     )
             , 3000
             , 30
             , 0),
-    BARBARIAN("Barbarian", Arrays.asList(
+    BARBARIAN("Barbarian", IRON_AXE, Arrays.asList(
             "§7Replaces your sword with a",
             "§7stronger axe."
     )
             , 3000
             , 30
             , 2),
-    MINEMAN("Mineman", Arrays.asList(
+    MINEMAN("Mineman", COBBLESTONE, Arrays.asList(
             "§7Spawn with §f24 cobblestone",
             "§7and a diamond pickaxe."
     )
             , 3000
             , 20
             , 0),
-    INSURANCE("Insurance", Arrays.asList(
+    INSURANCE("Insurance", SADDLE, Arrays.asList(
             "§7If you die within §a2s §7of",
             "§7being damaged, §cfull heal §7and",
             "§7gain §9Resistance II §7(4s).",
@@ -60,14 +64,14 @@ public enum Perks {
             , 2000
             , 35
             , 0),
-    TRICKLE_DOWN("Trickle-down", Arrays.asList(
+    TRICKLE_DOWN("Trickle-down", GOLD_INGOT, Arrays.asList(
             "§7Gold ingots reward §6+10g",
             "§7and heal §c2❤§7."
     )
             , 1000
             , 40
             , 0),
-    LUCKY_DIAMOND("Lucky Diamond", Arrays.asList(
+    LUCKY_DIAMOND("Lucky Diamond", DIAMOND, Arrays.asList(
             "§730% chance to upgrade dropped",
             "§6armor pieces from kills to",
             "§bdiamond§7."
@@ -75,7 +79,7 @@ public enum Perks {
             , 4000
             , 40
             , 0),
-    SPAMMER("Spammer", Arrays.asList(
+    SPAMMER("Spammer", BOW, Arrays.asList(
             "§7Get §f3 arrows §7on arrow hit.",
             "\n",
             "§7Gain §63x base gold §7reward on",
@@ -86,7 +90,7 @@ public enum Perks {
             , 4000
             , 40
             , 0),
-    BOUNTY_HUNTER("Bounty Hunter", Arrays.asList(
+    BOUNTY_HUNTER("Bounty Hunter", GOLDEN_LEGGINGS, Arrays.asList(
             "§6+4g §7on all kills.",
             "§7Earn bounty assist shares.",
             "\n",
@@ -96,13 +100,13 @@ public enum Perks {
             , 2000
             , 50
             , 0),
-    STREAKER("Streaker", Collections.singletonList(
+    STREAKER("Streaker", WHEAT, Collections.singletonList(
             "§7Triple streak kill §bXP §7bonus."
     )
             , 8000
             , 50
             , 0),
-    ASSISTANT_STREAKER("Assistant Streaker", Arrays.asList(
+    ASSISTANT_STREAKER("Assistant Streaker", SPRUCE_FENCE, Arrays.asList(
             "§7Assists count their",
             "§aparticipation §7towards",
             "§7killstreaks.",
@@ -116,14 +120,14 @@ public enum Perks {
             , 8000
             , 50
             , 5),
-    CO_OP_CAT("Co-op Cat", Arrays.asList(
+    CO_OP_CAT("Co-op Cat", OCELOT_SPAWN_EGG, Arrays.asList(
             "§7Earn §b+50% XP §7and §6+50%g",
             "§7on all assists."
     )
             , 6000
             , 50
             , 6),
-    CONGLOMERATE("Conglomerate", Arrays.asList(
+    CONGLOMERATE("Conglomerate", HAY_BLOCK, Arrays.asList(
             "§7Don't earn §bXP §7from kills.",
             "§7The §bXP §7you would earn is",
             "§7converted to §6gold §7at a §e20%",
@@ -132,7 +136,7 @@ public enum Perks {
             , 20000
             , 50
             , 8),
-    GLADIATOR("Gladiator", Arrays.asList(
+    GLADIATOR("Gladiator", IRON_AXE, Arrays.asList(
             "§7Receive §9-3% §7damage per",
             "§7nearby player.",
             "\n",
@@ -142,7 +146,7 @@ public enum Perks {
             , 4000
             , 60
             , 0),
-    VAMPIRE("Vampire", Arrays.asList(
+    VAMPIRE("Vampire", FERMENTED_SPIDER_EYE, Arrays.asList(
             "§7Don't earn golden apples.",
             "§7Heal §c0.5❤ §7on hit.",
             "§7Tripled on arrow crit.",
@@ -151,7 +155,7 @@ public enum Perks {
             , 4000
             , 60
             , 0),
-    RECON("Recon", Arrays.asList(
+    RECON("Recon", ENDER_EYE, Arrays.asList(
             "§7Each fourth arrow shot at",
             "§7someone rewards §b+40 XP §7and",
             "§7deals §c+50% damage§7."
@@ -159,13 +163,13 @@ public enum Perks {
             , 6000
             , 60
             , 7),
-    OVERHEAL("Overheal", Collections.singletonList(
+    OVERHEAL("Overheal", BREAD, Collections.singletonList(
             "§7Double healing item limits."
     )
             , 6000
             , 70
             , 1),
-    RAMBO("Rambo", Arrays.asList(
+    RAMBO("Rambo", STICK, Arrays.asList(
             "§7Don't earn golden apples.",
             "§7Max health: §c8❤",
             "§7Refill all health on kill."
@@ -173,7 +177,7 @@ public enum Perks {
             , 6000
             , 70
             , 3),
-    OLYMPUS("Olympus", Arrays.asList(
+    OLYMPUS("Olympus", POTION, Arrays.asList(
             "§7Golden apples you earn turn into",
             "§bOlympus Potions§7.",
             "\n",
@@ -187,14 +191,14 @@ public enum Perks {
             , 6000
             , 70
             , 4),
-    DIRTY("Dirty", Arrays.asList(
+    DIRTY("Dirty", PODZOL, Arrays.asList(
             "§7Gain §9Resistance II §7(4s) on",
             "§7kill."
     )
             , 8000
             , 80
             , 2),
-    FIRST_STRIKE("First Strike", Arrays.asList(
+    FIRST_STRIKE("First Strike", COOKED_CHICKEN, Arrays.asList(
             "§7First hit on a player deals",
             "§c+35% damage §7and grants",
             "§eSpeed I §7(5s)."
@@ -202,7 +206,7 @@ public enum Perks {
             , 8000
             , 80
             , 5),
-    SOUP("Soup", Arrays.asList(
+    SOUP("Soup", MUSHROOM_STEW, Arrays.asList(
             "§7Golden apples you earn turn into",
             "§aTasty Soup§7. You also earn",
             "§7soup on assists.",
@@ -215,7 +219,7 @@ public enum Perks {
             , 8000
             , 90
             , 7),
-    MARATHON("Marathon", Arrays.asList(
+    MARATHON("Marathon", LEATHER_BOOTS, Arrays.asList(
             "§7Cannot wear boots.",
             "§7While you have speed:",
             "§8◾ §7Deal §c+18% §7damage",
@@ -224,13 +228,13 @@ public enum Perks {
             , 8000
             , 90
             , 6),
-    THICK("Thick", Collections.singletonList(
+    THICK("Thick", APPLE, Collections.singletonList(
             "§7You have §c+2 Max ❤§7."
     )
             , 10000
             , 90
             , 11),
-    KUNG_FU_KNOWLEDGE("Kung Fu Knowledge", Arrays.asList(
+    KUNG_FU_KNOWLEDGE("Kung Fu Knowledge", BEEF, Arrays.asList(
             "§7No sword damage.",
             "§7Fists hit like a truck.",
             "§7Gain speed II (5s) every fourth",
@@ -239,7 +243,7 @@ public enum Perks {
             , 10000
             , 100
             , 9),
-    UNSET("unset", Collections.singletonList(
+    UNSET("unset", DIAMOND_BLOCK, Collections.singletonList(
             "§7Select a perk to fill this slot."
     )
             , 0
@@ -247,13 +251,15 @@ public enum Perks {
             , 0);
 
     private final String name;
+    private final Material material;
     private final List<String> lore;
     private final int cost;
     private final int level;
     private final int prestige;
 
-    Perks(String name, List<String> lore, int cost, int level, int prestige) {
+    Perks(String name, Material material, List<String> lore, int cost, int level, int prestige) {
         this.name = name;
+        this.material = material;
         this.lore = lore;
         this.cost = cost;
         this.level = level;
@@ -262,6 +268,10 @@ public enum Perks {
 
     public String getName() {
         return name;
+    }
+
+    public Material getMaterial() {
+        return material;
     }
 
     public List<String> getLore() {
