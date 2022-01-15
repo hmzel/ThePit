@@ -291,6 +291,18 @@ public enum Perks {
         }
         return result;
     }
+
+    public static Perks findByEnumName(String name) {
+        Perks result = null;
+
+        for (Perks perk : values()) {
+            if (perk.name().equalsIgnoreCase(name)) {
+                result = perk;
+                break;
+            }
+        }
+        return result;
+    }
 }
 
 
