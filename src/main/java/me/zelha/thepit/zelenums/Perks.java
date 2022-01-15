@@ -238,7 +238,13 @@ public enum Perks {
     )
             , 10000
             , 100
-            , 9);
+            , 9),
+    UNSET("unset", Collections.singletonList(
+            "§7Select a perk to fill this slot."
+    )
+            , 0
+            , 0
+            , 0);
 
     private final String name;
     private final List<String> lore;
