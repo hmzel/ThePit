@@ -20,6 +20,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import static me.zelha.thepit.zelenums.Passives.*;
+import static me.zelha.thepit.zelenums.Perks.*;
 import static org.bukkit.Material.*;
 
 import java.util.*;
@@ -197,7 +198,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     private List<String> otherLoreBuilder(Perks perk) {
         List<String> lore = new ArrayList<>();
 
-        if (perk != Perks.UNSET) {
+        if (perk != UNSET) {
             lore.add("§Selected: §a" + perk.getName());
             lore.add("\n");
         }
@@ -213,10 +214,10 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         Inventory mainGUI = Bukkit.createInventory(p, 45, "Permanent upgrades");
         PlayerData pData = Main.getInstance().getPlayerData(p);
 
-        if (pData.getPerkAtSlot(1) != Perks.UNSET) {
+        if (pData.getPerkAtSlot(1) != UNSET) {
 
         } else if (pData.getLevel() >= 10) {
-            mainGUI.setItem(12, zl.itemBuilder(DIAMOND_BLOCK, 1, "§aPerk Slot #1", )));
+            mainGUI.setItem(12, zl.itemBuilder(DIAMOND_BLOCK, 1, "§aPerk Slot #1", otherLoreBuilder(UNSET)));
         } else {
 
         }
