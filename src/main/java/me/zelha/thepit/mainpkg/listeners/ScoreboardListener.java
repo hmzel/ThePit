@@ -21,7 +21,6 @@ public class ScoreboardListener implements Listener {
 
     private final RunMethods methods = Main.getInstance().generateRunMethods();
     private final RunMethods methods2 = Main.getInstance().generateRunMethods();
-    private final RunMethods methods3 = Main.getInstance().generateRunMethods();
 
     @EventHandler
     public void addOnJoin(PlayerJoinEvent e) {
