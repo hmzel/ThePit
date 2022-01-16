@@ -31,6 +31,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     private final Map<UUID, Double> costHandler = new HashMap<>();
     private final Map<UUID, String> backHandler = new HashMap<>();
     private final Map<UUID, Passives> passivesHandler = new HashMap<>();
+    private final Map<UUID, Integer> slotHandler = new HashMap<>();
 
     private String getPassivesNameColor(Player p, Passives passive, double cost) {
         PlayerData pData = Main.getInstance().getPlayerData(p);
@@ -226,8 +227,9 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         Inventory mainGUI = Bukkit.createInventory(p, 45, "Permanent upgrades");
         PlayerData pData = Main.getInstance().getPlayerData(p);
 
-
-
+        determinePerkSlotItem(mainGUI, pData, 1, 10);
+        determinePerkSlotItem(mainGUI, pData, 2, 35);
+        determinePerkSlotItem(mainGUI, pData, 3, 70);
         mainGUI.setItem(28, zl.itemBuilder(LIGHT_BLUE_DYE, 1, getPassivesNameColor(p, XP_BOOST, determineCost(p, XP_BOOST)), passivesLoreBuilder(p, LIGHT_BLUE_DYE, XP_BOOST)));
         mainGUI.setItem(29, zl.itemBuilder(ORANGE_DYE, 1, getPassivesNameColor(p, GOLD_BOOST, determineCost(p, GOLD_BOOST)), passivesLoreBuilder(p, ORANGE_DYE, GOLD_BOOST)));
         mainGUI.setItem(30, zl.itemBuilder(RED_DYE, 1, getPassivesNameColor(p, MELEE_DAMAGE, determineCost(p, MELEE_DAMAGE)), passivesLoreBuilder(p, RED_DYE, MELEE_DAMAGE)));
@@ -361,6 +363,12 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
             if (e.getCurrentItem() != null) {
                 switch (e.getSlot()) {
+                    case 12:
+                        break;
+                    case 13:
+                        break;
+                    case 14:
+                        break;
                     case 28:
                         purchaseHandler(p, XP_BOOST, determineCost(p, XP_BOOST), e);
                         break;
