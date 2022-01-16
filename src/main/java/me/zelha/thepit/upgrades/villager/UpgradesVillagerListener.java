@@ -364,10 +364,16 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             if (e.getCurrentItem() != null) {
                 switch (e.getSlot()) {
                     case 12:
+                        openPerkGUI(p);
+                        slotHandler.put(p.getUniqueId(), 1);
                         break;
                     case 13:
+                        openPerkGUI(p);
+                        slotHandler.put(p.getUniqueId(), 2);
                         break;
                     case 14:
+                        openPerkGUI(p);
+                        slotHandler.put(p.getUniqueId(), 3);
                         break;
                     case 28:
                         purchaseHandler(p, XP_BOOST, determineCost(p, XP_BOOST), e);
