@@ -241,7 +241,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         p.openInventory(mainGUI);
     }
 
-    private void openPerkGUI(Player p) {//unused atm
+    private void openPerkGUI(Player p) {
         Inventory perkGUI = Bukkit.createInventory(p, 45, "Choose a perk");
 
         p.openInventory(perkGUI);
@@ -428,11 +428,13 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
     @EventHandler
     public void onClose(InventoryCloseEvent e) {
+        UUID uuid = e.getPlayer().getUniqueId();
         if (e.getView().getTitle().equals("Are you sure?")) {
-            UUID uuid = e.getPlayer().getUniqueId();
             backHandler.remove(uuid);
             costHandler.remove(uuid);
             passivesHandler.remove(uuid);
+        } else if (e.getView().getTitle().equals("Choose a perk")) {
+            slotHandler.remove(uuid);
         }
     }
 
