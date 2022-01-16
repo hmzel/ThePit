@@ -160,10 +160,10 @@ public class StorageListener implements Listener {
                     pDoc.put(passive.getID(), pData.getPassiveTier(passive));
                 }
 
-                pDoc.put("perk_slot_1", pData.getPerkAtSlot(1));
-                pDoc.put("perk_slot_2", pData.getPerkAtSlot(2));
-                pDoc.put("perk_slot_3", pData.getPerkAtSlot(3));
-                pDoc.put("perk_slot_4", pData.getPerkAtSlot(4));
+                pDoc.put("perk_slot_1", pData.getPerkAtSlot(1).getName());
+                pDoc.put("perk_slot_2", pData.getPerkAtSlot(2).getName());
+                pDoc.put("perk_slot_3", pData.getPerkAtSlot(3).getName());
+                pDoc.put("perk_slot_4", pData.getPerkAtSlot(4).getName());
 
                 pDataCol.replaceOne(new Document("uuid", uuid), pDoc);
             }
