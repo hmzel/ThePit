@@ -442,6 +442,8 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     public void onDrag(InventoryDragEvent e) {
         if (e.getView().getTitle().equals("Permanent upgrades") && e.getInventory() != e.getView().getBottomInventory()) {
             e.setCancelled(true);
+        } else if (e.getView().getTitle().equals("Choose a perk") && e.getInventory() != e.getView().getBottomInventory()) {
+            e.setCancelled(true);
         }
     }
 }
