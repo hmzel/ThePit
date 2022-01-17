@@ -182,21 +182,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         return lore;
     }
 
-    private List<String> perkSlotLoreBuilder(Perks perk) {
-        List<String> lore = new ArrayList<>();
-
-        if (perk != UNSET) {
-            lore.add("§7Selected: §a" + perk.getName());
-            lore.add("\n");
-        }
-
-        lore.addAll(perk.getLore());
-        lore.add("\n");
-        lore.add("§eClick to choose perk!");
-
-        return lore;
-    }
-
     private void determinePerkSlotItem(Inventory inventory, PlayerData pData, int slot, int level) {
         if (pData.getPerkAtSlot(slot) != UNSET) {
             if (pData.getPerkAtSlot(slot) != GOLDEN_HEADS || pData.getPerkAtSlot(slot) != OLYMPUS) {
@@ -218,6 +203,21 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         }
     }
 
+    private List<String> perkSlotLoreBuilder(Perks perk) {
+        List<String> lore = new ArrayList<>();
+
+        if (perk != UNSET) {
+            lore.add("§7Selected: §a" + perk.getName());
+            lore.add("\n");
+        }
+
+        lore.addAll(perk.getLore());
+        lore.add("\n");
+        lore.add("§eClick to choose perk!");
+
+        return lore;
+    }
+
     private void perkSlotLevelCheck(InventoryClickEvent e, int slot) {
         Player p = (Player) e.getWhoClicked();
 
@@ -230,6 +230,16 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         }
     }
 
+    private double determinePassiveCost(Player p, Passives passive) {//will update when i figure out the costs
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+
+        switch (passive) {
+            case EL_GATO:
+                return ((pData.getPassiveTier(passive) + 1) * 1000);
+        }
+        return 0;
+    }
+
     private void openMainGUI(Player p) {
         Inventory mainGUI = Bukkit.createInventory(p, 45, "Permanent upgrades");
         PlayerData pData = Main.getInstance().getPlayerData(p);
@@ -237,13 +247,13 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         determinePerkSlotItem(mainGUI, pData, 1, 10);
         determinePerkSlotItem(mainGUI, pData, 2, 35);
         determinePerkSlotItem(mainGUI, pData, 3, 70);
-        mainGUI.setItem(28, zl.itemBuilder(LIGHT_BLUE_DYE, 1, getPassivesNameColor(p, XP_BOOST, determineCost(p, XP_BOOST)), passivesLoreBuilder(p, LIGHT_BLUE_DYE, XP_BOOST)));
-        mainGUI.setItem(29, zl.itemBuilder(ORANGE_DYE, 1, getPassivesNameColor(p, GOLD_BOOST, determineCost(p, GOLD_BOOST)), passivesLoreBuilder(p, ORANGE_DYE, GOLD_BOOST)));
-        mainGUI.setItem(30, zl.itemBuilder(RED_DYE, 1, getPassivesNameColor(p, MELEE_DAMAGE, determineCost(p, MELEE_DAMAGE)), passivesLoreBuilder(p, RED_DYE, MELEE_DAMAGE)));
-        mainGUI.setItem(31, zl.itemBuilder(YELLOW_DYE, 1, getPassivesNameColor(p, BOW_DAMAGE, determineCost(p, BOW_DAMAGE)), passivesLoreBuilder(p, YELLOW_DYE, BOW_DAMAGE)));
-        mainGUI.setItem(32, zl.itemBuilder(CYAN_DYE, 1, getPassivesNameColor(p, DAMAGE_REDUCTION, determineCost(p, DAMAGE_REDUCTION)), passivesLoreBuilder(p, CYAN_DYE, DAMAGE_REDUCTION)));
-        mainGUI.setItem(33, zl.itemBuilder(BONE_MEAL, 1, getPassivesNameColor(p, BUILD_BATTLER, determineCost(p, BUILD_BATTLER)), passivesLoreBuilder(p, BONE_MEAL, BUILD_BATTLER)));
-        mainGUI.setItem(34, zl.itemBuilder(CAKE, 1, getPassivesNameColor(p, EL_GATO, determineCost(p, EL_GATO)), passivesLoreBuilder(p, CAKE, EL_GATO)));
+        mainGUI.setItem(28, zl.itemBuilder(LIGHT_BLUE_DYE, 1, getPassivesNameColor(p, XP_BOOST, determinePassiveCost(p, XP_BOOST)), passivesLoreBuilder(p, LIGHT_BLUE_DYE, XP_BOOST)));
+        mainGUI.setItem(29, zl.itemBuilder(ORANGE_DYE, 1, getPassivesNameColor(p, GOLD_BOOST, determinePassiveCost(p, GOLD_BOOST)), passivesLoreBuilder(p, ORANGE_DYE, GOLD_BOOST)));
+        mainGUI.setItem(30, zl.itemBuilder(RED_DYE, 1, getPassivesNameColor(p, MELEE_DAMAGE, determinePassiveCost(p, MELEE_DAMAGE)), passivesLoreBuilder(p, RED_DYE, MELEE_DAMAGE)));
+        mainGUI.setItem(31, zl.itemBuilder(YELLOW_DYE, 1, getPassivesNameColor(p, BOW_DAMAGE, determinePassiveCost(p, BOW_DAMAGE)), passivesLoreBuilder(p, YELLOW_DYE, BOW_DAMAGE)));
+        mainGUI.setItem(32, zl.itemBuilder(CYAN_DYE, 1, getPassivesNameColor(p, DAMAGE_REDUCTION, determinePassiveCost(p, DAMAGE_REDUCTION)), passivesLoreBuilder(p, CYAN_DYE, DAMAGE_REDUCTION)));
+        mainGUI.setItem(33, zl.itemBuilder(BONE_MEAL, 1, getPassivesNameColor(p, BUILD_BATTLER, determinePassiveCost(p, BUILD_BATTLER)), passivesLoreBuilder(p, BONE_MEAL, BUILD_BATTLER)));
+        mainGUI.setItem(34, zl.itemBuilder(CAKE, 1, getPassivesNameColor(p, EL_GATO, determinePassiveCost(p, EL_GATO)), passivesLoreBuilder(p, CAKE, EL_GATO)));
 
         p.openInventory(mainGUI);
     }
@@ -321,16 +331,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         }
     }
 
-    private double determineCost(Player p, Passives passive) {//will update when i figure out the costs
-        PlayerData pData = Main.getInstance().getPlayerData(p);
-
-        switch (passive) {
-            case EL_GATO:
-                return ((pData.getPassiveTier(passive) + 1) * 1000);
-        }
-        return 0;
-    }
-
     private void determineBackInventory(Player p) {
         if (backHandler.get(p.getUniqueId()).equals("Permanent upgrades")) {
             openMainGUI(p);
@@ -404,25 +404,25 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                         perkSlotLevelCheck(e, 3);
                         break;
                     case 28:
-                        purchaseHandler(p, XP_BOOST, determineCost(p, XP_BOOST), e);
+                        purchaseHandler(p, XP_BOOST, determinePassiveCost(p, XP_BOOST), e);
                         break;
                     case 29:
-                        purchaseHandler(p, GOLD_BOOST, determineCost(p, GOLD_BOOST), e);
+                        purchaseHandler(p, GOLD_BOOST, determinePassiveCost(p, GOLD_BOOST), e);
                         break;
                     case 30:
-                        purchaseHandler(p, MELEE_DAMAGE, determineCost(p, MELEE_DAMAGE), e);
+                        purchaseHandler(p, MELEE_DAMAGE, determinePassiveCost(p, MELEE_DAMAGE), e);
                         break;
                     case 31:
-                        purchaseHandler(p, BOW_DAMAGE, determineCost(p, BOW_DAMAGE), e);
+                        purchaseHandler(p, BOW_DAMAGE, determinePassiveCost(p, BOW_DAMAGE), e);
                         break;
                     case 32:
-                        purchaseHandler(p, DAMAGE_REDUCTION, determineCost(p, DAMAGE_REDUCTION), e);
+                        purchaseHandler(p, DAMAGE_REDUCTION, determinePassiveCost(p, DAMAGE_REDUCTION), e);
                         break;
                     case 33:
-                        purchaseHandler(p, BUILD_BATTLER, determineCost(p, BUILD_BATTLER), e);
+                        purchaseHandler(p, BUILD_BATTLER, determinePassiveCost(p, BUILD_BATTLER), e);
                         break;
                     case 34:
-                        purchaseHandler(p, EL_GATO, determineCost(p, EL_GATO), e);
+                        purchaseHandler(p, EL_GATO, determinePassiveCost(p, EL_GATO), e);
                         break;
                 }
             }
