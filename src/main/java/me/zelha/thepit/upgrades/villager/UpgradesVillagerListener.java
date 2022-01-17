@@ -7,9 +7,7 @@ import me.zelha.thepit.zelenums.NPCs;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import me.zelha.thepit.zelenums.Worlds;
-import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -184,7 +182,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         return lore;
     }
 
-    private List<String> otherLoreBuilder(Perks perk) {
+    private List<String> perkSlotLoreBuilder(Perks perk) {
         List<String> lore = new ArrayList<>();
 
         if (perk != UNSET) {
@@ -202,17 +200,17 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     private void determinePerkSlotItem(Inventory inventory, PlayerData pData, int slot, int level) {
         if (pData.getPerkAtSlot(slot) != UNSET) {
             if (pData.getPerkAtSlot(slot) != GOLDEN_HEADS || pData.getPerkAtSlot(slot) != OLYMPUS) {
-                inventory.setItem(11 + slot, zl.itemBuilder(pData.getPerkAtSlot(slot).getMaterial(), 1, "§ePerk Slot #" + slot, otherLoreBuilder(pData.getPerkAtSlot(slot))));
+                inventory.setItem(11 + slot, zl.itemBuilder(pData.getPerkAtSlot(slot).getMaterial(), 1, "§ePerk Slot #" + slot, perkSlotLoreBuilder(pData.getPerkAtSlot(slot))));
             } else if (pData.getPerkAtSlot(slot) == GOLDEN_HEADS) {
-                ItemStack item = zl.itemBuilder(pData.getPerkAtSlot(slot).getMaterial(), 1, "§ePerk Slot #" + slot, otherLoreBuilder(pData.getPerkAtSlot(slot)));
+                ItemStack item = zl.itemBuilder(pData.getPerkAtSlot(slot).getMaterial(), 1, "§ePerk Slot #" + slot, perkSlotLoreBuilder(pData.getPerkAtSlot(slot)));
 
             } else if (pData.getPerkAtSlot(slot) == OLYMPUS) {
-                ItemStack item = zl.itemBuilder(pData.getPerkAtSlot(slot).getMaterial(), 1, "§ePerk Slot #" + slot, otherLoreBuilder(pData.getPerkAtSlot(slot)));
+                ItemStack item = zl.itemBuilder(pData.getPerkAtSlot(slot).getMaterial(), 1, "§ePerk Slot #" + slot, perkSlotLoreBuilder(pData.getPerkAtSlot(slot)));
 
                 inventory.setItem(11 + slot, item);//will do something with this later
             }
         } else if (pData.getLevel() >= level) {
-            inventory.setItem(11 + slot, zl.itemBuilder(DIAMOND_BLOCK, 1, "§aPerk Slot #" + slot, otherLoreBuilder(UNSET)));
+            inventory.setItem(11 + slot, zl.itemBuilder(DIAMOND_BLOCK, 1, "§aPerk Slot #" + slot, perkSlotLoreBuilder(UNSET)));
         } else {
             inventory.setItem(11 + slot, zl.itemBuilder(BEDROCK, 1, "§cPerk Slot #" + slot, Collections.singletonList(
                     "§7Required level: " + zl.getColorBracketAndLevel(0, level)
@@ -220,7 +218,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         }
     }
 
-    private void mainGUILevelCheck(InventoryClickEvent e, int slot) {
+    private void perkSlotLevelCheck(InventoryClickEvent e, int slot) {
         Player p = (Player) e.getWhoClicked();
 
         if (e.getCurrentItem().getType() != BEDROCK) {
@@ -397,13 +395,13 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             if (e.getCurrentItem() != null) {
                 switch (e.getSlot()) {
                     case 12:
-                        mainGUILevelCheck(e, 1);
+                        perkSlotLevelCheck(e, 1);
                         break;
                     case 13:
-                        mainGUILevelCheck(e, 2);
+                        perkSlotLevelCheck(e, 2);
                         break;
                     case 14:
-                        mainGUILevelCheck(e, 3);
+                        perkSlotLevelCheck(e, 3);
                         break;
                     case 28:
                         purchaseHandler(p, XP_BOOST, determineCost(p, XP_BOOST), e);
