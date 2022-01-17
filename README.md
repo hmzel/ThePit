@@ -7,4 +7,4 @@ MC Version 1.17.1 (because im too lazy to update and 1.8 scares me)
 
 progress: ~10% done, being optimistic
 
-using dependencies spigot-api and mongodb-driver-sync
+using dependencies spigot and mongodb-driver-sync

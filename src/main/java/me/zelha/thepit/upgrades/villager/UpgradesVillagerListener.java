@@ -7,7 +7,10 @@ import me.zelha.thepit.zelenums.NPCs;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import me.zelha.thepit.zelenums.Worlds;
+import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.*;
+import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -17,7 +20,13 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import static me.zelha.thepit.zelenums.Passives.*;
 import static me.zelha.thepit.zelenums.Perks.*;
@@ -200,7 +209,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         List<String> lore = new ArrayList<>();
 
         if (perk != UNSET) {
-            lore.add("§Selected: §a" + perk.getName());
+            lore.add("§7Selected: §a" + perk.getName());
             lore.add("\n");
         }
 
@@ -212,12 +221,26 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     }
 
     private void determinePerkSlotItem(Inventory inventory, PlayerData pData, int slot, int level) {
-        if (pData.getPerkAtSlot(1) != UNSET) {
-            inventory.setItem(11 + slot, zl.itemBuilder(pData.getPerkAtSlot(1).getMaterial(), 1, "§ePerk Slot #1", otherLoreBuilder(pData.getPerkAtSlot(1))));
-        } else if (pData.getLevel() >= 10) {
-            inventory.setItem(11+ slot, zl.itemBuilder(DIAMOND_BLOCK, 1, "§aPerk Slot #1", otherLoreBuilder(UNSET)));
+        if (pData.getPerkAtSlot(slot) != UNSET) {
+            if (pData.getPerkAtSlot(slot) != GOLDEN_HEADS || pData.getPerkAtSlot(slot) != OLYMPUS) {
+                inventory.setItem(11 + slot, zl.itemBuilder(pData.getPerkAtSlot(slot).getMaterial(), 1, "§ePerk Slot #" + slot, otherLoreBuilder(pData.getPerkAtSlot(slot))));
+            } else if (pData.getPerkAtSlot(slot) == GOLDEN_HEADS) {
+                ItemStack item = zl.itemBuilder(pData.getPerkAtSlot(slot).getMaterial(), 1, "§ePerk Slot #" + slot, otherLoreBuilder(pData.getPerkAtSlot(slot)));
+                SkullMeta meta = (SkullMeta) item.getItemMeta();
+
+                meta.setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString("57a8704d-b3f4-4c8f-bea0-64675011fe7b")));
+                item.setItemMeta(meta);
+                inventory.setItem(11 + slot, item);//aaaaaaaaaaaaaaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+                System.out.println(meta.getOwningPlayer());
+            } else if (pData.getPerkAtSlot(slot) == OLYMPUS) {
+                ItemStack item = zl.itemBuilder(pData.getPerkAtSlot(slot).getMaterial(), 1, "§ePerk Slot #" + slot, otherLoreBuilder(pData.getPerkAtSlot(slot)));
+
+                inventory.setItem(11 + slot, item);
+            }
+        } else if (pData.getLevel() >= level) {
+            inventory.setItem(11 + slot, zl.itemBuilder(DIAMOND_BLOCK, 1, "§aPerk Slot #" + slot, otherLoreBuilder(UNSET)));
         } else {
-            inventory.setItem(11+ slot, zl.itemBuilder(BEDROCK, 1, "§cPerk Slot #1", Collections.singletonList(
+            inventory.setItem(11 + slot, zl.itemBuilder(BEDROCK, 1, "§cPerk Slot #" + slot, Collections.singletonList(
                     "§7Required level: " + zl.getColorBracketAndLevel(0, level)
             )));
         }
