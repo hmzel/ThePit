@@ -10,7 +10,6 @@ import me.zelha.thepit.zelenums.Worlds;
 import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -20,13 +19,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import static me.zelha.thepit.zelenums.Passives.*;
 import static me.zelha.thepit.zelenums.Perks.*;
@@ -191,20 +184,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         return lore;
     }
 
-    private List<String> perkLoreBuilder(Player p, Material material) {//unused atm
-        List<String> lore = new ArrayList<>();
-        PlayerData pData = Main.getInstance().getPlayerData(p);
-
-        return lore;
-    }
-
-    private List<String> streakLoreBuilder(Player p, Material material) {//unused atm
-        List<String> lore = new ArrayList<>();
-        PlayerData pData = Main.getInstance().getPlayerData(p);
-
-        return lore;
-    }
-
     private List<String> otherLoreBuilder(Perks perk) {
         List<String> lore = new ArrayList<>();
 
@@ -226,16 +205,11 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 inventory.setItem(11 + slot, zl.itemBuilder(pData.getPerkAtSlot(slot).getMaterial(), 1, "§ePerk Slot #" + slot, otherLoreBuilder(pData.getPerkAtSlot(slot))));
             } else if (pData.getPerkAtSlot(slot) == GOLDEN_HEADS) {
                 ItemStack item = zl.itemBuilder(pData.getPerkAtSlot(slot).getMaterial(), 1, "§ePerk Slot #" + slot, otherLoreBuilder(pData.getPerkAtSlot(slot)));
-                SkullMeta meta = (SkullMeta) item.getItemMeta();
 
-                meta.setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString("57a8704d-b3f4-4c8f-bea0-64675011fe7b")));
-                item.setItemMeta(meta);
-                inventory.setItem(11 + slot, item);//aaaaaaaaaaaaaaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                System.out.println(meta.getOwningPlayer());
             } else if (pData.getPerkAtSlot(slot) == OLYMPUS) {
                 ItemStack item = zl.itemBuilder(pData.getPerkAtSlot(slot).getMaterial(), 1, "§ePerk Slot #" + slot, otherLoreBuilder(pData.getPerkAtSlot(slot)));
 
-                inventory.setItem(11 + slot, item);
+                inventory.setItem(11 + slot, item);//will do something with this later
             }
         } else if (pData.getLevel() >= level) {
             inventory.setItem(11 + slot, zl.itemBuilder(DIAMOND_BLOCK, 1, "§aPerk Slot #" + slot, otherLoreBuilder(UNSET)));
@@ -243,6 +217,18 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             inventory.setItem(11 + slot, zl.itemBuilder(BEDROCK, 1, "§cPerk Slot #" + slot, Collections.singletonList(
                     "§7Required level: " + zl.getColorBracketAndLevel(0, level)
             )));
+        }
+    }
+
+    private void mainGUILevelCheck(InventoryClickEvent e, int slot) {
+        Player p = (Player) e.getWhoClicked();
+
+        if (e.getCurrentItem().getType() != BEDROCK) {
+            openPerkGUI(p);
+            slotHandler.put(p.getUniqueId(), slot);
+        } else {
+            p.sendMessage("§cSlot not unlocked yet!");
+            p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
         }
     }
 
@@ -264,10 +250,34 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         p.openInventory(mainGUI);
     }
 
+    private void determinePerkItem(Inventory inventory, PlayerData pData, int invSlot, int level) {
+        if (pData.getLevel() >= level) {
+
+        } else {
+            inventory.setItem(invSlot, zl.itemBuilder(BEDROCK, 1, "§cUnknown Perk", Collections.singletonList(
+                    "§7Required level: " + zl.getColorBracketAndLevel(0, level)
+            )));
+        }
+    }
+
+    private List<String> perkLoreBuilder(Player p, Material material) {//unused atm
+        List<String> lore = new ArrayList<>();
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+
+        return lore;
+    }
+
     private void openPerkGUI(Player p) {
         Inventory perkGUI = Bukkit.createInventory(p, 45, "Choose a perk");
 
         p.openInventory(perkGUI);
+    }
+
+    private List<String> streakLoreBuilder(Player p, Material material) {//unused atm
+        List<String> lore = new ArrayList<>();
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+
+        return lore;
     }
 
     private void openMainStreakGUI(Player p) {//unused atm
@@ -387,16 +397,13 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             if (e.getCurrentItem() != null) {
                 switch (e.getSlot()) {
                     case 12:
-                        openPerkGUI(p);
-                        slotHandler.put(p.getUniqueId(), 1);
+                        mainGUILevelCheck(e, 1);
                         break;
                     case 13:
-                        openPerkGUI(p);
-                        slotHandler.put(p.getUniqueId(), 2);
+                        mainGUILevelCheck(e, 2);
                         break;
                     case 14:
-                        openPerkGUI(p);
-                        slotHandler.put(p.getUniqueId(), 3);
+                        mainGUILevelCheck(e, 3);
                         break;
                     case 28:
                         purchaseHandler(p, XP_BOOST, determineCost(p, XP_BOOST), e);
