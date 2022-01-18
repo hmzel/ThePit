@@ -219,33 +219,39 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         return 0;
     }
 
-    private void determinePerkSlotItem(Inventory inventory, PlayerData pData, int slot, int level) {
-        if (pData.getPerkAtSlot(slot) != UNSET) {
-            if (pData.getPerkAtSlot(slot) != GOLDEN_HEADS || pData.getPerkAtSlot(slot) != OLYMPUS) {
-                inventory.setItem(11 + slot, zl.itemBuilder(pData.getPerkAtSlot(slot).getMaterial(), 1, "§ePerk Slot #" + slot, perkSlotLoreBuilder(pData.getPerkAtSlot(slot))));
-            } else if (pData.getPerkAtSlot(slot) == GOLDEN_HEADS) {
-                ItemStack item = zl.itemBuilder(pData.getPerkAtSlot(slot).getMaterial(), 1, "§ePerk Slot #" + slot, perkSlotLoreBuilder(pData.getPerkAtSlot(slot)));
-                SkullMeta meta = (SkullMeta) item.getItemMeta();
-                meta.setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString("57a8704d-b3f4-4c8f-bea0-64675011fe7b")));
-
-                item.setItemMeta(meta);
-            } else if (pData.getPerkAtSlot(slot) == OLYMPUS) {
-                ItemStack item = zl.itemBuilder(pData.getPerkAtSlot(slot).getMaterial(), 1, "§ePerk Slot #" + slot, perkSlotLoreBuilder(pData.getPerkAtSlot(slot)));
-
-                inventory.setItem(11 + slot, item);//will do something with this later
-            }
-        } else if (pData.getLevel() >= level) {
-            inventory.setItem(11 + slot, zl.itemBuilder(DIAMOND_BLOCK, 1, "§aPerk Slot #" + slot, perkSlotLoreBuilder(UNSET)));
-        } else {
-            inventory.setItem(11 + slot, zl.itemBuilder(BEDROCK, 1, "§cPerk Slot #" + slot, Collections.singletonList(
-                    "§7Required level: " + zl.getColorBracketAndLevel(0, level)
-            )));
-        }
-    }
-
-    private List<String> perkSlotLoreBuilder(Perks perk) {
+    private ItemStack perkSlotItemBuilder(Player p, int slot) {
+        String name;
+        int level = 0;
         List<String> lore = new ArrayList<>();
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+        Perks perk = pData.getPerkAtSlot(slot);
 
+        //determining level
+        switch (slot) {
+            case 1:
+                level = 10;
+                break;
+            case 2:
+                level = 35;
+                break;
+            case 3:
+                level = 70;
+                break;
+            case 4:
+                level = 100;
+                break;
+        }
+        //end
+
+        //name building
+        if (pData.getPerkAtSlot(slot) != UNSET) {
+            name = "§ePerk Slot #" + slot;
+        } else {
+            name = "§aPerk Slot #" + slot;
+        }
+        //end
+
+        //lore building
         if (perk != UNSET) {
             lore.add("§7Selected: §a" + perk.getName());
             lore.add("\n");
@@ -254,17 +260,34 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         lore.addAll(perk.getLore());
         lore.add("\n");
         lore.add("§eClick to choose perk!");
+        //end
 
-        return lore;
+        //special item handling
+        if (pData.getLevel() < level && perk == UNSET) {
+            return zl.itemBuilder(BEDROCK, 1, "§cPerk Slot #" + slot, Collections.singletonList(
+                    "§7Required level: " + zl.getColorBracketAndLevel(0, level)
+            ));
+        } else if (pData.getPerkAtSlot(slot) == GOLDEN_HEADS) {
+            ItemStack item = zl.itemBuilder(perk.getMaterial(), 1, name, lore);
+            //insert head stuff here
+            return item;
+        } else if (pData.getPerkAtSlot(slot) == OLYMPUS) {
+            ItemStack item = zl.itemBuilder(perk.getMaterial(), 1, name, lore);
+            //insert potion stuff here
+            return item;
+        }
+        //end
+
+        return zl.itemBuilder(perk.getMaterial(), 1, name, lore);
     }
 
     private void openMainGUI(Player p) {
         Inventory mainGUI = Bukkit.createInventory(p, 45, "Permanent upgrades");
         PlayerData pData = Main.getInstance().getPlayerData(p);
 
-        determinePerkSlotItem(mainGUI, pData, 1, 10);
-        determinePerkSlotItem(mainGUI, pData, 2, 35);
-        determinePerkSlotItem(mainGUI, pData, 3, 70);
+        mainGUI.setItem(12, perkSlotItemBuilder(p, 1));
+        mainGUI.setItem(13, perkSlotItemBuilder(p, 2));
+        mainGUI.setItem(14, perkSlotItemBuilder(p, 3));
         mainGUI.setItem(28, passivesItemBuilder(p, XP_BOOST));
         mainGUI.setItem(29, passivesItemBuilder(p, GOLD_BOOST));
         mainGUI.setItem(30, passivesItemBuilder(p, MELEE_DAMAGE));
