@@ -18,7 +18,6 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SkullMeta;
 
 import static me.zelha.thepit.zelenums.Passives.*;
 import static me.zelha.thepit.zelenums.Perks.*;
@@ -48,7 +47,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 level = 10;
                 break;
             case GOLD_BOOST:
-                level = 20;
+                level = 20;//t2 is 35
                 break;
             case MELEE_DAMAGE:
             case BOW_DAMAGE:
@@ -189,20 +188,25 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
         lore.add("\n");
 
-        if (pData.getPassiveTier(passive) < 5) {
-            if (passive == EL_GATO && pData.getPassiveTier(EL_GATO) > 0) {
-                lore.add("§7Upgrade cost: §6" + zl.getFancyGoldString(cost) + "g");
-            } else {
-                lore.add("§7Cost: §6" + zl.getFancyGoldString(cost) + "g");
-            }
+        if (pData.getLevel() >= level) {
+            if (pData.getPassiveTier(passive) < 5) {
+                if (pData.getPassiveTier(passive) > 0) {
+                    lore.add("§7Upgrade cost: §6" + zl.getFancyGoldString(cost) + "g");
+                } else {
+                    lore.add("§7Cost: §6" + zl.getFancyGoldString(cost) + "g");
+                }
 
-            if ((pData.getGold() - cost) >= 0) {
-                lore.add("§eClick to purchase!");
+                if ((pData.getGold() - cost) >= 0) {
+                    lore.add("§eClick to purchase!");
+                } else {
+                    lore.add("§cNot enough gold!");
+                }
             } else {
-                lore.add("§cNot enough gold!");
+                lore.add("§aMax tier unlocked!");
             }
         } else {
-            lore.add("§aMax tier unlocked!");
+            lore.add("§7Required level: " + zl.getColorBracketAndLevel(1, level));
+            lore.add("§cLevel too low to upgrade!");
         }
         //end
 
@@ -283,7 +287,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
     private void openMainGUI(Player p) {
         Inventory mainGUI = Bukkit.createInventory(p, 45, "Permanent upgrades");
-        PlayerData pData = Main.getInstance().getPlayerData(p);
 
         mainGUI.setItem(12, perkSlotItemBuilder(p, 1));
         mainGUI.setItem(13, perkSlotItemBuilder(p, 2));
@@ -299,21 +302,20 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         p.openInventory(mainGUI);
     }
 
-    private void determinePerkItem(Inventory inventory, PlayerData pData, int invSlot, int level) {
-        if (pData.getLevel() >= level) {
-
-        } else {
-            inventory.setItem(invSlot, zl.itemBuilder(BEDROCK, 1, "§cUnknown Perk", Collections.singletonList(
-                    "§7Required level: " + zl.getColorBracketAndLevel(0, level)
-            )));
-        }
-    }
-
-    private List<String> perkLoreBuilder(Player p, Material material) {//unused atm
+    private ItemStack perkItemBuilder(Player p, Perks perk) {
+        String name = "";
+        int level = 0;
         List<String> lore = new ArrayList<>();
         PlayerData pData = Main.getInstance().getPlayerData(p);
 
-        return lore;
+        if (pData.getLevel() >= level) {
+
+        } else {
+            return zl.itemBuilder(BEDROCK, 1, "§cUnknown Perk", Collections.singletonList(
+                    "§7Required level: " + zl.getColorBracketAndLevel(0, level)
+            ));
+        }
+        return zl.itemBuilder(perk.getMaterial(), 1, name, lore);
     }
 
     private void openPerkGUI(Player p) {
@@ -335,8 +337,9 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         p.openInventory(streakGUI);
     }
 
-    private void purchaseHandler(Player p, Passives passive, double cost, InventoryClickEvent e) {
+    private void passivePurchaseHandler(Player p, Passives passive, InventoryClickEvent e) {
         PlayerData pData = Main.getInstance().getPlayerData(p);
+        double cost = determinePassiveCost(p, passive);
 
         if (pData.getPassiveTier(passive) < 5) {
             if (pData.getGold() - cost >= 0) {
@@ -467,25 +470,25 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                         }
                         break;
                     case 28:
-                        purchaseHandler(p, XP_BOOST, determinePassiveCost(p, XP_BOOST), e);
+                        passivePurchaseHandler(p, XP_BOOST, e);
                         break;
                     case 29:
-                        purchaseHandler(p, GOLD_BOOST, determinePassiveCost(p, GOLD_BOOST), e);
+                        passivePurchaseHandler(p, GOLD_BOOST, e);
                         break;
                     case 30:
-                        purchaseHandler(p, MELEE_DAMAGE, determinePassiveCost(p, MELEE_DAMAGE), e);
+                        passivePurchaseHandler(p, MELEE_DAMAGE, e);
                         break;
                     case 31:
-                        purchaseHandler(p, BOW_DAMAGE, determinePassiveCost(p, BOW_DAMAGE), e);
+                        passivePurchaseHandler(p, BOW_DAMAGE, e);
                         break;
                     case 32:
-                        purchaseHandler(p, DAMAGE_REDUCTION, determinePassiveCost(p, DAMAGE_REDUCTION), e);
+                        passivePurchaseHandler(p, DAMAGE_REDUCTION, e);
                         break;
                     case 33:
-                        purchaseHandler(p, BUILD_BATTLER, determinePassiveCost(p, BUILD_BATTLER), e);
+                        passivePurchaseHandler(p, BUILD_BATTLER, e);
                         break;
                     case 34:
-                        purchaseHandler(p, EL_GATO, determinePassiveCost(p, EL_GATO), e);
+                        passivePurchaseHandler(p, EL_GATO, e);
                         break;
                 }
             }
