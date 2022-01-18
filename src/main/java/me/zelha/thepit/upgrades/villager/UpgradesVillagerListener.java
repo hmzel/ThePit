@@ -18,6 +18,7 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import static me.zelha.thepit.zelenums.Passives.*;
 import static me.zelha.thepit.zelenums.Perks.*;
@@ -27,11 +28,21 @@ import java.util.*;
 
 public class UpgradesVillagerListener implements Listener {//i hate this class
 
-    private final ZelLogic zl = Main.getInstance().getZelLogic();
+    private final ZelLogic zl = Main.getInstance().getZelLogic();// will probably condense most of these methods when i get everything working
     private final Map<UUID, Double> costHandler = new HashMap<>();
     private final Map<UUID, String> backHandler = new HashMap<>();
     private final Map<UUID, Passives> passivesHandler = new HashMap<>();
     private final Map<UUID, Integer> slotHandler = new HashMap<>();
+
+    private void determinePassiveItem(Inventory inventory, Player p, Passives passive, int guiSlot, int level) {
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+
+        if (pData.getLevel() >= level || pData.getPrestige() != 0) {
+            inventory.setItem(guiSlot, zl.itemBuilder(passive.getMaterial(), 1, getPassivesNameColor(p, passive, determinePassiveCost(p, passive)), passivesLoreBuilder(p, passive.getMaterial(), passive)));
+        } else {
+
+        }
+    }
 
     private String getPassivesNameColor(Player p, Passives passive, double cost) {
         PlayerData pData = Main.getInstance().getPlayerData(p);
@@ -182,13 +193,26 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         return lore;
     }
 
+    private double determinePassiveCost(Player p, Passives passive) {//will update when i figure out the costs
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+
+        switch (passive) {
+            case EL_GATO:
+                return ((pData.getPassiveTier(passive) + 1) * 1000);
+        }
+        return 0;
+    }
+
     private void determinePerkSlotItem(Inventory inventory, PlayerData pData, int slot, int level) {
         if (pData.getPerkAtSlot(slot) != UNSET) {
             if (pData.getPerkAtSlot(slot) != GOLDEN_HEADS || pData.getPerkAtSlot(slot) != OLYMPUS) {
                 inventory.setItem(11 + slot, zl.itemBuilder(pData.getPerkAtSlot(slot).getMaterial(), 1, "§ePerk Slot #" + slot, perkSlotLoreBuilder(pData.getPerkAtSlot(slot))));
             } else if (pData.getPerkAtSlot(slot) == GOLDEN_HEADS) {
                 ItemStack item = zl.itemBuilder(pData.getPerkAtSlot(slot).getMaterial(), 1, "§ePerk Slot #" + slot, perkSlotLoreBuilder(pData.getPerkAtSlot(slot)));
+                SkullMeta meta = (SkullMeta) item.getItemMeta();
+                meta.setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString("57a8704d-b3f4-4c8f-bea0-64675011fe7b")));
 
+                item.setItemMeta(meta);
             } else if (pData.getPerkAtSlot(slot) == OLYMPUS) {
                 ItemStack item = zl.itemBuilder(pData.getPerkAtSlot(slot).getMaterial(), 1, "§ePerk Slot #" + slot, perkSlotLoreBuilder(pData.getPerkAtSlot(slot)));
 
@@ -216,28 +240,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         lore.add("§eClick to choose perk!");
 
         return lore;
-    }
-
-    private void perkSlotLevelCheck(InventoryClickEvent e, int slot) {
-        Player p = (Player) e.getWhoClicked();
-
-        if (e.getCurrentItem().getType() != BEDROCK) {
-            openPerkGUI(p);
-            slotHandler.put(p.getUniqueId(), slot);
-        } else {
-            p.sendMessage("§cSlot not unlocked yet!");
-            p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
-        }
-    }
-
-    private double determinePassiveCost(Player p, Passives passive) {//will update when i figure out the costs
-        PlayerData pData = Main.getInstance().getPlayerData(p);
-
-        switch (passive) {
-            case EL_GATO:
-                return ((pData.getPassiveTier(passive) + 1) * 1000);
-        }
-        return 0;
     }
 
     private void openMainGUI(Player p) {
@@ -337,6 +339,19 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         }
     }
 
+    private boolean levelCheck(InventoryClickEvent e, int level, String message, Sound sound) {
+        Player p = (Player) e.getWhoClicked();
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+
+        if (pData.getLevel() >= level) {
+            return true;
+        } else {
+            p.sendMessage(message);
+            p.playSound(p.getLocation(), sound, 1, 1);
+            return false;
+        }
+    }
+
     @EventHandler
     public void onDirectRightClick(InventoryOpenEvent e) {
         if (e.getView().getTopInventory().getType() == InventoryType.MERCHANT) {
@@ -395,13 +410,22 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             if (e.getCurrentItem() != null) {
                 switch (e.getSlot()) {
                     case 12:
-                        perkSlotLevelCheck(e, 1);
+                        if (levelCheck(e, 10, "§cSlot not unlocked yet!", Sound.ENTITY_ENDERMAN_TELEPORT)) {
+                            openPerkGUI(p);
+                            slotHandler.put(p.getUniqueId(), 1);
+                        }
                         break;
                     case 13:
-                        perkSlotLevelCheck(e, 2);
+                        if (levelCheck(e, 35, "§cSlot not unlocked yet!", Sound.ENTITY_ENDERMAN_TELEPORT)) {
+                            openPerkGUI(p);
+                            slotHandler.put(p.getUniqueId(), 2);
+                        }
                         break;
                     case 14:
-                        perkSlotLevelCheck(e, 3);
+                        if (levelCheck(e, 70, "§cSlot not unlocked yet!", Sound.ENTITY_ENDERMAN_TELEPORT)) {
+                            openPerkGUI(p);
+                            slotHandler.put(p.getUniqueId(), 3);
+                        }
                         break;
                     case 28:
                         purchaseHandler(p, XP_BOOST, determinePassiveCost(p, XP_BOOST), e);
