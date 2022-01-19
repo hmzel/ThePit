@@ -42,7 +42,7 @@ public class PlayerData {
         perkSlot4 = document.getString("perk_slot_4");
 
         for (Passives passive : Passives.values()) {
-            passivesMap.put(passive, document.getInteger(passive.getID()));
+            passivesMap.put(passive, document.getInteger("passives." + passive.getName()));
         }
 
         for (Perks perk : Perks.values()) {
