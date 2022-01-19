@@ -24,6 +24,7 @@ public class PlayerData {
     private String perkSlot2;
     private String perkSlot3;
     private String perkSlot4;
+    private final Map<Perks, Boolean> perkUnlocks = new HashMap<>();
 
     public PlayerData(Document document) {
         prestige = document.getInteger("prestige");
@@ -42,6 +43,10 @@ public class PlayerData {
 
         for (Passives passive : Passives.values()) {
             passivesMap.put(passive, document.getInteger(passive.getID()));
+        }
+
+        for (Perks perk : Perks.values()) {
+            perkUnlocks.put(perk, (boolean) document.get("perk_unlocks." + perk.getName()));
         }
 
         if (bounty != 0) {
@@ -109,6 +114,10 @@ public class PlayerData {
         }
     }
 
+    public boolean getPerkUnlock(Perks perk) {
+        return perkUnlocks.get(perk);
+    }
+
     //setters
 
     public void setPrestige(int prestige) {
@@ -165,6 +174,10 @@ public class PlayerData {
         } else if (slot == 4) {
             perkSlot4 = perk.getName();
         }
+    }
+
+    public void setPerkUnlock(Perks perk, boolean bool) {
+        perkUnlocks.put(perk, bool);
     }
 }
 
