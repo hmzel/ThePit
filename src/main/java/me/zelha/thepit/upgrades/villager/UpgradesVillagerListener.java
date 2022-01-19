@@ -177,7 +177,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 lore.add("§aMax tier unlocked!");
             }
         } else {
-            lore.add("§7Required level: " + zl.getColorBracketAndLevel(1, level));
+            lore.add("§7Required level: " + zl.getColorBracketAndLevel(0, level));
             lore.add("§cLevel too low to upgrade!");
         }
 
