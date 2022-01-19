@@ -34,6 +34,12 @@ public class StorageListener implements Listener {
 
     private boolean dataCheck(Document document) {
 
+        for (Passives passive : Passives.values()) {
+            if (document.get("passives." + passive.getName()) == null) {
+                return false;
+            }
+        }
+
         for (Perks perk : Perks.values()) {
             if (document.get("perk_unlocks." + perk.getName()) == null) {
                 return false;
@@ -45,13 +51,6 @@ public class StorageListener implements Listener {
                 && document.get("exp") != null
                 && document.get("gold") != null
                 && document.get("bounty") != null
-                && document.get("passive_xp_boost") != null
-                && document.get("passive_gold_boost") != null
-                && document.get("passive_melee_damage") != null
-                && document.get("passive_bow_damage") != null
-                && document.get("passive_damage_reduction") != null
-                && document.get("passive_build_battler") != null
-                && document.get("passive_el_gato") != null
                 && document.get("perk_slot_1") != null
                 && document.get("perk_slot_2") != null
                 && document.get("perk_slot_3") != null
@@ -67,8 +66,8 @@ public class StorageListener implements Listener {
         if (document.get("bounty") == null) document.append("bounty", 0);
 
         for (Passives passive : Passives.values()) {
-            if (document.get(passive.getID()) == null) {
-                document.append(passive.getID(), 0);
+            if (document.get("passives." + passive.getName()) == null) {
+                document.append("passives." + passive.getName(), 0);
             }
         }
 
@@ -93,7 +92,12 @@ public class StorageListener implements Listener {
         Document pDoc = pDataCol.find(filter).first();
 
         if (pDataCol.countDocuments(filter) < 1) {
+            Document passivesEmbed = new Document();
             Document unlockedPerksEmbed = new Document();
+
+            for (Passives passive : Passives.values()) {
+                passivesEmbed.append(passive.getName(), 0);
+            }
 
             for (Perks perk : Perks.values()) {
                 unlockedPerksEmbed.append(perk.getName(), false);
@@ -105,13 +109,7 @@ public class StorageListener implements Listener {
                     .append("exp", 15)
                     .append("gold", 0.0)
                     .append("bounty", 0)
-                    .append("passive_xp_boost", 0)
-                    .append("passive_gold_boost", 0)
-                    .append("passive_melee_damage", 0)
-                    .append("passive_bow_damage", 0)
-                    .append("passive_damage_reduction", 0)
-                    .append("passive_build_battler", 0)
-                    .append("passive_el_gato", 0)
+                    .append("passives", passivesEmbed)
                     .append("perk_slot_1", "unset")
                     .append("perk_slot_2", "unset")
                     .append("perk_slot_3", "unset")
@@ -150,7 +148,7 @@ public class StorageListener implements Listener {
         pDoc.put("bounty", pData.getBounty());
 
         for (Passives passive : Passives.values()) {
-            pDoc.put(passive.getID(), pData.getPassiveTier(passive));
+            pDoc.put("passives." + passive.getName(), pData.getPassiveTier(passive));
         }
 
         pDoc.put("perk_slot_1", pData.getPerkAtSlot(1).getName());
@@ -185,7 +183,7 @@ public class StorageListener implements Listener {
                 pDoc.put("bounty", pData.getBounty());
 
                 for (Passives passive : Passives.values()) {
-                    pDoc.put(passive.getID(), pData.getPassiveTier(passive));
+                    pDoc.put("passives." + passive.getName(), pData.getPassiveTier(passive));
                 }
 
                 pDoc.put("perk_slot_1", pData.getPerkAtSlot(1).getName());
