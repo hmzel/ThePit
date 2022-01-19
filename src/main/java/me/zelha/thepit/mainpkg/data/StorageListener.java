@@ -3,6 +3,7 @@ package me.zelha.thepit.mainpkg.data;
 import com.mongodb.client.MongoCollection;
 import me.zelha.thepit.Main;
 import me.zelha.thepit.zelenums.Passives;
+import me.zelha.thepit.zelenums.Perks;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -32,6 +33,12 @@ public class StorageListener implements Listener {
     }
 
     private boolean dataCheck(Document document) {
+
+        for (Perks perk : Perks.values()) {
+            if (document.get("perk_unlocks." + perk.getName()) == null) {
+                return false;
+            }
+        }
 
         return document.get("prestige") != null
                 && document.get("level") != null
@@ -70,6 +77,12 @@ public class StorageListener implements Listener {
         if (document.get("perk_slot_3") == null) document.append("perk_slot_3", "unset");
         if (document.get("perk_slot_4") == null) document.append("perk_slot_4", "unset");
 
+        for (Perks perk : Perks.values()) {
+            if (document.get("perk_unlocks." + perk.getName()) == null) {
+                document.append("perk_unlocks." + perk.getName(), false);
+            }
+        }
+
         return document;
     }
 
@@ -80,6 +93,12 @@ public class StorageListener implements Listener {
         Document pDoc = pDataCol.find(filter).first();
 
         if (pDataCol.countDocuments(filter) < 1) {
+            Document unlockedPerksEmbed = new Document();
+
+            for (Perks perk : Perks.values()) {
+                unlockedPerksEmbed.append(perk.getName(), false);
+            }
+
             pDataCol.insertOne(filter
                     .append("prestige", 0)
                     .append("level", 1)
@@ -96,7 +115,8 @@ public class StorageListener implements Listener {
                     .append("perk_slot_1", "unset")
                     .append("perk_slot_2", "unset")
                     .append("perk_slot_3", "unset")
-                    .append("perk_slot_4", "unset"));
+                    .append("perk_slot_4", "unset")
+                    .append("perk_unlocks", unlockedPerksEmbed));
 
             pDoc = pDataCol.find(filter).first();
 
@@ -133,6 +153,14 @@ public class StorageListener implements Listener {
             pDoc.put(passive.getID(), pData.getPassiveTier(passive));
         }
 
+        pDoc.put("perk_slot_1", pData.getPerkAtSlot(1).getName());
+        pDoc.put("perk_slot_2", pData.getPerkAtSlot(2).getName());
+        pDoc.put("perk_slot_3", pData.getPerkAtSlot(3).getName());
+        pDoc.put("perk_slot_4", pData.getPerkAtSlot(4).getName());
+
+        for (Perks perk : Perks.values()) {
+            pDoc.put("perk_unlocks." + perk.getName(), pData.getPerkUnlock(perk));
+        }
 
         pDataCol.replaceOne(new Document("uuid", uuid), pDoc);
 
@@ -164,6 +192,10 @@ public class StorageListener implements Listener {
                 pDoc.put("perk_slot_2", pData.getPerkAtSlot(2).getName());
                 pDoc.put("perk_slot_3", pData.getPerkAtSlot(3).getName());
                 pDoc.put("perk_slot_4", pData.getPerkAtSlot(4).getName());
+
+                for (Perks perk : Perks.values()) {
+                    pDoc.put("perk_unlocks." + perk.getName(), pData.getPerkUnlock(perk));
+                }
 
                 pDataCol.replaceOne(new Document("uuid", uuid), pDoc);
             }
