@@ -31,7 +31,6 @@ public class ZelLogic {//zel
         ItemStack item = new ItemStack(material, count);
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.setUnbreakable(true);
-        itemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         item.setItemMeta(itemMeta);
 
         return item;
@@ -43,6 +42,7 @@ public class ZelLogic {//zel
         itemMeta.setUnbreakable(true);
         itemMeta.setDisplayName(name);
         itemMeta.setLore(lore);
+        itemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         item.setItemMeta(itemMeta);
 
         return item;
