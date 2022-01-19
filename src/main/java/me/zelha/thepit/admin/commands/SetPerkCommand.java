@@ -28,12 +28,12 @@ public class SetPerkCommand implements CommandExecutor {
                             break;
                         default:
                             p.sendMessage("§5Invalid command usage." +
-                                    "\n§5try /setperk 1 golden_heads");
+                                    "\n§5try /setperk 1 unset");
                             break;
                     }
                 } else {
                     p.sendMessage("§5Invalid command usage." +
-                            "\n§5try /setperk 1 golden_heads");
+                            "\n§5try /setperk 1 unset");
                 }
             } else if (args.length == 3) {
                 if (Bukkit.getPlayer(args[0]) != null) {
@@ -50,19 +50,19 @@ public class SetPerkCommand implements CommandExecutor {
                                 break;
                             default:
                                 p.sendMessage("§5Invalid command usage." +
-                                        "\n§5try /setperk name 1 golden_heads");
+                                        "\n§5try /setperk name 1 unset");
                                 break;
                         }
                     } else {
                         p.sendMessage("§5Invalid command usage." +
-                                "\n§5try /setperk name 1 golden_heads");
+                                "\n§5try /setperk name 1 unset");
                     }
                 } else {
                     p.sendMessage("§5i haven't added support for offline players yet");
                 }
             } else {
                 p.sendMessage("§5Invalid command usage." +
-                        "\n§5try /setperk 1 golden_heads");
+                        "\n§5try /setperk 1 unset");
             }
         }
         return true;
