@@ -89,7 +89,7 @@ public class StorageListener implements Listener {
     public void assignDataDocument(PlayerJoinEvent e) {
         String uuid = e.getPlayer().getUniqueId().toString();
         Document filter = new Document("uuid", uuid);
-        Document pDoc = pDataCol.find(filter).first();
+        Document pDoc;
 
         if (pDataCol.countDocuments(filter) < 1) {
             Document perkSlotsEmbed = new Document();
@@ -121,7 +121,11 @@ public class StorageListener implements Listener {
             pDoc = pDataCol.find(filter).first();
 
             System.out.println("Created new player data document assigned to" + uuid);
-        } else if (!dataCheck(pDoc)) {
+        } else {
+             pDoc = pDataCol.find(filter).first();
+        }
+
+        if (!dataCheck(pDoc)) {
             pDoc = updateDocument(pDoc);
 
             System.out.println("Successfully updated player data document assigned to " + uuid);
