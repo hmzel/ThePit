@@ -33,16 +33,13 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     private final Map<UUID, Integer> slotHandler = new HashMap<>();
 
     private ItemStack passivesItemBuilder(Player p, Passives passive) {
-        Material material;
         String name;
         int cost = determinePassiveCost(p, passive);
         int level = determinePassiveLevel(passive);
         List<String> lore = new ArrayList<>();
         PlayerData pData = Main.getInstance().getPlayerData(p);
 
-        if (pData.getLevel() >= level || pData.getPrestige() != 0) {
-            material = passive.getMaterial();
-        } else {
+        if (pData.getLevel() < level && pData.getPrestige() == 0) {
             return zl.itemBuilder(BEDROCK, 1, "§cUnknown Upgrade", Collections.singletonList(
                     "§7Required level: " + zl.getColorBracketAndLevel(0, level)
             ));
@@ -181,7 +178,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             lore.add("§cLevel too low to upgrade!");
         }
 
-        return zl.itemBuilder(material, 1, name, lore);
+        return zl.itemBuilder(passive.getMaterial(), 1, name, lore);
     }
 
     private int determinePassiveCost(Player p, Passives passive) {//will update when i figure out the costs
@@ -329,18 +326,19 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     }
 
     private ItemStack perkItemBuilder(Player p, Perks perk) {
-        String name = "";
-        int level = 0;
+        String name;
+        double cost = perk.getCost();
+        int level = perk.getLevel();
         List<String> lore = new ArrayList<>();
         PlayerData pData = Main.getInstance().getPlayerData(p);
 
-        if (pData.getLevel() >= level) {
-
-        } else {
-            return zl.itemBuilder(BEDROCK, 1, "§cUnknown Perk", Collections.singletonList(
+        if (pData.getLevel() < level || pData.getPrestige() == 0) {
+            return zl.itemBuilder(BEDROCK, 1, "§cUnknown perk", Collections.singletonList(
                     "§7Required level: " + zl.getColorBracketAndLevel(0, level)
             ));
         }
+
+
         return zl.itemBuilder(perk.getMaterial(), 1, name, lore);
     }
 
