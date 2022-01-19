@@ -74,7 +74,10 @@ public enum Perks {
     LUCKY_DIAMOND("Lucky Diamond", DIAMOND, Arrays.asList(
             "§730% chance to upgrade dropped",
             "§6armor pieces from kills to",
-            "§bdiamond§7."
+            "§bdiamond§7.",
+            "\n",
+            "§Upgraded pieces warp to your",
+            "§inventory."
     )
             , 4000
             , 40
