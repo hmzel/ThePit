@@ -5,8 +5,6 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import org.bson.Document;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -160,7 +158,7 @@ public class StorageListener implements Listener {
         }
 
         for (Perks perk : Perks.values()) {
-            pDoc.put("perk_unlocks." + perk.getName(), pData.getPerkUnlock(perk));
+            pDoc.put("perk_unlocks." + perk.getName(), pData.getPerkUnlocked(perk));
         }
 
         pDataCol.replaceOne(new Document("uuid", uuid), pDoc);
@@ -194,7 +192,7 @@ public class StorageListener implements Listener {
                 }
 
                 for (Perks perk : Perks.values()) {
-                    pDoc.put("perk_unlocks." + perk.getName(), pData.getPerkUnlock(perk));
+                    pDoc.put("perk_unlocks." + perk.getName(), pData.getPerkUnlocked(perk));
                 }
 
                 pDataCol.replaceOne(new Document("uuid", uuid), pDoc);
