@@ -223,6 +223,44 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         return 0;
     }
 
+    private void passivePurchaseHandler(Player p, Passives passive, InventoryClickEvent e) {
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+        double cost = determinePassiveCost(p, passive);
+
+        if (pData.getPassiveTier(passive) < 5) {
+            if (pData.getGold() - cost >= 0) {
+                if (cost >= 1000) {
+                    Inventory inv = Bukkit.createInventory(p, 27, "Are you sure?");
+
+                    inv.setItem(11, zl.itemBuilder(GREEN_TERRACOTTA, 1, "§aConfirm", Arrays.asList(
+                            "§7Purchasing: " + passive.getColorfulName() + " " + zl.toRoman((pData.getPassiveTier(passive) + 1)),
+                            "§7Cost: §6" + zl.getFancyGoldString(cost)
+                    )));
+                    inv.setItem(15, zl.itemBuilder(RED_TERRACOTTA, 1, "§cCancel", Arrays.asList(
+                            "§7Return to previous menu."
+                    )));
+                    costHandler.put(p.getUniqueId(), cost);
+                    backHandler.put(p.getUniqueId(), e.getView().getTitle());
+                    passivesHandler.put(p.getUniqueId(), passive);
+                    p.openInventory(inv);
+                } else {
+                    pData.setGold(pData.getGold() - cost);
+                    pData.setPassiveTier(passive, pData.getPassiveTier(passive) + 1);
+
+                    if (e.getView().getTitle().equals("Permanent upgrades")) {
+                        openMainGUI(p);
+                    }
+                }
+            } else {
+                p.sendMessage("§cYou don't have enough gold to afford this!");
+                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            }
+        } else {
+            p.sendMessage("§aYou already unlocked the last upgrade!");
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+        }
+    }
+
     private ItemStack perkSlotItemBuilder(Player p, int slot) {
         String name;
         int level = 0;
@@ -337,47 +375,9 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         p.openInventory(streakGUI);
     }
 
-    private void passivePurchaseHandler(Player p, Passives passive, InventoryClickEvent e) {
-        PlayerData pData = Main.getInstance().getPlayerData(p);
-        double cost = determinePassiveCost(p, passive);
-
-        if (pData.getPassiveTier(passive) < 5) {
-            if (pData.getGold() - cost >= 0) {
-                if (cost >= 1000) {
-                    Inventory inv = Bukkit.createInventory(p, 27, "Are you sure?");
-
-                    inv.setItem(11, zl.itemBuilder(GREEN_TERRACOTTA, 1, "§aConfirm", Arrays.asList(
-                            "§7Purchasing: " + passive.getColorfulName() + " " + zl.toRoman((pData.getPassiveTier(passive) + 1)),
-                            "§7Cost: §6" + zl.getFancyGoldString(cost)
-                    )));
-                    inv.setItem(15, zl.itemBuilder(RED_TERRACOTTA, 1, "§cCancel", Arrays.asList(
-                            "§7Return to previous menu."
-                    )));
-                    costHandler.put(p.getUniqueId(), cost);
-                    backHandler.put(p.getUniqueId(), e.getView().getTitle());
-                    passivesHandler.put(p.getUniqueId(), passive);
-                    p.openInventory(inv);
-                } else {
-                    pData.setGold(pData.getGold() - cost);
-                    pData.setPassiveTier(passive, pData.getPassiveTier(passive) + 1);
-
-                    if (e.getView().getTitle().equals("Permanent upgrades")) {
-                        openMainGUI(p);
-                    }
-                }
-            } else {
-                p.sendMessage("§cYou don't have enough gold to afford this!");
-                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-            }
-        } else {
-            p.sendMessage("§aYou already unlocked the last upgrade!");
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-        }
-    }
-
-    private void determineBackInventory(Player p) {
-        if (backHandler.get(p.getUniqueId()).equals("Permanent upgrades")) {
-            openMainGUI(p);
+    private void determineBackInventory(InventoryClickEvent e) {
+        if (e.getView().getTitle().equals("Permanent upgrades")) {
+            openMainGUI((Player) e.getWhoClicked());
         }
     }
 
@@ -508,9 +508,9 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 if (e.getCurrentItem().getType() == GREEN_TERRACOTTA) {
                     pData.setGold(pData.getGold() - costHandler.get(uuid));
                     pData.setPassiveTier(passivesHandler.get(uuid), pData.getPassiveTier(passivesHandler.get(uuid)) + 1);
-                    determineBackInventory(p);
+                    determineBackInventory(e);
                 } else if (e.getCurrentItem().getType() == RED_TERRACOTTA) {
-                    determineBackInventory(p);
+                    determineBackInventory(e);
                 }
 
                 backHandler.remove(uuid);
