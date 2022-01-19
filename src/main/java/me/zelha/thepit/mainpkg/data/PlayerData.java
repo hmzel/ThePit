@@ -19,11 +19,8 @@ public class PlayerData {
     private double streak;
     private boolean hideTimer;
     private int multikill;
+    private final Map<Integer, Perks> perkSlots = new HashMap<>();
     private final Map<Passives, Integer> passivesMap = new HashMap<>();
-    private String perkSlot1;
-    private String perkSlot2;
-    private String perkSlot3;
-    private String perkSlot4;
     private final Map<Perks, Boolean> perkUnlocks = new HashMap<>();
 
     public PlayerData(Document document) {
@@ -36,10 +33,10 @@ public class PlayerData {
         combatTimer = 0;
         hideTimer = true;
         multikill = 0;
-        perkSlot1 = document.getString("perk_slot_1");
-        perkSlot2 = document.getString("perk_slot_2");
-        perkSlot3 = document.getString("perk_slot_3");
-        perkSlot4 = document.getString("perk_slot_4");
+
+        for (int i = 1; i <= 4; i++) {
+            perkSlots.put(i, Perks.findByName(document.getString("perk_slots." + i)));
+        }
 
         for (Passives passive : Passives.values()) {
             passivesMap.put(passive, document.getInteger("passives." + passive.getName()));
@@ -101,17 +98,7 @@ public class PlayerData {
     }
 
     public Perks getPerkAtSlot(int slot) {
-        if (slot == 1) {
-            return Perks.findByName(perkSlot1);
-        } else if (slot == 2) {
-            return Perks.findByName(perkSlot2);
-        } else if (slot == 3) {
-            return Perks.findByName(perkSlot3);
-        } else if (slot == 4) {
-            return Perks.findByName(perkSlot4);
-        } else {
-            return null;
-        }
+        return perkSlots.get(slot);
     }
 
     public boolean getPerkUnlock(Perks perk) {
@@ -165,15 +152,7 @@ public class PlayerData {
     }
 
     public void setPerkAtSlot(int slot, Perks perk) {
-        if (slot == 1) {
-            perkSlot1 = perk.getName();
-        } else if (slot == 2) {
-            perkSlot2 = perk.getName();
-        } else if (slot == 3) {
-            perkSlot3 = perk.getName();
-        } else if (slot == 4) {
-            perkSlot4 = perk.getName();
-        }
+        perkSlots.put(slot, perk);
     }
 
     public void setPerkUnlock(Perks perk, boolean bool) {
