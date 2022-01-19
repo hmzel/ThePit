@@ -36,11 +36,10 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         Material material;
         String name;
         int cost = determinePassiveCost(p, passive);
-        int level = determineLevel(passive);
+        int level = determinePassiveLevel(passive);
         List<String> lore = new ArrayList<>();
         PlayerData pData = Main.getInstance().getPlayerData(p);
 
-        //determining material
         if (pData.getLevel() >= level || pData.getPrestige() != 0) {
             material = passive.getMaterial();
         } else {
@@ -48,9 +47,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                     "§7Required level: " + zl.getColorBracketAndLevel(0, level)
             ));
         }
-        //end
 
-        //name building
         if ((pData.getLevel() >= level || pData.getPassiveTier(passive) == 5) || (pData.getPassiveTier(passive) > 0 && pData.getGold() - cost >= 0)) {
             name = "§a" + passive.getName();
         } else if (pData.getPassiveTier(passive) == 0 && pData.getGold() - cost >= 0 && pData.getLevel() >= level) {
@@ -58,9 +55,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         } else {
             name = "§c" + passive.getName();
         }
-        //end
 
-        //lore building
         switch (passive) {
             case XP_BOOST:
                 if (pData.getPassiveTier(XP_BOOST) > 0) {
@@ -185,7 +180,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             lore.add("§7Required level: " + zl.getColorBracketAndLevel(1, level));
             lore.add("§cLevel too low to upgrade!");
         }
-        //end
 
         return zl.itemBuilder(material, 1, name, lore);
     }
@@ -269,7 +263,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         PlayerData pData = Main.getInstance().getPlayerData(p);
         Perks perk = pData.getPerkAtSlot(slot);
 
-        //determining level
         switch (slot) {
             case 1:
                 level = 10;
@@ -284,17 +277,13 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 level = 100;
                 break;
         }
-        //end
 
-        //name building
         if (pData.getPerkAtSlot(slot) != UNSET) {
             name = "§ePerk Slot #" + slot;
         } else {
             name = "§aPerk Slot #" + slot;
         }
-        //end
 
-        //lore building
         if (perk != UNSET) {
             lore.add("§7Selected: §a" + perk.getName());
             lore.add("\n");
@@ -303,7 +292,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         lore.addAll(perk.getLore());
         lore.add("\n");
         lore.add("§eClick to choose perk!");
-        //end
 
         //special item handling
         if (pData.getLevel() < level && perk == UNSET) {
@@ -319,7 +307,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             //insert potion stuff here
             return item;
         }
-        //end
 
         return zl.itemBuilder(perk.getMaterial(), 1, name, lore);
     }
@@ -471,25 +458,39 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                         }
                         break;
                     case 28:
-                        passivePurchaseHandler(p, XP_BOOST, e);
+                        if (levelCheck(e, determinePassiveLevel(XP_BOOST), "§cYou are too low level to acquire this!", Sound.ENTITY_VILLAGER_NO)) {
+                            passivePurchaseHandler(p, XP_BOOST, e);
+                        }
                         break;
                     case 29:
-                        passivePurchaseHandler(p, GOLD_BOOST, e);
+                        if (levelCheck(e, determinePassiveLevel(GOLD_BOOST), "§cYou are too low level to acquire this!", Sound.ENTITY_VILLAGER_NO)) {
+                            passivePurchaseHandler(p, GOLD_BOOST, e);
+                        }
                         break;
                     case 30:
-                        passivePurchaseHandler(p, MELEE_DAMAGE, e);
+                        if (levelCheck(e, determinePassiveLevel(MELEE_DAMAGE), "§cYou are too low level to acquire this!", Sound.ENTITY_VILLAGER_NO)) {
+                            passivePurchaseHandler(p, MELEE_DAMAGE, e);
+                        }
                         break;
                     case 31:
-                        passivePurchaseHandler(p, BOW_DAMAGE, e);
+                        if (levelCheck(e, determinePassiveLevel(BOW_DAMAGE), "§cYou are too low level to acquire this!", Sound.ENTITY_VILLAGER_NO)) {
+                            passivePurchaseHandler(p, BOW_DAMAGE, e);
+                        }
                         break;
                     case 32:
-                        passivePurchaseHandler(p, DAMAGE_REDUCTION, e);
+                        if (levelCheck(e, determinePassiveLevel(DAMAGE_REDUCTION), "§cYou are too low level to acquire this!", Sound.ENTITY_VILLAGER_NO)) {
+                            passivePurchaseHandler(p, DAMAGE_REDUCTION, e);
+                        }
                         break;
                     case 33:
-                        passivePurchaseHandler(p, BUILD_BATTLER, e);
+                        if (levelCheck(e, determinePassiveLevel(BUILD_BATTLER), "§cYou are too low level to acquire this!", Sound.ENTITY_VILLAGER_NO)) {
+                            passivePurchaseHandler(p, BUILD_BATTLER, e);
+                        }
                         break;
                     case 34:
-                        passivePurchaseHandler(p, EL_GATO, e);
+                        if (levelCheck(e, determinePassiveLevel(EL_GATO), "§cYou are too low level to acquire this!", Sound.ENTITY_VILLAGER_NO)) {
+                            passivePurchaseHandler(p, EL_GATO, e);
+                        }
                         break;
                 }
             }
