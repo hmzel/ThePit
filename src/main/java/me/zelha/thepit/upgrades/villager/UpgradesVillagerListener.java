@@ -29,7 +29,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final Map<UUID, Double> costHandler = new HashMap<>();
-    private final Map<UUID, String> backHandler = new HashMap<>();
     private final Map<UUID, Passives> passivesHandler = new HashMap<>();
     private final Map<UUID, Integer> slotHandler = new HashMap<>();
 
@@ -240,7 +239,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                             "§7Return to previous menu."
                     )));
                     costHandler.put(p.getUniqueId(), cost);
-                    backHandler.put(p.getUniqueId(), e.getView().getTitle());
                     passivesHandler.put(p.getUniqueId(), passive);
                     p.openInventory(inv);
                 } else {
@@ -513,7 +511,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                     determineBackInventory(e);
                 }
 
-                backHandler.remove(uuid);
                 costHandler.remove(uuid);
                 passivesHandler.remove(uuid);
             }
@@ -524,7 +521,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     public void onClose(InventoryCloseEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
         if (e.getView().getTitle().equals("Are you sure?")) {
-            backHandler.remove(uuid);
             costHandler.remove(uuid);
             passivesHandler.remove(uuid);
         } else if (e.getView().getTitle().equals("Choose a perk")) {
