@@ -36,31 +36,9 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         Material material;
         String name;
         int cost = determinePassiveCost(p, passive);
-        int level = 0;
+        int level = determineLevel(passive);
         List<String> lore = new ArrayList<>();
         PlayerData pData = Main.getInstance().getPlayerData(p);
-
-        //determining level
-        switch (passive) {
-            case XP_BOOST:
-                level = 10;
-                break;
-            case GOLD_BOOST:
-                level = 20;//t2 is 35
-                break;
-            case MELEE_DAMAGE:
-            case BOW_DAMAGE:
-            case DAMAGE_REDUCTION:
-                level = 30;
-                break;
-            case BUILD_BATTLER:
-                level = 40;
-                break;
-            case EL_GATO:
-                level = 50;
-                break;
-        }
-        //end
 
         //determining material
         if (pData.getLevel() >= level || pData.getPrestige() != 0) {
@@ -220,6 +198,31 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 return ((pData.getPassiveTier(passive) + 1) * 1000);
         }
         return 0;
+    }
+
+    private int determinePassiveLevel(Passives passive) {//most levels unknown atm
+        int level = 0;
+
+        switch (passive) {
+            case XP_BOOST:
+                level = 10;
+                break;
+            case GOLD_BOOST:
+                level = 20;//t2 is 35
+                break;
+            case MELEE_DAMAGE:
+            case BOW_DAMAGE:
+            case DAMAGE_REDUCTION:
+                level = 30;
+                break;
+            case BUILD_BATTLER:
+                level = 40;
+                break;
+            case EL_GATO:
+                level = 50;
+                break;
+        }
+        return level;
     }
 
     private void passivePurchaseHandler(Player p, Passives passive, InventoryClickEvent e) {
