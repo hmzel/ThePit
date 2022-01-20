@@ -158,6 +158,17 @@ public class PlayerData {
     public void setPerkUnlocked(Perks perk, boolean bool) {
         perkUnlocks.put(perk, bool);
     }
+
+    //other
+
+    public boolean hasPerkEquipped(Perks perk) {
+        for (Perks slotPerk : perkSlots.values()) {
+            if (slotPerk == perk) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 
