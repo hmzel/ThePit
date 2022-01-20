@@ -329,15 +329,47 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         String name;
         double cost = perk.getCost();
         int level = perk.getLevel();
-        List<String> lore = new ArrayList<>();
         PlayerData pData = Main.getInstance().getPlayerData(p);
 
-        if (pData.getLevel() < level || pData.getPrestige() == 0) {
+        if (pData.getPerkUnlocked(perk)) {
+            name = "§a" + perk.getName();
+        } else if (pData.getGold() - cost >= 0 && pData.getLevel() >= level) {
+            name = "§e" + perk.getName();
+        } else {
+            name = "§c" + perk.getName();
+        }
+
+        List<String> lore = new ArrayList<>(perk.getLore());
+        lore.add("\n");
+
+        if (pData.hasPerkEquipped(perk)) {
+            lore.add("§aAlready selected!");
+        } else if (pData.getPerkUnlocked(perk)) {
+            lore.add("§eClick to select!");
+        } else {
+            lore.add("§7Cost: §6" + zl.getFancyGoldString(cost) + "g");
+
+            if (pData.getGold() - cost >= 0) {
+                lore.add("§eClick to purchase!");
+            } else {
+                lore.add("§cNot enough gold!");
+            }
+        }
+
+        //special item handling
+        if (pData.getLevel() < level && pData.getPrestige() == 0) {
             return zl.itemBuilder(BEDROCK, 1, "§cUnknown perk", Collections.singletonList(
                     "§7Required level: " + zl.getColorBracketAndLevel(0, level)
             ));
-        }
-
+        } else if (perk == GOLDEN_HEADS) {
+            ItemStack item = zl.itemBuilder(perk.getMaterial(), 1, name, lore);
+            //insert head stuff here
+            return item;
+        } else if (perk == OLYMPUS) {
+            ItemStack item = zl.itemBuilder(perk.getMaterial(), 1, name, lore);
+            //insert potion stuff here
+            return item;
+        }//i cant get this stuff to work for the life of me ill do it later
 
         return zl.itemBuilder(perk.getMaterial(), 1, name, lore);
     }
