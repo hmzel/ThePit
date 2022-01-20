@@ -27,7 +27,15 @@ public class StorageListener implements Listener {
     }
 
     public void runDataSaver() {
-        new SaveDataPeriodically().runTaskTimerAsynchronously(Main.getInstance(),0, 1200);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (String uuid : playerUUIDList) {
+                    saveDocument(uuid);
+                }
+            }
+        }.runTaskTimerAsynchronously(Main.getInstance(), 0, 1200);
+
         System.out.println("ThePit: Successfully started data saver");
     }
 
@@ -179,18 +187,6 @@ public class StorageListener implements Listener {
     @EventHandler
     public void saveDataDocument(PlayerQuitEvent e) {
         saveDocument(e.getPlayer().getUniqueId().toString());
-    }
-
-
-    private class SaveDataPeriodically extends BukkitRunnable {
-
-        @Override
-        public void run() {
-
-            for (String uuid : playerUUIDList) {
-                saveDocument(uuid);
-            }
-        }
     }
 }
 
