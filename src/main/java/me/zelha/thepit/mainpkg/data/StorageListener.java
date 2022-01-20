@@ -5,6 +5,7 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import org.bson.Document;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -85,6 +86,40 @@ public class StorageListener implements Listener {
         return document;
     }
 
+    private void saveDocument(String uuid) {
+        PlayerData pData = getPlayerData(uuid);
+        Document pDoc = pDataCol.find(new Document("uuid", uuid)).first();
+        Document perkSlotsEmbed = new Document();
+        Document passivesEmbed = new Document();
+        Document unlockedPerksEmbed = new Document();
+
+        for (int i = 1; i <= 4; i++) {
+            perkSlotsEmbed.append(String.valueOf(i), pData.getPerkAtSlot(i));
+        }
+
+        for (Passives passive : Passives.values()) {
+            passivesEmbed.append(passive.getName(), pData.getPassiveTier(passive));
+        }
+
+        for (Perks perk : Perks.values()) {
+            unlockedPerksEmbed.append(perk.getName(), pData.getPerkUnlocked(perk));
+        }
+
+        pDoc.put("prestige", pData.getPrestige());
+        pDoc.put("level", pData.getLevel());
+        pDoc.put("exp", pData.getExp());
+        pDoc.put("gold", pData.getGold());
+        pDoc.put("bounty", pData.getBounty());
+        pDoc.put("perk_slots", perkSlotsEmbed);
+        pDoc.put("passives", passivesEmbed);
+        pDoc.put("perk_unlocks", unlockedPerksEmbed);
+
+        pDataCol.replaceOne(new Document("uuid", uuid), pDoc);
+
+        playerDataMap.remove(uuid);
+        playerUUIDList.remove(uuid);
+    }
+
     @EventHandler
     public void assignDataDocument(PlayerJoinEvent e) {
         String uuid = e.getPlayer().getUniqueId().toString();
@@ -143,32 +178,7 @@ public class StorageListener implements Listener {
 
     @EventHandler
     public void saveDataDocument(PlayerQuitEvent e) {
-        String uuid = e.getPlayer().getUniqueId().toString();
-        PlayerData pData = getPlayerData(uuid);
-        Document pDoc = pDataCol.find(new Document("uuid", uuid)).first();
-
-        pDoc.put("prestige", pData.getPrestige());
-        pDoc.put("level", pData.getLevel());
-        pDoc.put("exp", pData.getExp());
-        pDoc.put("gold", pData.getGold());
-        pDoc.put("bounty", pData.getBounty());
-
-        for (int i = 1; i <= 4; i++) {
-            pDoc.put("perk_slots." + i, pData.getPerkAtSlot(i).getName());
-        }
-
-        for (Passives passive : Passives.values()) {
-            pDoc.put("passives." + passive.getName(), pData.getPassiveTier(passive));
-        }
-
-        for (Perks perk : Perks.values()) {
-            pDoc.put("perk_unlocks." + perk.getName(), pData.getPerkUnlocked(perk));
-        }
-
-        pDataCol.replaceOne(new Document("uuid", uuid), pDoc);
-
-        playerDataMap.remove(uuid);
-        playerUUIDList.remove(uuid);
+        saveDocument(e.getPlayer().getUniqueId().toString());
     }
 
 
@@ -178,28 +188,7 @@ public class StorageListener implements Listener {
         public void run() {
 
             for (String uuid : playerUUIDList) {
-                PlayerData pData = getPlayerData(uuid);
-                Document pDoc = pDataCol.find(new Document("uuid", uuid)).first();
-
-                pDoc.put("prestige", pData.getPrestige());
-                pDoc.put("level", pData.getLevel());
-                pDoc.put("exp", pData.getExp());
-                pDoc.put("gold", pData.getGold());
-                pDoc.put("bounty", pData.getBounty());
-
-                for (int i = 1; i <= 4; i++) {
-                    pDoc.put("perk_slots." + i, pData.getPerkAtSlot(i).getName());
-                }
-
-                for (Passives passive : Passives.values()) {
-                    pDoc.put("passives." + passive.getName(), pData.getPassiveTier(passive));
-                }
-
-                for (Perks perk : Perks.values()) {
-                    pDoc.put("perk_unlocks." + perk.getName(), pData.getPerkUnlocked(perk));
-                }
-
-                pDataCol.replaceOne(new Document("uuid", uuid), pDoc);
+                saveDocument(uuid);
             }
         }
     }

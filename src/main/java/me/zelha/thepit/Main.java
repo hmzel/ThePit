@@ -41,7 +41,7 @@ public final class Main extends JavaPlugin {
     public void onEnable() {
         //Plugin startup logic
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "minecraft:kick @a");
-        mongoClient = MongoClients.create(DatabaseLogin.DatabaseLogin);
+        mongoClient = MongoClients.create(DatabaseLogin.DATABASE_LOGIN);
         MongoDatabase mongoDatabase = mongoClient.getDatabase("zelhadb");
         playerDataCollection = mongoDatabase.getCollection("playerdata");
 
