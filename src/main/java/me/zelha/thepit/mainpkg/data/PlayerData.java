@@ -4,6 +4,7 @@ import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import org.bson.Document;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,15 +36,15 @@ public class PlayerData {
         multikill = 0;
 
         for (int i = 1; i <= 4; i++) {
-            perkSlots.put(i, Perks.findByName(document.getString("perk_slots." + i)));
+            perkSlots.put(i, Perks.findByName(document.getEmbedded(Arrays.asList("perk_slots", String.valueOf(i)), String.class)));
         }
 
         for (Passives passive : Passives.values()) {
-            passivesMap.put(passive, document.getInteger("passives." + passive.getName()));
+            passivesMap.put(passive, document.getEmbedded(Arrays.asList("passives", passive.getName()), Integer.class));
         }
 
         for (Perks perk : Perks.values()) {
-            perkUnlocks.put(perk, (boolean) document.get("perk_unlocks." + perk.getName()));
+            perkUnlocks.put(perk, document.getEmbedded(Arrays.asList("perk_unlocks", perk.getName()), Boolean.class));
         }
 
         if (bounty != 0) {

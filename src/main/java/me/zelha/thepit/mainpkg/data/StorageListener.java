@@ -42,19 +42,19 @@ public class StorageListener implements Listener {
     private boolean dataCheck(Document document) {
 
         for (int i = 1; i <= 4; i++) {
-            if (document.get("perk_slots." + i) == null) {
+            if (document.getEmbedded(Arrays.asList("perk_slots", String.valueOf(i)), String.class) == null) {
                 return false;
             }
         }
 
         for (Passives passive : Passives.values()) {
-            if (document.get("passives." + passive.getName()) == null) {
+            if (document.getEmbedded(Arrays.asList("passives", passive.getName()), Integer.class) == null) {
                 return false;
             }
         }
 
         for (Perks perk : Perks.values()) {
-            if (document.get("perk_unlocks." + perk.getName()) == null) {
+            if (document.get(Arrays.asList("perk_unlocks", perk.getName()), Boolean.class) == null) {
                 return false;
             }
         }
@@ -66,30 +66,45 @@ public class StorageListener implements Listener {
                 && document.get("bounty") != null;
     }
 
-    private Document updateDocument(Document document) {
+    private Document updateDocument(Document document, String uuid) {
+        PlayerData pData = getPlayerData(uuid);
+        Document perkSlotsEmbed = new Document();
+        Document passivesEmbed = new Document();
+        Document unlockedPerksEmbed = new Document();
+
+        for (int i = 1; i <= 4; i++) {
+            if (document.getEmbedded(Arrays.asList("perk_slots", String.valueOf(i)), String.class) == null) {
+                perkSlotsEmbed.append(String.valueOf(i), "unset");
+            } else {
+                perkSlotsEmbed.append(String.valueOf(i), pData.getPerkAtSlot(i).getName());
+            }
+        }
+
+        for (Passives passive : Passives.values()) {
+            if (document.getEmbedded(Arrays.asList("passives", passive.getName()), Integer.class) == null) {
+                passivesEmbed.append(passive.getName(), 0);
+            } else {
+                passivesEmbed.append(passive.getName(), pData.getPassiveTier(passive));
+            }
+        }
+
+        for (Perks perk : Perks.values()) {
+            if (document.getEmbedded(Arrays.asList("perk_unlocks", perk.getName()), Boolean.class) == null) {
+                unlockedPerksEmbed.append(perk.getName(), false);
+            } else {
+                unlockedPerksEmbed.append(perk.getName(), pData.getPerkUnlocked(perk));
+            }
+        }
+
         if (document.get("prestige") == null) document.append("prestige", 0);
         if (document.get("level") == null) document.append("level", 1);
         if (document.get("exp") == null) document.append("exp", 15);
         if (document.get("gold") == null) document.append("gold", 0.0);
         if (document.get("bounty") == null) document.append("bounty", 0);
 
-        for (int i = 1; i <= 4; i++) {
-            if (document.get("perk_slots." + i) == null) {
-                document.append("perk_slots." + i, "unset");
-            }
-        }
-
-        for (Passives passive : Passives.values()) {
-            if (document.get("passives." + passive.getName()) == null) {
-                document.append("passives." + passive.getName(), 0);
-            }
-        }
-
-        for (Perks perk : Perks.values()) {
-            if (document.get("perk_unlocks." + perk.getName()) == null) {
-                document.append("perk_unlocks." + perk.getName(), false);
-            }
-        }
+        document.append("perk_slots", perkSlotsEmbed);
+        document.append("passives", passivesEmbed);
+        document.append("perk_unlocks", unlockedPerksEmbed);
 
         return document;
     }
@@ -102,7 +117,7 @@ public class StorageListener implements Listener {
         Document unlockedPerksEmbed = new Document();
 
         for (int i = 1; i <= 4; i++) {
-            perkSlotsEmbed.append(String.valueOf(i), pData.getPerkAtSlot(i));
+            perkSlotsEmbed.append(String.valueOf(i), pData.getPerkAtSlot(i).getName());
         }
 
         for (Passives passive : Passives.values()) {
@@ -169,7 +184,7 @@ public class StorageListener implements Listener {
         }
 
         if (!dataCheck(pDoc)) {
-            pDoc = updateDocument(pDoc);
+            pDoc = updateDocument(pDoc, uuid);
 
             System.out.println("Successfully updated player data document assigned to " + uuid);
         }
