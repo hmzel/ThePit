@@ -42,7 +42,7 @@ public class AntiVanillaListener implements Listener {
 
         if (blockType != OBSIDIAN && blockType != COBBLESTONE && blockType != OAK_WOOD) {
 
-            if (!Main.getInstance().blockPriviledges.contains(e.getPlayer())) {
+            if (!Main.getInstance().blockPriviledges.contains(e.getPlayer()) || !placedBlocks.contains(e.getBlock())) {
                 e.setCancelled(true);
             }
         }
