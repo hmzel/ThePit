@@ -60,7 +60,7 @@ public class StorageListener implements Listener {
         }
 
         for (Perks perk : Perks.values()) {
-            if (document.getEmbedded(Arrays.asList("perk_unlocks", perk.getName()), boolean.class) == null) {
+            if (document.getEmbedded(Arrays.asList("perk_unlocks", perk.getName()), Boolean.class) == null) {
                 return false;
             }
         }
