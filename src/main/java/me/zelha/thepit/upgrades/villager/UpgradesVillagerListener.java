@@ -34,7 +34,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
     private ItemStack passivesItemBuilder(Player p, Passives passive) {
         String name;
-        int cost = determinePassiveCost(p, passive);
+        int cost = passive.getCost(p);
         int level = passive.getLevelRequirement(p);
         List<String> lore = new ArrayList<>();
         PlayerData pData = Main.getInstance().getPlayerData(p);
@@ -181,19 +181,9 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         return zl.itemBuilder(passive.getMaterial(), 1, name, lore);
     }
 
-    private int determinePassiveCost(Player p, Passives passive) {//will update when i figure out the costs
-        PlayerData pData = Main.getInstance().getPlayerData(p);
-
-        switch (passive) {
-            case EL_GATO:
-                return ((pData.getPassiveTier(passive) + 1) * 1000);
-        }
-        return 0;
-    }
-
     private void passivePurchaseHandler(Player p, Passives passive, InventoryClickEvent e) {
         PlayerData pData = Main.getInstance().getPlayerData(p);
-        double cost = determinePassiveCost(p, passive);
+        double cost = passive.getCost(p);
 
         if (pData.getPassiveTier(passive) < 5) {
             if (pData.getGold() - cost >= 0) {
