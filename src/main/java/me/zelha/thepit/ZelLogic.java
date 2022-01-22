@@ -290,7 +290,7 @@ public class ZelLogic {//zel
         } else if (prestige < 40) {
             return "§b[" + getColorLevel(level) + "§b]";
         } else if (prestige < 45) {
-            return "§2[" + getColorLevel(level) + "§2]";
+            return "§1[" + getColorLevel(level) + "§1]";
         } else if (prestige < 50) {
             return "§3[" + getColorLevel(level) + "§3]";
         } else if (prestige == 50) {
