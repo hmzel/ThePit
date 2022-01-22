@@ -1,6 +1,9 @@
 package me.zelha.thepit.zelenums;
 
+import me.zelha.thepit.Main;
+import me.zelha.thepit.mainpkg.data.PlayerData;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 
 public enum Passives {
     XP_BOOST("XP Boost", "§bXP Boost", Material.LIGHT_BLUE_DYE, 10),
@@ -45,6 +48,36 @@ public enum Passives {
             }
         }
         return result;
+    }
+
+    public static int determineLevelRequirement(Passives passive, Player p) {//most levels unknown atm
+        PlayerData pData = Main.getInstance().getPlayerData(p);//0 is a placeholder dont yell at me please
+        int level = 0;
+
+        switch (passive) {
+            case XP_BOOST:
+                level = XP_BOOST.baseLevelReq + (0 * pData.getPassiveTier(passive));
+                break;
+            case GOLD_BOOST://t2 is 35, just going off that, idk the actual levels
+                level = GOLD_BOOST.baseLevelReq + (15 * pData.getPassiveTier(passive));
+                break;
+            case MELEE_DAMAGE:
+                level = MELEE_DAMAGE.baseLevelReq + (0 * pData.getPassiveTier(passive));
+                break;
+            case BOW_DAMAGE:
+                level = BOW_DAMAGE.baseLevelReq + (0 * pData.getPassiveTier(passive));
+                break;
+            case DAMAGE_REDUCTION:
+                level = DAMAGE_REDUCTION.baseLevelReq + (0 * pData.getPassiveTier(passive));
+                break;
+            case BUILD_BATTLER:
+                level = BUILD_BATTLER.baseLevelReq + (0 * pData.getPassiveTier(passive));
+                break;
+            case EL_GATO:
+                level = EL_GATO.baseLevelReq + (0 * pData.getPassiveTier(passive));
+                break;
+        }
+        return level;
     }
 }
 
