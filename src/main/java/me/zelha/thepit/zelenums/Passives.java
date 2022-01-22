@@ -59,5 +59,26 @@ public enum Passives {//0 tierMultipler is just a placeholder dont hurt me pleas
 
         return baseLevelReq + (levelTierMultiplier * pData.getPassiveTier(Passives.findByName(super.name())));
     }
+
+    public int getCost(Player p) {
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+        Passives passive = Passives.findByName(super.name());
+        int cost = 0;
+
+        switch (passive) {//will udpate when i figure out all the costs
+            case XP_BOOST:
+            case GOLD_BOOST:
+            case MELEE_DAMAGE:
+            case BOW_DAMAGE:
+            case DAMAGE_REDUCTION:
+            case BUILD_BATTLER:
+                cost = baseCost;
+                break;
+            case EL_GATO:
+                cost = baseCost + (pData.getPassiveTier(passive) * 1000);
+                break;
+        }
+        return cost;
+    }
 }
 
