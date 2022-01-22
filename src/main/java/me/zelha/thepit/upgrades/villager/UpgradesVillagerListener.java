@@ -185,6 +185,12 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         PlayerData pData = Main.getInstance().getPlayerData(p);
         double cost = passive.getCost(p);
 
+        if (pData.getLevel() < passive.getLevelRequirement(p)) {
+            p.sendMessage("§cYou are too low level to acquire this!");
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            return;
+        }
+
         if (pData.getPassiveTier(passive) < 5) {
             if (pData.getGold() - cost >= 0) {
                 if (cost >= 1000) {
@@ -498,39 +504,25 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                         openPerkGUI(p, 3);
                         break;
                     case 28:
-                        if (levelCheck(e, XP_BOOST.getLevelRequirement(p), "§cYou are too low level to acquire this!", Sound.ENTITY_VILLAGER_NO)) {
-                            passivePurchaseHandler(p, XP_BOOST, e);
-                        }
+                        passivePurchaseHandler(p, XP_BOOST, e);
                         break;
                     case 29:
-                        if (levelCheck(e, GOLD_BOOST.getLevelRequirement(p), "§cYou are too low level to acquire this!", Sound.ENTITY_VILLAGER_NO)) {
-                            passivePurchaseHandler(p, GOLD_BOOST, e);
-                        }
+                        passivePurchaseHandler(p, GOLD_BOOST, e);
                         break;
                     case 30:
-                        if (levelCheck(e, MELEE_DAMAGE.getLevelRequirement(p), "§cYou are too low level to acquire this!", Sound.ENTITY_VILLAGER_NO)) {
-                            passivePurchaseHandler(p, MELEE_DAMAGE, e);
-                        }
+                        passivePurchaseHandler(p, MELEE_DAMAGE, e);
                         break;
                     case 31:
-                        if (levelCheck(e, BOW_DAMAGE.getLevelRequirement(p), "§cYou are too low level to acquire this!", Sound.ENTITY_VILLAGER_NO)) {
-                            passivePurchaseHandler(p, BOW_DAMAGE, e);
-                        }
+                        passivePurchaseHandler(p, BOW_DAMAGE, e);
                         break;
                     case 32:
-                        if (levelCheck(e, DAMAGE_REDUCTION.getLevelRequirement(p), "§cYou are too low level to acquire this!", Sound.ENTITY_VILLAGER_NO)) {
-                            passivePurchaseHandler(p, DAMAGE_REDUCTION, e);
-                        }
+                        passivePurchaseHandler(p, DAMAGE_REDUCTION, e);
                         break;
                     case 33:
-                        if (levelCheck(e, BUILD_BATTLER.getLevelRequirement(p), "§cYou are too low level to acquire this!", Sound.ENTITY_VILLAGER_NO)) {
-                            passivePurchaseHandler(p, BUILD_BATTLER, e);
-                        }
+                        passivePurchaseHandler(p, BUILD_BATTLER, e);
                         break;
                     case 34:
-                        if (levelCheck(e, EL_GATO.getLevelRequirement(p), "§cYou are too low level to acquire this!", Sound.ENTITY_VILLAGER_NO)) {
-                            passivePurchaseHandler(p, EL_GATO, e);
-                        }
+                        passivePurchaseHandler(p, EL_GATO, e);
                         break;
                 }
             }
