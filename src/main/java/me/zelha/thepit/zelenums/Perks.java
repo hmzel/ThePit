@@ -28,7 +28,7 @@ public enum Perks {
             , 1000
             , 10
             , 0),
-    STRENGTH_CHAINING("Strength-Chaining", REDSTONE_WIRE, Arrays.asList(
+    STRENGTH_CHAINING("Strength-Chaining", REDSTONE, Arrays.asList(
             "§c+8% damage §7for 7s stacking",
             "§7on kill."
     )
@@ -73,11 +73,11 @@ public enum Perks {
             , 0),
     LUCKY_DIAMOND("Lucky Diamond", DIAMOND, Arrays.asList(
             "§730% chance to upgrade dropped",
-            "§6armor pieces from kills to",
+            "§7armor pieces from kills to",
             "§bdiamond§7.",
             "\n",
-            "§Upgraded pieces warp to your",
-            "§inventory."
+            "§7Upgraded pieces warp to your",
+            "§7inventory."
     )
             , 4000
             , 40
