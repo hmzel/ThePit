@@ -18,14 +18,14 @@ public enum Passives {//0 tierMultipler is just a placeholder dont hurt me pleas
     private final String colorfulName;
     private final Material material;
     private final int baseLevelReq;
-    private final int tierMultiplier;
+    private final int levelTierMultiplier;
 
-    Passives(String name, String colorfulName, Material material, int baseLevelReq, int tierMultiplier) {
+    Passives(String name, String colorfulName, Material material, int baseLevelReq, int levelTierMultiplier) {
         this.name = name;
         this.colorfulName = colorfulName;
         this.material = material;
         this.baseLevelReq = baseLevelReq;
-        this.tierMultiplier = tierMultiplier;
+        this.levelTierMultiplier = levelTierMultiplier;
     }
 
     public String getName() {
@@ -55,7 +55,7 @@ public enum Passives {//0 tierMultipler is just a placeholder dont hurt me pleas
     public int getLevelRequirement(Player p) {
         PlayerData pData = Main.getInstance().getPlayerData(p);
 
-        return baseLevelReq + (tierMultiplier * pData.getPassiveTier(Passives.findByName(super.name())));
+        return baseLevelReq + (levelTierMultiplier * pData.getPassiveTier(Passives.findByName(super.name())));
     }
 }
 
