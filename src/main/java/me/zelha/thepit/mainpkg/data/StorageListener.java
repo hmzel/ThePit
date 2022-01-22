@@ -61,8 +61,7 @@ public class StorageListener implements Listener {
 
         for (Perks perk : Perks.values()) {
             if (document.getEmbedded(Arrays.asList("perk_unlocks", perk.getName()), boolean.class) == null) {
-                System.out.println(perk.getName());
-                //return false;
+                return false;
             }
         }
 
