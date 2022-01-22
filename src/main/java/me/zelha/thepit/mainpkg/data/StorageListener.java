@@ -22,6 +22,8 @@ public class StorageListener implements Listener {
     private final static Map<String, PlayerData> playerDataMap = new HashMap<>();
     private final static List<String> playerUUIDList = new ArrayList<>();
 
+    private final List<String> slots = Arrays.asList("one", "two", "three", "four");
+
     public PlayerData getPlayerData(String uuid) {
         return playerDataMap.get(uuid);
     }
@@ -40,12 +42,6 @@ public class StorageListener implements Listener {
     }
 
     private boolean dataCheck(Document document) {
-        List<String> slots = Arrays.asList(
-                "one",
-                "two",
-                "three",
-                "four"
-        );
 
         for (String slot : slots) {
             if (document.getEmbedded(Arrays.asList("perk_slots", slot), String.class) == null) {
@@ -77,12 +73,6 @@ public class StorageListener implements Listener {
         Document perkSlotsEmbed = new Document();
         Document passivesEmbed = new Document();
         Document unlockedPerksEmbed = new Document();
-        List<String> slots = Arrays.asList(
-                "one",
-                "two",
-                "three",
-                "four"
-        );
 
         for (String slot : slots) {
             if (document.getEmbedded(Arrays.asList("perk_slots", slot), String.class) == null) {
@@ -127,12 +117,6 @@ public class StorageListener implements Listener {
         Document perkSlotsEmbed = new Document();
         Document passivesEmbed = new Document();
         Document unlockedPerksEmbed = new Document();
-        List<String> slots = Arrays.asList(
-                "one",
-                "two",
-                "three",
-                "four"
-        );
 
         for (String slot : slots) {
             perkSlotsEmbed.append(slot, pData.getPerkAtSlot((slots.indexOf(slot) + 1)).getName());
@@ -168,12 +152,6 @@ public class StorageListener implements Listener {
             Document perkSlotsEmbed = new Document();
             Document passivesEmbed = new Document();
             Document unlockedPerksEmbed = new Document();
-            List<String> slots = Arrays.asList(
-                    "one",
-                    "two",
-                    "three",
-                    "four"
-            );
 
             for (String slot : slots) {
                 perkSlotsEmbed.append(slot, "unset");
