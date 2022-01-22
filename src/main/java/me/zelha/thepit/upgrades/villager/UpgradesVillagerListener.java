@@ -424,19 +424,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         }
     }
 
-    private boolean levelCheck(InventoryClickEvent e, int level, String message, Sound sound) {
-        Player p = (Player) e.getWhoClicked();
-        PlayerData pData = Main.getInstance().getPlayerData(p);
-
-        if (pData.getLevel() >= level) {
-            return true;
-        } else {
-            p.sendMessage(message);
-            p.playSound(p.getLocation(), sound, 1, 1);
-            return false;
-        }
-    }
-
     @EventHandler
     public void onDirectRightClick(InventoryOpenEvent e) {
         if (e.getView().getTopInventory().getType() == InventoryType.MERCHANT) {
