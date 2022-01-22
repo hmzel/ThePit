@@ -327,9 +327,15 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
     private ItemStack perkItemBuilder(Player p, Perks perk) {
         String name;
-        double cost = perk.getCost();
+        int cost = perk.getCost();
         int level = perk.getLevel();
         PlayerData pData = Main.getInstance().getPlayerData(p);
+
+        if (pData.getLevel() < level && pData.getPrestige() == 0) {
+            return zl.itemBuilder(BEDROCK, 1, "§cUnknown perk", Collections.singletonList(
+                    "§7Required level: " + zl.getColorBracketAndLevel(0, level)
+            ));
+        }
 
         if (pData.getPerkUnlocked(perk)) {
             name = "§a" + perk.getName();
@@ -349,19 +355,20 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         } else {
             lore.add("§7Cost: §6" + zl.getFancyGoldString(cost) + "g");
 
-            if (pData.getGold() - cost >= 0) {
-                lore.add("§eClick to purchase!");
+            if (pData.getLevel() >= level) {
+                if (pData.getGold() - cost >= 0) {
+                    lore.add("§eClick to purchase!");
+                } else {
+                    lore.add("§cNot enough gold!");
+                }
             } else {
-                lore.add("§cNot enough gold!");
+                lore.add("§7Required level: " + zl.getColorBracketAndLevel(pData.getPrestige(), level));
+                lore.add("§cToo low level!");
             }
         }
 
         //special item handling
-        if (pData.getLevel() < level && pData.getPrestige() == 0) {
-            return zl.itemBuilder(BEDROCK, 1, "§cUnknown perk", Collections.singletonList(
-                    "§7Required level: " + zl.getColorBracketAndLevel(0, level)
-            ));
-        } else if (perk == GOLDEN_HEADS) {
+        if (perk == GOLDEN_HEADS) {
             ItemStack item = zl.itemBuilder(perk.getMaterial(), 1, name, lore);
             //insert head stuff here
             return item;
@@ -375,7 +382,30 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     }
 
     private void openPerkGUI(Player p) {
-        Inventory perkGUI = Bukkit.createInventory(p, 45, "Choose a perk");
+        Inventory perkGUI = Bukkit.createInventory(p, 36, "Choose a perk");
+
+        perkGUI.setItem(10, perkItemBuilder(p, GOLDEN_HEADS));
+        perkGUI.setItem(11, perkItemBuilder(p, Perks.FISHING_ROD));
+        perkGUI.setItem(12, perkItemBuilder(p, Perks.LAVA_BUCKET));
+        perkGUI.setItem(13, perkItemBuilder(p, STRENGTH_CHAINING));
+        perkGUI.setItem(14, perkItemBuilder(p, SAFETY_FIRST));
+        perkGUI.setItem(15, perkItemBuilder(p, MINEMAN));
+        perkGUI.setItem(16, perkItemBuilder(p, INSURANCE));
+        perkGUI.setItem(19, perkItemBuilder(p, TRICKLE_DOWN));
+        perkGUI.setItem(20, perkItemBuilder(p, LUCKY_DIAMOND));
+        perkGUI.setItem(21, perkItemBuilder(p, SPAMMER));
+        perkGUI.setItem(22, perkItemBuilder(p, BOUNTY_HUNTER));
+        perkGUI.setItem(23, perkItemBuilder(p, STREAKER));
+        perkGUI.setItem(24, perkItemBuilder(p, GLADIATOR));
+        perkGUI.setItem(25, perkItemBuilder(p, VAMPIRE));
+        perkGUI.setItem(31, zl.itemBuilder(ARROW, 1, "§aGo Back", Collections.singletonList("§7To Permanent upgrades")));
+        perkGUI.setItem(32, zl.itemBuilder(DIAMOND_BLOCK, 1, "§cNo perk", Arrays.asList(
+                "§7Are you hardcore enough that you",
+                "§7don't need any perk for this",
+                "§7slot?",
+                "\n",
+                "§eClick to remove perk!"
+        )));
 
         p.openInventory(perkGUI);
     }

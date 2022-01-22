@@ -36,7 +36,7 @@ public class StorageListener implements Listener {
                     saveDocument(uuid);
                 }
             }
-        }.runTaskTimerAsynchronously(Main.getInstance(), 20, 1200);
+        }.runTaskTimerAsynchronously(Main.getInstance(), 0, 1200);
 
         System.out.println("ThePit: Successfully started data saver");
     }
