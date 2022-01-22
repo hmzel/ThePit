@@ -346,7 +346,30 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         return zl.itemBuilder(perk.getMaterial(), 1, name, lore);
     }
 
-    private void openPerkGUI(Player p) {
+    private void openPerkGUI(Player p, int slot) {
+        int level = 0;
+
+        switch (slot) {
+            case 1:
+                level = 10;
+                break;
+            case 2:
+                level = 35;
+                break;
+            case 3:
+                level = 70;
+                break;
+            case 4:
+                level = 100;
+                break;
+        }
+
+        if (Main.getInstance().getPlayerData(p).getLevel() < level) {
+            p.sendMessage("§cSlot not unlocked yet!");
+            p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
+            return;
+        }
+
         Inventory perkGUI = Bukkit.createInventory(p, 36, "Choose a perk");
 
         perkGUI.setItem(10, perkItemBuilder(p, GOLDEN_HEADS));
@@ -372,6 +395,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 "§eClick to remove perk!"
         )));
 
+        slotHandler.put(p.getUniqueId(), slot);
         p.openInventory(perkGUI);
     }
 
@@ -465,22 +489,13 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             if (e.getCurrentItem() != null) {
                 switch (e.getSlot()) {
                     case 12:
-                        if (levelCheck(e, 10, "§cSlot not unlocked yet!", Sound.ENTITY_ENDERMAN_TELEPORT)) {
-                            openPerkGUI(p);
-                            slotHandler.put(p.getUniqueId(), 1);
-                        }
+                        openPerkGUI(p, 1);
                         break;
                     case 13:
-                        if (levelCheck(e, 35, "§cSlot not unlocked yet!", Sound.ENTITY_ENDERMAN_TELEPORT)) {
-                            openPerkGUI(p);
-                            slotHandler.put(p.getUniqueId(), 2);
-                        }
+                        openPerkGUI(p, 2);
                         break;
                     case 14:
-                        if (levelCheck(e, 70, "§cSlot not unlocked yet!", Sound.ENTITY_ENDERMAN_TELEPORT)) {
-                            openPerkGUI(p);
-                            slotHandler.put(p.getUniqueId(), 3);
-                        }
+                        openPerkGUI(p, 3);
                         break;
                     case 28:
                         if (levelCheck(e, XP_BOOST.getLevelRequirement(p), "§cYou are too low level to acquire this!", Sound.ENTITY_VILLAGER_NO)) {
