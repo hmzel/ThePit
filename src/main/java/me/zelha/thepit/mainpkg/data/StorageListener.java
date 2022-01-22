@@ -34,15 +34,21 @@ public class StorageListener implements Listener {
                     saveDocument(uuid);
                 }
             }
-        }.runTaskTimerAsynchronously(Main.getInstance(), 0, 1200);
+        }.runTaskTimerAsynchronously(Main.getInstance(), 20, 1200);
 
         System.out.println("ThePit: Successfully started data saver");
     }
 
     private boolean dataCheck(Document document) {
+        List<String> slots = Arrays.asList(
+                "one",
+                "two",
+                "three",
+                "four"
+        );
 
-        for (int i = 1; i <= 4; i++) {
-            if (document.getEmbedded(Arrays.asList("perk_slots", String.valueOf(i)), String.class) == null) {
+        for (String slot : slots) {
+            if (document.getEmbedded(Arrays.asList("perk_slots", slot), String.class) == null) {
                 return false;
             }
         }
@@ -71,12 +77,18 @@ public class StorageListener implements Listener {
         Document perkSlotsEmbed = new Document();
         Document passivesEmbed = new Document();
         Document unlockedPerksEmbed = new Document();
+        List<String> slots = Arrays.asList(
+                "one",
+                "two",
+                "three",
+                "four"
+        );
 
-        for (int i = 1; i <= 4; i++) {
-            if (document.getEmbedded(Arrays.asList("perk_slots", String.valueOf(i)), String.class) == null) {
-                perkSlotsEmbed.append(String.valueOf(i), "unset");
+        for (String slot : slots) {
+            if (document.getEmbedded(Arrays.asList("perk_slots", slot), String.class) == null) {
+                perkSlotsEmbed.append(slot, "unset");
             } else {
-                perkSlotsEmbed.append(String.valueOf(i), pData.getPerkAtSlot(i).getName());
+                perkSlotsEmbed.append(slot, pData.getPerkAtSlot((slots.indexOf(slot) + 1)).getName());
             }
         }
 
@@ -115,9 +127,15 @@ public class StorageListener implements Listener {
         Document perkSlotsEmbed = new Document();
         Document passivesEmbed = new Document();
         Document unlockedPerksEmbed = new Document();
+        List<String> slots = Arrays.asList(
+                "one",
+                "two",
+                "three",
+                "four"
+        );
 
-        for (int i = 1; i <= 4; i++) {
-            perkSlotsEmbed.append(String.valueOf(i), pData.getPerkAtSlot(i).getName());
+        for (String slot : slots) {
+            perkSlotsEmbed.append(slot, pData.getPerkAtSlot((slots.indexOf(slot) + 1)).getName());
         }
 
         for (Passives passive : Passives.values()) {
@@ -153,9 +171,15 @@ public class StorageListener implements Listener {
             Document perkSlotsEmbed = new Document();
             Document passivesEmbed = new Document();
             Document unlockedPerksEmbed = new Document();
+            List<String> slots = Arrays.asList(
+                    "one",
+                    "two",
+                    "three",
+                    "four"
+            );
 
-            for (int i = 1; i <= 4; i++) {
-                perkSlotsEmbed.append(String.valueOf(i), "unset");
+            for (String slot : slots) {
+                perkSlotsEmbed.append(slot, "unset");
             }
 
             for (Passives passive : Passives.values()) {
@@ -184,6 +208,7 @@ public class StorageListener implements Listener {
         }
 
         if (!dataCheck(pDoc)) {
+            playerDataMap.put(uuid, new PlayerData(pDoc));
             pDoc = updateDocument(pDoc, uuid);
 
             System.out.println("Successfully updated player data document assigned to " + uuid);

@@ -6,6 +6,7 @@ import org.bson.Document;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PlayerData {
@@ -24,6 +25,13 @@ public class PlayerData {
     private final Map<Passives, Integer> passivesMap = new HashMap<>();
     private final Map<Perks, Boolean> perkUnlocks = new HashMap<>();
 
+    List<String> slots = Arrays.asList(
+            "one",
+            "two",
+            "three",
+            "four"
+    );
+
     public PlayerData(Document document) {
         prestige = document.getInteger("prestige");
         level = document.getInteger("level");
@@ -35,8 +43,8 @@ public class PlayerData {
         hideTimer = true;
         multikill = 0;
 
-        for (int i = 1; i <= 4; i++) {
-            perkSlots.put(i, Perks.findByName(document.getEmbedded(Arrays.asList("perk_slots", String.valueOf(i)), String.class)));
+        for (String slot : slots) {
+            perkSlots.put((slots.indexOf(slot) + 1), Perks.findByName(document.getEmbedded(Arrays.asList("perk_slots", slot), String.class)));
         }
 
         for (Passives passive : Passives.values()) {
