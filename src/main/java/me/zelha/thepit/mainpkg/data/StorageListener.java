@@ -156,9 +156,6 @@ public class StorageListener implements Listener {
         pDoc.put("perk_unlocks", unlockedPerksEmbed);
 
         pDataCol.replaceOne(new Document("uuid", uuid), pDoc);
-
-        playerDataMap.remove(uuid);
-        playerUUIDList.remove(uuid);
     }
 
     @EventHandler
@@ -227,6 +224,8 @@ public class StorageListener implements Listener {
     @EventHandler
     public void saveDataDocument(PlayerQuitEvent e) {
         saveDocument(e.getPlayer().getUniqueId().toString());
+        playerDataMap.remove(e.getPlayer().getUniqueId().toString());
+        playerUUIDList.remove(e.getPlayer().getUniqueId().toString());
     }
 }
 
