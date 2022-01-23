@@ -191,36 +191,34 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             p.sendMessage("§cYou are too low level to acquire this!");
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return;
-        }
-
-        if (pData.getPassiveTier(passive) < 5) {
-            if (pData.getGold() - cost >= 0) {
-                if (cost >= 1000) {
-                    Inventory inv = Bukkit.createInventory(p, 27, "Are you sure?");
-
-                    inv.setItem(11, zl.itemBuilder(GREEN_TERRACOTTA, 1, "§aConfirm", Arrays.asList(
-                            "§7Purchasing: " + passive.getColorfulName() + " " + zl.toRoman((pData.getPassiveTier(passive) + 1)),
-                            "§7Cost: §6" + zl.getFancyGoldString(cost) + "g"
-                    )));
-                    inv.setItem(15, zl.itemBuilder(RED_TERRACOTTA, 1, "§cCancel", Arrays.asList(
-                            "§7Return to previous menu."
-                    )));
-                    costHandler.put(p.getUniqueId(), cost);
-                    passivesHandler.put(p.getUniqueId(), passive);
-                    p.openInventory(inv);
-                } else {
-                    pData.setGold(pData.getGold() - cost);
-                    pData.setPassiveTier(passive, pData.getPassiveTier(passive) + 1);
-                    openMainGUI(p);
-                }
-            } else {
-                p.sendMessage("§cYou don't have enough gold to afford this!");
-                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-            }
-        } else {
+        } else if (pData.getPassiveTier(passive) < 5) {
             p.sendMessage("§aYou already unlocked the last upgrade!");
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            return;
+        } else if (pData.getGold() - cost < 0) {
+            p.sendMessage("§cYou don't have enough gold to afford this!");
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            return;
+        } else if (cost < 1000) {
+            pData.setGold(pData.getGold() - cost);
+            pData.setPassiveTier(passive, pData.getPassiveTier(passive) + 1);
+            p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+            openMainGUI(p);
+            return;
         }
+
+        Inventory inv = Bukkit.createInventory(p, 27, "Are you sure?");
+
+        inv.setItem(11, zl.itemBuilder(GREEN_TERRACOTTA, 1, "§aConfirm", Arrays.asList(
+                "§7Purchasing: " + passive.getColorfulName() + " " + zl.toRoman((pData.getPassiveTier(passive) + 1)),
+                "§7Cost: §6" + zl.getFancyGoldString(cost) + "g"
+        )));
+        inv.setItem(15, zl.itemBuilder(RED_TERRACOTTA, 1, "§cCancel", Arrays.asList(
+                "§7Return to previous menu."
+        )));
+        costHandler.put(p.getUniqueId(), cost);
+        passivesHandler.put(p.getUniqueId(), passive);
+        p.openInventory(inv);
     }
 
     private ItemStack perkSlotItemBuilder(Player p, int slot) {
