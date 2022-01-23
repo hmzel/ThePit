@@ -202,7 +202,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         } else if (cost < 1000) {
             pData.setGold(pData.getGold() - cost);
             pData.setPassiveTier(passive, pData.getPassiveTier(passive) + 1);
-            p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+            p.playSound(p.getLocation(),  Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
             openMainGUI(p);
             return;
         }
@@ -594,7 +594,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                         openMainGUI(p);
                     }
 
-                    p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                    p.playSound(p.getLocation(),  Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
 
                 } else if (e.getCurrentItem().getType() == RED_TERRACOTTA) {
                     if (passivesHandler.get(uuid) != null || perksHandler.get(uuid) != null) {
