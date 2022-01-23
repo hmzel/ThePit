@@ -200,7 +200,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
                     inv.setItem(11, zl.itemBuilder(GREEN_TERRACOTTA, 1, "§aConfirm", Arrays.asList(
                             "§7Purchasing: " + passive.getColorfulName() + " " + zl.toRoman((pData.getPassiveTier(passive) + 1)),
-                            "§7Cost: §6" + zl.getFancyGoldString(cost)
+                            "§7Cost: §6" + zl.getFancyGoldString(cost) + "g"
                     )));
                     inv.setItem(15, zl.itemBuilder(RED_TERRACOTTA, 1, "§cCancel", Arrays.asList(
                             "§7Return to previous menu."
@@ -307,7 +307,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             ));
         }
 
-        if (pData.getPerkUnlocked(perk)) {
+        if (pData.getPerkUnlockStatus(perk)) {
             name = "§a" + perk.getName();
         } else if (pData.getGold() - cost >= 0 && pData.getLevel() >= level) {
             name = "§e" + perk.getName();
@@ -320,7 +320,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
         if (pData.hasPerkEquipped(perk)) {
             lore.add("§aAlready selected!");
-        } else if (pData.getPerkUnlocked(perk)) {
+        } else if (pData.getPerkUnlockStatus(perk)) {
             lore.add("§eClick to select!");
         } else {
             lore.add("§7Cost: §6" + zl.getFancyGoldString(cost) + "g");
@@ -351,7 +351,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         return zl.itemBuilder(perk.getMaterial(), 1, name, lore);
     }
 
-    private void perkPurchaseHandler(Player p, Perks perk) {
+    private void perkSelectHandler(Player p, Perks perk) {
         PlayerData pData = Main.getInstance().getPlayerData(p);
         double cost = perk.getCost();
 
@@ -359,25 +359,32 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             p.sendMessage("§cYou are too low level to acquire this!");
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return;
-        }
-
-        if (pData.getGold() - cost >= 0) {
-            Inventory inv = Bukkit.createInventory(p, 27, "Are you sure?");
-
-            inv.setItem(11, zl.itemBuilder(GREEN_TERRACOTTA, 1, "§aConfirm", Arrays.asList(
-                    "§7Purchasing: §6" + perk.getName(),
-                    "§7Cost: §6" + zl.getFancyGoldString(cost)
-            )));
-            inv.setItem(15, zl.itemBuilder(RED_TERRACOTTA, 1, "§cCancel", Arrays.asList(
-                    "§7Return to previous menu."
-            )));
-            costHandler.put(p.getUniqueId(), cost);
-            perksHandler.put(p.getUniqueId(), perk);
-            p.openInventory(inv);
-        } else {
+        } else if (pData.getGold() - cost < 0) {
             p.sendMessage("§cYou don't have enough gold to afford this!");
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            return;
+        } else if (pData.hasPerkEquipped(perk)) {
+            p.sendMessage("§cThis perk is already selected!");
+            p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
+            return;
+        } else if (pData.getPerkUnlockStatus(perk)) {
+            pData.setPerkAtSlot(slotHandler.get(p.getUniqueId()), perk);
+            openMainGUI(p);
+            return;
         }
+
+        Inventory inv = Bukkit.createInventory(p, 27, "Are you sure?");
+
+        inv.setItem(11, zl.itemBuilder(GREEN_TERRACOTTA, 1, "§aConfirm", Arrays.asList(
+                "§7Purchasing: §6" + perk.getName(),
+                "§7Cost: §6" + zl.getFancyGoldString(cost) + "g"
+        )));
+        inv.setItem(15, zl.itemBuilder(RED_TERRACOTTA, 1, "§cCancel", Arrays.asList(
+                "§7Return to previous menu."
+        )));
+        costHandler.put(p.getUniqueId(), cost);
+        perksHandler.put(p.getUniqueId(), perk);
+        p.openInventory(inv);
     }
 
     private void openPerkGUI(Player p, int slot) {
@@ -553,7 +560,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             if (clicked.getType() != DIAMOND_BLOCK && clicked.getType() != ARROW) {
                 for (Perks perk : Perks.values()) {
                     if (clicked.getItemMeta().getLore().containsAll(perk.getLore())) {
-                        perkPurchaseHandler(p, perk);
+                        perkSelectHandler(p, perk);
                         return;
                     }
                 }
@@ -584,7 +591,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                         pData.setPassiveTier(passivesHandler.get(uuid), pData.getPassiveTier(passivesHandler.get(uuid)) + 1);
                         openMainGUI(p);
                     } else if (perksHandler.get(uuid) != null) {
-                        pData.setPerkUnlocked(perksHandler.get(uuid), true);
+                        pData.setPerkUnlockStatus(perksHandler.get(uuid), true);
                         pData.setPerkAtSlot(slotHandler.get(uuid), perksHandler.get(uuid));
                         openMainGUI(p);
                     }

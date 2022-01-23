@@ -5,7 +5,6 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import org.bson.Document;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -94,7 +93,7 @@ public class StorageListener implements Listener {
             if (document.getEmbedded(Arrays.asList("perk_unlocks", perk.getName()), Boolean.class) == null) {
                 unlockedPerksEmbed.append(perk.getName(), false);
             } else {
-                unlockedPerksEmbed.append(perk.getName(), pData.getPerkUnlocked(perk));
+                unlockedPerksEmbed.append(perk.getName(), pData.getPerkUnlockStatus(perk));
             }
         }
 
@@ -127,7 +126,7 @@ public class StorageListener implements Listener {
         }
 
         for (Perks perk : Perks.values()) {
-            unlockedPerksEmbed.append(perk.getName(), pData.getPerkUnlocked(perk));
+            unlockedPerksEmbed.append(perk.getName(), pData.getPerkUnlockStatus(perk));
         }
 
         pDoc.put("prestige", pData.getPrestige());
