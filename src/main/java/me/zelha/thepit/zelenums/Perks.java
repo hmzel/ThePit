@@ -75,7 +75,7 @@ public enum Perks {
             "§730% chance to upgrade dropped",
             "§7armor pieces from kills to",
             "§bdiamond§7.",
-            "\n",
+            " ",
             "§7Upgraded pieces warp to your",
             "§7inventory."
     )
@@ -84,10 +84,10 @@ public enum Perks {
             , 0),
     SPAMMER("Spammer", BOW, Arrays.asList(
             "§7Get §f3 arrows §7on arrow hit.",
-            "\n",
+            " ",
             "§7Gain §63x base gold §7reward on",
             "§7targets you've shot an arrow in.",
-            "\n",
+            " ",
             "§7Earn §6+2g §7on assists."
     )
             , 4000
@@ -96,7 +96,7 @@ public enum Perks {
     BOUNTY_HUNTER("Bounty Hunter", GOLDEN_LEGGINGS, Arrays.asList(
             "§6+4g §7on all kills.",
             "§7Earn bounty assist shares.",
-            "\n",
+            " ",
             "§c+1% damage§7/100g bounty on",
             "§7target."
     )
@@ -113,10 +113,10 @@ public enum Perks {
             "§7Assists count their",
             "§aparticipation §7towards",
             "§7killstreaks.",
-            "\n",
+            " ",
             "§7Earn §6+2g §7and §b+15% XP",
             "§7from kills and assists.",
-            "\n",
+            " ",
             "§7Gain §e+1 §7streak every §c4th",
             "§ckill§7."
     )
@@ -142,7 +142,7 @@ public enum Perks {
     GLADIATOR("Gladiator", IRON_AXE, Arrays.asList(
             "§7Receive §9-3% §7damage per",
             "§7nearby player.",
-            "\n",
+            " ",
             "§712 blocks range.",
             "§7Minimum 3, max 10 players."
     )
@@ -183,7 +183,7 @@ public enum Perks {
     OLYMPUS("Olympus", POTION, Arrays.asList(
             "§7Golden apples you earn turn into",
             "§bOlympus Potions§7.",
-            "\n",
+            " ",
             "§bOlympus Potion",
             "§9Speed I (0:24)",
             "§9Regeneration III (0:10)",
@@ -213,7 +213,7 @@ public enum Perks {
             "§7Golden apples you earn turn into",
             "§aTasty Soup§7. You also earn",
             "§7soup on assists.",
-            "\n",
+            " ",
             "§aTasty Soup",
             "§9Speed I (0:07)",
             "§a1.5❤ Heal §7+ §61❤ Absorption",
