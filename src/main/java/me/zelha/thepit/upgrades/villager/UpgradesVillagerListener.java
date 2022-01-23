@@ -538,6 +538,35 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     }
 
     @EventHandler
+    public void perkGUIInteract(InventoryClickEvent e) {
+        Player p = (Player) e.getWhoClicked();
+        ItemStack clicked = e.getCurrentItem();
+
+        if (e.getView().getTitle().equals("Choose a perk") && e.getClickedInventory() != e.getView().getBottomInventory()) {
+            e.setCancelled(true);
+
+            if (clicked == null) {
+                return;
+            }
+
+            if (clicked.getType() != DIAMOND_BLOCK && clicked.getType() != ARROW) {
+                for (Perks perk : Perks.values()) {
+                    if (clicked.getItemMeta().getLore().containsAll(perk.getLore())) {
+                        perkPurchaseHandler(p, perk);
+                        return;
+                    }
+                }
+            } else if (clicked.getType() == DIAMOND_BLOCK) {
+                Main.getInstance().getPlayerData(p).setPerkAtSlot(slotHandler.get(p.getUniqueId()), UNSET);
+                slotHandler.remove(p.getUniqueId());
+                openMainGUI(p);
+            } else if (clicked.getType() == ARROW) {
+                openMainGUI(p);
+            }
+        }
+    }
+
+    @EventHandler
     public void confirmGUIInteract(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
         UUID uuid = p.getUniqueId();
