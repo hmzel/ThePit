@@ -32,7 +32,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     private final Map<UUID, Passives> passivesHandler = new HashMap<>();
     private final Map<UUID, Perks> perksHandler = new HashMap<>();
     private final Map<UUID, Integer> slotHandler = new HashMap<>();
-    private final Map<UUID, Inventory> backHandler = new HashMap<>();
 
     private ItemStack passivesItemBuilder(Player p, Passives passive) {
         String name;
@@ -207,6 +206,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                     )));
                     costHandler.put(p.getUniqueId(), cost);
                     passivesHandler.put(p.getUniqueId(), passive);
+                    backHandler.put(p.getUniqueId(), p.getInventory());
                     p.openInventory(inv);
                 } else {
                     pData.setGold(pData.getGold() - cost);
@@ -373,6 +373,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             )));
             costHandler.put(p.getUniqueId(), cost);
             perksHandler.put(p.getUniqueId(), perk);
+            backHandler.put(p.getUniqueId(), p.getInventory());
             p.openInventory(inv);
         } else {
             p.sendMessage("§cYou don't have enough gold to afford this!");
@@ -446,8 +447,8 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         p.openInventory(streakGUI);
     }
 
-    private void determineBackInventory() {
-        if (e.getView().getTitle().equals("Permanent upgrades")) {
+    private void determineBackInventory(UUID uuid) {
+        if (slotHandler.get(uuid).getView().getTitle().equals("Permanent upgrades")) {
             openMainGUI((Player) e.getWhoClicked());
         }
     }
@@ -564,6 +565,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
                 costHandler.remove(uuid);
                 passivesHandler.remove(uuid);
+                backHandler.remove(uuid);
             }
         }
     }
@@ -574,6 +576,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         if (e.getView().getTitle().equals("Are you sure?")) {
             costHandler.remove(uuid);
             passivesHandler.remove(uuid);
+            backHandler.remove(uuid);
         } else if (e.getView().getTitle().equals("Choose a perk")) {
             slotHandler.remove(uuid);
         }
