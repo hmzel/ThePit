@@ -110,7 +110,7 @@ public class PlayerData {
         return perkSlots.get(slot);
     }
 
-    public boolean getPerkUnlocked(Perks perk) {
+    public boolean getPerkUnlockStatus(Perks perk) {
         return perkUnlocks.get(perk);
     }
 
@@ -164,7 +164,7 @@ public class PlayerData {
         perkSlots.put(slot, perk);
     }
 
-    public void setPerkUnlocked(Perks perk, boolean bool) {
+    public void setPerkUnlockStatus(Perks perk, boolean bool) {
         perkUnlocks.put(perk, bool);
     }
 
