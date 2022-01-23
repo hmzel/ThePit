@@ -30,6 +30,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final Map<UUID, Double> costHandler = new HashMap<>();
     private final Map<UUID, Passives> passivesHandler = new HashMap<>();
+    private final Map<UUID, Perks> perksHandler = new HashMap<>();
     private final Map<UUID, Integer> slotHandler = new HashMap<>();
 
     private ItemStack passivesItemBuilder(Player p, Passives passive) {
@@ -209,10 +210,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 } else {
                     pData.setGold(pData.getGold() - cost);
                     pData.setPassiveTier(passive, pData.getPassiveTier(passive) + 1);
-
-                    if (e.getView().getTitle().equals("Permanent upgrades")) {
-                        openMainGUI(p);
-                    }
+                    openMainGUI(p);
                 }
             } else {
                 p.sendMessage("§cYou don't have enough gold to afford this!");
@@ -350,6 +348,35 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         }//i cant get this stuff to work for the life of me ill do it later
 
         return zl.itemBuilder(perk.getMaterial(), 1, name, lore);
+    }
+
+    private void perkPurchaseHandler(Player p, Perks perk) {
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+        double cost = perk.getCost();
+
+        if (pData.getLevel() < perk.getLevel()) {
+            p.sendMessage("§cYou are too low level to acquire this!");
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            return;
+        }
+
+        if (pData.getGold() - cost >= 0) {
+            Inventory inv = Bukkit.createInventory(p, 27, "Are you sure?");
+
+            inv.setItem(11, zl.itemBuilder(GREEN_TERRACOTTA, 1, "§aConfirm", Arrays.asList(
+                    "§7Purchasing: §6" + perk.getName(),
+                    "§7Cost: §6" + zl.getFancyGoldString(cost)
+            )));
+            inv.setItem(15, zl.itemBuilder(RED_TERRACOTTA, 1, "§cCancel", Arrays.asList(
+                    "§7Return to previous menu."
+            )));
+            costHandler.put(p.getUniqueId(), cost);
+            perksHandler.put(p.getUniqueId(), perk);
+            p.openInventory(inv);
+        } else {
+            p.sendMessage("§cYou don't have enough gold to afford this!");
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+        }
     }
 
     private void openPerkGUI(Player p, int slot) {

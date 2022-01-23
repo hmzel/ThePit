@@ -65,7 +65,7 @@ public enum Passives {//0 tierMultipler is just a placeholder dont hurt me pleas
         Passives passive = Passives.findByName(super.name());
         int cost = 0;
 
-        switch (passive) {//will udpate when i figure out all the costs
+        switch (passive) {//will update when i figure out all the costs
             case XP_BOOST:
             case GOLD_BOOST:
             case MELEE_DAMAGE:
