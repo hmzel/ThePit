@@ -183,7 +183,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         return zl.itemBuilder(passive.getMaterial(), 1, name, lore);
     }
 
-    private void passivePurchaseHandler(Player p, Passives passive, InventoryClickEvent e) {
+    private void passivePurchaseHandler(Player p, Passives passive) {
         PlayerData pData = Main.getInstance().getPlayerData(p);
         double cost = passive.getCost(p);
 
@@ -518,25 +518,25 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                         openPerkGUI(p, 3);
                         break;
                     case 28:
-                        passivePurchaseHandler(p, XP_BOOST, e);
+                        passivePurchaseHandler(p, XP_BOOST);
                         break;
                     case 29:
-                        passivePurchaseHandler(p, GOLD_BOOST, e);
+                        passivePurchaseHandler(p, GOLD_BOOST);
                         break;
                     case 30:
-                        passivePurchaseHandler(p, MELEE_DAMAGE, e);
+                        passivePurchaseHandler(p, MELEE_DAMAGE);
                         break;
                     case 31:
-                        passivePurchaseHandler(p, BOW_DAMAGE, e);
+                        passivePurchaseHandler(p, BOW_DAMAGE);
                         break;
                     case 32:
-                        passivePurchaseHandler(p, DAMAGE_REDUCTION, e);
+                        passivePurchaseHandler(p, DAMAGE_REDUCTION);
                         break;
                     case 33:
-                        passivePurchaseHandler(p, BUILD_BATTLER, e);
+                        passivePurchaseHandler(p, BUILD_BATTLER);
                         break;
                     case 34:
-                        passivePurchaseHandler(p, EL_GATO, e);
+                        passivePurchaseHandler(p, EL_GATO);
                         break;
                 }
             }
