@@ -206,7 +206,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                     )));
                     costHandler.put(p.getUniqueId(), cost);
                     passivesHandler.put(p.getUniqueId(), passive);
-                    backHandler.put(p.getUniqueId(), p.getInventory());
                     p.openInventory(inv);
                 } else {
                     pData.setGold(pData.getGold() - cost);
@@ -373,7 +372,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             )));
             costHandler.put(p.getUniqueId(), cost);
             perksHandler.put(p.getUniqueId(), perk);
-            backHandler.put(p.getUniqueId(), p.getInventory());
             p.openInventory(inv);
         } else {
             p.sendMessage("§cYou don't have enough gold to afford this!");
@@ -445,12 +443,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         Inventory streakGUI = Bukkit.createInventory(p, 27, "Killstreaks");
 
         p.openInventory(streakGUI);
-    }
-
-    private void determineBackInventory(UUID uuid) {
-        if (slotHandler.get(uuid).getView().getTitle().equals("Permanent upgrades")) {
-            openMainGUI((Player) e.getWhoClicked());
-        }
     }
 
     @EventHandler
@@ -565,7 +557,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
                 costHandler.remove(uuid);
                 passivesHandler.remove(uuid);
-                backHandler.remove(uuid);
             }
         }
     }
