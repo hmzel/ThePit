@@ -16,6 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -600,17 +601,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         }
     }
 
-    @EventHandler
-    public void onClose(InventoryCloseEvent e) {
-        UUID uuid = e.getPlayer().getUniqueId();
-        if (e.getView().getTitle().equals("Are you sure?")) {
-            costHandler.remove(uuid);
-            passivesHandler.remove(uuid);
-        } else if (e.getView().getTitle().equals("Choose a perk")) {
-            slotHandler.remove(uuid);
-        }
-    }
-
     private final List<String> inventoryNames = Arrays.asList(
             "Permanent upgrades",
             "Choose a perk",
@@ -625,6 +615,16 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 return;
             }
         }
+    }
+
+    @EventHandler
+    public void onLeave(PlayerQuitEvent e) {
+        UUID uuid = e.getPlayer().getUniqueId();
+
+        costHandler.remove(uuid);
+        passivesHandler.remove(uuid);
+        perksHandler.remove(uuid);
+        slotHandler.remove(uuid);
     }
 }
 
