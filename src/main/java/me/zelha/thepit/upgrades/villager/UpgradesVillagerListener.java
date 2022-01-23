@@ -549,13 +549,23 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             if (e.getCurrentItem() != null) {
                 if (e.getCurrentItem().getType() == GREEN_TERRACOTTA) {
                     pData.setGold(pData.getGold() - costHandler.get(uuid));
-                    pData.setPassiveTier(passivesHandler.get(uuid), pData.getPassiveTier(passivesHandler.get(uuid)) + 1);
-                    determineBackInventory(p);
+
+                    if (passivesHandler.get(uuid) != null) {
+                        pData.setPassiveTier(passivesHandler.get(uuid), pData.getPassiveTier(passivesHandler.get(uuid)) + 1);
+                        openMainGUI(p);
+                    } else if (perksHandler.get(uuid) != null) {
+                        pData.setPerkUnlocked(perksHandler.get(uuid), true);
+                        pData.setPerkAtSlot(slotHandler.get(uuid), perksHandler.get(uuid));
+                        openMainGUI(p);
+                    }
                 } else if (e.getCurrentItem().getType() == RED_TERRACOTTA) {
-                    determineBackInventory(p);
+                    if (passivesHandler.get(uuid) != null || perksHandler.get(uuid) != null) {
+                        openMainGUI(p);
+                    }
                 }
 
                 costHandler.remove(uuid);
+                perksHandler.remove(uuid);
                 passivesHandler.remove(uuid);
             }
         }
@@ -567,7 +577,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         if (e.getView().getTitle().equals("Are you sure?")) {
             costHandler.remove(uuid);
             passivesHandler.remove(uuid);
-            backHandler.remove(uuid);
         } else if (e.getView().getTitle().equals("Choose a perk")) {
             slotHandler.remove(uuid);
         }
