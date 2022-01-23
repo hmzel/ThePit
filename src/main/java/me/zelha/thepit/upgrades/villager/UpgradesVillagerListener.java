@@ -32,6 +32,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     private final Map<UUID, Passives> passivesHandler = new HashMap<>();
     private final Map<UUID, Perks> perksHandler = new HashMap<>();
     private final Map<UUID, Integer> slotHandler = new HashMap<>();
+    private final Map<UUID, Inventory> backHandler = new HashMap<>();
 
     private ItemStack passivesItemBuilder(Player p, Passives passive) {
         String name;
@@ -445,7 +446,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         p.openInventory(streakGUI);
     }
 
-    private void determineBackInventory(InventoryClickEvent e) {
+    private void determineBackInventory() {
         if (e.getView().getTitle().equals("Permanent upgrades")) {
             openMainGUI((Player) e.getWhoClicked());
         }
@@ -556,9 +557,9 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 if (e.getCurrentItem().getType() == GREEN_TERRACOTTA) {
                     pData.setGold(pData.getGold() - costHandler.get(uuid));
                     pData.setPassiveTier(passivesHandler.get(uuid), pData.getPassiveTier(passivesHandler.get(uuid)) + 1);
-                    determineBackInventory(e);
+                    determineBackInventory(p);
                 } else if (e.getCurrentItem().getType() == RED_TERRACOTTA) {
-                    determineBackInventory(e);
+                    determineBackInventory(p);
                 }
 
                 costHandler.remove(uuid);
