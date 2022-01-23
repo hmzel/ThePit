@@ -595,6 +595,9 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                         pData.setPerkAtSlot(slotHandler.get(uuid), perksHandler.get(uuid));
                         openMainGUI(p);
                     }
+
+                    p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+
                 } else if (e.getCurrentItem().getType() == RED_TERRACOTTA) {
                     if (passivesHandler.get(uuid) != null || perksHandler.get(uuid) != null) {
                         openMainGUI(p);
