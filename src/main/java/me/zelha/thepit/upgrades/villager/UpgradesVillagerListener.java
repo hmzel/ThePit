@@ -191,7 +191,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             p.sendMessage("§cYou are too low level to acquire this!");
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return;
-        } else if (pData.getPassiveTier(passive) < 5) {
+        } else if (pData.getPassiveTier(passive) >= 5) {
             p.sendMessage("§aYou already unlocked the last upgrade!");
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return;
