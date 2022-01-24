@@ -43,7 +43,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
         if (pData.getLevel() < passive.getBaseLevelReq() && pData.getPrestige() == 0) {
             return zl.itemBuilder(BEDROCK, 1, "§cUnknown Upgrade", Collections.singletonList(
-                    "§7Required level: " + zl.getColorBracketAndLevel(0, level)
+                    "§7Required level: " + zl.getColorBracketAndLevel(0, passive.getBaseLevelReq())
             ));
         }
 
