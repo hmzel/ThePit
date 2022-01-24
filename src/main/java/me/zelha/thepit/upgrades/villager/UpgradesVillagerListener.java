@@ -555,19 +555,26 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 return;
             }
 
-            if (clicked.getType() != DIAMOND_BLOCK && clicked.getType() != ARROW) {
-                for (Perks perk : Perks.values()) {
-                    if (clicked.getItemMeta().getLore().containsAll(perk.getLore())) {
-                        perkSelectHandler(p, perk);
-                        return;
-                    }
-                }
+            //special case handling
+            if (clicked.getType() == BEDROCK) {
+                p.sendMessage("§cYou are too low level to acquire this perk!");
+                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+                return;
             } else if (clicked.getType() == DIAMOND_BLOCK) {
                 Main.getInstance().getPlayerData(p).setPerkAtSlot(slotHandler.get(p.getUniqueId()), UNSET);
                 slotHandler.remove(p.getUniqueId());
                 openMainGUI(p);
+                return;
             } else if (clicked.getType() == ARROW) {
                 openMainGUI(p);
+                return;
+            }
+
+            for (Perks perk : Perks.values()) {
+                if (clicked.getItemMeta().getLore().containsAll(perk.getLore())) {//theres no logical case where this should be null so im ignoring the warning
+                    perkSelectHandler(p, perk);
+                    return;
+                }
             }
         }
     }
