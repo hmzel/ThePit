@@ -8,6 +8,9 @@ import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import me.zelha.thepit.zelenums.Worlds;
 import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Skull;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -19,6 +22,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import static me.zelha.thepit.zelenums.Passives.*;
 import static me.zelha.thepit.zelenums.Perks.*;
@@ -266,16 +270,14 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                     "§7Required level: " + zl.getColorBracketAndLevel(0, level)
             ));
         } else if (pData.getPerkAtSlot(slot) == GOLDEN_HEADS) {
-            ItemStack item = zl.itemBuilder(perk.getMaterial(), 1, name, lore);
-            //insert head stuff here
-            return item;
+            return zl.headItemBuilder("PhantomTupac", slot, name, lore);
         } else if (pData.getPerkAtSlot(slot) == OLYMPUS) {
             ItemStack item = zl.itemBuilder(perk.getMaterial(), 1, name, lore);
             //insert potion stuff here
             return item;
         }
 
-        return zl.itemBuilder(perk.getMaterial(), 1, name, lore);
+        return zl.itemBuilder(perk.getMaterial(), slot, name, lore);
     }
 
     private void openMainGUI(Player p) {
@@ -339,9 +341,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
         //special item handling
         if (perk == GOLDEN_HEADS) {
-            ItemStack item = zl.itemBuilder(perk.getMaterial(), 1, name, lore);
-            //insert head stuff here
-            return item;
+            return zl.headItemBuilder("PhantomTupac", slotHandler.get(p.getUniqueId()), name, lore);
         } else if (perk == OLYMPUS) {
             ItemStack item = zl.itemBuilder(perk.getMaterial(), 1, name, lore);
             //insert potion stuff here
