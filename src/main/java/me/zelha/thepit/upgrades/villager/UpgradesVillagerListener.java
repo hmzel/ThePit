@@ -41,7 +41,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         List<String> lore = new ArrayList<>();
         PlayerData pData = Main.getInstance().getPlayerData(p);
 
-        if (pData.getLevel() < level && pData.getPrestige() == 0) {
+        if (pData.getLevel() < level && pData.getPrestige() == 0 && pData.getPassiveTier(passive) < 5) {
             return zl.itemBuilder(BEDROCK, 1, "§cUnknown Upgrade", Collections.singletonList(
                     "§7Required level: " + zl.getColorBracketAndLevel(0, level)
             ));
