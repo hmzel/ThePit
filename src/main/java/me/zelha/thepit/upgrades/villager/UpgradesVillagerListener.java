@@ -386,6 +386,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     }
 
     private void openPerkGUI(Player p, int slot) {
+        PlayerData pData = Main.getInstance().getPlayerData(p);
         int level = 0;
 
         switch (slot) {
@@ -403,7 +404,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 break;
         }
 
-        if (Main.getInstance().getPlayerData(p).getLevel() < level) {
+        if (pData.getLevel() < level) {
             p.sendMessage("§cSlot not unlocked yet!");
             p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
             return;
@@ -426,13 +427,16 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         perkGUI.setItem(24, perkItemBuilder(p, GLADIATOR));
         perkGUI.setItem(25, perkItemBuilder(p, VAMPIRE));
         perkGUI.setItem(31, zl.itemBuilder(ARROW, 1, "§aGo Back", Collections.singletonList("§7To Permanent upgrades")));
-        perkGUI.setItem(32, zl.itemBuilder(DIAMOND_BLOCK, 1, "§cNo perk", Arrays.asList(
-                "§7Are you hardcore enough that you",
-                "§7don't need any perk for this",
-                "§7slot?",
-                "\n",
-                "§eClick to remove perk!"
-        )));
+
+        if (pData.getPerkAtSlot(slot) != UNSET) {
+            perkGUI.setItem(32, zl.itemBuilder(DIAMOND_BLOCK, 1, "§cNo perk", Arrays.asList(
+                    "§7Are you hardcore enough that you",
+                    "§7don't need any perk for this",
+                    "§7slot?",
+                    "\n",
+                    "§eClick to remove perk!"
+            )));
+        }
 
         slotHandler.put(p.getUniqueId(), slot);
         p.openInventory(perkGUI);

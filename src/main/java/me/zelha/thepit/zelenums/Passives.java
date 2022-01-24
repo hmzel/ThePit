@@ -66,7 +66,7 @@ public enum Passives {//0 tierMultipler is just a placeholder dont hurt me pleas
         int cost = 0;
 
         switch (passive) {//will update when i figure out all the costs
-            case XP_BOOST:
+            case XP_BOOST://t2 is 2500, t5 is 25000, wtf is this calculation
             case GOLD_BOOST:
             case MELEE_DAMAGE:
             case BOW_DAMAGE:
