@@ -5,6 +5,7 @@ import me.zelha.thepit.zelenums.NPCs;
 import me.zelha.thepit.zelenums.Worlds;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.Skull;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -20,12 +21,37 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.TreeMap;
 
+import static org.bukkit.Material.AIR;
+import static org.bukkit.Material.PLAYER_HEAD;
+
 public class ZelLogic {//zel
 
     public boolean playerCheck(Player player) {return player != null && player.isValid();}
     public boolean playerCheck(Entity entity) {return entity != null && entity.isValid() && entity instanceof Player;}
     public boolean blockCheck(Block block) {return block != null && block.getType() != Material.AIR;}
     public boolean itemCheck(ItemStack item) {return item != null && item.getType() != Material.AIR;}
+
+    public ItemStack headItemBuilder(String playerName, int count, String displayName, List<String> lore) {
+        ItemStack item = null;
+        Block block = Bukkit.getWorld("world").getBlockAt(13131313, 0, 13131313);
+        block.setType(PLAYER_HEAD);
+        Skull state = (Skull) block.getState();
+        state.setOwner(playerName);
+        state.update();
+
+        for (ItemStack blockItem : block.getDrops()) {
+            item = blockItem;
+        }
+
+        ItemMeta meta = item.getItemMeta();
+
+        meta.setDisplayName(displayName);
+        meta.setLore(lore);
+        item.setAmount(count);
+        item.setItemMeta(meta);
+        block.setType(AIR);
+        return item;
+    }
 
     public ItemStack itemBuilder(Material material, int count) {
         ItemStack item = new ItemStack(material, count);
