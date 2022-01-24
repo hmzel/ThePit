@@ -76,14 +76,18 @@ public class LevelUpListener implements Listener {
 
             float percentage = zl.maxXPReq(uuid.toString()) - pData.getExp();
 
-            if (percentage <= 1) {
+            if (percentage <= 1 && percentage >= 0) {
                 if (player.getExp() != (percentage / zl.maxXPReq(uuid.toString())) && pData.getLevel() < 120) {
                     player.setExp(percentage / zl.maxXPReq(uuid.toString()));
                 } else if (pData.getLevel() >= 120) {
                     player.setExp(1);
                 }
             } else {
-                player.setExp(0);
+                if (percentage > 1.0) {
+                    player.setExp(1);
+                } else if (percentage < 0.0) {
+                    player.setExp(0);
+                }
             }
         }
     }
