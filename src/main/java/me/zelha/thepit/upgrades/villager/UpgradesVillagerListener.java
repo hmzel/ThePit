@@ -568,6 +568,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             } else if (clicked.getType() == DIAMOND_BLOCK) {
                 Main.getInstance().getPlayerData(p).setPerkAtSlot(slotHandler.get(p.getUniqueId()), UNSET);
                 slotHandler.remove(p.getUniqueId());
+                p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                 openMainGUI(p);
                 return;
             } else if (clicked.getType() == ARROW) {
