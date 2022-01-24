@@ -41,7 +41,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         List<String> lore = new ArrayList<>();
         PlayerData pData = Main.getInstance().getPlayerData(p);
 
-        if (pData.getLevel() < level && pData.getPrestige() == 0 && pData.getPassiveTier(passive) < 5) {
+        if (pData.getLevel() < passive.getBaseLevelReq() && pData.getPrestige() == 0) {
             return zl.itemBuilder(BEDROCK, 1, "§cUnknown Upgrade", Collections.singletonList(
                     "§7Required level: " + zl.getColorBracketAndLevel(0, level)
             ));
@@ -159,8 +159,9 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
         lore.add("\n");
 
-        if (pData.getLevel() >= level) {
-            if (pData.getPassiveTier(passive) < 5) {
+
+        if (pData.getPassiveTier(passive) < 5) {
+            if (pData.getLevel() >= level) {
                 if (pData.getPassiveTier(passive) > 0) {
                     lore.add("§7Upgrade cost: §6" + zl.getFancyGoldString(cost) + "g");
                 } else {
@@ -173,11 +174,12 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                     lore.add("§cNot enough gold!");
                 }
             } else {
-                lore.add("§aMax tier unlocked!");
+                lore.add("§7Required level: " + zl.getColorBracketAndLevel(0, level));
+                lore.add("§cLevel too low to upgrade!");
             }
         } else {
-            lore.add("§7Required level: " + zl.getColorBracketAndLevel(0, level));
-            lore.add("§cLevel too low to upgrade!");
+
+            lore.add("§aMax tier unlocked!");
         }
 
         return zl.itemBuilder(passive.getMaterial(), 1, name, lore);
