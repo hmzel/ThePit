@@ -367,6 +367,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             return;
         } else if (pData.getPerkUnlockStatus(perk)) {
             pData.setPerkAtSlot(slotHandler.get(p.getUniqueId()), perk);
+            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
             openMainGUI(p);
             return;
         }
