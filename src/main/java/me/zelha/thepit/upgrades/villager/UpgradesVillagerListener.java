@@ -341,7 +341,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
         //special item handling
         if (perk == GOLDEN_HEADS) {
-            return zl.headItemBuilder("PhantomTupac", slotHandler.get(p.getUniqueId()), name, lore);
+            return zl.headItemBuilder("PhantomTupac", 1, name, lore);
         } else if (perk == OLYMPUS) {
             ItemStack item = zl.itemBuilder(perk.getMaterial(), 1, name, lore);
             //insert potion stuff here
