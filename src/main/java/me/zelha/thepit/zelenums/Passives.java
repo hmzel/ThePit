@@ -54,6 +54,10 @@ public enum Passives {//0 tierMultipler is just a placeholder dont hurt me pleas
         return result;
     }
 
+    public int getBaseLevelReq() {
+        return baseLevelReq;
+    }
+
     public int getLevelRequirement(Player p) {
         PlayerData pData = Main.getInstance().getPlayerData(p);
 
