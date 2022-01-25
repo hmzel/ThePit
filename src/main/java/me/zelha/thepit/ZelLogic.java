@@ -6,6 +6,7 @@ import me.zelha.thepit.zelenums.Worlds;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -13,16 +14,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.BoundingBox;
 
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.TreeMap;
 
-import static org.bukkit.Material.AIR;
-import static org.bukkit.Material.PLAYER_HEAD;
+import static org.bukkit.Material.*;
 
 public class ZelLogic {//zel
 
@@ -50,6 +53,30 @@ public class ZelLogic {//zel
         item.setAmount(count);
         item.setItemMeta(meta);
         block.setType(AIR);
+        return item;
+    }
+
+    /**
+     * note: should handle it fine when "effects" is null, if it's not necessary
+     */
+    public ItemStack potionItemBuilder(Color color, @Nullable List<PotionEffect> effects, int count, String name, List<String> lore) {
+        ItemStack item = new ItemStack(POTION, count);
+        PotionMeta meta = (PotionMeta) item.getItemMeta();
+
+        meta.setDisplayName(name);
+        meta.setLore(lore);
+        meta.setColor(color);
+        meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+
+        if (effects != null) {
+            for (PotionEffect effect : effects) {
+                meta.addCustomEffect(effect, true);
+            }
+        }
+
+        item.setItemMeta(meta);
         return item;
     }
 
