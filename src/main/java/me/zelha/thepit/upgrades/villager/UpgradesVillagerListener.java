@@ -8,10 +8,6 @@ import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import me.zelha.thepit.zelenums.Worlds;
 import org.bukkit.*;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Skull;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -22,10 +18,7 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
 
 import static me.zelha.thepit.zelenums.Passives.*;
 import static me.zelha.thepit.zelenums.Perks.*;
@@ -379,7 +372,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 "§7Purchasing: §6" + perk.getName(),
                 "§7Cost: §6" + zl.getFancyGoldString(cost) + "g"
         )));
-        inv.setItem(15, zl.itemBuilder(RED_TERRACOTTA, 1, "§cCancel", Arrays.asList(
+        inv.setItem(15, zl.itemBuilder(RED_TERRACOTTA, 1, "§cCancel", Collections.singletonList(
                 "§7Return to previous menu."
         )));
         costHandler.put(p.getUniqueId(), cost);
@@ -512,7 +505,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         if (e.getView().getTitle().equals("Permanent upgrades") && e.getClickedInventory() != e.getView().getBottomInventory()) {
             e.setCancelled(true);
 
-            if (e.getCurrentItem() != null) {
+            if (e.getCurrentItem() != null) {//reminder: simplify this so passives do something like the perkguiinteract listener
                 switch (e.getSlot()) {
                     case 12:
                         openPerkGUI(p, 1);

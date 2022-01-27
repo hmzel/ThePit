@@ -12,6 +12,7 @@ import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.mainpkg.data.StorageListener;
 import me.zelha.thepit.mainpkg.listeners.*;
 import me.zelha.thepit.mainpkg.runnables.ParticipationRunnable;
+import me.zelha.thepit.upgrades.perks.PerkHandler;
 import me.zelha.thepit.upgrades.villager.UpgradesVillagerListener;
 import org.bson.Document;
 import org.bukkit.Bukkit;
@@ -25,6 +26,7 @@ import java.util.UUID;
 public final class Main extends JavaPlugin {
 
     private ZelLogic zelLogic;
+    private PerkHandler perkHandler;
     private StorageListener storage;
     private DeathListener deathListener;
     private SpawnListener spawnListener;
@@ -47,6 +49,7 @@ public final class Main extends JavaPlugin {
 
         instance = this;
         zelLogic = new ZelLogic();
+        perkHandler = new PerkHandler();
         storage = new StorageListener();
         deathListener = new DeathListener();
         spawnListener = new SpawnListener();
@@ -98,6 +101,9 @@ public final class Main extends JavaPlugin {
 
     public ZelLogic getZelLogic() {
         return zelLogic;
+    }
+    public PerkHandler getPerkHandler() {
+        return perkHandler;
     }
     public DeathListener getDeathListener() {
         return deathListener;
