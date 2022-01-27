@@ -13,6 +13,7 @@ import me.zelha.thepit.mainpkg.data.StorageListener;
 import me.zelha.thepit.mainpkg.listeners.*;
 import me.zelha.thepit.mainpkg.runnables.ParticipationRunnable;
 import me.zelha.thepit.upgrades.perks.PerkHandler;
+import me.zelha.thepit.upgrades.perks.PerkListener;
 import me.zelha.thepit.upgrades.villager.UpgradesVillagerListener;
 import org.bson.Document;
 import org.bukkit.Bukkit;
@@ -65,6 +66,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ItemsVillagerListener(), this);
         getServer().getPluginManager().registerEvents(new GoldenPickaxeListener(), this);
         getServer().getPluginManager().registerEvents(new UpgradesVillagerListener(), this);
+        getServer().getPluginManager().registerEvents(new PerkListener(), this);
 
         getCommand("setprestige").setExecutor(new SetPrestigeCommand());
         getCommand("setlevel").setExecutor(new SetLevelCommand());
