@@ -14,7 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.UUID;
 
-public class CombatListener implements Listener {
+public class AttackListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final RunMethods methods = Main.getInstance().generateRunMethods();
