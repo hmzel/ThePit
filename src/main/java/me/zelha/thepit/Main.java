@@ -26,6 +26,7 @@ import java.util.UUID;
 public final class Main extends JavaPlugin {
 
     private ZelLogic zelLogic;
+    private PerkHandlerAndListeners perkHandler;
     private StorageListener storage;
     private DeathListener deathListener;
     private SpawnListener spawnListener;
@@ -48,6 +49,7 @@ public final class Main extends JavaPlugin {
 
         instance = this;
         zelLogic = new ZelLogic();
+        perkHandler = new PerkHandlerAndListeners();
         storage = new StorageListener();
         deathListener = new DeathListener();
         spawnListener = new SpawnListener();
@@ -63,7 +65,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ItemsVillagerListener(), this);
         getServer().getPluginManager().registerEvents(new GoldenPickaxeListener(), this);
         getServer().getPluginManager().registerEvents(new UpgradesVillagerListener(), this);
-        getServer().getPluginManager().registerEvents(new PerkHandlerAndListeners(), this);
+        getServer().getPluginManager().registerEvents(perkHandler, this);
 
         getCommand("setprestige").setExecutor(new SetPrestigeCommand());
         getCommand("setlevel").setExecutor(new SetLevelCommand());
@@ -100,6 +102,9 @@ public final class Main extends JavaPlugin {
 
     public ZelLogic getZelLogic() {
         return zelLogic;
+    }
+    public PerkHandlerAndListeners getPerkHandler() {
+        return perkHandler;
     }
     public DeathListener getDeathListener() {
         return deathListener;
