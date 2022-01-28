@@ -14,6 +14,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -28,17 +29,30 @@ public class PerkHandlerAndListeners implements Listener {
     private PlayerData pData(Player player) {
         return Main.getInstance().getPlayerData(player);
     }
-
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-
     private final Set<UUID> gheadCooldown = new HashSet<>();
-
     private final ItemStack goldenHeadItem = zl.headItemBuilder("PhantomTupac", 1, "§6Golden Head", Arrays.asList(
                 "§9Speed I (0:08)",
                 "§9Regeneration II (0:05)",
                 "§63❤ absorption!",
                 "§71 second between eats"
         ));
+    private final ItemStack gapple = new ItemStack(Material.GOLDEN_APPLE, 1);
+
+    public void perkSelectHandler(Player p) {
+        Inventory inv = p.getInventory();
+
+        removeAll(inv, goldenHeadItem);
+        removeAll(inv, gapple);
+    }
+
+    private void removeAll(Inventory inventory, ItemStack item) {
+        for (ItemStack items : inventory.getContents()) {
+            if (items.isSimilar(item)) {
+                items.setType(Material.AIR);
+            }
+        }
+    }
 
     private void determineHealingItem(Player p) {
         ItemStack item;
@@ -46,7 +60,7 @@ public class PerkHandlerAndListeners implements Listener {
         if (pData(p).hasPerkEquipped(GOLDEN_HEADS)) {
             item = goldenHeadItem;
         } else {
-            item = new ItemStack(Material.GOLDEN_APPLE, 1);
+            item = gapple;
         }
 
         if (!p.getInventory().containsAtLeast(item, 2)) {
@@ -55,7 +69,7 @@ public class PerkHandlerAndListeners implements Listener {
     }
 
     @EventHandler
-    public void OnAttack(EntityDamageByEntityEvent e) {
+    public void onAttack(EntityDamageByEntityEvent e) {
         Entity damagedEntity = e.getEntity();
         Entity damagerEntity = e.getDamager();
 
@@ -103,12 +117,12 @@ public class PerkHandlerAndListeners implements Listener {
     }
 
     @EventHandler
-    public void OnJoin(PlayerJoinEvent e) {
+    public void onJoin(PlayerJoinEvent e) {
 
     }
 
     @EventHandler
-    public void OnLeave(PlayerQuitEvent e) {
+    public void onLeave(PlayerQuitEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
 
         gheadCooldown.remove(uuid);
