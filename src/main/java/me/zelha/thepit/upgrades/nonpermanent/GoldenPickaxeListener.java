@@ -2,7 +2,6 @@ package me.zelha.thepit.upgrades.nonpermanent;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
-import me.zelha.thepit.mainpkg.listeners.AntiVanillaListener;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -25,13 +24,13 @@ public class GoldenPickaxeListener implements Listener {
     private final Map<Player, Integer> hitCount = new HashMap<>();
 
     private boolean isPlacedBlock(Block block) {
-        return AntiVanillaListener.placedBlocks.contains(block);
+        return PlaceableBlocksListener.placedBlocks.contains(block);
     }
 
     private void stylishlyRemoveBlock(Block block) {
         block.setType(AIR);
         block.getWorld().spawnParticle(Particle.CLOUD, block.getLocation(), 5, 0.5, 0.5, 0.5, 0);
-        AntiVanillaListener.placedBlocks.remove(block);
+        PlaceableBlocksListener.placedBlocks.remove(block);
     }
 
     @EventHandler
