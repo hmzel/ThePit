@@ -40,11 +40,17 @@ public class PerkHandlerAndListeners implements Listener {
                 "§71 second between eats"
         ));
 
-    private ItemStack determineHealingItem(Player p) {
+    private void determineHealingItem(Player p) {
+        ItemStack item;
+
         if (pData(p).hasPerkEquipped(GOLDEN_HEADS)) {
-            return goldenHeadItem;
+            item = goldenHeadItem;
         } else {
-            return new ItemStack(Material.GOLDEN_APPLE, 1);
+            item = new ItemStack(Material.GOLDEN_APPLE, 1);
+        }
+
+        if (!p.getInventory().containsAtLeast(item, 2)) {
+            p.getInventory().addItem(item);
         }
     }
 
@@ -62,7 +68,7 @@ public class PerkHandlerAndListeners implements Listener {
             if (e.getCause() != DamageCause.FALL && (damagedHP - finalDMG) <= 0) {
                 //on kill
                 if (!pData(damager).hasPerkEquipped(VAMPIRE) && !pData(damager).hasPerkEquipped(RAMBO)) {
-                    damager.getInventory().addItem(determineHealingItem(damager));
+                    determineHealingItem(damager);
                 }
             }
         }
@@ -71,7 +77,7 @@ public class PerkHandlerAndListeners implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
         Player p = e.getPlayer();
-        ItemStack item = e.getItem();//bro
+        ItemStack item = e.getItem();
 
         if (zl.itemCheck(item) && item.isSimilar(goldenHeadItem) && !gheadCooldown.contains(p.getUniqueId())) {
             e.setCancelled(true);
