@@ -3,6 +3,7 @@ package me.zelha.thepit.upgrades.villager;
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.upgrades.perks.PerkListenersAndUtils;
 import me.zelha.thepit.zelenums.NPCs;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
@@ -29,6 +30,7 @@ import java.util.*;
 public class UpgradesVillagerListener implements Listener {//i hate this class
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
+    private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
     private final Map<UUID, Double> costHandler = new HashMap<>();
     private final Map<UUID, Passives> passivesHandler = new HashMap<>();
     private final Map<UUID, Perks> perksHandler = new HashMap<>();
@@ -360,6 +362,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
             return;
         } else if (pData.getPerkUnlockStatus(perk)) {
+            perkUtils.perkSelectHandler(p);
             pData.setPerkAtSlot(slotHandler.get(p.getUniqueId()), perk);
             p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
             openMainGUI(p);
@@ -560,6 +563,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                 return;
             } else if (clicked.getType() == DIAMOND_BLOCK) {
+                perkUtils.perkSelectHandler(p);
                 Main.getInstance().getPlayerData(p).setPerkAtSlot(slotHandler.get(p.getUniqueId()), UNSET);
                 slotHandler.remove(p.getUniqueId());
                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
@@ -597,6 +601,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                         openMainGUI(p);
                     } else if (perksHandler.get(uuid) != null) {
                         pData.setPerkUnlockStatus(perksHandler.get(uuid), true);
+                        perkUtils.perkSelectHandler(p);
                         pData.setPerkAtSlot(slotHandler.get(uuid), perksHandler.get(uuid));
                         openMainGUI(p);
                     }
