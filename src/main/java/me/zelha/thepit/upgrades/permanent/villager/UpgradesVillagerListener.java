@@ -1,9 +1,9 @@
-package me.zelha.thepit.upgrades.villager;
+package me.zelha.thepit.upgrades.permanent.villager;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
-import me.zelha.thepit.upgrades.perks.PerkListenersAndUtils;
+import me.zelha.thepit.upgrades.permanent.perks.PerkListenersAndUtils;
 import me.zelha.thepit.zelenums.NPCs;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;

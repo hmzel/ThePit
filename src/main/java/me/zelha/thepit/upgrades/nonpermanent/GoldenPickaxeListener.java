@@ -1,7 +1,8 @@
-package me.zelha.thepit.mainpkg.listeners;
+package me.zelha.thepit.upgrades.nonpermanent;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
+import me.zelha.thepit.mainpkg.listeners.AntiVanillaListener;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;

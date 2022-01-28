@@ -1,9 +1,8 @@
-package me.zelha.thepit.upgrades.perks;
+package me.zelha.thepit.upgrades.permanent.perks;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
-import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;

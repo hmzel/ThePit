@@ -1,4 +1,4 @@
-package me.zelha.thepit.mainpkg.listeners;
+package me.zelha.thepit.upgrades.nonpermanent.villager;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
