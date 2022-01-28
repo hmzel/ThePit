@@ -48,7 +48,7 @@ public class PerkListenersAndUtils implements Listener {
 
     private void removeAll(Inventory inventory, ItemStack item) {
         for (ItemStack items : inventory.getContents()) {
-            if (items.isSimilar(item)) {
+            if (zl.itemCheck(items) && items.isSimilar(item)) {
                 items.setType(Material.AIR);
             }
         }
