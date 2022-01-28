@@ -103,7 +103,7 @@ public class ScoreboardListener implements Listener {
             }
 
             boardScores.add("§4");
-            boardScores.add("§eheckyou.zel");
+            boardScores.add("§epet a cat");
 
             return boardScores;
         }

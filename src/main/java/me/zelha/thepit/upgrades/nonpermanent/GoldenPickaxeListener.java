@@ -24,13 +24,13 @@ public class GoldenPickaxeListener implements Listener {
     private final Map<Player, Integer> hitCount = new HashMap<>();
 
     private boolean isPlacedBlock(Block block) {
-        return PlaceableBlocksListener.placedBlocks.contains(block);
+        return BlockPlaceListener.placedBlocks.contains(block);
     }
 
     private void stylishlyRemoveBlock(Block block) {
         block.setType(AIR);
         block.getWorld().spawnParticle(Particle.CLOUD, block.getLocation(), 5, 0.5, 0.5, 0.5, 0);
-        PlaceableBlocksListener.placedBlocks.remove(block);
+        BlockPlaceListener.placedBlocks.remove(block);
     }
 
     @EventHandler

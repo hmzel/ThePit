@@ -9,26 +9,34 @@ import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.BoundingBox;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 
 import static org.bukkit.Material.*;
 
-public class PlaceableBlocksListener implements Listener {
+public class BlockPlaceListener implements Listener {
 
     public final static List<Block> placedBlocks = new ArrayList<>();
+    private final List<Material> placeable = new ArrayList<>();
+
+    private List<Material> getPlaceableBlocks() {
+        if (!placeable.contains(OBSIDIAN)) placeable.add(OBSIDIAN);
+        if (!placeable.contains(COBBLESTONE)) placeable.add(COBBLESTONE);
+        if (!placeable.contains(OAK_WOOD)) placeable.add(OAK_WOOD);
+     return placeable;
+    }
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
         Material blockType = e.getBlock().getType();
 
-        if (blockType != OBSIDIAN && blockType != COBBLESTONE && blockType != OAK_WOOD) {
-
+        if (!getPlaceableBlocks().contains(blockType)) {
             if (!Main.getInstance().blockPriviledges.contains(e.getPlayer()) || !placedBlocks.contains(e.getBlock())) {
                 e.setCancelled(true);
             }
@@ -40,15 +48,14 @@ public class PlaceableBlocksListener implements Listener {
         Material blockType = e.getBlock().getType();
         PlayerData pData = Main.getInstance().getPlayerData(e.getPlayer());
 
-        if (blockType != OBSIDIAN && blockType != COBBLESTONE && blockType != OAK_WOOD) {
-
+        if (getPlaceableBlocks().contains(blockType)) {
             if (!Main.getInstance().blockPriviledges.contains(e.getPlayer())) {
                 e.setCancelled(true);
             }
         }
 
         if (blockType == OBSIDIAN) {
-            new BlockGoPoof(e.getBlock(), e.getBlockReplacedState().getType(), (int) Math.round(120 * (1 + (pData.getPassiveTier(Passives.BUILD_BATTLER) * 0.6)))).runTaskTimer(Main.getInstance(), 0, 1);
+            new BlockGoPoof(e.getBlock(), e.getBlockReplacedState().getType()).runTaskTimer(Main.getInstance(), 0, (Math.round(120 * (1 + (pData.getPassiveTier(Passives.BUILD_BATTLER) * 0.6)))) * 20);
             placedBlocks.add(e.getBlock());
         }
     }
@@ -58,25 +65,20 @@ public class PlaceableBlocksListener implements Listener {
 
         private final Block block;
         private final Material previousBlock;
-        private final int timer;
-        private int countdown = 0;
 
-        private BlockGoPoof(Block block, Material previousBlock, int timer) {
+        private BlockGoPoof(Block block, Material previousBlock) {
             this.block = block;
             this.previousBlock = previousBlock;
-            this.timer = timer * 20;
         }
 
         @Override
         public void run() {
 
-            if (countdown >= timer) {
-                block.setType(previousBlock);
-                block.getWorld().spawnParticle(Particle.CLOUD, block.getLocation(), 5, 0.5, 0.5, 0.5, 0);
-                placedBlocks.remove(block);
-                cancel();
-            }
-            countdown++;
+            block.setType(previousBlock);
+            block.getWorld().spawnParticle(Particle.CLOUD, block.getLocation(), 5, 0.5, 0.5, 0.5, 0);
+            placedBlocks.remove(block);
+
+            cancel();
         }
     }
 }
