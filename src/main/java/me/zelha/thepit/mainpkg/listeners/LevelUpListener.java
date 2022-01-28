@@ -61,7 +61,6 @@ public class LevelUpListener implements Listener {
 
                 pData.setLevel(level + 1);
                 pData.setExp(zl.maxXPReq(uuid.toString()));
-                player.setLevel(pData.getLevel());
 
                 if (zl.playerCheck(Bukkit.getPlayer(uuid))) {
                     Player p = Bukkit.getPlayer(uuid);
@@ -73,6 +72,8 @@ public class LevelUpListener implements Listener {
                     p.sendMessage("§b§lPIT LEVEL UP! " + previousLevel + " ➟ " + zl.getColorBracketAndLevel(uuid.toString()));
                 }
             }
+
+            player.setLevel(pData.getLevel());
 
             float percentage = zl.maxXPReq(uuid.toString()) - pData.getExp();
 
