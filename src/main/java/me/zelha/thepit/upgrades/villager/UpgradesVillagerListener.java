@@ -9,6 +9,7 @@ import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import me.zelha.thepit.zelenums.Worlds;
 import org.bukkit.*;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -19,7 +20,9 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import static me.zelha.thepit.zelenums.Passives.*;
 import static me.zelha.thepit.zelenums.Perks.*;
@@ -298,6 +301,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         int cost = perk.getCost();
         int level = perk.getLevel();
         PlayerData pData = Main.getInstance().getPlayerData(p);
+        ItemStack item;
 
         if (pData.getLevel() < level && pData.getPrestige() == 0) {
             return zl.itemBuilder(BEDROCK, 1, "§cUnknown perk", Collections.singletonList(
@@ -337,12 +341,21 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
         //special item handling
         if (perk == GOLDEN_HEADS) {
-            return zl.headItemBuilder("PhantomTupac", 1, name, lore);
+            item = zl.headItemBuilder("PhantomTupac", 1, name, lore);
         } else if (perk == OLYMPUS) {
-            return zl.potionItemBuilder(Color.LIME, null, 1, name, lore);
+            item = zl.potionItemBuilder(Color.LIME, null, 1, name, lore);
+        } else {
+            item = zl.itemBuilder(perk.getMaterial(), 1, name, lore);
         }
 
-        return zl.itemBuilder(perk.getMaterial(), 1, name, lore);
+        if (pData.hasPerkEquipped(perk)) {
+            item.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1);
+            ItemMeta meta = item.getItemMeta();
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            item.setItemMeta(meta);
+        }
+
+        return item;
     }
 
     private void perkSelectHandler(Player p, Perks perk) {
