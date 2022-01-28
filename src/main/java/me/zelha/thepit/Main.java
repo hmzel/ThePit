@@ -12,7 +12,7 @@ import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.mainpkg.data.StorageListener;
 import me.zelha.thepit.mainpkg.listeners.*;
 import me.zelha.thepit.mainpkg.runnables.ParticipationRunnable;
-import me.zelha.thepit.upgrades.perks.PerkHandlerAndListeners;
+import me.zelha.thepit.upgrades.perks.PerkListenersAndUtils;
 import me.zelha.thepit.upgrades.villager.UpgradesVillagerListener;
 import org.bson.Document;
 import org.bukkit.Bukkit;
@@ -26,7 +26,7 @@ import java.util.UUID;
 public final class Main extends JavaPlugin {
 
     private ZelLogic zelLogic;
-    private PerkHandlerAndListeners perkHandler;
+    private PerkListenersAndUtils perkUtils;
     private StorageListener storage;
     private DeathListener deathListener;
     private SpawnListener spawnListener;
@@ -49,7 +49,7 @@ public final class Main extends JavaPlugin {
 
         instance = this;
         zelLogic = new ZelLogic();
-        perkHandler = new PerkHandlerAndListeners();
+        perkUtils = new PerkListenersAndUtils();
         storage = new StorageListener();
         deathListener = new DeathListener();
         spawnListener = new SpawnListener();
@@ -65,7 +65,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ItemsVillagerListener(), this);
         getServer().getPluginManager().registerEvents(new GoldenPickaxeListener(), this);
         getServer().getPluginManager().registerEvents(new UpgradesVillagerListener(), this);
-        getServer().getPluginManager().registerEvents(perkHandler, this);
+        getServer().getPluginManager().registerEvents(perkUtils, this);
 
         getCommand("setprestige").setExecutor(new SetPrestigeCommand());
         getCommand("setlevel").setExecutor(new SetLevelCommand());
@@ -103,8 +103,8 @@ public final class Main extends JavaPlugin {
     public ZelLogic getZelLogic() {
         return zelLogic;
     }
-    public PerkHandlerAndListeners getPerkHandler() {
-        return perkHandler;
+    public PerkListenersAndUtils getPerkUtils() {
+        return perkUtils;
     }
     public DeathListener getDeathListener() {
         return deathListener;

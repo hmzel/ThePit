@@ -24,7 +24,7 @@ import java.util.*;
 
 import static me.zelha.thepit.zelenums.Perks.*;
 
-public class PerkHandlerAndListeners implements Listener {
+public class PerkListenersAndUtils implements Listener {
 
     private PlayerData pData(Player player) {
         return Main.getInstance().getPlayerData(player);
