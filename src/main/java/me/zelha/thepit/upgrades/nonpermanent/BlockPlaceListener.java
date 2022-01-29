@@ -81,7 +81,6 @@ public class BlockPlaceListener implements Listener {
         @Override
         public void run() {
             block.setType(previousBlock);
-            block.getWorld().spawnParticle(Particle.CLOUD, block.getLocation(), 5, 0.5, 0.5, 0.5, 0);
             placedBlocks.remove(block);
             cancel();
         }
