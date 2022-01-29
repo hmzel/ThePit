@@ -17,7 +17,7 @@ public enum Worlds {
         return name;
     }
 
-    public static Worlds valueOfName(String string) {
+    public static Worlds findByName(String string) {
         for (Worlds world : Worlds.values()) {
             if (world.getName().equals(string)) {
                 return world;

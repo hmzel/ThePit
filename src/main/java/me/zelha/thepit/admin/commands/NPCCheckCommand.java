@@ -84,14 +84,14 @@ public class NPCCheckCommand implements CommandExecutor {
             Player p = (Player) sender;
             String worldName = p.getWorld().getName();
 
-            if (npcAbsent(villagerLocation(Worlds.valueOfName(worldName), NPCs.ITEMS))) {
-                spawnVillager(villagerLocation(Worlds.valueOfName(worldName), NPCs.ITEMS), NPCs.ITEMS);
+            if (npcAbsent(villagerLocation(Worlds.findByName(worldName), NPCs.ITEMS))) {
+                spawnVillager(villagerLocation(Worlds.findByName(worldName), NPCs.ITEMS), NPCs.ITEMS);
                 p.sendMessage("§aItems Villager successfully spawned!");
             } else {
                 p.sendMessage("§cItems Villager is not absent.");
             }
-            if (npcAbsent(villagerLocation(Worlds.valueOfName(worldName), NPCs.UPGRADES))) {
-                spawnVillager(villagerLocation(Worlds.valueOfName(worldName), NPCs.UPGRADES), NPCs.UPGRADES);
+            if (npcAbsent(villagerLocation(Worlds.findByName(worldName), NPCs.UPGRADES))) {
+                spawnVillager(villagerLocation(Worlds.findByName(worldName), NPCs.UPGRADES), NPCs.UPGRADES);
                 p.sendMessage("§aUpgrades Villager successfully spawned!");
             } else {
                 p.sendMessage("§cUpgrades Villager is not absent.");

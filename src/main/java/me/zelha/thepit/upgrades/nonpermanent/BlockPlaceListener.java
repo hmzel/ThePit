@@ -22,6 +22,7 @@ import java.util.List;
 import static org.bukkit.Material.*;
 
 public class BlockPlaceListener implements Listener {
+    //note: block placement prevention in spawn is handled in SpawnListener
 
     public final static List<Block> placedBlocks = new ArrayList<>();
     private final List<Material> placeable = new ArrayList<>();

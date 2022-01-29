@@ -478,7 +478,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
             e.setCancelled(true);
 
-            if (zl.noObstructions(Worlds.valueOfName(worldName), NPCs.UPGRADES).contains(x, y, z)) {
+            if (zl.noObstructions(Worlds.findByName(worldName), NPCs.UPGRADES).contains(x, y, z)) {
                 openMainGUI(p);
             }
         }
@@ -491,7 +491,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         double y = e.getRightClicked().getLocation().getY();
         double z = e.getRightClicked().getLocation().getZ();
 
-        if (zl.noObstructions(Worlds.valueOfName(worldName), NPCs.UPGRADES).contains(x, y, z)) {
+        if (zl.noObstructions(Worlds.findByName(worldName), NPCs.UPGRADES).contains(x, y, z)) {
             openMainGUI(e.getPlayer());
         }
     }
@@ -508,7 +508,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             double y = damaged.getLocation().getY();
             double z = damaged.getLocation().getZ();
 
-            if (zl.noObstructions(Worlds.valueOfName(worldName), NPCs.UPGRADES).contains(x, y, z)) {
+            if (zl.noObstructions(Worlds.findByName(worldName), NPCs.UPGRADES).contains(x, y, z)) {
                 openMainGUI(damager);
             }
         }

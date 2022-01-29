@@ -153,7 +153,7 @@ public class ItemsVillagerListener implements Listener {
 
             e.setCancelled(true);
 
-            if (zl.noObstructions(Worlds.valueOfName(worldName), NPCs.ITEMS).contains(x, y, z)) {
+            if (zl.noObstructions(Worlds.findByName(worldName), NPCs.ITEMS).contains(x, y, z)) {
                 openGUI(p);
             }
         }
@@ -166,7 +166,7 @@ public class ItemsVillagerListener implements Listener {
         double y = e.getRightClicked().getLocation().getY();
         double z = e.getRightClicked().getLocation().getZ();
 
-        if (zl.noObstructions(Worlds.valueOfName(worldName), NPCs.ITEMS).contains(x, y, z)) {
+        if (zl.noObstructions(Worlds.findByName(worldName), NPCs.ITEMS).contains(x, y, z)) {
             openGUI(e.getPlayer());
         }
     }
@@ -183,7 +183,7 @@ public class ItemsVillagerListener implements Listener {
             double y = damaged.getLocation().getY();
             double z = damaged.getLocation().getZ();
 
-            if (zl.noObstructions(Worlds.valueOfName(worldName), NPCs.ITEMS).contains(x, y, z)) {
+            if (zl.noObstructions(Worlds.findByName(worldName), NPCs.ITEMS).contains(x, y, z)) {
                 openGUI(damager);
             }
         }

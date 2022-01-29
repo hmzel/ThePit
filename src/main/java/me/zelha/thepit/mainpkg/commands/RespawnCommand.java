@@ -2,6 +2,7 @@ package me.zelha.thepit.mainpkg.commands;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.zelenums.Worlds;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -23,12 +24,8 @@ public class RespawnCommand implements CommandExecutor {
             PlayerData pData = Main.getInstance().getPlayerData(p);
 
             if (!pData.getStatus().equals("fighting")) {
-                String worldName = p.getWorld().getName();
-                double x = p.getLocation().getX();
-                double y = p.getLocation().getY();
-                double z = p.getLocation().getZ();
 
-                if (!Main.getInstance().getSpawnListener().spawnCheck(worldName, x, y, z)) {
+                if (!Main.getInstance().getSpawnListener().spawnCheck(p.getLocation())) {
 
                     if (!cooldown.contains(p.getUniqueId())) {
                         Main.getInstance().getDeathListener().teleportToSpawnMethod(p);
