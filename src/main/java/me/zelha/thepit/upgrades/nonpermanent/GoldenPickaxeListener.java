@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.bukkit.Material.AIR;
+import static org.bukkit.Material.GOLDEN_PICKAXE;
 
 public class GoldenPickaxeListener implements Listener {
 
@@ -35,10 +36,13 @@ public class GoldenPickaxeListener implements Listener {
 
     @EventHandler
     public void onClick(PlayerInteractEvent e) {
-        Player p = e.getPlayer();
-        Block clicked = e.getClickedBlock();
-
         if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
+            if (!zl.itemCheck(e.getItem()) || e.getItem().getType() != GOLDEN_PICKAXE) {
+                return;
+            }
+
+            Player p = e.getPlayer();
+            Block clicked = e.getClickedBlock();
 
             if (hitCount.containsKey(p) && isPlacedBlock(clicked)) {
                 hitCount.put(p, hitCount.get(p) + 1);
