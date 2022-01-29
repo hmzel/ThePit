@@ -3,6 +3,7 @@ package me.zelha.thepit.upgrades.nonpermanent;
 import me.zelha.thepit.Main;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.Passives;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
@@ -46,16 +47,22 @@ public class BlockPlaceListener implements Listener {
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent e) {
         Material blockType = e.getBlock().getType();
+        Location blockLocation = e.getBlock().getLocation();
         PlayerData pData = Main.getInstance().getPlayerData(e.getPlayer());
 
-        if (getPlaceableBlocks().contains(blockType)) {
+        if (!getPlaceableBlocks().contains(blockType)) {
             if (!Main.getInstance().blockPriviledges.contains(e.getPlayer())) {
                 e.setCancelled(true);
             }
         }
 
+        if (blockLocation.distance(new Location(blockLocation.getWorld(), 0, blockLocation.getY(), 0)) < 10) {
+            e.setCancelled(true);
+            return;
+        }
+
         if (blockType == OBSIDIAN) {
-            new BlockGoPoof(e.getBlock(), e.getBlockReplacedState().getType()).runTaskTimer(Main.getInstance(), 0, (Math.round(120 * (1 + (pData.getPassiveTier(Passives.BUILD_BATTLER) * 0.6)))) * 20);
+            new BlockGoPoof(e.getBlock(), e.getBlockReplacedState().getType()).runTaskLater(Main.getInstance(), (Math.round(120 * (1 + (pData.getPassiveTier(Passives.BUILD_BATTLER) * 0.6)))) * 20);
             placedBlocks.add(e.getBlock());
         }
     }
@@ -73,11 +80,9 @@ public class BlockPlaceListener implements Listener {
 
         @Override
         public void run() {
-
             block.setType(previousBlock);
             block.getWorld().spawnParticle(Particle.CLOUD, block.getLocation(), 5, 0.5, 0.5, 0.5, 0);
             placedBlocks.remove(block);
-
             cancel();
         }
     }
