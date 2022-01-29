@@ -56,13 +56,13 @@ public class BlockPlaceListener implements Listener {
             }
         }
 
-        if (blockLocation.distance(new Location(blockLocation.getWorld(), 0, blockLocation.getY(), 0)) < 10) {
+        if (blockLocation.distance(new Location(blockLocation.getWorld(), 0, blockLocation.getY(), 0)) < 9) {
             e.setCancelled(true);
             return;
         }
 
         if (blockType == OBSIDIAN) {
-            new BlockGoPoof(e.getBlock(), e.getBlockReplacedState().getType()).runTaskLater(Main.getInstance(), (Math.round(120 * (1 + (pData.getPassiveTier(Passives.BUILD_BATTLER) * 0.6)))) * 20);
+            new BlockGoPoof(e.getBlock(), e.getBlockReplacedState().getType()).runTaskLater(Main.getInstance(), (Math.round(120 * (1 + (pData.getPassiveTier(Passives.BUILD_BATTLER) * 0.6)))));
             placedBlocks.add(e.getBlock());
         }
     }
