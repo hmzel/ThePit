@@ -103,6 +103,12 @@ public class DeathListener implements Listener {
         Entity entity = e.getEntity();
 
         if (zl.playerCheck(entity)) {
+
+            if (Main.getInstance().getSpawnListener().spawnCheck(entity.getLocation())) {
+                e.setCancelled(true);
+                return;
+            }
+
             Player p = (Player) e.getEntity();
             double finalDMG = e.getFinalDamage();
             double currentHP = p.getHealth();

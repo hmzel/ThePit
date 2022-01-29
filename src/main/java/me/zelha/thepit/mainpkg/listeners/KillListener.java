@@ -23,6 +23,7 @@ import java.util.UUID;
 public class KillListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
+    private final SpawnListener spawnUtils = Main.getInstance().getSpawnListener();
     private final RunMethods methods = Main.getInstance().generateRunMethods();
     private final RunMethods methods2 = Main.getInstance().generateRunMethods();
 
@@ -194,7 +195,12 @@ public class KillListener implements Listener {
         Entity damagedEntity = e.getEntity();
         Entity damagerEntity = e.getDamager();
 
+        if (spawnUtils.spawnCheck(damagedEntity.getLocation()) || spawnUtils.spawnCheck(damagerEntity.getLocation())) {
+            return;
+        }
+
         if (zl.playerCheck(damagedEntity) && zl.playerCheck(damagerEntity)) {
+
             Player damaged = (Player) e.getEntity();
             Player damager = (Player) e.getDamager();
             double finalDMG = e.getFinalDamage();
