@@ -29,6 +29,8 @@ import static org.bukkit.Material.*;
 
 public class ZelLogic {//zel
 
+    //split these methods up into zellogic and zelutils next refactor
+
     public boolean playerCheck(Player player) {return player != null && player.isValid();}
     public boolean playerCheck(Entity entity) {return entity != null && entity.isValid() && entity instanceof Player;}
     public boolean blockCheck(Block block) {return block != null && block.getType() != Material.AIR;}
@@ -163,7 +165,9 @@ public class ZelLogic {//zel
                 return;
             }
         }
+
         ArmorStand hologram = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
+
         hologram.setVisible(false);
         hologram.setBasePlate(false);
         hologram.setMarker(true);

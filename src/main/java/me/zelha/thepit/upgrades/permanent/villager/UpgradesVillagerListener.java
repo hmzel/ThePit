@@ -375,7 +375,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
             return;
         } else if (pData.getPerkUnlockStatus(perk)) {
-            perkUtils.perkSelectHandler(p);
+            perkUtils.perkReset(p);
             pData.setPerkAtSlot(slotHandler.get(p.getUniqueId()), perk);
             p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
             openMainGUI(p);
@@ -576,7 +576,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                 return;
             } else if (clicked.getType() == DIAMOND_BLOCK) {
-                perkUtils.perkSelectHandler(p);
+                perkUtils.perkReset(p);
                 Main.getInstance().getPlayerData(p).setPerkAtSlot(slotHandler.get(p.getUniqueId()), UNSET);
                 slotHandler.remove(p.getUniqueId());
                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
@@ -614,7 +614,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                         openMainGUI(p);
                     } else if (perksHandler.get(uuid) != null) {
                         pData.setPerkUnlockStatus(perksHandler.get(uuid), true);
-                        perkUtils.perkSelectHandler(p);
+                        perkUtils.perkReset(p);
                         pData.setPerkAtSlot(slotHandler.get(uuid), perksHandler.get(uuid));
                         openMainGUI(p);
                     }

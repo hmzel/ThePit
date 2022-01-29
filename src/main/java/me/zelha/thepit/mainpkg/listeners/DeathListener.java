@@ -115,6 +115,7 @@ public class DeathListener implements Listener {
 
             if (e.getCause() != DamageCause.FALL && (currentHP - finalDMG <= 0)) {
                 teleportToSpawnMethod(p);
+
                 e.setCancelled(true);
             }
         }

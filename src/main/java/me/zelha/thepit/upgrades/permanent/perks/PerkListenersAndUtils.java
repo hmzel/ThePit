@@ -29,8 +29,10 @@ public class PerkListenersAndUtils implements Listener {
     private PlayerData pData(Player player) {
         return Main.getInstance().getPlayerData(player);
     }
+
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final SpawnListener spawnUtils = Main.getInstance().getSpawnListener();
+
     private final Set<UUID> gheadCooldown = new HashSet<>();
     private final ItemStack goldenHeadItem = zl.headItemBuilder("PhantomTupac", 1, "§6Golden Head", Arrays.asList(
                 "§9Speed I (0:08)",
@@ -40,7 +42,11 @@ public class PerkListenersAndUtils implements Listener {
         ));
     private final ItemStack gapple = new ItemStack(Material.GOLDEN_APPLE, 1);
 
-    public void perkSelectHandler(Player p) {
+    /**
+     * supposed to be called every time perk items should be reset <p>
+     * ex: dying, selecting a perk, etc
+     */
+    public void perkReset(Player p) {
         Inventory inv = p.getInventory();
 
         removeAll(inv, goldenHeadItem);
@@ -55,17 +61,23 @@ public class PerkListenersAndUtils implements Listener {
         }
     }
 
-    private void determineHealingItem(Player p) {
-        ItemStack item;
+    private void determineKillReward(Player p) {
+        if (!pData(p).hasPerkEquipped(VAMPIRE) && !pData(p).hasPerkEquipped(RAMBO)) {
+            if (pData(p).hasPerkEquipped(OLYMPUS)) {
 
-        if (pData(p).hasPerkEquipped(GOLDEN_HEADS)) {
-            item = goldenHeadItem;
-        } else {
-            item = gapple;
+            } else if (pData(p).hasPerkEquipped(GOLDEN_HEADS) && !p.getInventory().containsAtLeast(goldenHeadItem, 2)) {
+                p.getInventory().addItem(goldenHeadItem);
+            } else if (!p.getInventory().containsAtLeast(gapple, 2)) {
+                p.getInventory().addItem(gapple);
+            }
         }
 
-        if (!p.getInventory().containsAtLeast(item, 2)) {
-            p.getInventory().addItem(item);
+        if (pData(p).hasPerkEquipped(VAMPIRE)) {
+
+        }
+
+        if (pData(p).hasPerkEquipped(RAMBO)) {
+
         }
     }
 
@@ -85,10 +97,7 @@ public class PerkListenersAndUtils implements Listener {
             double damagedHP = damaged.getHealth();
 
             if (e.getCause() != DamageCause.FALL && (damagedHP - finalDMG) <= 0) {
-                //on kill
-                if (!pData(damager).hasPerkEquipped(VAMPIRE) && !pData(damager).hasPerkEquipped(RAMBO)) {
-                    determineHealingItem(damager);
-                }
+                determineKillReward(damager);
             }
         }
     }
