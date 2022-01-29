@@ -3,6 +3,7 @@ package me.zelha.thepit.upgrades.permanent.perks;
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.mainpkg.listeners.SpawnListener;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -29,6 +30,7 @@ public class PerkListenersAndUtils implements Listener {
         return Main.getInstance().getPlayerData(player);
     }
     private final ZelLogic zl = Main.getInstance().getZelLogic();
+    private final SpawnListener spawnUtils = Main.getInstance().getSpawnListener();
     private final Set<UUID> gheadCooldown = new HashSet<>();
     private final ItemStack goldenHeadItem = zl.headItemBuilder("PhantomTupac", 1, "§6Golden Head", Arrays.asList(
                 "§9Speed I (0:08)",
@@ -71,6 +73,10 @@ public class PerkListenersAndUtils implements Listener {
     public void onAttack(EntityDamageByEntityEvent e) {
         Entity damagedEntity = e.getEntity();
         Entity damagerEntity = e.getDamager();
+
+        if (spawnUtils.spawnCheck(damagedEntity.getLocation()) || spawnUtils.spawnCheck(damagerEntity.getLocation())) {
+            return;
+        }
 
         if (zl.playerCheck(damagedEntity) && zl.playerCheck(damagerEntity)) {
             Player damaged = (Player) e.getEntity();

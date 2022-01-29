@@ -200,7 +200,6 @@ public class KillListener implements Listener {
         }
 
         if (zl.playerCheck(damagedEntity) && zl.playerCheck(damagerEntity)) {
-
             Player damaged = (Player) e.getEntity();
             Player damager = (Player) e.getDamager();
             double finalDMG = e.getFinalDamage();
@@ -223,8 +222,7 @@ public class KillListener implements Listener {
                 damagerData.setGold(damagerData.getGold() + calculatedGold);
                 damagerData.setMultiKill(damagerData.getMultiKill() + 1);
 
-                if ((Math.floor(damagerData.getStreak()) % 10 == 0)
-                || (damagerData.getStreak() < 6 && damagerData.getStreak() >= 5)) {
+                if ((Math.floor(damagerData.getStreak()) % 10 == 0) || (damagerData.getStreak() < 6 && damagerData.getStreak() >= 5)) {
                     Bukkit.broadcastMessage("§c§lSTREAK! §7of §c" + (int) Math.floor(damagerData.getStreak()) + " §7kills by "
                     + zl.getColorBracketAndLevel(damager.getUniqueId().toString()) + " §7" + damager.getName());
                 }
