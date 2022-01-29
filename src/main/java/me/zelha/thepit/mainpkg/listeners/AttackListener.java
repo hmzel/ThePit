@@ -17,12 +17,17 @@ import java.util.UUID;
 public class AttackListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
+    private final SpawnListener spawnUtils = Main.getInstance().getSpawnListener();
     private final RunMethods methods = Main.getInstance().generateRunMethods();
 
     @EventHandler
     public void onAttack(EntityDamageByEntityEvent e) {
         Entity damagedEntity = e.getEntity();
         Entity damagerEntity = e.getDamager();
+
+        if (spawnUtils.spawnCheck(damagedEntity.getLocation()) || spawnUtils.spawnCheck(damagerEntity.getLocation())) {
+            return;
+        }
 
         if (zl.playerCheck(damagedEntity) && zl.playerCheck(damagerEntity)) {
             Player damaged = (Player) e.getEntity();
