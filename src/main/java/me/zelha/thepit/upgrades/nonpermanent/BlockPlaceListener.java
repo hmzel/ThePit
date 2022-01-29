@@ -35,10 +35,8 @@ public class BlockPlaceListener implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
-        Material blockType = e.getBlock().getType();
-
-        if (!getPlaceableBlocks().contains(blockType)) {
-            if (!Main.getInstance().blockPriviledges.contains(e.getPlayer()) || !placedBlocks.contains(e.getBlock())) {
+        if (!placedBlocks.contains(e.getBlock())) {
+            if (!Main.getInstance().blockPriviledges.contains(e.getPlayer())) {
                 e.setCancelled(true);
             }
         }
