@@ -12,34 +12,21 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import static org.bukkit.Material.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class DeathListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-
-    private final List<Material> lostOnDeathBaseList = new ArrayList<>();
-    private List<Material> lostOnDeathList() {
-        if (lostOnDeathBaseList.contains(DIAMOND_HELMET)) lostOnDeathBaseList.add(DIAMOND_HELMET);
-        if (lostOnDeathBaseList.contains(DIAMOND_CHESTPLATE)) lostOnDeathBaseList.add(DIAMOND_CHESTPLATE);
-        if (lostOnDeathBaseList.contains(DIAMOND_LEGGINGS)) lostOnDeathBaseList.add(DIAMOND_LEGGINGS);
-        if (lostOnDeathBaseList.contains(DIAMOND_BOOTS)) lostOnDeathBaseList.add(DIAMOND_BOOTS);
-        if (lostOnDeathBaseList.contains(IRON_CHESTPLATE)) lostOnDeathBaseList.add(IRON_CHESTPLATE);
-        if (lostOnDeathBaseList.contains(IRON_LEGGINGS)) lostOnDeathBaseList.add(IRON_LEGGINGS);
-        if (lostOnDeathBaseList.contains(IRON_BOOTS)) lostOnDeathBaseList.add(IRON_BOOTS);
-        if (lostOnDeathBaseList.contains(CHAINMAIL_CHESTPLATE)) lostOnDeathBaseList.add(CHAINMAIL_CHESTPLATE);
-        if (lostOnDeathBaseList.contains(CHAINMAIL_LEGGINGS)) lostOnDeathBaseList.add(CHAINMAIL_LEGGINGS);
-        if (lostOnDeathBaseList.contains(CHAINMAIL_BOOTS)) lostOnDeathBaseList.add(CHAINMAIL_BOOTS);
-        if (lostOnDeathBaseList.contains(DIAMOND_SWORD)) lostOnDeathBaseList.add(DIAMOND_SWORD);
-        if (lostOnDeathBaseList.contains(DIAMOND_AXE)) lostOnDeathBaseList.add(DIAMOND_AXE);
-        return lostOnDeathBaseList;
-    }//theres gotta be a better way to do this
+    private final Material[] lostOnDeathList = {
+            DIAMOND_HELMET, DIAMOND_CHESTPLATE, DIAMOND_LEGGINGS, DIAMOND_BOOTS, DIAMOND_SWORD, DIAMOND_AXE,
+            IRON_HELMET, IRON_CHESTPLATE, IRON_LEGGINGS, IRON_BOOTS,
+            CHAINMAIL_CHESTPLATE, CHAINMAIL_LEGGINGS, CHAINMAIL_BOOTS
+    };
 
     private boolean getThemPlayers(Player p, double x, double y, double z, double ax, double ay, double az) {
         return p.getWorld().getNearbyEntities(new Location(p.getWorld(), x, y, z), ax, ay, az).contains(p);
@@ -130,12 +117,16 @@ public class DeathListener implements Listener {
             }
 
             Player p = (Player) e.getEntity();
+            Inventory inv = p.getInventory();
             double finalDMG = e.getFinalDamage();
             double currentHP = p.getHealth();
 
             if (e.getCause() != DamageCause.FALL && (currentHP - finalDMG <= 0)) {
 
-                p.getInventory().remove();
+
+                for (Material material : lostOnDeathList) {
+                    inv.remove(material);
+                }
 
                 teleportToSpawnMethod(p);
                 e.setCancelled(true);
