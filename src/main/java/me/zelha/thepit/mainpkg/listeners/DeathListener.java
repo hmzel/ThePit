@@ -3,8 +3,8 @@ package me.zelha.thepit.mainpkg.listeners;
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -14,11 +14,32 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import static org.bukkit.Material.*;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class DeathListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
+
+    private final List<Material> lostOnDeathBaseList = new ArrayList<>();
+    private List<Material> lostOnDeathList() {
+        if (lostOnDeathBaseList.contains(DIAMOND_HELMET)) lostOnDeathBaseList.add(DIAMOND_HELMET);
+        if (lostOnDeathBaseList.contains(DIAMOND_CHESTPLATE)) lostOnDeathBaseList.add(DIAMOND_CHESTPLATE);
+        if (lostOnDeathBaseList.contains(DIAMOND_LEGGINGS)) lostOnDeathBaseList.add(DIAMOND_LEGGINGS);
+        if (lostOnDeathBaseList.contains(DIAMOND_BOOTS)) lostOnDeathBaseList.add(DIAMOND_BOOTS);
+        if (lostOnDeathBaseList.contains(IRON_CHESTPLATE)) lostOnDeathBaseList.add(IRON_CHESTPLATE);
+        if (lostOnDeathBaseList.contains(IRON_LEGGINGS)) lostOnDeathBaseList.add(IRON_LEGGINGS);
+        if (lostOnDeathBaseList.contains(IRON_BOOTS)) lostOnDeathBaseList.add(IRON_BOOTS);
+        if (lostOnDeathBaseList.contains(CHAINMAIL_CHESTPLATE)) lostOnDeathBaseList.add(CHAINMAIL_CHESTPLATE);
+        if (lostOnDeathBaseList.contains(CHAINMAIL_LEGGINGS)) lostOnDeathBaseList.add(CHAINMAIL_LEGGINGS);
+        if (lostOnDeathBaseList.contains(CHAINMAIL_BOOTS)) lostOnDeathBaseList.add(CHAINMAIL_BOOTS);
+        if (lostOnDeathBaseList.contains(DIAMOND_SWORD)) lostOnDeathBaseList.add(DIAMOND_SWORD);
+        if (lostOnDeathBaseList.contains(DIAMOND_AXE)) lostOnDeathBaseList.add(DIAMOND_AXE);
+        return lostOnDeathBaseList;
+    }//theres gotta be a better way to do this
 
     private boolean getThemPlayers(Player p, double x, double y, double z, double ax, double ay, double az) {
         return p.getWorld().getNearbyEntities(new Location(p.getWorld(), x, y, z), ax, ay, az).contains(p);
@@ -103,7 +124,6 @@ public class DeathListener implements Listener {
         Entity entity = e.getEntity();
 
         if (zl.playerCheck(entity)) {
-
             if (Main.getInstance().getSpawnListener().spawnCheck(entity.getLocation())) {
                 e.setCancelled(true);
                 return;
@@ -114,9 +134,20 @@ public class DeathListener implements Listener {
             double currentHP = p.getHealth();
 
             if (e.getCause() != DamageCause.FALL && (currentHP - finalDMG <= 0)) {
+
+                p.getInventory().remove();
+
                 teleportToSpawnMethod(p);
                 e.setCancelled(true);
             }
         }
     }
 }
+
+//perk-related death handling is in PerkListenersAndUtils
+
+
+
+
+
+
