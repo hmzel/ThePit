@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -103,6 +104,25 @@ public class PerkListenersAndUtils implements Listener {
     }
 
     @EventHandler
+    public void onPlayerDeath(EntityDamageEvent e) {
+        Entity entity = e.getEntity();
+
+        if (zl.playerCheck(entity)) {
+            if (spawnUtils.spawnCheck(entity.getLocation())) {
+                return;
+            }
+
+            Player p = (Player) e.getEntity();
+            double finalDMG = e.getFinalDamage();
+            double currentHP = p.getHealth();
+
+            if (e.getCause() != DamageCause.FALL && (currentHP - finalDMG <= 0)) {
+                perkReset(p);
+            }
+        }
+    }
+
+    @EventHandler
     public void onInteract(PlayerInteractEvent e) {
         Player p = e.getPlayer();
         ItemStack item = e.getItem();
@@ -132,7 +152,7 @@ public class PerkListenersAndUtils implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-
+        perkReset(e.getPlayer());
     }
 
     @EventHandler
