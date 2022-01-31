@@ -50,8 +50,13 @@ public class PerkListenersAndUtils implements Listener {
     public void perkReset(Player p) {
         Inventory inv = p.getInventory();
 
-        removeAll(inv, goldenHeadItem);
         removeAll(inv, gapple);
+
+        for (ItemStack items : p.getInventory().getContents()) {
+            if (zl.itemCheck(items) && items.getItemMeta().getDisplayName().equals(goldenHeadItem.getItemMeta().getDisplayName())) {
+                items.setType(Material.AIR);
+            }
+        }
     }
 
     private void removeAll(Inventory inventory, ItemStack item) {
@@ -127,7 +132,7 @@ public class PerkListenersAndUtils implements Listener {
         Player p = e.getPlayer();
         ItemStack item = e.getItem();
 
-        if (zl.itemCheck(item) && item.isSimilar(goldenHeadItem) && !gheadCooldown.contains(p.getUniqueId())) {
+        if (zl.itemCheck(item) && item.getItemMeta().getDisplayName().equals(goldenHeadItem.getItemMeta().getDisplayName()) && !gheadCooldown.contains(p.getUniqueId())) {
             e.setCancelled(true);
 
             if (item.getAmount() > 1) {
