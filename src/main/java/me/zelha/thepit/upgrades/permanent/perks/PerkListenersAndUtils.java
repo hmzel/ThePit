@@ -53,7 +53,7 @@ public class PerkListenersAndUtils implements Listener {
         removeAll(inv, gapple);
 
         for (ItemStack items : p.getInventory().getContents()) {
-            if (zl.itemCheck(items) && items.getItemMeta().getDisplayName().equals(goldenHeadItem.getItemMeta().getDisplayName())) {
+            if (zl.itemCheck(items) && items.getItemMeta().getDisplayName().equals("§6Golden Head")) {
                 items.setType(Material.AIR);
             }
         }
@@ -132,7 +132,7 @@ public class PerkListenersAndUtils implements Listener {
         Player p = e.getPlayer();
         ItemStack item = e.getItem();
 
-        if (zl.itemCheck(item) && item.getItemMeta().getDisplayName().equals(goldenHeadItem.getItemMeta().getDisplayName()) && !gheadCooldown.contains(p.getUniqueId())) {
+        if (zl.itemCheck(item) && item.getItemMeta().getDisplayName().equals("§6Golden Head") && !gheadCooldown.contains(p.getUniqueId())) {
             e.setCancelled(true);
 
             if (item.getAmount() > 1) {

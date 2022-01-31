@@ -129,9 +129,9 @@ public class DeathListener implements Listener {
                 e.setCancelled(true);
 
                 for (ItemStack item : inv.getArmorContents()) {
-                    String name = item.getType().name();
-
                     if (zl.itemCheck(item) && item.getItemMeta().getEnchants().isEmpty()) {
+                        String name = item.getType().name();
+
                         if ((name.contains("DIAMOND") || name.contains("IRON")) && new Random().nextInt(4) == 3) {
                             p.getWorld().dropItemNaturally(p.getLocation(), item);
                         }
