@@ -53,9 +53,9 @@ public final class Main extends JavaPlugin {
         instance = this;
         zelLogic = new ZelLogic();
         storage = new StorageListener();
-        deathListener = new DeathListener();
         spawnListener = new SpawnListener();
         perkUtils = new PerkListenersAndUtils();
+        deathListener = new DeathListener();
 
         getServer().getPluginManager().registerEvents(storage, this);
         getServer().getPluginManager().registerEvents(new LevelUpListener(), this);
