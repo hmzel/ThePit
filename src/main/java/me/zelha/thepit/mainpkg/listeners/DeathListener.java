@@ -3,6 +3,7 @@ package me.zelha.thepit.mainpkg.listeners;
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -13,6 +14,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import static org.bukkit.Material.*;
@@ -117,19 +120,48 @@ public class DeathListener implements Listener {
             }
 
             Player p = (Player) e.getEntity();
-            Inventory inv = p.getInventory();
+            PlayerData pData = Main.getInstance().getPlayerData(p);
+            PlayerInventory inv = p.getInventory();
             double finalDMG = e.getFinalDamage();
             double currentHP = p.getHealth();
 
             if (e.getCause() != DamageCause.FALL && (currentHP - finalDMG <= 0)) {
+                e.setCancelled(true);
 
+                for (ItemStack item : inv.getArmorContents()) {
+                    String name = item.getType().name();
+
+                    if (zl.itemCheck(item) && item.getItemMeta().getEnchants().isEmpty()) {
+                        if ((name.contains("DIAMOND") || name.contains("IRON")) && new Random().nextInt(4) == 3) {
+                            p.getWorld().dropItemNaturally(p.getLocation(), item);
+                        }
+                    }
+                }
 
                 for (Material material : lostOnDeathList) {
                     inv.remove(material);
                 }
 
+                switch (new Random().nextInt(3)) {
+                    case 0:
+                        if (!zl.itemCheck(inv.getChestplate())) inv.setChestplate(new ItemStack(IRON_CHESTPLATE, 1));
+                        break;
+                    case 1:
+                        if (!zl.itemCheck(inv.getLeggings())) inv.setLeggings(new ItemStack(IRON_LEGGINGS, 1));
+                        break;
+                    case 2:
+                        if (!zl.itemCheck(inv.getBoots())) inv.setBoots(new ItemStack(IRON_BOOTS, 1));
+                        break;
+                }
+
+                if (!zl.itemCheck(inv.getChestplate())) inv.setChestplate(new ItemStack(CHAINMAIL_CHESTPLATE, 1));
+                if (!zl.itemCheck(inv.getLeggings())) inv.setLeggings(new ItemStack(CHAINMAIL_LEGGINGS, 1));
+                if (!zl.itemCheck(inv.getBoots())) inv.setBoots(new ItemStack(CHAINMAIL_BOOTS, 1));
+                if (!inv.contains(BOW)) inv.addItem(new ItemStack(BOW, 1));
+                if (!inv.contains(IRON_SWORD) && !pData.hasPerkEquipped(Perks.BARBARIAN)) inv.addItem(new ItemStack(IRON_SWORD, 1));
+                //barbarian axe is given in PerkListenersAndUtils
+
                 teleportToSpawnMethod(p);
-                e.setCancelled(true);
             }
         }
     }
