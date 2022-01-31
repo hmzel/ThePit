@@ -67,13 +67,17 @@ public class PerkListenersAndUtils implements Listener {
         }
     }
 
+    private boolean containsLessThan(int amount, ItemStack item, Inventory inv) {
+        return !inv.containsAtLeast(item, amount) || !inv.contains(item);
+    }//why in the seven hells does containsAtLeast return true if theres less than 1 in the inventory
+
     private void determineKillReward(Player p) {
         if (!pData(p).hasPerkEquipped(VAMPIRE) && !pData(p).hasPerkEquipped(RAMBO)) {
             if (pData(p).hasPerkEquipped(OLYMPUS)) {
 
-            } else if (pData(p).hasPerkEquipped(GOLDEN_HEADS) && !p.getInventory().containsAtLeast(goldenHeadItem, 2)) {
+            } else if (pData(p).hasPerkEquipped(GOLDEN_HEADS) && containsLessThan(2, goldenHeadItem, p.getInventory())) {
                 p.getInventory().addItem(goldenHeadItem);
-            } else if (!p.getInventory().containsAtLeast(gapple, 2)) {
+            } else if (containsLessThan(2, gapple, p.getInventory())) {
                 p.getInventory().addItem(gapple);
             }
         }
