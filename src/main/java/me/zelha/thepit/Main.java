@@ -61,6 +61,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new LevelUpListener(), this);
         getServer().getPluginManager().registerEvents(new ScoreboardListener(), this);
         getServer().getPluginManager().registerEvents(new KillListener(), this);
+        getServer().getPluginManager().registerEvents(perkUtils, this);
         getServer().getPluginManager().registerEvents(deathListener, this);
         getServer().getPluginManager().registerEvents(new AntiVanillaListener(), this);
         getServer().getPluginManager().registerEvents(new AttackListener(), this);
@@ -68,7 +69,6 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ItemsVillagerListener(), this);
         getServer().getPluginManager().registerEvents(new GoldenPickaxeListener(), this);
         getServer().getPluginManager().registerEvents(new UpgradesVillagerListener(), this);
-        getServer().getPluginManager().registerEvents(perkUtils, this);
         getServer().getPluginManager().registerEvents(new BlockPlaceListener(), this);
 
         getCommand("setprestige").setExecutor(new SetPrestigeCommand());
