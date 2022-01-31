@@ -226,7 +226,7 @@ public class ScoreboardListener implements Listener {
             if (pData.getBounty() == 0) {
                 p.setPlayerListName(zl.getColorBracketAndLevel(p.getUniqueId().toString()) + " §7" + p.getName());
             } else {
-                p.setPlayerListName(zl.getColorBracketAndLevel(p.getUniqueId().toString()) + " §7" + p.getName() + " §6§l" + zl.getFancyGoldString(pData.getBounty()) + "g");
+                p.setPlayerListName(zl.getColorBracketAndLevel(p.getUniqueId().toString()) + " §7" + p.getName() + " §6§l" + pData.getBounty() + "g");
             }
         }
     }
