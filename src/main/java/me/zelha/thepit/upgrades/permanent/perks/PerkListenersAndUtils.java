@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -48,21 +49,21 @@ public class PerkListenersAndUtils implements Listener {
      * ex: dying, selecting a perk, etc
      */
     public void perkReset(Player p) {
-        Inventory inv = p.getInventory();
+        PlayerInventory inv = p.getInventory();
 
         removeAll(inv, gapple);
 
-        for (ItemStack items : p.getInventory().getContents()) {
+        for (ItemStack items : inv.all(Material.PLAYER_HEAD).values()) {
             if (zl.itemCheck(items) && items.getItemMeta().getDisplayName().equals("§6Golden Head")) {
-                items.setType(Material.AIR);
+                inv.remove(items);
             }
         }
     }
 
-    private void removeAll(Inventory inventory, ItemStack item) {
-        for (ItemStack items : inventory.getContents()) {
-            if (zl.itemCheck(items) && items.isSimilar(item)) {
-                items.setType(Material.AIR);
+    private void removeAll(PlayerInventory inventory, ItemStack item) {
+        for (ItemStack items : inventory.all(item.getType()).values()) {
+            if (items.isSimilar(item)) {
+                inventory.remove(items);
             }
         }
     }
@@ -71,14 +72,31 @@ public class PerkListenersAndUtils implements Listener {
         return !inv.containsAtLeast(item, amount) || !inv.contains(item);
     }//why in the seven hells does containsAtLeast return true if theres less than 1 in the inventory
 
+    private boolean containsLessThan(int amount, String name, Material material, Inventory inv) {
+        int count = 0;
+
+        for (ItemStack item : inv.all(material).values()) {
+            if (zl.itemCheck(item) && item.getItemMeta().getDisplayName().equals(name)) {
+                count += item.getAmount();
+            }
+        }
+
+        if (count >= amount) {
+            return false;
+        }
+        return true;
+    }//i hate player heads. with a passion.
+
     private void determineKillReward(Player p) {
+        PlayerInventory inv = p.getInventory();
+
         if (!pData(p).hasPerkEquipped(VAMPIRE) && !pData(p).hasPerkEquipped(RAMBO)) {
             if (pData(p).hasPerkEquipped(OLYMPUS)) {
 
-            } else if (pData(p).hasPerkEquipped(GOLDEN_HEADS) && containsLessThan(2, goldenHeadItem, p.getInventory())) {
-                p.getInventory().addItem(goldenHeadItem);
-            } else if (containsLessThan(2, gapple, p.getInventory())) {
-                p.getInventory().addItem(gapple);
+            } else if (pData(p).hasPerkEquipped(GOLDEN_HEADS) && containsLessThan(2, "§6Golden Head", Material.PLAYER_HEAD, inv)) {
+                inv.addItem(goldenHeadItem);
+            } else if (containsLessThan(2, gapple, inv)) {
+                inv.addItem(gapple);
             }
         }
 
