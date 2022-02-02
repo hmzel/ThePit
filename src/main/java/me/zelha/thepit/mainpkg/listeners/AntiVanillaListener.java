@@ -44,6 +44,7 @@ public class AntiVanillaListener implements Listener {
         //yes. i did this just for arrows. because its in regular pit. why? only god knows.
 
         Player p = (Player) e.getEntity();
+        CraftPlayer craftP = (CraftPlayer) p;
         PlayerInventory inv = p.getInventory();
         Item itemEntity = e.getItem();
         ItemStack item = itemEntity.getItemStack();
@@ -54,6 +55,8 @@ public class AntiVanillaListener implements Listener {
                 craftPlayer.getHandle().b.sendPacket(new PacketPlayOutCollect(itemEntity.getEntityId(), p.getEntityId(), item.getAmount()));
             }
         }
+
+        craftP.getHandle().b.sendPacket(new PacketPlayOutCollect(itemEntity.getEntityId(), p.getEntityId(), item.getAmount()));
 
         e.getItem().setPickupDelay(999999);
         e.setCancelled(true);
