@@ -48,6 +48,7 @@ public class ArmorPickupListener implements Listener {
     public void onPickup(EntityPickupItemEvent e) {
 
         if (!zl.playerCheck(e.getEntity())) return;
+        if (determineWeight(e.getItem().getItemStack()) == 13) return;
 
         Player p = (Player) e.getEntity();
         PlayerInventory inv = p.getInventory();
@@ -58,24 +59,34 @@ public class ArmorPickupListener implements Listener {
         if (name.contains("HELMET")) {
             if (!zl.itemCheck(inv.getHelmet())) {
                 inv.setHelmet(item);
-                e.getItem().setItemStack(new ItemStack(AIR));
+            } else if (determineWeight(inv.getHelmet()) < determineWeight(item)) {
+                if (determineWeight(inv.getHelmet()) != 0) inv.addItem(inv.getHelmet());
+                inv.setHelmet(item);
             }
         } else if (name.contains("CHESTPLATE")) {
             if (!zl.itemCheck(inv.getChestplate())) {
                 inv.setChestplate(item);
-                e.getItem().setItemStack(new ItemStack(AIR));
+            } else if (determineWeight(inv.getChestplate()) < determineWeight(item)) {
+                if (determineWeight(inv.getChestplate()) != 0) inv.addItem(inv.getChestplate());
+                inv.setChestplate(item);
             }
         } else if (name.contains("LEGGINGS")) {
             if (!zl.itemCheck(inv.getLeggings())) {
                 inv.setLeggings(item);
-                e.getItem().setItemStack(new ItemStack(AIR));
+            } else if (determineWeight(inv.getLeggings()) < determineWeight(item)) {
+                if (determineWeight(inv.getLeggings()) != 0) inv.addItem(inv.getLeggings());
+                inv.setLeggings(item);
             }
         } else if (name.contains("BOOTS")) {
             if (!zl.itemCheck(inv.getBoots())) {
                 inv.setBoots(item);
-                e.getItem().setItemStack(new ItemStack(AIR));
+            } else if (determineWeight(inv.getBoots()) < determineWeight(item)) {
+                if (determineWeight(inv.getBoots()) != 0) inv.addItem(inv.getBoots());
+                inv.setBoots(item);
             }
         }
+
+        e.getItem().setItemStack(new ItemStack(AIR));
     }
 }
 
