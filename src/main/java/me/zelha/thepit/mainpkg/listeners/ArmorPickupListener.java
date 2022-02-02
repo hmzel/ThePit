@@ -57,7 +57,11 @@ public class ArmorPickupListener implements Listener {
         if (inv.contains(item)) {
             e.setCancelled(true);
             return;
-        }
+        }//inv.contains does not include armor/offhand/crafting
+
+        zl.fakePickup(p, e.getItem(), e.getItem().getEntityId(), 16);
+        e.getItem().setPickupDelay(9999999);
+        e.setCancelled(true);
 
         Material type = item.getType();
         String name = type.name();
@@ -68,6 +72,8 @@ public class ArmorPickupListener implements Listener {
             } else if (determineWeight(inv.getHelmet()) < determineWeight(item)) {
                 inv.setItem(zl.firstEmptySlot(inv), inv.getHelmet());
                 inv.setHelmet(item);
+            } else {
+                inv.setItem(zl.firstEmptySlot(inv), inv.getHelmet());
             }
         } else if (name.contains("CHESTPLATE")) {
             if (!zl.itemCheck(inv.getChestplate())) {
@@ -75,6 +81,8 @@ public class ArmorPickupListener implements Listener {
             } else if (determineWeight(inv.getChestplate()) < determineWeight(item)) {
                 inv.setItem(zl.firstEmptySlot(inv), inv.getChestplate());
                 inv.setChestplate(item);
+            } else {
+                inv.setItem(zl.firstEmptySlot(inv), inv.getChestplate());
             }
         } else if (name.contains("LEGGINGS")) {
             if (!zl.itemCheck(inv.getLeggings())) {
@@ -82,6 +90,8 @@ public class ArmorPickupListener implements Listener {
             } else if (determineWeight(inv.getLeggings()) < determineWeight(item)) {
                 inv.setItem(zl.firstEmptySlot(inv), inv.getLeggings());
                 inv.setLeggings(item);
+            } else {
+                inv.setItem(zl.firstEmptySlot(inv), inv.getLeggings());
             }
         } else if (name.contains("BOOTS")) {
             if (!zl.itemCheck(inv.getBoots())) {
@@ -89,6 +99,8 @@ public class ArmorPickupListener implements Listener {
             } else if (determineWeight(inv.getBoots()) < determineWeight(item)) {
                 inv.setItem(zl.firstEmptySlot(inv), inv.getBoots());
                 inv.setBoots(item);
+            } else {
+                inv.setItem(zl.firstEmptySlot(inv), inv.getBoots());
             }
         }
     }

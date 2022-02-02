@@ -3,7 +3,6 @@ package me.zelha.thepit.mainpkg.listeners;
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
 import org.bukkit.entity.AbstractArrow;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,10 +29,9 @@ public class AntiVanillaListener implements Listener {
 
         Player p = (Player) e.getEntity();
         PlayerInventory inv = p.getInventory();
-        Item itemEntity = e.getItem();
-        ItemStack item = itemEntity.getItemStack();
+        ItemStack item = e.getItem().getItemStack();
 
-        zl.fakePickup(p, itemEntity, itemEntity.getEntityId(), 16);
+        zl.fakePickup(p, e.getItem(), e.getItem().getEntityId(), 16);
         e.getItem().setPickupDelay(999999);
         e.setCancelled(true);
 
@@ -63,10 +61,9 @@ public class AntiVanillaListener implements Listener {
 
         Player p = e.getPlayer();
         PlayerInventory inv = p.getInventory();
-        AbstractArrow arrowEntity = e.getArrow();
         ItemStack item = e.getItem().getItemStack();
 
-        zl.fakePickup(p, arrowEntity, arrowEntity.getEntityId(), 62);
+        zl.fakePickup(p, e.getArrow(), e.getArrow().getEntityId(), 62);
         e.getArrow().setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
         e.setCancelled(true);
 
