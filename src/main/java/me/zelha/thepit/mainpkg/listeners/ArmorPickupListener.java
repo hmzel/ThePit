@@ -9,8 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import static org.bukkit.Material.*;
 
@@ -68,39 +66,31 @@ public class ArmorPickupListener implements Listener {
             if (!zl.itemCheck(inv.getHelmet())) {
                 inv.setHelmet(item);
             } else if (determineWeight(inv.getHelmet()) < determineWeight(item)) {
-                inv.setItem(inv.first(AIR), inv.getHelmet());
+                inv.setItem(zl.firstEmptySlot(inv), inv.getHelmet());
                 inv.setHelmet(item);
             }
         } else if (name.contains("CHESTPLATE")) {
             if (!zl.itemCheck(inv.getChestplate())) {
                 inv.setChestplate(item);
             } else if (determineWeight(inv.getChestplate()) < determineWeight(item)) {
-                inv.setItem(inv.first(AIR), inv.getChestplate());
+                inv.setItem(zl.firstEmptySlot(inv), inv.getChestplate());
                 inv.setChestplate(item);
             }
         } else if (name.contains("LEGGINGS")) {
             if (!zl.itemCheck(inv.getLeggings())) {
                 inv.setLeggings(item);
             } else if (determineWeight(inv.getLeggings()) < determineWeight(item)) {
-                inv.setItem(inv.first(AIR), inv.getLeggings());
+                inv.setItem(zl.firstEmptySlot(inv), inv.getLeggings());
                 inv.setLeggings(item);
             }
         } else if (name.contains("BOOTS")) {
             if (!zl.itemCheck(inv.getBoots())) {
                 inv.setBoots(item);
             } else if (determineWeight(inv.getBoots()) < determineWeight(item)) {
-                inv.setItem(inv.first(AIR), inv.getBoots());
+                inv.setItem(zl.firstEmptySlot(inv), inv.getBoots());
                 inv.setBoots(item);
             }
         }
-
-
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName("§4a");
-        item.setItemMeta(meta);
-        e.getItem().setItemStack(item);
-
-
     }
 }
 
