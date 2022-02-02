@@ -70,7 +70,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new GoldenPickaxeListener(), this);
         getServer().getPluginManager().registerEvents(new UpgradesVillagerListener(), this);
         getServer().getPluginManager().registerEvents(new BlockPlaceListener(), this);
-        getServer().getPluginManager().registerEvents(new ArmorPickupListener(), this);
+        //getServer().getPluginManager().registerEvents(new ArmorPickupListener(), this);
 
         getCommand("setprestige").setExecutor(new SetPrestigeCommand());
         getCommand("setlevel").setExecutor(new SetLevelCommand());
