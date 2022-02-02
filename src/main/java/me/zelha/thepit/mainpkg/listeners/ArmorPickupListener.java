@@ -86,6 +86,7 @@ public class ArmorPickupListener implements Listener {
             }
         }
 
+        e.getItem().remove();
         e.setCancelled(true);
     }
 }
