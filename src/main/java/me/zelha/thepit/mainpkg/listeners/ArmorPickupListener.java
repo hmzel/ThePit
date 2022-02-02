@@ -27,6 +27,23 @@ public class ArmorPickupListener implements Listener {
             DIAMOND_HELMET, DIAMOND_CHESTPLATE, DIAMOND_LEGGINGS, DIAMOND_BOOTS
     };
 
+    private int determineWeight(ItemStack item) {
+        Material type = item.getType();
+
+        for (Material material : armorWeight0) {
+            if (material == type) return 0;
+        }
+
+        for (Material material : armorWeight1) {
+            if (material == type) return 1;
+        }
+
+        for (Material material : armorWeight2) {
+            if (material == type) return 2;
+        }
+        return 13;
+    }
+
     @EventHandler
     public void onPickup(EntityPickupItemEvent e) {
 
