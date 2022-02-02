@@ -3,20 +3,20 @@ package me.zelha.thepit;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.NPCs;
 import me.zelha.thepit.zelenums.Worlds;
+import net.minecraft.network.protocol.game.PacketPlayOutCollect;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
 
 import javax.annotation.Nullable;
@@ -193,6 +193,30 @@ public class ZelLogic {//zel
         hologram.setGravity(false);
         hologram.addScoreboardTag("z-entity");
         player.sendMessage("§aHologram " + name + " §asuccessfully spawned!");
+    }
+
+    /**
+     * note: highly recommended to make sure the event that runs this cant be fired again on the same entity, or else it will probably cause issues <p>
+     * example: setting pickupDelay on an Item to 99999999
+     */
+    public void fakePickup(Player player, Entity entity, int entityID) {
+        CraftPlayer craftP = (CraftPlayer) player;
+
+        craftP.getHandle().b.sendPacket(new PacketPlayOutCollect(entityID, player.getEntityId(), 1));
+
+        for (Entity nearbyEntity : player.getNearbyEntities(16, 16, 16)) {
+            if (nearbyEntity instanceof Player) {
+                craftP = (CraftPlayer) nearbyEntity;
+                craftP.getHandle().b.sendPacket(new PacketPlayOutCollect(entityID, player.getEntityId(), 1));
+            }
+        }
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                entity.remove();
+            }
+        }.runTaskLater(Main.getInstance(), 10);
     }
 
     public String toRoman(int number) {
