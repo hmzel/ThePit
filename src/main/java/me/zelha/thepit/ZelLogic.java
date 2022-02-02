@@ -13,6 +13,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
@@ -102,6 +103,19 @@ public class ZelLogic {//zel
         item.setItemMeta(itemMeta);
 
         return item;
+    }
+
+    public int firstEmptySlot(PlayerInventory inv) {
+        ItemStack[] invItems = inv.getStorageContents();
+
+        for (int i = 9; i < 36; i++) {
+            if (!itemCheck(invItems[i])) return i;
+        }
+
+        for (int i = 0; i < 9; i++) {
+            if (!itemCheck(invItems[i])) return i;
+        }
+        return -1;
     }
 
     public BoundingBox noObstructions(Worlds world, NPCs type) {//nested switch statements are so cursed. i love them.

@@ -25,19 +25,6 @@ public class AntiVanillaListener implements Listener {
 
     ZelLogic zl = Main.getInstance().getZelLogic();
 
-    private int firstEmptySlot(PlayerInventory inv) {
-        ItemStack[] invItems = inv.getStorageContents();
-
-        for (int i = 9; i < 36; i++) {
-            if (!zl.itemCheck(invItems[i])) return i;
-        }
-
-        for (int i = 0; i < 9; i++) {
-            if (!zl.itemCheck(invItems[i])) return i;
-        }
-        return -1;
-    }
-
     @EventHandler
     public void onArrowItemPickup(EntityPickupItemEvent e) {
 
@@ -76,7 +63,7 @@ public class AntiVanillaListener implements Listener {
                     if (invItem.getAmount() + item.getAmount() > item.getMaxStackSize()) {
                         item.setAmount(item.getAmount() - (invItem.getMaxStackSize() - invItem.getAmount()));
                         invItem.setAmount(invItem.getMaxStackSize());
-                        inv.setItem(firstEmptySlot(inv), item);
+                        inv.setItem(zl.firstEmptySlot(inv), item);
                     } else {
                         invItem.setAmount(invItem.getAmount() + item.getAmount());
                     }
@@ -85,7 +72,7 @@ public class AntiVanillaListener implements Listener {
             }
         }
 
-        inv.setItem(firstEmptySlot(inv), item);
+        inv.setItem(zl.firstEmptySlot(inv), item);
     }
 
     @EventHandler
@@ -128,7 +115,7 @@ public class AntiVanillaListener implements Listener {
             }
         }
 
-        inv.setItem(firstEmptySlot(inv), item);
+        inv.setItem(zl.firstEmptySlot(inv), item);
     }
 
     @EventHandler
