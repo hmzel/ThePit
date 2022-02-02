@@ -4,6 +4,7 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
 import net.minecraft.network.protocol.game.PacketPlayOutCollect;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
+import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -12,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -37,7 +39,7 @@ public class AntiVanillaListener implements Listener {
     }
 
     @EventHandler
-    public void onDrop(EntityPickupItemEvent e) {
+    public void onArrowItemPickup(EntityPickupItemEvent e) {
 
         if (!zl.playerCheck(e.getEntity())) return;
         if (e.getItem().getItemStack().getType() != ARROW) return;
@@ -78,6 +80,49 @@ public class AntiVanillaListener implements Listener {
                     } else {
                         invItem.setAmount(invItem.getAmount() + item.getAmount());
                     }
+                    return;
+                }
+            }
+        }
+
+        inv.setItem(firstEmptySlot(inv), item);
+    }
+
+    @EventHandler
+    public void onArrowEntityPickup(PlayerPickupArrowEvent e) {
+
+        if (!zl.playerCheck(e.getPlayer())) return;
+        //why did mini do this. why am i doing this. why am i so stubborn. why
+
+        Player p = e.getPlayer();
+        CraftPlayer craftP = (CraftPlayer) p;
+        PlayerInventory inv = p.getInventory();
+        AbstractArrow arrowEntity = e.getArrow();
+        ItemStack item = e.getItem().getItemStack();
+
+        for (Entity entity : p.getNearbyEntities(62, 62, 62)) {
+            if (entity instanceof Player) {
+                CraftPlayer craftPlayer = (CraftPlayer) entity;
+                craftPlayer.getHandle().b.sendPacket(new PacketPlayOutCollect(arrowEntity.getEntityId(), p.getEntityId(), 1));
+            }
+        }
+
+        craftP.getHandle().b.sendPacket(new PacketPlayOutCollect(arrowEntity.getEntityId(), p.getEntityId(), 1));
+
+        e.getArrow().setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
+        e.setCancelled(true);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                arrowEntity.remove();
+            }
+        }.runTaskLater(Main.getInstance(), 10);
+
+        for (ItemStack invItem : inv.getStorageContents()) {
+            if (zl.itemCheck(invItem)) {
+                if (invItem.isSimilar(item) && invItem.getAmount() != invItem.getMaxStackSize()) {
+                    invItem.setAmount(invItem.getAmount() + item.getAmount());
                     return;
                 }
             }
