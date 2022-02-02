@@ -33,7 +33,7 @@ public class AntiVanillaListener implements Listener {
         Item itemEntity = e.getItem();
         ItemStack item = itemEntity.getItemStack();
 
-        zl.fakePickup(p, itemEntity, itemEntity.getEntityId());
+        zl.fakePickup(p, itemEntity, itemEntity.getEntityId(), 16);
         e.getItem().setPickupDelay(999999);
         e.setCancelled(true);
 
@@ -66,7 +66,7 @@ public class AntiVanillaListener implements Listener {
         AbstractArrow arrowEntity = e.getArrow();
         ItemStack item = e.getItem().getItemStack();
 
-        zl.fakePickup(p, arrowEntity, arrowEntity.getEntityId());
+        zl.fakePickup(p, arrowEntity, arrowEntity.getEntityId(), 62);
         e.getArrow().setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
         e.setCancelled(true);
 
