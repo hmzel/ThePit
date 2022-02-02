@@ -52,6 +52,12 @@ public class ArmorPickupListener implements Listener {
 
         Player p = (Player) e.getEntity();
         PlayerInventory inv = p.getInventory();
+
+        if (inv.contains(e.getItem().getItemStack())) {
+            e.setCancelled(true);
+            return;
+        }
+
         ItemStack item = e.getItem().getItemStack();
         Material type = item.getType();
         String name = type.name();
@@ -85,9 +91,6 @@ public class ArmorPickupListener implements Listener {
                 inv.setBoots(item);
             }
         }
-
-        e.getItem().remove();
-        e.setCancelled(true);
     }
 }
 
