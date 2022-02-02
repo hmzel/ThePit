@@ -9,6 +9,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import static org.bukkit.Material.*;
 
@@ -52,13 +54,13 @@ public class ArmorPickupListener implements Listener {
 
         Player p = (Player) e.getEntity();
         PlayerInventory inv = p.getInventory();
+        ItemStack item = e.getItem().getItemStack();
 
-        if (inv.contains(e.getItem().getItemStack())) {
+        if (inv.contains(item)) {
             e.setCancelled(true);
             return;
         }
 
-        ItemStack item = e.getItem().getItemStack();
         Material type = item.getType();
         String name = type.name();
 
@@ -66,31 +68,39 @@ public class ArmorPickupListener implements Listener {
             if (!zl.itemCheck(inv.getHelmet())) {
                 inv.setHelmet(item);
             } else if (determineWeight(inv.getHelmet()) < determineWeight(item)) {
-                if (determineWeight(inv.getHelmet()) != 0) inv.addItem(inv.getHelmet());
+                inv.setItem(inv.first(AIR), inv.getHelmet());
                 inv.setHelmet(item);
             }
         } else if (name.contains("CHESTPLATE")) {
             if (!zl.itemCheck(inv.getChestplate())) {
                 inv.setChestplate(item);
             } else if (determineWeight(inv.getChestplate()) < determineWeight(item)) {
-                if (determineWeight(inv.getChestplate()) != 0) inv.addItem(inv.getChestplate());
+                inv.setItem(inv.first(AIR), inv.getChestplate());
                 inv.setChestplate(item);
             }
         } else if (name.contains("LEGGINGS")) {
             if (!zl.itemCheck(inv.getLeggings())) {
                 inv.setLeggings(item);
             } else if (determineWeight(inv.getLeggings()) < determineWeight(item)) {
-                if (determineWeight(inv.getLeggings()) != 0) inv.addItem(inv.getLeggings());
+                inv.setItem(inv.first(AIR), inv.getLeggings());
                 inv.setLeggings(item);
             }
         } else if (name.contains("BOOTS")) {
             if (!zl.itemCheck(inv.getBoots())) {
                 inv.setBoots(item);
             } else if (determineWeight(inv.getBoots()) < determineWeight(item)) {
-                if (determineWeight(inv.getBoots()) != 0) inv.addItem(inv.getBoots());
+                inv.setItem(inv.first(AIR), inv.getBoots());
                 inv.setBoots(item);
             }
         }
+
+
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName("§4a");
+        item.setItemMeta(meta);
+        e.getItem().setItemStack(item);
+
+
     }
 }
 
