@@ -38,7 +38,27 @@ public class ArmorPickupListener implements Listener {
         Material type = item.getType();
         String name = type.name();
 
-
+        if (name.contains("HELMET")) {
+            if (!zl.itemCheck(inv.getHelmet())) {
+                inv.setHelmet(item);
+                e.getItem().setItemStack(new ItemStack(AIR));
+            }
+        } else if (name.contains("CHESTPLATE")) {
+            if (!zl.itemCheck(inv.getChestplate())) {
+                inv.setChestplate(item);
+                e.getItem().setItemStack(new ItemStack(AIR));
+            }
+        } else if (name.contains("LEGGINGS")) {
+            if (!zl.itemCheck(inv.getLeggings())) {
+                inv.setLeggings(item);
+                e.getItem().setItemStack(new ItemStack(AIR));
+            }
+        } else if (name.contains("BOOTS")) {
+            if (!zl.itemCheck(inv.getBoots())) {
+                inv.setBoots(item);
+                e.getItem().setItemStack(new ItemStack(AIR));
+            }
+        }
     }
 }
 
