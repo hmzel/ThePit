@@ -13,8 +13,7 @@ import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import static org.bukkit.Material.ARROW;
-import static org.bukkit.Material.GRASS_BLOCK;
+import static org.bukkit.Material.*;
 
 public class AntiVanillaListener implements Listener {
 
@@ -85,11 +84,13 @@ public class AntiVanillaListener implements Listener {
     }
 
     @EventHandler
-    public void onGrassChange(BlockPhysicsEvent e) {
+    public void onBlockChange(BlockPhysicsEvent e) {
 
         if (e.getSourceBlock().getType() == GRASS_BLOCK) {
             e.setCancelled(true);
         }
+
+        if (e.getChangedType() == LAVA || e.getChangedType() == WATER) e.setCancelled(true);
     }
 }
 
