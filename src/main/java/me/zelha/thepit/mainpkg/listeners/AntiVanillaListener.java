@@ -6,6 +6,7 @@ import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
@@ -89,8 +90,12 @@ public class AntiVanillaListener implements Listener {
         if (e.getSourceBlock().getType() == GRASS_BLOCK) {
             e.setCancelled(true);
         }
+    }
 
-        if (e.getSourceBlock().getType() == LAVA || e.getSourceBlock().getType() == WATER) e.setCancelled(true);
+    @EventHandler
+    public void onFlow(BlockFromToEvent e) {
+
+        if (e.getBlock().getType() == LAVA || e.getBlock().getType() == WATER) e.setCancelled(true);
     }
 }
 
