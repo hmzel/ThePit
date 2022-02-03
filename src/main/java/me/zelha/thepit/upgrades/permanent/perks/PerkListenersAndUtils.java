@@ -68,6 +68,8 @@ public class PerkListenersAndUtils implements Listener {
             }
         }
 
+        if (!inv.contains(IRON_SWORD) && !pData.hasPerkEquipped(Perks.BARBARIAN)) inv.addItem(new ItemStack(IRON_SWORD, 1));
+        if (!inv.contains(BOW)) inv.addItem(new ItemStack(BOW, 1));
         if (pData.hasPerkEquipped(Perks.FISHING_ROD)) inv.addItem(fishingRodItem);
     }
 

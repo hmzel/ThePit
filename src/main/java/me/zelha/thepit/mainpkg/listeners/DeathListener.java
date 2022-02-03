@@ -3,7 +3,6 @@ package me.zelha.thepit.mainpkg.listeners;
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
-import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -156,9 +155,7 @@ public class DeathListener implements Listener {
                 if (!zl.itemCheck(inv.getChestplate())) inv.setChestplate(new ItemStack(CHAINMAIL_CHESTPLATE, 1));
                 if (!zl.itemCheck(inv.getLeggings())) inv.setLeggings(new ItemStack(CHAINMAIL_LEGGINGS, 1));
                 if (!zl.itemCheck(inv.getBoots())) inv.setBoots(new ItemStack(CHAINMAIL_BOOTS, 1));
-                if (!inv.contains(BOW)) inv.addItem(new ItemStack(BOW, 1));
-                if (!inv.contains(IRON_SWORD) && !pData.hasPerkEquipped(Perks.BARBARIAN)) inv.addItem(new ItemStack(IRON_SWORD, 1));
-                //barbarian axe will be given in PerkListenersAndUtils
+                //sword & bow are handled in PerkListenersAndUtils.perkReset for consistency's sake
 
                 teleportToSpawnMethod(p);
             }
