@@ -13,6 +13,10 @@ public class RunMethods {
         task.put(uuid, id);
     }
 
+    public int getID(UUID uuid) {
+        return task.get(uuid);
+    }
+
     public boolean hasID(UUID uuid) {
         return task.containsKey(uuid);
     }
