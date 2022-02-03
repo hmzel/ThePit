@@ -211,6 +211,8 @@ public class ZelLogic {//zel
             }
         }
 
+        player.updateInventory();
+
         new BukkitRunnable() {
             @Override
             public void run() {
