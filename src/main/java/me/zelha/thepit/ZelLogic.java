@@ -109,6 +109,21 @@ public class ZelLogic {//zel
         return item;
     }
 
+    public ItemStack itemBuilder(Material material, int count, @Nullable String name, @Nullable List<String> lore, Boolean showUnbreakable) {
+        ItemStack item = new ItemStack(material, count);
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setUnbreakable(true);
+
+        if (name != null) itemMeta.setDisplayName(name);
+        if (lore != null) itemMeta.setLore(lore);
+        if (!showUnbreakable) itemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+
+        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        item.setItemMeta(itemMeta);
+
+        return item;
+    }
+
     public int firstEmptySlot(PlayerInventory inv) {
         ItemStack[] invItems = inv.getStorageContents();
 
