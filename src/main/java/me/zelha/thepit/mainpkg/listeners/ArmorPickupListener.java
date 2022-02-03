@@ -51,7 +51,7 @@ public class ArmorPickupListener implements Listener {
         } else if (determineWeight(inventory.getItem(slot)) < determineWeight(item)) {
             inventory.setItem(zl.firstEmptySlot(inventory), inventory.getItem(slot));
             inventory.setItem(slot, item);
-        } else {
+        } else if (!inventory.contains(item)) {
             inventory.setItem(zl.firstEmptySlot(inventory), item);
         }
     }
@@ -65,11 +65,6 @@ public class ArmorPickupListener implements Listener {
         Player p = (Player) e.getEntity();
         PlayerInventory inv = p.getInventory();
         ItemStack item = e.getItem().getItemStack();
-
-        if (inv.contains(item)) {
-            e.setCancelled(true);
-            return;
-        }//inv.contains does not include armor/offhand/crafting
 
         zl.fakePickup(p, e.getItem(), 16);
         e.getItem().setPickupDelay(9999999);
