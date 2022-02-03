@@ -13,7 +13,7 @@ public class RunMethods {
         task.put(uuid, id);
     }
 
-    public int getID(UUID uuid) {
+    public Integer getID(UUID uuid) {
         return task.get(uuid);
     }
 
