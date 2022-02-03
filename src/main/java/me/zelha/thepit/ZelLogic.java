@@ -199,15 +199,15 @@ public class ZelLogic {//zel
      * note: highly recommended to make sure the event that runs this cant be fired again on the same entity, or else it will probably cause issues <p>
      * example: setting pickupDelay on an Item to 99999999
      */
-    public void fakePickup(Player player, Entity entity, int entityID, int radius) {
+    public void fakePickup(Player player, Entity entity, int radius) {
         CraftPlayer craftP = (CraftPlayer) player;
 
-        craftP.getHandle().b.sendPacket(new PacketPlayOutCollect(entityID, player.getEntityId(), 1));
+        craftP.getHandle().b.sendPacket(new PacketPlayOutCollect(entity.getEntityId(), player.getEntityId(), 1));
 
         for (Entity nearbyEntity : player.getNearbyEntities(radius, radius, radius)) {
             if (nearbyEntity instanceof Player) {
                 craftP = (CraftPlayer) nearbyEntity;
-                craftP.getHandle().b.sendPacket(new PacketPlayOutCollect(entityID, player.getEntityId(), 1));
+                craftP.getHandle().b.sendPacket(new PacketPlayOutCollect(entity.getEntityId(), player.getEntityId(), 1));
             }
         }
 

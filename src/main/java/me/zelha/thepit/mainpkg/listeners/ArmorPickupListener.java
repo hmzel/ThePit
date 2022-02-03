@@ -71,7 +71,7 @@ public class ArmorPickupListener implements Listener {
             return;
         }//inv.contains does not include armor/offhand/crafting
 
-        zl.fakePickup(p, e.getItem(), e.getItem().getEntityId(), 16);
+        zl.fakePickup(p, e.getItem(), 16);
         e.getItem().setPickupDelay(9999999);
         e.setCancelled(true);
 

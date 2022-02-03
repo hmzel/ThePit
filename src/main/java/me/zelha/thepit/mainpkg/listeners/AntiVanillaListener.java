@@ -31,7 +31,7 @@ public class AntiVanillaListener implements Listener {
         PlayerInventory inv = p.getInventory();
         ItemStack item = e.getItem().getItemStack();
 
-        zl.fakePickup(p, e.getItem(), e.getItem().getEntityId(), 16);
+        zl.fakePickup(p, e.getItem(), 16);
         e.getItem().setPickupDelay(999999);
         e.setCancelled(true);
 
@@ -63,7 +63,7 @@ public class AntiVanillaListener implements Listener {
         PlayerInventory inv = p.getInventory();
         ItemStack item = e.getItem().getItemStack();
 
-        zl.fakePickup(p, e.getArrow(), e.getArrow().getEntityId(), 62);
+        zl.fakePickup(p, e.getArrow(), 62);
         e.getArrow().setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
         e.setCancelled(true);
 
