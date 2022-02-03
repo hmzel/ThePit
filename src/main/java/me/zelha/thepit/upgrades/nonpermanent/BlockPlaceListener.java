@@ -5,18 +5,14 @@ import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.Passives;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.BoundingBox;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.List;
 
 import static org.bukkit.Material.*;
@@ -32,7 +28,7 @@ public class BlockPlaceListener implements Listener {
         if (!placeable.contains(COBBLESTONE)) placeable.add(COBBLESTONE);
         if (!placeable.contains(OAK_WOOD)) placeable.add(OAK_WOOD);
      return placeable;
-    }
+    }//i... didnt know how to use arrays until recently
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
@@ -56,8 +52,10 @@ public class BlockPlaceListener implements Listener {
         }
 
         if (blockLocation.distance(new Location(blockLocation.getWorld(), 0, blockLocation.getY(), 0)) < 9) {
-            e.setCancelled(true);
-            return;
+            if (!Main.getInstance().blockPriviledges.contains(e.getPlayer())) {
+                e.setCancelled(true);
+                return;
+            }
         }
 
         if (blockType == OBSIDIAN) {
