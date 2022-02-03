@@ -13,14 +13,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import static org.bukkit.Material.*;
-
 import java.util.Random;
+
+import static org.bukkit.Material.*;
 
 public class DeathListener implements Listener {
 
@@ -159,7 +158,7 @@ public class DeathListener implements Listener {
                 if (!zl.itemCheck(inv.getBoots())) inv.setBoots(new ItemStack(CHAINMAIL_BOOTS, 1));
                 if (!inv.contains(BOW)) inv.addItem(new ItemStack(BOW, 1));
                 if (!inv.contains(IRON_SWORD) && !pData.hasPerkEquipped(Perks.BARBARIAN)) inv.addItem(new ItemStack(IRON_SWORD, 1));
-                //barbarian axe is given in PerkListenersAndUtils
+                //barbarian axe will be given in PerkListenersAndUtils
 
                 teleportToSpawnMethod(p);
             }
