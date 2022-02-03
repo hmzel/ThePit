@@ -2,11 +2,11 @@ package me.zelha.thepit.zelenums;
 
 import org.bukkit.Material;
 
-import static org.bukkit.Material.*;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static org.bukkit.Material.*;
 
 public enum Perks {
     GOLDEN_HEADS("Golden Heads", PLAYER_HEAD, Arrays.asList(
@@ -139,7 +139,7 @@ public enum Perks {
             , 20000
             , 50
             , 8),
-    GLADIATOR("Gladiator", IRON_AXE, Arrays.asList(
+    GLADIATOR("Gladiator", BONE, Arrays.asList(
             "§7Receive §9-3% §7damage per",
             "§7nearby player.",
             " ",
