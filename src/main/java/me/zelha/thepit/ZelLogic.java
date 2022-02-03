@@ -37,7 +37,7 @@ public class ZelLogic {//zel
     public boolean blockCheck(Block block) {return block != null && block.getType() != Material.AIR;}
     public boolean itemCheck(ItemStack item) {return item != null && item.getType() != Material.AIR;}
 
-    public ItemStack headItemBuilder(String playerName, int count, String displayName, List<String> lore) {
+    public ItemStack headItemBuilder(String playerName, int count, @Nullable String displayName, @Nullable List<String> lore) {
         ItemStack item = null;
         Block block = Bukkit.getWorld("world").getBlockAt(13131313, 0, 13131313);
         block.setType(PLAYER_HEAD);
@@ -51,8 +51,9 @@ public class ZelLogic {//zel
 
         ItemMeta meta = item.getItemMeta();
 
-        meta.setDisplayName(displayName);
-        meta.setLore(lore);
+        if (displayName != null) meta.setDisplayName(displayName);
+        if (lore != null) meta.setLore(lore);
+
         item.setAmount(count);
         item.setItemMeta(meta);
         block.setType(AIR);
@@ -62,12 +63,13 @@ public class ZelLogic {//zel
     /**
      * note: should handle it fine when "effects" is null, if it's not necessary
      */
-    public ItemStack potionItemBuilder(Color color, @Nullable List<PotionEffect> effects, int count, String name, List<String> lore) {
+    public ItemStack potionItemBuilder(Color color, @Nullable List<PotionEffect> effects, int count, @Nullable String name, @Nullable List<String> lore) {
         ItemStack item = new ItemStack(POTION, count);
         PotionMeta meta = (PotionMeta) item.getItemMeta();
 
-        meta.setDisplayName(name);
-        meta.setLore(lore);
+        if (name != null) meta.setDisplayName(name);
+        if (lore != null) meta.setLore(lore);
+
         meta.setColor(color);
         meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -92,12 +94,14 @@ public class ZelLogic {//zel
         return item;
     }
 
-    public ItemStack itemBuilder(Material material, int count, String name, List<String> lore) {
+    public ItemStack itemBuilder(Material material, int count, @Nullable String name, @Nullable List<String> lore) {
         ItemStack item = new ItemStack(material, count);
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.setUnbreakable(true);
-        itemMeta.setDisplayName(name);
-        itemMeta.setLore(lore);
+
+        if (name != null) itemMeta.setDisplayName(name);
+        if (lore != null) itemMeta.setLore(lore);
+
         itemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         item.setItemMeta(itemMeta);
