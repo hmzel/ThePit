@@ -90,7 +90,7 @@ public class AntiVanillaListener implements Listener {
             e.setCancelled(true);
         }
 
-        if (e.getChangedType() == LAVA || e.getChangedType() == WATER) e.setCancelled(true);
+        if (e.getSourceBlock().getType() == LAVA || e.getSourceBlock().getType() == WATER) e.setCancelled(true);
     }
 }
 
