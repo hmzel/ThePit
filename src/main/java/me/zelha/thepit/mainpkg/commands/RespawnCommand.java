@@ -2,7 +2,7 @@ package me.zelha.thepit.mainpkg.commands;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.mainpkg.data.PlayerData;
-import me.zelha.thepit.zelenums.Worlds;
+import me.zelha.thepit.upgrades.permanent.perks.PerkListenersAndUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,6 +15,7 @@ import java.util.UUID;
 
 public class RespawnCommand implements CommandExecutor {
 
+    private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
     private final List<UUID> cooldown = new ArrayList<>();
 
     @Override
@@ -30,6 +31,7 @@ public class RespawnCommand implements CommandExecutor {
                     if (!cooldown.contains(p.getUniqueId())) {
                         Main.getInstance().getDeathListener().teleportToSpawnMethod(p);
                         cooldown.add(p.getUniqueId());
+                        perkUtils.perkReset(p);
 
                         new BukkitRunnable() {
                             @Override
