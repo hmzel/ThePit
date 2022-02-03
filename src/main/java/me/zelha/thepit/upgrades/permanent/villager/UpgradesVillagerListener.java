@@ -8,7 +8,10 @@ import me.zelha.thepit.zelenums.NPCs;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import me.zelha.thepit.zelenums.Worlds;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -16,7 +19,10 @@ import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.inventory.*;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
@@ -24,11 +30,11 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.*;
+
 import static me.zelha.thepit.zelenums.Passives.*;
 import static me.zelha.thepit.zelenums.Perks.*;
 import static org.bukkit.Material.*;
-
-import java.util.*;
 
 public class UpgradesVillagerListener implements Listener {//i hate this class
 
@@ -375,8 +381,8 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
             return;
         } else if (pData.getPerkUnlockStatus(perk)) {
-            perkUtils.perkReset(p);
             pData.setPerkAtSlot(slotHandler.get(p.getUniqueId()), perk);
+            perkUtils.perkReset(p);
             p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
             openMainGUI(p);
             return;
@@ -576,8 +582,8 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                 return;
             } else if (clicked.getType() == DIAMOND_BLOCK) {
-                perkUtils.perkReset(p);
                 Main.getInstance().getPlayerData(p).setPerkAtSlot(slotHandler.get(p.getUniqueId()), UNSET);
+                perkUtils.perkReset(p);
                 slotHandler.remove(p.getUniqueId());
                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                 openMainGUI(p);
@@ -614,8 +620,8 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                         openMainGUI(p);
                     } else if (perksHandler.get(uuid) != null) {
                         pData.setPerkUnlockStatus(perksHandler.get(uuid), true);
-                        perkUtils.perkReset(p);
                         pData.setPerkAtSlot(slotHandler.get(uuid), perksHandler.get(uuid));
+                        perkUtils.perkReset(p);
                         openMainGUI(p);
                     }
 

@@ -65,13 +65,12 @@ public class ArmorPickupListener implements Listener {
         Player p = (Player) e.getEntity();
         PlayerInventory inv = p.getInventory();
         ItemStack item = e.getItem().getItemStack();
+        Material type = item.getType();
+        String name = type.name();
 
         zl.fakePickup(p, e.getItem(), 16);
         e.getItem().setPickupDelay(9999999);
         e.setCancelled(true);
-
-        Material type = item.getType();
-        String name = type.name();
 
         if (name.contains("HELMET")) {
             itemPlacementHandler(inv, EquipmentSlot.HEAD, item);

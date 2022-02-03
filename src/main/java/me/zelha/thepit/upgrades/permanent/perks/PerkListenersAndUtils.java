@@ -4,6 +4,7 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.mainpkg.listeners.SpawnListener;
+import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -22,9 +23,13 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 import static me.zelha.thepit.zelenums.Perks.*;
+import static org.bukkit.Material.*;
 
 public class PerkListenersAndUtils implements Listener {
 
@@ -36,28 +41,35 @@ public class PerkListenersAndUtils implements Listener {
     private final SpawnListener spawnUtils = Main.getInstance().getSpawnListener();
 
     private final Set<UUID> gheadCooldown = new HashSet<>();
+
+    private final ItemStack fishingRodItem = zl.itemBuilder(Material.FISHING_ROD, 1);
     private final ItemStack goldenHeadItem = zl.headItemBuilder("PhantomTupac", 1, "§6Golden Head", Arrays.asList(
                 "§9Speed I (0:08)",
                 "§9Regeneration II (0:05)",
                 "§63❤ absorption!",
                 "§71 second between eats"
         ));
-    private final ItemStack gapple = new ItemStack(Material.GOLDEN_APPLE, 1);
+    private final ItemStack gapple = new ItemStack(GOLDEN_APPLE, 1);
 
     /**
      * supposed to be called every time perk items should be reset <p>
      * ex: dying, selecting a perk, etc
+     * must be called *after* the perk slot is set, in conditions where that applies
      */
     public void perkReset(Player p) {
         PlayerInventory inv = p.getInventory();
+        PlayerData pData = Main.getInstance().getPlayerData(p);
 
+        removeAll(inv, fishingRodItem);
         removeAll(inv, gapple);
 
-        for (ItemStack items : inv.all(Material.PLAYER_HEAD).values()) {
+        for (ItemStack items : inv.all(PLAYER_HEAD).values()) {
             if (zl.itemCheck(items) && items.getItemMeta().getDisplayName().equals("§6Golden Head")) {
                 inv.remove(items);
             }
         }
+
+        if (pData.hasPerkEquipped(Perks.FISHING_ROD)) inv.addItem(fishingRodItem);
     }
 
     private void removeAll(PlayerInventory inventory, ItemStack item) {
@@ -93,7 +105,7 @@ public class PerkListenersAndUtils implements Listener {
         if (!pData(p).hasPerkEquipped(VAMPIRE) && !pData(p).hasPerkEquipped(RAMBO)) {
             if (pData(p).hasPerkEquipped(OLYMPUS)) {
 
-            } else if (pData(p).hasPerkEquipped(GOLDEN_HEADS) && containsLessThan(2, "§6Golden Head", Material.PLAYER_HEAD, inv)) {
+            } else if (pData(p).hasPerkEquipped(GOLDEN_HEADS) && containsLessThan(2, "§6Golden Head", PLAYER_HEAD, inv)) {
                 inv.addItem(goldenHeadItem);
             } else if (containsLessThan(2, gapple, inv)) {
                 inv.addItem(gapple);
@@ -160,7 +172,7 @@ public class PerkListenersAndUtils implements Listener {
             if (item.getAmount() > 1) {
                 item.setAmount(item.getAmount() - 1);
             } else {
-                item.setType(Material.AIR);
+                item.setType(AIR);
             }
 
             p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 160, 1, false, false));
