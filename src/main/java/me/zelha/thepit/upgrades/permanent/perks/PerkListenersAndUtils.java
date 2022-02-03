@@ -1,18 +1,23 @@
 package me.zelha.thepit.upgrades.permanent.perks;
 
 import me.zelha.thepit.Main;
+import me.zelha.thepit.RunMethods;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.mainpkg.listeners.SpawnListener;
 import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
@@ -22,10 +27,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static me.zelha.thepit.zelenums.Perks.*;
 import static org.bukkit.Material.*;
@@ -38,9 +40,15 @@ public class PerkListenersAndUtils implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final SpawnListener spawnUtils = Main.getInstance().getSpawnListener();
+    private final RunMethods methods = Main.getInstance().generateRunMethods();
 
     private final Set<UUID> gheadCooldown = new HashSet<>();
+    private final Map<UUID, Integer> lavaExistTimer = new HashMap<>();
+    private final Map<UUID, Block> placedLava = new HashMap<>();
+    private final Map<UUID, Material> previousLavaBlock = new HashMap<>();
 
+    private final ItemStack lavaBucketItem = zl.itemBuilder(Material.LAVA_BUCKET, 1, null, Collections.singletonList("§7Perk item"));
+    private final ItemStack emptyBucketItem = zl.itemBuilder(BUCKET, 1, null, Collections.singletonList("§7Perk item"));
     private final ItemStack fishingRodItem = zl.itemBuilder(Material.FISHING_ROD, 1);
     private final ItemStack goldenHeadItem = zl.headItemBuilder("PhantomTupac", 1, "§6Golden Head", Arrays.asList(
                 "§9Speed I (0:08)",
@@ -52,14 +60,18 @@ public class PerkListenersAndUtils implements Listener {
 
     /**
      * supposed to be called every time perk items should be reset <p>
-     * ex: dying, selecting a perk, etc
+     * ex: dying, selecting a perk, etc <p>
      * must be called *after* the perk slot is set, in conditions where that applies
      */
     public void perkReset(Player p) {
         PlayerInventory inv = p.getInventory();
         PlayerData pData = Main.getInstance().getPlayerData(p);
+        int arrowCount = 0;
 
-        removeAll(inv, fishingRodItem);
+        for (ItemStack item : inv.all(ARROW).values()) {
+            arrowCount+= item.getAmount();
+        }
+
         removeAll(inv, gapple);
 
         for (ItemStack items : inv.all(PLAYER_HEAD).values()) {
@@ -70,7 +82,31 @@ public class PerkListenersAndUtils implements Listener {
 
         if (!inv.contains(IRON_SWORD) && !pData.hasPerkEquipped(Perks.BARBARIAN)) inv.addItem(new ItemStack(IRON_SWORD, 1));
         if (!inv.contains(BOW)) inv.addItem(new ItemStack(BOW, 1));
-        if (pData.hasPerkEquipped(Perks.FISHING_ROD)) inv.addItem(fishingRodItem);
+
+        if (pData.hasPerkEquipped(Perks.FISHING_ROD)) {
+            if (!inv.contains(fishingRodItem)) {
+                inv.addItem(fishingRodItem);
+            }
+        } else {
+            removeAll(inv, fishingRodItem);
+        }
+
+        if (pData.hasPerkEquipped(Perks.LAVA_BUCKET)) {
+            if (inv.contains(emptyBucketItem)) {
+                inv.setItem(inv.first(emptyBucketItem), lavaBucketItem);
+            } else if (!inv.contains(lavaBucketItem)) {
+                inv.addItem(lavaBucketItem);
+            }
+        } else {
+            removeAll(inv, emptyBucketItem);
+            removeAll(inv, lavaBucketItem);
+        }
+
+        if (arrowCount < 32 && !zl.itemCheck(inv.getItem(8))) {
+            inv.setItem(8, new ItemStack(ARROW, 32));
+        } else if (arrowCount < 32) {
+            inv.addItem(new ItemStack(ARROW, 32));
+        }
     }
 
     private void removeAll(PlayerInventory inventory, ItemStack item) {
@@ -191,10 +227,83 @@ public class PerkListenersAndUtils implements Listener {
     }
 
     @EventHandler
+    public void onBucketEmpty(PlayerBucketEmptyEvent e) {
+
+        e.setCancelled(true);
+        Player p = e.getPlayer();
+        Block block = e.getBlock();
+
+        if (spawnUtils.spawnCheck(block.getLocation())) return;
+        if (block.getType() == LAVA || block.getType() == WATER) return;
+
+        if (e.getBucket() == Material.LAVA_BUCKET) {
+
+            previousLavaBlock.put(p.getUniqueId(), e.getBlock().getType());
+            placedLava.put(p.getUniqueId(), block);
+            block.setType(LAVA);
+
+             new BukkitRunnable() {
+
+                @Override
+                public void run() {
+
+                    if (!methods.hasID(p.getUniqueId())) {
+                        methods.setID(p.getUniqueId(), getTaskId());
+                    }
+
+                    if (block.getType() != LAVA) {
+                        lavaExistTimer.put(p.getUniqueId(), 0);
+                        methods.stop(p.getUniqueId());
+                    }
+
+                    if (!lavaExistTimer.containsKey(p.getUniqueId())) lavaExistTimer.put(p.getUniqueId(), 0);
+                    lavaExistTimer.put(p.getUniqueId(), lavaExistTimer.get(p.getUniqueId()) + 1);
+
+                    if (lavaExistTimer.get(p.getUniqueId()) == 240) {
+                        lavaExistTimer.put(p.getUniqueId(), 0);
+                        block.setType(previousLavaBlock.get(p.getUniqueId()));
+                        previousLavaBlock.remove(p.getUniqueId());
+                        lavaExistTimer.remove(p.getUniqueId());
+                        placedLava.remove(p.getUniqueId());
+                        methods.stop(p.getUniqueId());
+                    }
+                }
+            }.runTaskTimer(Main.getInstance(), 0, 1);
+
+            p.getInventory().setItemInMainHand(emptyBucketItem);
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onBucketFill(PlayerBucketFillEvent e) {
+
+        Player p = e.getPlayer();
+        Block block = e.getBlock();
+
+        if (e.getBucket() == BUCKET) {
+            if (block.getType() == LAVA && methods.getID(p.getUniqueId()) != null && placedLava.containsValue(block)) {
+                block.setType(previousLavaBlock.get(p.getUniqueId()));
+                previousLavaBlock.remove(p.getUniqueId());
+                placedLava.remove(p.getUniqueId());
+                methods.stop(p.getUniqueId());
+                p.getInventory().setItemInMainHand(lavaBucketItem);
+            }
+        }
+
+        e.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onLeave(PlayerQuitEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
 
+        if (placedLava.containsKey(uuid)) placedLava.get(uuid).setType(previousLavaBlock.get(uuid));
+
         gheadCooldown.remove(uuid);
+        lavaExistTimer.remove(uuid);
+        previousLavaBlock.remove(uuid);
+        placedLava.remove(uuid);
         perkReset(e.getPlayer());
     }
 }
