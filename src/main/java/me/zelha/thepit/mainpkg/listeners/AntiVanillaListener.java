@@ -2,6 +2,7 @@ package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
+import org.bukkit.Material;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,15 +11,22 @@ import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+
+import java.util.Arrays;
 
 import static org.bukkit.Material.*;
 
 public class AntiVanillaListener implements Listener {
 
     ZelLogic zl = Main.getInstance().getZelLogic();
+
+    Material[] undroppable = {
+            IRON_SWORD, BOW
+    };
 
     @EventHandler
     public void onArrowItemPickup(EntityPickupItemEvent e) {
@@ -77,6 +85,13 @@ public class AntiVanillaListener implements Listener {
         }
 
         inv.setItem(zl.firstEmptySlot(inv), item);
+    }
+
+    public void onDrop(PlayerDropItemEvent e) {
+
+        if (Arrays.asList(undroppable).contains(e.getItemDrop().getItemStack().getType())) {
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler
