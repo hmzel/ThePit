@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -44,6 +45,17 @@ public class ArmorPickupListener implements Listener {
         return 13;
     }
 
+    private void itemPlacementHandler(PlayerInventory inventory, EquipmentSlot slot, ItemStack item) {
+        if (!zl.itemCheck(inventory.getItem(slot))) {
+            inventory.setItem(slot, item);
+        } else if (determineWeight(inventory.getItem(slot)) < determineWeight(item)) {
+            inventory.setItem(zl.firstEmptySlot(inventory), inventory.getItem(slot));
+            inventory.setItem(slot, item);
+        } else {
+            inventory.setItem(zl.firstEmptySlot(inventory), item);
+        }
+    }
+
     @EventHandler
     public void onPickup(EntityPickupItemEvent e) {
 
@@ -67,41 +79,13 @@ public class ArmorPickupListener implements Listener {
         String name = type.name();
 
         if (name.contains("HELMET")) {
-            if (!zl.itemCheck(inv.getHelmet())) {
-                inv.setHelmet(item);
-            } else if (determineWeight(inv.getHelmet()) < determineWeight(item)) {
-                inv.setItem(zl.firstEmptySlot(inv), inv.getHelmet());
-                inv.setHelmet(item);
-            } else {
-                inv.setItem(zl.firstEmptySlot(inv), inv.getHelmet());
-            }
+            itemPlacementHandler(inv, EquipmentSlot.HEAD, item);
         } else if (name.contains("CHESTPLATE")) {
-            if (!zl.itemCheck(inv.getChestplate())) {
-                inv.setChestplate(item);
-            } else if (determineWeight(inv.getChestplate()) < determineWeight(item)) {
-                inv.setItem(zl.firstEmptySlot(inv), inv.getChestplate());
-                inv.setChestplate(item);
-            } else {
-                inv.setItem(zl.firstEmptySlot(inv), inv.getChestplate());
-            }
+            itemPlacementHandler(inv, EquipmentSlot.CHEST, item);
         } else if (name.contains("LEGGINGS")) {
-            if (!zl.itemCheck(inv.getLeggings())) {
-                inv.setLeggings(item);
-            } else if (determineWeight(inv.getLeggings()) < determineWeight(item)) {
-                inv.setItem(zl.firstEmptySlot(inv), inv.getLeggings());
-                inv.setLeggings(item);
-            } else {
-                inv.setItem(zl.firstEmptySlot(inv), inv.getLeggings());
-            }
+            itemPlacementHandler(inv, EquipmentSlot.LEGS, item);
         } else if (name.contains("BOOTS")) {
-            if (!zl.itemCheck(inv.getBoots())) {
-                inv.setBoots(item);
-            } else if (determineWeight(inv.getBoots()) < determineWeight(item)) {
-                inv.setItem(zl.firstEmptySlot(inv), inv.getBoots());
-                inv.setBoots(item);
-            } else {
-                inv.setItem(zl.firstEmptySlot(inv), inv.getBoots());
-            }
+            itemPlacementHandler(inv, EquipmentSlot.FEET, item);
         }
     }
 }
