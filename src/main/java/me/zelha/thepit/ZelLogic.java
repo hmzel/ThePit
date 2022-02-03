@@ -110,15 +110,11 @@ public class ZelLogic {//zel
     }
 
     public ItemStack itemBuilder(Material material, int count, @Nullable String name, @Nullable List<String> lore, Boolean showUnbreakable) {
-        ItemStack item = new ItemStack(material, count);
+        ItemStack item = itemBuilder(material, count, name, lore);
         ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setUnbreakable(true);
 
-        if (name != null) itemMeta.setDisplayName(name);
-        if (lore != null) itemMeta.setLore(lore);
-        if (!showUnbreakable) itemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        if (showUnbreakable) itemMeta.removeItemFlags(ItemFlag.HIDE_UNBREAKABLE);
 
-        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         item.setItemMeta(itemMeta);
 
         return item;
