@@ -100,9 +100,11 @@ public class PerkListenersAndUtils implements Listener {
             removeAll(inv, lavaBucketItem);
         }
 
-        if (arrowCount < 32 && !zl.itemCheck(inv.getItem(8))) {
+        if (arrowCount < 32 && arrowCount != 0) {
+            inv.addItem(new ItemStack(ARROW, 32 - arrowCount));
+        } else if (arrowCount == 0 && !zl.itemCheck(inv.getItem(8))) {
             inv.setItem(8, new ItemStack(ARROW, 32));
-        } else if (arrowCount < 32) {
+        } else if (arrowCount == 0) {
             inv.addItem(new ItemStack(ARROW, 32));
         }
     }
