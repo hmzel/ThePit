@@ -109,6 +109,11 @@ public class PerkListenersAndUtils implements Listener {
         }
     }
 
+    public double getPerkDamageBoost(Player player, double originalDamage) {
+        double boost = 0;
+        return boost;
+    }
+
     private void removeAll(PlayerInventory inventory, ItemStack item) {
         for (ItemStack items : inventory.all(item.getType()).values()) {
             if (items.isSimilar(item)) {
@@ -159,7 +164,7 @@ public class PerkListenersAndUtils implements Listener {
     }
 
     @EventHandler
-    public void onAttack(EntityDamageByEntityEvent e) {
+    public void onAttackAndKill(EntityDamageByEntityEvent e) {
         Entity damagedEntity = e.getEntity();
         Entity damagerEntity = e.getDamager();
 
@@ -299,7 +304,7 @@ public class PerkListenersAndUtils implements Listener {
 
         ItemMeta meta = e.getItemDrop().getItemStack().getItemMeta();
 
-        if (meta != null && meta.getLore() != null && meta.getLore().contains("Perk item")) {
+        if (meta != null && meta.getLore() != null && meta.getLore().contains("§7Perk item")) {
             e.getPlayer().sendMessage("§c§lNOPE! §7You cannot drop this item!");
             e.setCancelled(true);
         }
