@@ -44,6 +44,7 @@ public class PerkListenersAndUtils implements Listener {
     private final Map<UUID, Integer> lavaExistTimer = new HashMap<>();
     private final Map<UUID, Block> placedLava = new HashMap<>();
     private final Map<UUID, Material> previousLavaBlock = new HashMap<>();
+    private final Map<UUID, Integer> strengthChaining = new HashMap<>();
 
     private final ItemStack lavaBucketItem = zl.itemBuilder(Material.LAVA_BUCKET, 1, null, Collections.singletonList("§7Perk item"));
     private final ItemStack emptyBucketItem = zl.itemBuilder(BUCKET, 1, null, Collections.singletonList("§7Perk item"));
@@ -112,6 +113,10 @@ public class PerkListenersAndUtils implements Listener {
     public double getPerkDamageBoost(Player player, double originalDamage) {
         double boost = 0;
         return boost;
+    }
+
+    public Integer getStrengthChaining(Player p) {
+        return strengthChaining.get(p.getUniqueId());
     }
 
     private void removeAll(PlayerInventory inventory, ItemStack item) {

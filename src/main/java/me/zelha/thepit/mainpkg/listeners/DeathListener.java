@@ -118,7 +118,6 @@ public class DeathListener implements Listener {
             }
 
             Player p = (Player) e.getEntity();
-            PlayerData pData = Main.getInstance().getPlayerData(p);
             PlayerInventory inv = p.getInventory();
             double finalDMG = e.getFinalDamage();
             double currentHP = p.getHealth();
