@@ -137,8 +137,16 @@ public class PerkListenersAndUtils implements Listener {
     }
 
     private boolean containsLessThan(int amount, ItemStack item, Inventory inv) {
-        return !inv.containsAtLeast(item, amount) || !inv.contains(item);
-    }//why in the seven hells does containsAtLeast return true if theres less than 1 in the inventory
+        int count = 0;
+
+        for (ItemStack invItem : inv.all(item.getType()).values()) {
+            if (zl.itemCheck(invItem) && invItem.isSimilar(item)) {
+                count += invItem.getAmount();
+            }
+        }
+
+        return count < amount;
+    }
 
     private boolean containsLessThan(int amount, String name, Material material, Inventory inv) {
         int count = 0;
@@ -149,10 +157,7 @@ public class PerkListenersAndUtils implements Listener {
             }
         }
 
-        if (count >= amount) {
-            return false;
-        }
-        return true;
+        return count < amount;
     }//i hate player heads. with a passion.
 
     private void determineKillReward(Player p) {
