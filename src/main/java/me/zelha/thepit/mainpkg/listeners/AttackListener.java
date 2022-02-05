@@ -26,7 +26,7 @@ public class AttackListener implements Listener {
         double damageBoost = 1;
         double defenseBoost = 0;
 
-        damageBoost+= perkUtils.getPerkDamageBoost(damager);
+        damageBoost += perkUtils.getPerkDamageBoost(damager);
 
         return originalDamage * (damageBoost - defenseBoost);
     }

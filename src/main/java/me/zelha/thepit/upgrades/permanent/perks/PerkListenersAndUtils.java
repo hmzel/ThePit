@@ -48,6 +48,7 @@ public class PerkListenersAndUtils implements Listener {
     private final Map<UUID, Integer> strengthChaining = new HashMap<>();
     private final Map<UUID, Integer> strengthChainingTimer = new HashMap<>();
 
+    private final ItemStack safetyFirstItem = zl.itemBuilder(CHAINMAIL_HELMET, 1, null, Collections.singletonList("§7Perk item"));
     private final ItemStack lavaBucketItem = zl.itemBuilder(Material.LAVA_BUCKET, 1, null, Collections.singletonList("§7Perk item"));
     private final ItemStack emptyBucketItem = zl.itemBuilder(BUCKET, 1, null, Collections.singletonList("§7Perk item"));
     private final ItemStack fishingRodItem = zl.itemBuilder(Material.FISHING_ROD, 1, null, Collections.singletonList("§7Perk item"), true);
@@ -103,6 +104,12 @@ public class PerkListenersAndUtils implements Listener {
         } else {
             removeAll(inv, emptyBucketItem);
             removeAll(inv, lavaBucketItem);
+        }
+
+        if (pData.hasPerkEquipped(SAFETY_FIRST)) {
+            if (!zl.itemCheck(inv.getHelmet())) inv.setHelmet(safetyFirstItem);
+        } else {
+            removeAll(inv, safetyFirstItem);
         }
 
         if (arrowCount < 32 && arrowCount != 0) {
