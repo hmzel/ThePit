@@ -217,6 +217,12 @@ public class PerkListenersAndUtils implements Listener {
         if (pData(p).hasPerkEquipped(RAMBO)) {
 
         }
+
+        if (pData(p).hasPerkEquipped(MINEMAN)) {
+            ItemStack item = minemanCobblestoneItem;
+            item.setAmount(3);
+            inv.addItem(item);
+        }
     }
 
     @EventHandler
