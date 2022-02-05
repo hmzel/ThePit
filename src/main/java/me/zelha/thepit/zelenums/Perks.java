@@ -50,7 +50,9 @@ public enum Perks {
             , 2),
     MINEMAN("Mineman", COBBLESTONE, Arrays.asList(
             "§7Spawn with §f24 cobblestone",
-            "§7and a diamond pickaxe."
+            "§7and a diamond pickaxe.",
+            " ",
+            "§7+§f3 blocks §7on kill."
     )
             , 3000
             , 20
