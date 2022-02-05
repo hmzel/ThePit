@@ -128,7 +128,7 @@ public class PerkListenersAndUtils implements Listener {
                     removeAll(inv, minemanCobblestoneItem);
                     inv.setItem(slot, minemanCobblestoneItem);
                 } else {
-                    inv.addItem(minemanPickaxeItem);
+                    inv.addItem(minemanCobblestoneItem);
                 }
             }
         } else {
