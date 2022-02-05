@@ -51,7 +51,7 @@ public class ArmorPickupListener implements Listener {
         } else if (determineWeight(inventory.getItem(slot)) < determineWeight(item)) {
             inventory.setItem(zl.firstEmptySlot(inventory), inventory.getItem(slot));
             inventory.setItem(slot, item);
-        } else if (!inventory.contains(item)) {
+        } else {
             inventory.setItem(zl.firstEmptySlot(inventory), item);
         }
     }
@@ -61,6 +61,8 @@ public class ArmorPickupListener implements Listener {
 
         if (!zl.playerCheck(e.getEntity())) return;
         if (determineWeight(e.getItem().getItemStack()) == 13) return;
+        if (((Player) e.getEntity()).getInventory().contains(e.getItem().getItemStack())) return;
+
 
         Player p = (Player) e.getEntity();
         PlayerInventory inv = p.getInventory();
