@@ -9,7 +9,10 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.*;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -24,6 +27,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import static org.bukkit.Material.*;
@@ -114,6 +118,23 @@ public class ZelLogic {//zel
         ItemMeta itemMeta = item.getItemMeta();
 
         if (showUnbreakable) itemMeta.removeItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+
+        item.setItemMeta(itemMeta);
+
+        return item;
+    }
+
+    public ItemStack itemBuilder(Material material, int count, @Nullable String name, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchants, Boolean showEnchants, Boolean showUnbreakable) {
+        ItemStack item = itemBuilder(material, count, name, lore, showUnbreakable);
+        ItemMeta itemMeta = item.getItemMeta();
+
+        if (enchants != null) {
+            for (Enchantment enchant : enchants.keySet()) {
+                itemMeta.addEnchant(enchant, enchants.get(enchant), true);
+            }
+        }
+
+        if (!showUnbreakable) itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
         item.setItemMeta(itemMeta);
 
