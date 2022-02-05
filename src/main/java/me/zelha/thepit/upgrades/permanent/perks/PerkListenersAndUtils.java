@@ -195,12 +195,10 @@ public class PerkListenersAndUtils implements Listener {
                 determineKillReward(damager);
 
                 if (pData(damager).hasPerkEquipped(STRENGTH_CHAINING)) {
-                    if (getStrengthChaining(damager)[0] != 5) {
-                        if (getStrengthChaining(damager)[0] != null) {
-                            strengthChaining.put(damagerUUID, getStrengthChaining(damager)[0] + 1);
-                        } else {
-                            strengthChaining.put(damagerUUID, 1);
-                        }
+                    if (getStrengthChaining(damager)[0] == null) {
+                        strengthChaining.put(damagerUUID, 1);
+                    } else if (getStrengthChaining(damager)[0] != 5) {
+                        strengthChaining.put(damagerUUID, getStrengthChaining(damager)[0] + 1);
                     }
 
                     if (methods2.hasID(damagerUUID)) methods2.stop(damagerUUID);
