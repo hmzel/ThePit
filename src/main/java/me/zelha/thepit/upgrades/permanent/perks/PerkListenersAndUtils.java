@@ -39,12 +39,14 @@ public class PerkListenersAndUtils implements Listener {
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final SpawnListener spawnUtils = Main.getInstance().getSpawnListener();
     private final RunMethods methods = Main.getInstance().generateRunMethods();
+    private final RunMethods methods2 = Main.getInstance().generateRunMethods();
 
     private final Set<UUID> gheadCooldown = new HashSet<>();
     private final Map<UUID, Integer> lavaExistTimer = new HashMap<>();
     private final Map<UUID, Block> placedLava = new HashMap<>();
     private final Map<UUID, Material> previousLavaBlock = new HashMap<>();
     private final Map<UUID, Integer> strengthChaining = new HashMap<>();
+    private final Map<UUID, Integer> strengthChainingTimer = new HashMap<>();
 
     private final ItemStack lavaBucketItem = zl.itemBuilder(Material.LAVA_BUCKET, 1, null, Collections.singletonList("§7Perk item"));
     private final ItemStack emptyBucketItem = zl.itemBuilder(BUCKET, 1, null, Collections.singletonList("§7Perk item"));
@@ -113,12 +115,15 @@ public class PerkListenersAndUtils implements Listener {
     public double getPerkDamageBoost(Player player, double originalDamage) {
         double boost = 1;
 
-        if (getStrengthChaining(player) != null) boost+= 0.08 * getStrengthChaining(player);
+        if (getStrengthChaining(player) != null) boost+= 0.08 * getStrengthChaining(player)[0];
         return boost;
     }
 
-    public Integer getStrengthChaining(Player p) {
-        return strengthChaining.get(p.getUniqueId());
+    /**
+     *returns an array where [0] is the level of strength and [1] is the timer
+     */
+    public Integer[] getStrengthChaining(Player p) {
+        return new Integer[] {strengthChaining.get(p.getUniqueId()), strengthChainingTimer.get(p.getUniqueId())};
     }
 
     private void removeAll(PlayerInventory inventory, ItemStack item) {
@@ -182,11 +187,31 @@ public class PerkListenersAndUtils implements Listener {
         if (zl.playerCheck(damagedEntity) && zl.playerCheck(damagerEntity)) {
             Player damaged = (Player) e.getEntity();
             Player damager = (Player) e.getDamager();
+            UUID damagerUUID = damager.getUniqueId();
             double finalDMG = e.getFinalDamage();
             double damagedHP = damaged.getHealth();
 
             if (e.getCause() != DamageCause.FALL && (damagedHP - finalDMG) <= 0) {
                 determineKillReward(damager);
+
+                if (pData(damager).hasPerkEquipped(STRENGTH_CHAINING)) {
+                    if (getStrengthChaining(damager)[0] != 5) strengthChaining.put(damagerUUID, getStrengthChaining(damager)[0] + 1);
+                    if (methods2.hasID(damagerUUID)) methods2.stop(damagerUUID);
+                    strengthChainingTimer.put(damagerUUID, 7);
+
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            if (!methods2.hasID(damagerUUID)) methods2.setID(damagerUUID, getTaskId());
+                            strengthChainingTimer.put(damagerUUID, getStrengthChaining(damager)[0] - 1);
+
+                            if (strengthChainingTimer.get(damagerUUID) == 0) {
+                                strengthChaining.remove(damagerUUID);
+                                cancel();
+                            }
+                        }
+                    }.runTaskTimer(Main.getInstance(), 20, 20);
+                }
             }
         }
     }
