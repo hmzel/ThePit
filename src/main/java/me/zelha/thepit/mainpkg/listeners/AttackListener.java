@@ -4,6 +4,7 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.RunMethods;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.upgrades.permanent.perks.PerkListenersAndUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,7 +19,17 @@ public class AttackListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final SpawnListener spawnUtils = Main.getInstance().getSpawnListener();
+    private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
     private final RunMethods methods = Main.getInstance().generateRunMethods();
+
+    private double calculateAttackDamage(Player damaged, Player damager, double originalDamage) {
+        double damageBoost = 1;
+        double defenseBoost = 0;
+
+        damageBoost+= perkUtils.getPerkDamageBoost(damager);
+
+        return originalDamage * (damageBoost - defenseBoost);
+    }
 
     @EventHandler
     public void onAttack(EntityDamageByEntityEvent e) {
@@ -33,6 +44,8 @@ public class AttackListener implements Listener {
             Player damaged = (Player) e.getEntity();
             Player damager = (Player) e.getDamager();
 
+            e.setDamage(calculateAttackDamage(damaged, damager, e.getDamage()));
+
             if (methods.hasID(damaged.getUniqueId())) {
                 methods.stop(damaged.getUniqueId());
             }
@@ -41,8 +54,8 @@ public class AttackListener implements Listener {
                 methods.stop(damager.getUniqueId());
             }
 
-            new CombatTimerRunnable(damaged.getUniqueId()).runTaskTimer(Main.getInstance(),0, 20);
-            new CombatTimerRunnable(damager.getUniqueId()).runTaskTimer(Main.getInstance(),0, 20);
+            new CombatTimerRunnable(damaged.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
+            new CombatTimerRunnable(damager.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
         }
     }
 

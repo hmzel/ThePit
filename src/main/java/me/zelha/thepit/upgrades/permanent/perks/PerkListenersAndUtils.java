@@ -73,6 +73,8 @@ public class PerkListenersAndUtils implements Listener {
             arrowCount+= item.getAmount();
         }
 
+        strengthChaining.remove(p.getUniqueId());
+
         removeAll(inv, gapple);
 
         for (ItemStack items : inv.all(PLAYER_HEAD).values()) {
@@ -112,8 +114,8 @@ public class PerkListenersAndUtils implements Listener {
         }
     }
 
-    public double getPerkDamageBoost(Player player, double originalDamage) {
-        double boost = 1;
+    public double getPerkDamageBoost(Player player) {
+        double boost = 0;
 
         if (getStrengthChaining(player) != null) boost+= 0.08 * getStrengthChaining(player)[0];
         return boost;
