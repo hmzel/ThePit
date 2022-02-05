@@ -195,7 +195,14 @@ public class PerkListenersAndUtils implements Listener {
                 determineKillReward(damager);
 
                 if (pData(damager).hasPerkEquipped(STRENGTH_CHAINING)) {
-                    if (getStrengthChaining(damager)[0] != 5) strengthChaining.put(damagerUUID, getStrengthChaining(damager)[0] + 1);
+                    if (getStrengthChaining(damager)[0] != 5) {
+                        if (getStrengthChaining(damager)[0] != null) {
+                            strengthChaining.put(damagerUUID, getStrengthChaining(damager)[0] + 1);
+                        } else {
+                            strengthChaining.put(damagerUUID, 1);
+                        }
+                    }
+
                     if (methods2.hasID(damagerUUID)) methods2.stop(damagerUUID);
                     strengthChainingTimer.put(damagerUUID, 7);
 
@@ -203,10 +210,16 @@ public class PerkListenersAndUtils implements Listener {
                         @Override
                         public void run() {
                             if (!methods2.hasID(damagerUUID)) methods2.setID(damagerUUID, getTaskId());
-                            strengthChainingTimer.put(damagerUUID, getStrengthChaining(damager)[0] - 1);
+
+                            if (getStrengthChaining(damager)[0] != null) {
+                                strengthChainingTimer.put(damagerUUID, getStrengthChaining(damager)[0] - 1);
+                            } else {
+                                strengthChainingTimer.put(damagerUUID, 1);
+                            }
 
                             if (strengthChainingTimer.get(damagerUUID) == 0) {
                                 strengthChaining.remove(damagerUUID);
+                                strengthChainingTimer.remove(damagerUUID);
                                 cancel();
                             }
                         }

@@ -4,6 +4,7 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.RunMethods;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.upgrades.permanent.perks.PerkListenersAndUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,8 +20,10 @@ import java.util.*;
 
 public class ScoreboardListener implements Listener {
 
+    private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final RunMethods methods = Main.getInstance().generateRunMethods();
     private final RunMethods methods2 = Main.getInstance().generateRunMethods();
+    private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
 
     @EventHandler
     public void addOnJoin(PlayerJoinEvent e) {
@@ -43,13 +46,11 @@ public class ScoreboardListener implements Listener {
     }
 
 
-    private class UpdateAndAnimation extends BukkitRunnable {//i would have no clue what to make
+    private class UpdateAndAnimation extends BukkitRunnable {
 
         private final Player p;
         int ticks = 0;
         private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("MM/dd/yy");
-
-        private final ZelLogic zl = Main.getInstance().getZelLogic();
 
         public UpdateAndAnimation(Player player) {
             this.p = player;
@@ -100,6 +101,10 @@ public class ScoreboardListener implements Listener {
                 } else {
                     boardScores.add("§fStreak: §a" + pData.getStreak());
                 }
+            }
+
+            if (perkUtils.getStrengthChaining(p)[0] != null) {
+                boardScores.add("§fStrength: §c" + zl.toRoman(perkUtils.getStrengthChaining(p)[0]) + " §9(" + perkUtils.getStrengthChaining(p)[1] + ")");
             }
 
             boardScores.add("§4");
@@ -208,8 +213,6 @@ public class ScoreboardListener implements Listener {
 
         private final Player p;
         private final PlayerData pData;
-
-        private final ZelLogic zl = Main.getInstance().getZelLogic();
 
         public UpdateTab(Player player) {
             this.p = player;
