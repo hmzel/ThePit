@@ -117,7 +117,7 @@ public class PerkListenersAndUtils implements Listener {
     public double getPerkDamageBoost(Player player) {
         double boost = 0;
 
-        if (getStrengthChaining(player) != null) boost+= 0.08 * getStrengthChaining(player)[0];
+        if (getStrengthChaining(player)[0] != null) boost+= 0.08 * getStrengthChaining(player)[0];
         return boost;
     }
 
