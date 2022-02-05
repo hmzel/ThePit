@@ -209,11 +209,7 @@ public class PerkListenersAndUtils implements Listener {
                         public void run() {
                             if (!methods2.hasID(damagerUUID)) methods2.setID(damagerUUID, getTaskId());
 
-                            if (getStrengthChaining(damager)[0] != null) {
-                                strengthChainingTimer.put(damagerUUID, getStrengthChaining(damager)[0] - 1);
-                            } else {
-                                strengthChainingTimer.put(damagerUUID, 1);
-                            }
+                            strengthChainingTimer.put(damagerUUID, getStrengthChaining(damager)[1] - 1);
 
                             if (strengthChainingTimer.get(damagerUUID) == 0) {
                                 strengthChaining.remove(damagerUUID);

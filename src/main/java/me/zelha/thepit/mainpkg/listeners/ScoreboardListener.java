@@ -104,7 +104,7 @@ public class ScoreboardListener implements Listener {
             }
 
             if (perkUtils.getStrengthChaining(p)[0] != null) {
-                boardScores.add("§fStrength: §c" + zl.toRoman(perkUtils.getStrengthChaining(p)[0]) + " §9(" + perkUtils.getStrengthChaining(p)[1] + ")");
+                boardScores.add("§fStrength: §c" + zl.toRoman(perkUtils.getStrengthChaining(p)[0]) + " §7(" + perkUtils.getStrengthChaining(p)[1] + ")");
             }
 
             boardScores.add("§4");
