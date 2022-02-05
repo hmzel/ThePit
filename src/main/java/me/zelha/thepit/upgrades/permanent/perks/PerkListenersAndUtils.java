@@ -166,8 +166,14 @@ public class PerkListenersAndUtils implements Listener {
         if (!pData(p).hasPerkEquipped(VAMPIRE) && !pData(p).hasPerkEquipped(RAMBO)) {
             if (pData(p).hasPerkEquipped(OLYMPUS)) {
 
-            } else if (pData(p).hasPerkEquipped(GOLDEN_HEADS) && containsLessThan(2, "§6Golden Head", PLAYER_HEAD, inv)) {
-                inv.addItem(goldenHeadItem);
+            } else if (pData(p).hasPerkEquipped(GOLDEN_HEADS)) {
+                if (containsLessThan(2, "§6Golden Head", PLAYER_HEAD, inv)) {
+                    if (inv.first(PLAYER_HEAD) != -1) {
+                        inv.getItem(inv.first(PLAYER_HEAD)).setAmount(inv.getItem(inv.first(PLAYER_HEAD)).getAmount() + 1);
+                    } else {
+                        inv.addItem(goldenHeadItem);
+                    }
+                }
             } else if (containsLessThan(2, gapple, inv)) {
                 inv.addItem(gapple);
             }
