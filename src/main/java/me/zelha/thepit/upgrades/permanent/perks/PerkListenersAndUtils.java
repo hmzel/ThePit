@@ -8,6 +8,7 @@ import me.zelha.thepit.mainpkg.listeners.SpawnListener;
 import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -48,6 +49,9 @@ public class PerkListenersAndUtils implements Listener {
     private final Map<UUID, Integer> strengthChaining = new HashMap<>();
     private final Map<UUID, Integer> strengthChainingTimer = new HashMap<>();
 
+    private final ItemStack minemanPickaxeItem = zl.itemBuilder(DIAMOND_PICKAXE, 1, null, Collections.singletonList("§7Perk item"),
+            new Enchantment[] {Enchantment.DIG_SPEED}, new Integer[] {4}, true, true);
+    private final ItemStack minemanCobblestoneItem = zl.itemBuilder(COBBLESTONE, 24, null, Collections.singletonList("§7Perk item"));
     private final ItemStack safetyFirstItem = zl.itemBuilder(CHAINMAIL_HELMET, 1, null, Collections.singletonList("§7Perk item"));
     private final ItemStack lavaBucketItem = zl.itemBuilder(Material.LAVA_BUCKET, 1, null, Collections.singletonList("§7Perk item"));
     private final ItemStack emptyBucketItem = zl.itemBuilder(BUCKET, 1, null, Collections.singletonList("§7Perk item"));
@@ -110,6 +114,26 @@ public class PerkListenersAndUtils implements Listener {
             if (!zl.itemCheck(inv.getHelmet())) inv.setHelmet(safetyFirstItem);
         } else {
             removeAll(inv, safetyFirstItem);
+        }
+
+        if (pData.hasPerkEquipped(MINEMAN)) {
+            if (!inv.contains(minemanPickaxeItem)) {
+                inv.addItem(minemanPickaxeItem);
+            }
+
+            if (!inv.contains(minemanCobblestoneItem)) {
+                if (inv.first(COBBLESTONE) != -1) {
+                    int slot = inv.first(COBBLESTONE);
+
+                    removeAll(inv, minemanCobblestoneItem);
+                    inv.setItem(slot, minemanCobblestoneItem);
+                } else {
+                    inv.addItem(minemanPickaxeItem);
+                }
+            }
+        } else {
+            removeAll(inv, minemanPickaxeItem);
+            removeAll(inv, minemanCobblestoneItem);
         }
 
         if (arrowCount < 32 && arrowCount != 0) {
