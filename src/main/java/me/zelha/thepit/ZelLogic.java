@@ -27,7 +27,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 import static org.bukkit.Material.*;
@@ -124,13 +123,13 @@ public class ZelLogic {//zel
         return item;
     }
 
-    public ItemStack itemBuilder(Material material, int count, @Nullable String name, @Nullable List<String> lore, @Nullable Map<Enchantment, Integer> enchants, Boolean showEnchants, Boolean showUnbreakable) {
+    public ItemStack itemBuilder(Material material, int count, @Nullable String name, @Nullable List<String> lore, @Nullable Enchantment[] enchants, Integer[] enchantTiers, Boolean showEnchants, Boolean showUnbreakable) {
         ItemStack item = itemBuilder(material, count, name, lore, showUnbreakable);
         ItemMeta itemMeta = item.getItemMeta();
 
         if (enchants != null) {
-            for (Enchantment enchant : enchants.keySet()) {
-                itemMeta.addEnchant(enchant, enchants.get(enchant), true);
+            for (int i = 0; i <= enchants.length; i++) {
+                itemMeta.addEnchant(enchants[i], enchantTiers[i], true);
             }
         }
 
