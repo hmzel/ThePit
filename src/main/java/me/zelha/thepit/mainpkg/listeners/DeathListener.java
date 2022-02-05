@@ -137,6 +137,10 @@ public class DeathListener implements Listener {
 
                 for (Material material : lostOnDeathList) {
                     inv.remove(material);
+                    if (zl.itemCheck(inv.getHelmet()) && inv.getHelmet().getType() == material) inv.setHelmet(new ItemStack(AIR));
+                    if (zl.itemCheck(inv.getChestplate()) && inv.getChestplate().getType() == material) inv.setChestplate(new ItemStack(AIR));;
+                    if (zl.itemCheck(inv.getLeggings()) && inv.getLeggings().getType() == material) inv.setLeggings(new ItemStack(AIR));
+                    if (zl.itemCheck(inv.getBoots()) &&inv.getBoots().getType() == material) inv.setBoots(new ItemStack(AIR));
                 }
 
                 switch (new Random().nextInt(3)) {
