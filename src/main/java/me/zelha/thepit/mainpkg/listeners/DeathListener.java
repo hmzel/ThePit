@@ -158,7 +158,7 @@ public class DeathListener implements Listener {
                 if (!zl.itemCheck(inv.getChestplate())) inv.setChestplate(zl.itemBuilder(CHAINMAIL_CHESTPLATE, 1));
                 if (!zl.itemCheck(inv.getLeggings())) inv.setLeggings(zl.itemBuilder(CHAINMAIL_LEGGINGS, 1));
                 if (!zl.itemCheck(inv.getBoots())) inv.setBoots(zl.itemBuilder(CHAINMAIL_BOOTS, 1));
-                //sword & bow are handled in PerkListenersAndUtils.perkReset for consistency's sake
+                //sword & bow & arrow are handled in PerkListenersAndUtils.perkReset for consistency's sake
 
                 teleportToSpawnMethod(p);
             }
