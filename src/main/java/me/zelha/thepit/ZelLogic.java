@@ -128,7 +128,7 @@ public class ZelLogic {//zel
         ItemMeta itemMeta = item.getItemMeta();
 
         if (enchants != null) {
-            for (int i = 0; i <= enchants.length; i++) {
+            for (int i = 0; i <= enchants.length - 1; i++) {
                 itemMeta.addEnchant(enchants[i], enchantTiers[i], true);
             }
         }
