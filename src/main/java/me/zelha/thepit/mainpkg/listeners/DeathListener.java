@@ -141,19 +141,19 @@ public class DeathListener implements Listener {
 
                 switch (new Random().nextInt(3)) {
                     case 0:
-                        if (!zl.itemCheck(inv.getChestplate())) inv.setChestplate(new ItemStack(IRON_CHESTPLATE, 1));
+                        if (!zl.itemCheck(inv.getChestplate())) inv.setChestplate(zl.itemBuilder(IRON_CHESTPLATE, 1));
                         break;
                     case 1:
-                        if (!zl.itemCheck(inv.getLeggings())) inv.setLeggings(new ItemStack(IRON_LEGGINGS, 1));
+                        if (!zl.itemCheck(inv.getLeggings())) inv.setLeggings(zl.itemBuilder(IRON_LEGGINGS, 1));
                         break;
                     case 2:
-                        if (!zl.itemCheck(inv.getBoots())) inv.setBoots(new ItemStack(IRON_BOOTS, 1));
+                        if (!zl.itemCheck(inv.getBoots())) inv.setBoots(zl.itemBuilder(IRON_BOOTS, 1));
                         break;
                 }
 
-                if (!zl.itemCheck(inv.getChestplate())) inv.setChestplate(new ItemStack(CHAINMAIL_CHESTPLATE, 1));
-                if (!zl.itemCheck(inv.getLeggings())) inv.setLeggings(new ItemStack(CHAINMAIL_LEGGINGS, 1));
-                if (!zl.itemCheck(inv.getBoots())) inv.setBoots(new ItemStack(CHAINMAIL_BOOTS, 1));
+                if (!zl.itemCheck(inv.getChestplate())) inv.setChestplate(zl.itemBuilder(CHAINMAIL_CHESTPLATE, 1));
+                if (!zl.itemCheck(inv.getLeggings())) inv.setLeggings(zl.itemBuilder(CHAINMAIL_LEGGINGS, 1));
+                if (!zl.itemCheck(inv.getBoots())) inv.setBoots(zl.itemBuilder(CHAINMAIL_BOOTS, 1));
                 //sword & bow are handled in PerkListenersAndUtils.perkReset for consistency's sake
 
                 teleportToSpawnMethod(p);
