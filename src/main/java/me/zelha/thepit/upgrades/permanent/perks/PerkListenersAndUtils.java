@@ -279,6 +279,7 @@ public class PerkListenersAndUtils implements Listener {
                 if (pData(damaged).hasPerkEquipped(INSURANCE) && insuranceTimer.containsKey(damagedUUID) && !insuranceCooldown.containsKey(damagedUUID)) {
                     e.setDamage(0);
                     damaged.setHealth(damaged.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+                    damaged.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 80, 2, false, true, true));
 
                     for (Player player : Arrays.asList(damaged, damager)) {
                         player.spawnParticle(Particle.HEART, damaged.getLocation(), 20, 0.3, 0.6, 0.3, 0);
