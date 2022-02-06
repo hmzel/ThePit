@@ -57,7 +57,10 @@ public class BlockListener implements Listener {
         }
 
         if (blockType == OBSIDIAN) {
-            new BlockGoPoof(e.getBlock(), e.getBlockReplacedState().getType()).runTaskLater(Main.getInstance(), (Math.round(120 * (1 + (pData.getPassiveTier(Passives.BUILD_BATTLER) * 0.6)))));
+            new BlockGoPoof(e.getBlock(), e.getBlockReplacedState().getType()).runTaskLater(Main.getInstance(), (Math.round(2400 * (1 + (pData.getPassiveTier(Passives.BUILD_BATTLER) * 0.6)))));
+            placedBlocks.add(e.getBlock());
+        } else if (blockType == COBBLESTONE) {
+            new BlockGoPoof(e.getBlock(), e.getBlockReplacedState().getType()).runTaskLater(Main.getInstance(), (Math.round(300 * (1 + (pData.getPassiveTier(Passives.BUILD_BATTLER) * 0.6)))));
             placedBlocks.add(e.getBlock());
         }
     }
