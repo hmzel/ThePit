@@ -6,7 +6,11 @@ import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.mainpkg.listeners.SpawnListener;
 import me.zelha.thepit.zelenums.Perks;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
@@ -25,6 +29,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 
@@ -43,6 +48,8 @@ public class PerkListenersAndUtils implements Listener {
     private final RunMethods methods2 = Main.getInstance().generateRunMethods();
 
     private final Set<UUID> gheadCooldown = new HashSet<>();
+    private final Map<UUID, Integer> insuranceTimer = new HashMap<>();
+    private final Map<UUID, Integer> insuranceCooldown = new HashMap<>();
     private final Map<UUID, Integer> lavaExistTimer = new HashMap<>();
     private final Map<UUID, Block> placedLava = new HashMap<>();
     private final Map<UUID, Material> previousLavaBlock = new HashMap<>();
@@ -79,6 +86,12 @@ public class PerkListenersAndUtils implements Listener {
         }
 
         strengthChaining.remove(p.getUniqueId());
+
+        if (insuranceTimer.get(p.getUniqueId()) != null) Bukkit.getScheduler().cancelTask(insuranceTimer.get(p.getUniqueId()));
+        if (insuranceCooldown.get(p.getUniqueId()) != null) Bukkit.getScheduler().cancelTask(insuranceCooldown.get(p.getUniqueId()));
+
+        insuranceTimer.remove(p.getUniqueId());
+        insuranceCooldown.remove(p.getUniqueId());
 
         removeAll(inv, gapple);
 
@@ -153,7 +166,7 @@ public class PerkListenersAndUtils implements Listener {
     }
 
     /**
-     *returns an array where [0] is the level of strength and [1] is the timer
+     *@Returns an array where [0] is the level of strength and [1] is the timer
      */
     public Integer[] getStrengthChaining(Player p) {
         return new Integer[] {strengthChaining.get(p.getUniqueId()), strengthChainingTimer.get(p.getUniqueId())};
@@ -237,11 +250,64 @@ public class PerkListenersAndUtils implements Listener {
         if (zl.playerCheck(damagedEntity) && zl.playerCheck(damagerEntity)) {
             Player damaged = (Player) e.getEntity();
             Player damager = (Player) e.getDamager();
+            UUID damagedUUID = damaged.getUniqueId();
             UUID damagerUUID = damager.getUniqueId();
             double finalDMG = e.getFinalDamage();
             double damagedHP = damaged.getHealth();
 
+            if (pData(damaged).hasPerkEquipped(INSURANCE) && !insuranceTimer.containsKey(damagedUUID) && !insuranceCooldown.containsKey(damaged.getUniqueId())) {
+                BukkitTask insuranceRunnable1 = new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        insuranceTimer.remove(damagedUUID);
+
+                        BukkitTask insuranceRunnable2 = new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                insuranceCooldown.remove(damagedUUID);
+                            }
+                        }.runTaskLater(Main.getInstance(), 400);
+
+                        insuranceCooldown.put(damagedUUID, insuranceRunnable2.getTaskId());
+                    }
+                }.runTaskLater(Main.getInstance(), 40);
+
+                insuranceTimer.put(damagedUUID, insuranceRunnable1.getTaskId());
+            }
+
             if (e.getCause() != DamageCause.FALL && (damagedHP - finalDMG) <= 0) {
+                if (pData(damaged).hasPerkEquipped(INSURANCE) && insuranceTimer.containsKey(damagedUUID) && !insuranceCooldown.containsKey(damagedUUID)) {
+                    e.setDamage(0);
+                    damaged.setHealth(damaged.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+
+                    for (Player player : Arrays.asList(damaged, damager)) {
+                        player.spawnParticle(Particle.HEART, damaged.getLocation(), 20, 0.3, 0.6, 0.3, 0);
+                        player.playSound(damaged.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CURE, 0.25F, 2F);
+
+                        new BukkitRunnable() {
+                            double i = 1;
+
+                            @Override
+                            public void run() {
+                                player.playSound(damaged.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.5F, (float) i);
+                                i+= 0.2;
+                                if (i >= 2) cancel();
+                            }
+                        }.runTaskTimer(Main.getInstance(), 0, 1);
+                    }
+
+                    BukkitTask insuranceRunnable3 = new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            insuranceCooldown.remove(damagedUUID);
+                        }
+                    }.runTaskLater(Main.getInstance(), 400);
+
+                    damaged.sendMessage("§a§lINSURANCE! §7Triggered against " + zl.getColorBracketAndLevel(damagerUUID.toString()) + " §7" + damager.getName());
+                    insuranceCooldown.put(damagedUUID, insuranceRunnable3.getTaskId());
+                    return;
+                }
+
                 determineKillReward(damager);
 
                 if (pData(damager).hasPerkEquipped(STRENGTH_CHAINING)) {
