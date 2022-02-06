@@ -87,6 +87,7 @@ public class AntiVanillaListener implements Listener {
         inv.setItem(zl.firstEmptySlot(inv), item);
     }
 
+    @EventHandler
     public void onDrop(PlayerDropItemEvent e) {
 
         if (Arrays.asList(undroppable).contains(e.getItemDrop().getItemStack().getType())) {
