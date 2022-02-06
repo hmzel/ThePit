@@ -207,7 +207,7 @@ public class ItemsVillagerListener implements Listener {
                         }
                         break;
                     case OBSIDIAN:
-                        itemPurchase(p, zl.itemBuilder(OBSIDIAN, 8), 40);
+                        itemPurchase(p, zl.itemBuilder(OBSIDIAN, 8, null, null), 40);
                         break;
                     case GOLDEN_PICKAXE:
                         itemPurchase(p, zl.itemBuilder(GOLDEN_PICKAXE, 1, "§6Golden Pickaxe", Arrays.asList(

@@ -12,7 +12,7 @@ import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.mainpkg.data.StorageListener;
 import me.zelha.thepit.mainpkg.listeners.*;
 import me.zelha.thepit.mainpkg.runnables.ParticipationRunnable;
-import me.zelha.thepit.upgrades.nonpermanent.BlockPlaceListener;
+import me.zelha.thepit.mainpkg.listeners.BlockListener;
 import me.zelha.thepit.upgrades.nonpermanent.GoldenPickaxeListener;
 import me.zelha.thepit.upgrades.nonpermanent.villager.ItemsVillagerListener;
 import me.zelha.thepit.upgrades.permanent.perks.PerkListenersAndUtils;
@@ -69,7 +69,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ItemsVillagerListener(), this);
         getServer().getPluginManager().registerEvents(new GoldenPickaxeListener(), this);
         getServer().getPluginManager().registerEvents(new UpgradesVillagerListener(), this);
-        getServer().getPluginManager().registerEvents(new BlockPlaceListener(), this);
+        getServer().getPluginManager().registerEvents(new BlockListener(), this);
         getServer().getPluginManager().registerEvents(new ArmorPickupListener(), this);
 
         getCommand("setprestige").setExecutor(new SetPrestigeCommand());

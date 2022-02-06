@@ -1,4 +1,4 @@
-package me.zelha.thepit.upgrades.nonpermanent;
+package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.mainpkg.data.PlayerData;
@@ -17,7 +17,7 @@ import java.util.List;
 
 import static org.bukkit.Material.*;
 
-public class BlockPlaceListener implements Listener {
+public class BlockListener implements Listener {
     //note: block placement prevention in spawn is handled in SpawnListener
 
     public final static List<Block> placedBlocks = new ArrayList<>();
@@ -32,11 +32,9 @@ public class BlockPlaceListener implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
-        if (!placedBlocks.contains(e.getBlock())) {
-            if (!Main.getInstance().blockPriviledges.contains(e.getPlayer())) {
-                e.setCancelled(true);
-            }
-        }
+        if (!placedBlocks.contains(e.getBlock()) && !Main.getInstance().blockPriviledges.contains(e.getPlayer())) e.setCancelled(true);
+
+        e.setDropItems(false);
     }
 
     @EventHandler

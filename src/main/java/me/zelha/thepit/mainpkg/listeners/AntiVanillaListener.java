@@ -101,7 +101,6 @@ public class AntiVanillaListener implements Listener {
 
     @EventHandler
     public void onBlockChange(BlockPhysicsEvent e) {
-
         if (e.getSourceBlock().getType() == GRASS_BLOCK) {
             e.setCancelled(true);
         }
@@ -109,7 +108,6 @@ public class AntiVanillaListener implements Listener {
 
     @EventHandler
     public void onFlow(BlockFromToEvent e) {
-
         if (e.getBlock().getType() == LAVA || e.getBlock().getType() == WATER) e.setCancelled(true);
     }
 }
