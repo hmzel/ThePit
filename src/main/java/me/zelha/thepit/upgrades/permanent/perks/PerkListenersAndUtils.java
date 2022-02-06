@@ -218,7 +218,7 @@ public class PerkListenersAndUtils implements Listener {
 
         }
 
-        if (pData(p).hasPerkEquipped(MINEMAN)) {
+        if (pData(p).hasPerkEquipped(MINEMAN) && containsLessThan(64, minemanCobblestoneItem, inv)) {
             ItemStack item = minemanCobblestoneItem;
             item.setAmount(3);
             inv.addItem(item);
