@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -189,7 +190,7 @@ public class KillListener implements Listener {
         return ((gold + baseModifier) * percentageModifier) + damagedData.getBounty();
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDeath(EntityDamageByEntityEvent e) {
         Entity damagedEntity = e.getEntity();
         Entity damagerEntity = e.getDamager();
