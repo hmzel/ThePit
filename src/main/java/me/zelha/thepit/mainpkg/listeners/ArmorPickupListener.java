@@ -3,6 +3,7 @@ package me.zelha.thepit.mainpkg.listeners;
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
 import org.bukkit.Material;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -45,14 +46,25 @@ public class ArmorPickupListener implements Listener {
         return 13;
     }
 
-    private void itemPlacementHandler(PlayerInventory inventory, EquipmentSlot slot, ItemStack item) {
+    private void itemPlacementHandler(Player player, EquipmentSlot slot, Item item) {
+        PlayerInventory inventory = player.getInventory();
+        boolean doFakePickup = false;
+
         if (!zl.itemCheck(inventory.getItem(slot))) {
-            inventory.setItem(slot, item);
-        } else if (determineWeight(inventory.getItem(slot)) < determineWeight(item)) {
+            inventory.setItem(slot, item.getItemStack());
+            doFakePickup = true;
+        } else if (determineWeight(inventory.getItem(slot)) < determineWeight(item.getItemStack())) {
             inventory.setItem(zl.firstEmptySlot(inventory), inventory.getItem(slot));
-            inventory.setItem(slot, item);
-        } else {
-            inventory.setItem(zl.firstEmptySlot(inventory), item);
+            inventory.setItem(slot, item.getItemStack());
+            doFakePickup = true;
+        } else if (!inventory.contains(item.getItemStack())) {
+            inventory.setItem(zl.firstEmptySlot(inventory), item.getItemStack());
+            doFakePickup = true;
+        }
+
+        if (doFakePickup) {
+            zl.fakePickup(player, item, 16);
+            item.setPickupDelay(9999999);
         }
     }
 
@@ -61,27 +73,21 @@ public class ArmorPickupListener implements Listener {
 
         if (!zl.playerCheck(e.getEntity())) return;
         if (determineWeight(e.getItem().getItemStack()) == 13) return;
-        if (((Player) e.getEntity()).getInventory().contains(e.getItem().getItemStack())) return;
 
-
+        e.setCancelled(true);
         Player p = (Player) e.getEntity();
-        PlayerInventory inv = p.getInventory();
-        ItemStack item = e.getItem().getItemStack();
-        Material type = item.getType();
+        Item item = e.getItem();
+        Material type = item.getItemStack().getType();
         String name = type.name();
 
-        zl.fakePickup(p, e.getItem(), 16);
-        e.getItem().setPickupDelay(9999999);
-        e.setCancelled(true);
-
         if (name.contains("HELMET")) {
-            itemPlacementHandler(inv, EquipmentSlot.HEAD, item);
+            itemPlacementHandler(p, EquipmentSlot.HEAD, item);
         } else if (name.contains("CHESTPLATE")) {
-            itemPlacementHandler(inv, EquipmentSlot.CHEST, item);
+            itemPlacementHandler(p, EquipmentSlot.CHEST, item);
         } else if (name.contains("LEGGINGS")) {
-            itemPlacementHandler(inv, EquipmentSlot.LEGS, item);
+            itemPlacementHandler(p, EquipmentSlot.LEGS, item);
         } else if (name.contains("BOOTS")) {
-            itemPlacementHandler(inv, EquipmentSlot.FEET, item);
+            itemPlacementHandler(p, EquipmentSlot.FEET, item);
         }
     }
 }
