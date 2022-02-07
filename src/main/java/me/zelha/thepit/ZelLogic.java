@@ -9,10 +9,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -236,13 +233,14 @@ public class ZelLogic {//zel
      */
     public void fakePickup(Player player, Entity entity, int radius) {
         CraftPlayer craftP = (CraftPlayer) player;
+        int amount = (entity instanceof Item) ? ((Item) entity).getItemStack().getAmount() : 1;
 
-        craftP.getHandle().b.sendPacket(new PacketPlayOutCollect(entity.getEntityId(), player.getEntityId(), 1));
+        craftP.getHandle().b.sendPacket(new PacketPlayOutCollect(entity.getEntityId(), player.getEntityId(), amount));
 
         for (Entity nearbyEntity : player.getNearbyEntities(radius, radius, radius)) {
             if (nearbyEntity instanceof Player) {
                 craftP = (CraftPlayer) nearbyEntity;
-                craftP.getHandle().b.sendPacket(new PacketPlayOutCollect(entity.getEntityId(), player.getEntityId(), 1));
+                craftP.getHandle().b.sendPacket(new PacketPlayOutCollect(entity.getEntityId(), player.getEntityId(), amount));
             }
         }
 
