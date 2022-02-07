@@ -7,6 +7,7 @@ import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -50,6 +51,7 @@ public class GoldIngotListener implements Listener {
         }
 
         pData.setGold(pData.getGold() + ingotGold);
+        p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1F, 1.8F);
         p.sendMessage("§6§lGOLD PICKUP! §7from the ground §6" + zl.getFancyGoldString(ingotGold) + "g");
         zl.fakePickup(p, e.getItem(), 16);
     }
