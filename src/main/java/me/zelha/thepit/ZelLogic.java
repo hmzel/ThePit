@@ -153,6 +153,13 @@ public class ZelLogic {//zel
         return -1;
     }
 
+    public boolean armorContentsContains(PlayerInventory inventory, Material material) {
+        for (ItemStack item : inventory.getArmorContents()) {
+            if (itemCheck(item) && item.getType() == material) return true;
+        }
+        return false;
+    }
+
     public BoundingBox noObstructions(Worlds world, NPCs type) {//nested switch statements are so cursed. i love them.
 
         switch(world) {
