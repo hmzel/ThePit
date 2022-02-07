@@ -22,6 +22,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -150,6 +151,25 @@ public class PerkListenersAndUtils implements Listener {
             removeAll(inv, minemanCobblestoneItem);
         }
 
+        if (!pData.hasPerkEquipped(LUCKY_DIAMOND)) {// i currently want to fly into a rage of eldritch malice
+            for (ItemStack item : inv.getArmorContents()) {
+                if (zl.itemCheck(item) && item.getType().name().contains("DIAMOND") && item.getItemMeta() != null
+                   && item.getItemMeta().getLore() != null && item.getItemMeta().getLore().contains("§7Perk item")) {
+                    if (zl.itemCheck(inv.getHelmet()) && inv.getHelmet().equals(item)) inv.setHelmet(new ItemStack(AIR));
+                    if (zl.itemCheck(inv.getChestplate()) && inv.getChestplate().equals(item)) inv.setChestplate(new ItemStack(AIR));
+                    if (zl.itemCheck(inv.getLeggings()) && inv.getLeggings().equals(item)) inv.setLeggings(new ItemStack(AIR));
+                    if (zl.itemCheck(inv.getBoots()) && inv.getBoots().equals(item)) inv.setBoots(new ItemStack(AIR));
+                }
+            }
+
+            for (ItemStack item : inv.getStorageContents()) {
+                if (zl.itemCheck(item) && item.getType().name().contains("DIAMOND") && item.getItemMeta() != null
+                   && item.getItemMeta().getLore() != null && item.getItemMeta().getLore().contains("§7Perk item")) {
+                    inv.remove(item);
+                }
+            }
+        }
+
         if (arrowCount < 32 && arrowCount != 0) {
             inv.addItem(new ItemStack(ARROW, 32 - arrowCount));
         } else if (arrowCount == 0 && !zl.itemCheck(inv.getItem(8))) {
@@ -205,13 +225,13 @@ public class PerkListenersAndUtils implements Listener {
         return count < amount;
     }//i hate player heads. with a passion.
 
-    private void determineKillReward(Player p) {
-        PlayerInventory inv = p.getInventory();
+    private void determineKillRewards(Player killer, Player dead) {
+        PlayerInventory inv = killer.getInventory();
 
-        if (!pData(p).hasPerkEquipped(VAMPIRE) && !pData(p).hasPerkEquipped(RAMBO)) {
-            if (pData(p).hasPerkEquipped(OLYMPUS)) {
+        if (!pData(killer).hasPerkEquipped(VAMPIRE) && !pData(killer).hasPerkEquipped(RAMBO)) {
+            if (pData(killer).hasPerkEquipped(OLYMPUS)) {
 
-            } else if (pData(p).hasPerkEquipped(GOLDEN_HEADS)) {
+            } else if (pData(killer).hasPerkEquipped(GOLDEN_HEADS)) {
                 if (containsLessThan(2, "§6Golden Head", PLAYER_HEAD, inv)) {
                     if (inv.first(PLAYER_HEAD) != -1) {
                         inv.getItem(inv.first(PLAYER_HEAD)).setAmount(inv.getItem(inv.first(PLAYER_HEAD)).getAmount() + 1);
@@ -224,19 +244,82 @@ public class PerkListenersAndUtils implements Listener {
             }
         }
 
-        if (pData(p).hasPerkEquipped(VAMPIRE)) {
+        if (pData(killer).hasPerkEquipped(VAMPIRE)) {
 
         }
 
-        if (pData(p).hasPerkEquipped(RAMBO)) {
+        if (pData(killer).hasPerkEquipped(RAMBO)) {
 
         }
 
-        if (pData(p).hasPerkEquipped(MINEMAN) && containsLessThan(64, minemanCobblestoneItem, inv)) {
+        if (pData(killer).hasPerkEquipped(MINEMAN) && containsLessThan(64, minemanCobblestoneItem, inv)) {
             ItemStack item = new ItemStack(minemanCobblestoneItem);
             item.setAmount(3);
             inv.addItem(item);
         }
+
+        if (pData(killer).hasPerkEquipped(LUCKY_DIAMOND)) {//this is a mess.
+            for (ItemStack item : dead.getInventory().getArmorContents()) {
+                if (zl.itemCheck(item) && item.getType().name().contains("IRON") && new Random().nextInt(100) < 30) {
+                    Material itemType = Material.getMaterial(new StringBuilder(item.getType().name()).replace(0, 4, "DIAMOND").toString());
+                    String typeName = item.getType().name();
+                    EquipmentSlot slot = null;
+                    boolean armorDoesntHave = true;
+
+                    for (ItemStack armorItem : inv.getArmorContents()) {
+                        if (zl.itemCheck(armorItem) && armorItem.getType() == itemType)  armorDoesntHave = false;
+                    }
+
+                    if (!inv.contains(itemType) || armorDoesntHave) {
+                        if (typeName.contains("HELMET")) {
+                            if (zl.itemCheck(inv.getHelmet()) && weightCheck(inv.getHelmet().getType().name())) {
+                                inv.setItem(zl.firstEmptySlot(inv), inv.getHelmet());
+                                slot = EquipmentSlot.HEAD;
+                            } else if (!zl.itemCheck(inv.getHelmet())) {
+                                slot = EquipmentSlot.HEAD;
+                            }
+                            killer.sendMessage("§b§lLUCKY DIAMOND! §7Diamond Helmet");
+                        } else if (typeName.contains("CHESTPLATE")) {
+                            if (zl.itemCheck(inv.getChestplate()) && weightCheck(inv.getChestplate().getType().name())) {
+                                inv.setItem(zl.firstEmptySlot(inv), inv.getChestplate());
+                                slot = EquipmentSlot.CHEST;
+                            } else if (!zl.itemCheck(inv.getChestplate())) {
+                                slot = EquipmentSlot.CHEST;
+                            }
+                            killer.sendMessage("§b§lLUCKY DIAMOND! §7Diamond Chestplate");
+                        } else if (typeName.contains("LEGGINGS")) {
+                            if (zl.itemCheck(inv.getLeggings()) && weightCheck(inv.getLeggings().getType().name())) {
+                                inv.setItem(zl.firstEmptySlot(inv), inv.getLeggings());
+                                slot = EquipmentSlot.LEGS;
+                            } else if (!zl.itemCheck(inv.getLeggings())) {
+                                slot = EquipmentSlot.LEGS;
+                            }
+                            killer.sendMessage("§b§lLUCKY DIAMOND! §7Diamond Leggings");
+                        } else if (typeName.contains("BOOTS")) {
+                            if (zl.itemCheck(inv.getBoots()) && weightCheck(inv.getBoots().getType().name())) {
+                                inv.setItem(zl.firstEmptySlot(inv), inv.getBoots());
+                                slot = EquipmentSlot.FEET;
+                            } else if (!zl.itemCheck(inv.getBoots())) {
+                                slot = EquipmentSlot.FEET;
+                            }
+                            killer.sendMessage("§b§lLUCKY DIAMOND! §7Diamond Boots");
+                        }
+
+                        if (slot != null) {
+                            inv.setItem(slot, zl.itemBuilder(itemType, 1, null, Collections.singletonList("§7Perk item"), true));
+                        } else {
+                            inv.setItem(zl.firstEmptySlot(inv), zl.itemBuilder(itemType, 1, null, Collections.singletonList("§7Perk item"), true));
+                        }
+                    } else {
+                        dead.getWorld().dropItemNaturally(dead.getLocation(), zl.itemBuilder(itemType, 1));
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean weightCheck(String name) {
+        return name.contains("IRON") || name.contains("CHAINMAIL") || name.contains("LEATHER");
     }
 
     @EventHandler
@@ -310,7 +393,7 @@ public class PerkListenersAndUtils implements Listener {
                     return;
                 }
 
-                determineKillReward(damager);
+                determineKillRewards(damager, damaged);
 
                 if (pData(damager).hasPerkEquipped(STRENGTH_CHAINING)) {
                     if (getStrengthChaining(damager)[0] == null) {
