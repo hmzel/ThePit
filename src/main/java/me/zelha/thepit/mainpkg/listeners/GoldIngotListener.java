@@ -32,6 +32,7 @@ public class GoldIngotListener implements Listener {
     @EventHandler
     public void onPickup(EntityPickupItemEvent e) {
         if (!zl.playerCheck(e.getEntity())) return;
+        if (e.getItem().getItemStack().getType() != Material.GOLD_INGOT) return;
         e.setCancelled(true);
         e.getItem().setPickupDelay(999999999);
 
