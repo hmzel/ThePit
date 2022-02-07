@@ -109,19 +109,22 @@ public class ZelLogic {//zel
         return item;
     }
 
-    public ItemStack itemBuilder(Material material, int count, @Nullable String name, @Nullable List<String> lore, Boolean showUnbreakable) {
+    public ItemStack itemBuilder(Material material, int count, @Nullable String name, @Nullable List<String> lore, Boolean showJuicyStuff) {
         ItemStack item = itemBuilder(material, count, name, lore);
         ItemMeta itemMeta = item.getItemMeta();
 
-        if (showUnbreakable) itemMeta.removeItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        if (showJuicyStuff) {
+            itemMeta.removeItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+            itemMeta.removeItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        }
 
         item.setItemMeta(itemMeta);
 
         return item;
     }
 
-    public ItemStack itemBuilder(Material material, int count, @Nullable String name, @Nullable List<String> lore, @Nullable Enchantment[] enchants, Integer[] enchantTiers, Boolean showEnchants, Boolean showUnbreakable) {
-        ItemStack item = itemBuilder(material, count, name, lore, showUnbreakable);
+    public ItemStack itemBuilder(Material material, int count, @Nullable String name, @Nullable List<String> lore, @Nullable Enchantment[] enchants, Integer[] enchantTiers, Boolean showEnchants, Boolean showJuicyStuff) {
+        ItemStack item = itemBuilder(material, count, name, lore, showJuicyStuff);
         ItemMeta itemMeta = item.getItemMeta();
 
         if (enchants != null) {
@@ -130,7 +133,7 @@ public class ZelLogic {//zel
             }
         }
 
-        if (!showUnbreakable) itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        if (!showEnchants) itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
         item.setItemMeta(itemMeta);
 
