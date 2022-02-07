@@ -125,6 +125,7 @@ public class DeathListener implements Listener {
 
             if (e.getCause() != DamageCause.FALL && (currentHP - finalDMG <= 0)) {
                 e.setCancelled(true);
+                teleportToSpawnMethod(p);
 
                 for (ItemStack item : inv.getArmorContents()) {
                     if (zl.itemCheck(item) && item.getItemMeta().getEnchants().isEmpty()) {
@@ -160,8 +161,6 @@ public class DeathListener implements Listener {
                 if (!zl.itemCheck(inv.getLeggings())) inv.setLeggings(zl.itemBuilder(CHAINMAIL_LEGGINGS, 1));
                 if (!zl.itemCheck(inv.getBoots())) inv.setBoots(zl.itemBuilder(CHAINMAIL_BOOTS, 1));
                 //sword & bow & arrow are handled in PerkListenersAndUtils.perkReset for consistency's sake
-
-                teleportToSpawnMethod(p);
             }
         }
     }
