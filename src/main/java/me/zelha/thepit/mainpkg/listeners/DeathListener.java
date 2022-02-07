@@ -131,7 +131,7 @@ public class DeathListener implements Listener {
                         String name = item.getType().name();
 
                         if ((name.contains("DIAMOND") || name.contains("IRON")) && new Random().nextInt(4) == 3) {
-                            p.getWorld().dropItemNaturally(p.getLocation(), item);
+                            p.getWorld().dropItemNaturally(p.getLocation(), zl.itemBuilder(item.getType(), 1));
                         }
                     }
                 }
