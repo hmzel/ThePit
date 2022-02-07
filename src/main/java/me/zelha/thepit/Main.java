@@ -71,6 +71,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new UpgradesVillagerListener(), this);
         getServer().getPluginManager().registerEvents(new BlockListener(), this);
         getServer().getPluginManager().registerEvents(new ArmorPickupListener(), this);
+        getServer().getPluginManager().registerEvents(new GoldIngotListener(), this);
 
         getCommand("setprestige").setExecutor(new SetPrestigeCommand());
         getCommand("setlevel").setExecutor(new SetLevelCommand());
