@@ -7,6 +7,7 @@ import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.perks.PerkListenersAndUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -35,28 +36,32 @@ public class AttackListener implements Listener {
     public void onAttack(EntityDamageByEntityEvent e) {
         Entity damagedEntity = e.getEntity();
         Entity damagerEntity = e.getDamager();
+        Player damaged;
+        Player damager;
 
-        if (spawnUtils.spawnCheck(damagedEntity.getLocation()) || spawnUtils.spawnCheck(damagerEntity.getLocation())) {
+        if (spawnUtils.spawnCheck(damagedEntity.getLocation()) || spawnUtils.spawnCheck(damagerEntity.getLocation())) return;
+        if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
+
+        if (damagerEntity instanceof Projectile && ((Projectile) damagerEntity).getShooter() instanceof Player) {
+            damager = (Player) ((Projectile) damagerEntity).getShooter();
+        } else if (zl.playerCheck(damagerEntity)) {
+            damager = (Player) damagerEntity;
+        } else {
             return;
         }
 
-        if (zl.playerCheck(damagedEntity) && zl.playerCheck(damagerEntity)) {
-            Player damaged = (Player) e.getEntity();
-            Player damager = (Player) e.getDamager();
+        e.setDamage(calculateAttackDamage(damaged, damager, e.getDamage()));
 
-            e.setDamage(calculateAttackDamage(damaged, damager, e.getDamage()));
-
-            if (methods.hasID(damaged.getUniqueId())) {
-                methods.stop(damaged.getUniqueId());
-            }
-
-            if (methods.hasID(damager.getUniqueId())) {
-                methods.stop(damager.getUniqueId());
-            }
-
-            new CombatTimerRunnable(damaged.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
-            new CombatTimerRunnable(damager.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
+        if (methods.hasID(damaged.getUniqueId())) {
+            methods.stop(damaged.getUniqueId());
         }
+
+        if (methods.hasID(damager.getUniqueId())) {
+            methods.stop(damager.getUniqueId());
+        }
+
+        new CombatTimerRunnable(damaged.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
+        new CombatTimerRunnable(damager.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
     }
 
     @EventHandler
