@@ -5,6 +5,7 @@ import me.zelha.thepit.RunMethods;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.perks.PerkListenersAndUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -29,7 +30,7 @@ public class AttackListener implements Listener {
         PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
 
         if (damagedData.getPrestige() == 0) defenseBoost+= 0.15;
-        damageBoost += perkUtils.getPerkDamageBoost(damager);
+        damageBoost += perkUtils.getPerkDamageBoost(damager, damaged);
 
         return originalDamage * (damageBoost - defenseBoost);
     }
@@ -53,6 +54,7 @@ public class AttackListener implements Listener {
         }
 
         e.setDamage(calculateAttackDamage(damaged, damager, e.getDamage()));
+        Bukkit.broadcastMessage(String.valueOf(e.getDamage()));
 
         if (methods.hasID(damaged.getUniqueId())) {
             methods.stop(damaged.getUniqueId());

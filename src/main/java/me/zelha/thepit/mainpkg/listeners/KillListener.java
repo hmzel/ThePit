@@ -6,6 +6,7 @@ import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.perks.PerkListenersAndUtils;
 import me.zelha.thepit.zelenums.Passives;
+import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
@@ -145,6 +146,8 @@ public class KillListener implements Listener {
         PlayerData damagerData = Main.getInstance().getPlayerData(damager);
 
         if (perkUtils.hasBeenShotBySpammer(damager, damaged)) gold = gold * 3;
+        if (damagerData.hasPerkEquipped(Perks.BOUNTY_HUNTER) && zl.itemCheck(damager.getInventory().getLeggings())
+           && damager.getInventory().getLeggings().getType() == Material.GOLDEN_LEGGINGS) baseModifier+= 4;
 
         if (zl.itemCheck(damaged.getInventory().getHelmet())
            && damaged.getInventory().getHelmet().getType() == Material.DIAMOND_HELMET) {

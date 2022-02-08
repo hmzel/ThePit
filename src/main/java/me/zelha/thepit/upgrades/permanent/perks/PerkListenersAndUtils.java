@@ -60,6 +60,7 @@ public class PerkListenersAndUtils implements Listener {
     private final Map<UUID, Integer> strengthChainingTimer = new HashMap<>();
     private final Map<UUID, UUID> spammerShotIdentifier = new HashMap<>();
 
+    private final ItemStack bountyHunterItem = zl.itemBuilder(GOLDEN_LEGGINGS, 1, null, Collections.singletonList("§7Perk item"), true);
     private final ItemStack minemanPickaxeItem = zl.itemBuilder(DIAMOND_PICKAXE, 1, null, Collections.singletonList("§7Perk item"),
             new Enchantment[] {Enchantment.DIG_SPEED}, new Integer[] {4}, true, true);
     private final ItemStack minemanCobblestoneItem = zl.itemBuilder(COBBLESTONE, 24, null, Collections.singletonList("§7Perk item"));
@@ -153,7 +154,7 @@ public class PerkListenersAndUtils implements Listener {
             removeAll(inv, minemanCobblestoneItem);
         }
 
-        if (!pData.hasPerkEquipped(LUCKY_DIAMOND)) {// i currently want to fly into a rage of eldritch malice
+        if (!pData.hasPerkEquipped(LUCKY_DIAMOND)) {
             for (ItemStack item : inv.getArmorContents()) {
                 if (zl.itemCheck(item) && item.getType().name().contains("DIAMOND") && item.getItemMeta() != null
                    && item.getItemMeta().getLore() != null && item.getItemMeta().getLore().contains("§7Perk item")) {
@@ -172,6 +173,18 @@ public class PerkListenersAndUtils implements Listener {
             }
         }
 
+        if (pData.hasPerkEquipped(BOUNTY_HUNTER)) {
+            if (!inv.contains(bountyHunterItem) && !zl.armorContentsContains(inv, bountyHunterItem.getType())) {
+                if (!zl.itemCheck(inv.getLeggings()) || inv.getLeggings().getType() == CHAINMAIL_LEGGINGS
+                   || inv.getLeggings().getType() == IRON_LEGGINGS) {
+                    inv.setLeggings(bountyHunterItem);
+                }
+            }
+        } else {
+            removeAll(inv, bountyHunterItem);
+            if (zl.itemCheck(inv.getLeggings()) && inv.getLeggings().equals(bountyHunterItem)) inv.setLeggings(zl.itemBuilder(CHAINMAIL_LEGGINGS, 1));
+        }
+
         if (arrowCount < 32 && arrowCount != 0) {
             inv.addItem(new ItemStack(ARROW, 32 - arrowCount));
         } else if (arrowCount == 0 && !zl.itemCheck(inv.getItem(8))) {
@@ -181,10 +194,15 @@ public class PerkListenersAndUtils implements Listener {
         }
     }
 
-    public double getPerkDamageBoost(Player player) {
+    public double getPerkDamageBoost(Player damager, Player damaged) {
         double boost = 0;
 
-        if (getStrengthChaining(player)[0] != null) boost+= 0.08 * getStrengthChaining(player)[0];
+        if (getStrengthChaining(damager)[0] != null) boost+= 0.08 * getStrengthChaining(damager)[0];
+
+        if (pData(damager).hasPerkEquipped(Perks.BOUNTY_HUNTER) && zl.itemCheck(damager.getInventory().getLeggings())
+           && damager.getInventory().getLeggings().getType() == Material.GOLDEN_LEGGINGS) {
+            boost+= Math.floor((double) pData(damaged).getBounty() / 100) / 100;
+        }
         return boost;
     }
 
@@ -336,7 +354,7 @@ public class PerkListenersAndUtils implements Listener {
         Entity damagerEntity = e.getDamager();
         Player damaged;
         Player damager;
-        Boolean damageCauseArrow = false;
+        boolean damageCauseArrow = false;
 
         if (spawnUtils.spawnCheck(damagedEntity.getLocation()) || spawnUtils.spawnCheck(damagerEntity.getLocation())) return;
         if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
