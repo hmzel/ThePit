@@ -16,7 +16,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -342,8 +341,8 @@ public class PerkListenersAndUtils implements Listener {
         if (spawnUtils.spawnCheck(damagedEntity.getLocation()) || spawnUtils.spawnCheck(damagerEntity.getLocation())) return;
         if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
 
-        if (damagerEntity instanceof Projectile && ((Projectile) damagerEntity).getShooter() instanceof Player) {
-            damager = (Player) ((Projectile) damagerEntity).getShooter();
+        if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player) {
+            damager = (Player) ((Arrow) damagerEntity).getShooter();
         } else if (zl.playerCheck(damagerEntity)) {
             damager = (Player) damagerEntity;
         } else {
@@ -354,6 +353,10 @@ public class PerkListenersAndUtils implements Listener {
         UUID damagerUUID = damager.getUniqueId();
         double finalDMG = e.getFinalDamage();
         double damagedHP = damaged.getHealth();
+
+        if (e.getCause() == DamageCause.PROJECTILE && pData(damager).hasPerkEquipped(SPAMMER) && damagerEntity instanceof Arrow) {
+
+        }
 
         if (pData(damaged).hasPerkEquipped(INSURANCE) && !insuranceTimer.containsKey(damagedUUID) && !insuranceCooldown.containsKey(damaged.getUniqueId())) {
             BukkitTask insuranceRunnable1 = new BukkitRunnable() {
