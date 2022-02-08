@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -198,52 +199,55 @@ public class KillListener implements Listener {
     public void onPlayerDeath(EntityDamageByEntityEvent e) {
         Entity damagedEntity = e.getEntity();
         Entity damagerEntity = e.getDamager();
+        Player damaged;
+        Player damager;
 
-        if (spawnUtils.spawnCheck(damagedEntity.getLocation()) || spawnUtils.spawnCheck(damagerEntity.getLocation())) {
+        if (spawnUtils.spawnCheck(damagedEntity.getLocation()) || spawnUtils.spawnCheck(damagerEntity.getLocation())) return;
+        if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
+
+        if (damagerEntity instanceof Projectile && ((Projectile) damagerEntity).getShooter() instanceof Player) {
+            damager = (Player) ((Projectile) damagerEntity).getShooter();
+        } else if (zl.playerCheck(damagerEntity)) {
+            damager = (Player) damagerEntity;
+        } else {
             return;
         }
 
-        if (zl.playerCheck(damagedEntity) && zl.playerCheck(damagerEntity)) {
-            Player damaged = (Player) e.getEntity();
-            Player damager = (Player) e.getDamager();
-            double finalDMG = e.getFinalDamage();
-            double currentHP = damaged.getHealth();
+        if (methods2.hasID(damager.getUniqueId())) methods2.stop(damager.getUniqueId());
 
-            if (methods2.hasID(damager.getUniqueId())) {
-                methods2.stop(damager.getUniqueId());
+        new MultiKillRunnable(damager).runTaskTimer(Main.getInstance(), 0, 1);
+
+        double finalDMG = e.getFinalDamage();
+        double currentHP = damaged.getHealth();
+
+        if (e.getCause() != DamageCause.FALL && (currentHP - finalDMG) <= 0) {
+            String uuid = damaged.getUniqueId().toString();
+            PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
+            PlayerData damagerData = Main.getInstance().getPlayerData(damager);
+            double calculatedGold = calculateGold(damaged, damager);
+
+            damagerData.setStreak(damagerData.getStreak() + 1);
+            damagerData.setExp(damagerData.getExp() - calculateEXP(damaged, damager));
+            damagerData.setGold(damagerData.getGold() + calculatedGold);
+            damagerData.setMultiKill(damagerData.getMultiKill() + 1);
+
+            if ((Math.floor(damagerData.getStreak()) % 10 == 0) || (damagerData.getStreak() < 6 && damagerData.getStreak() >= 5)) {
+                Bukkit.broadcastMessage("§c§lSTREAK! §7of §c" + (int) Math.floor(damagerData.getStreak()) + " §7kills by "
+                        + zl.getColorBracketAndLevel(damager.getUniqueId().toString()) + " §7" + damager.getName());
             }
 
-            new MultiKillRunnable(damager).runTaskTimer(Main.getInstance(),0, 1);
+            if (damagedData.getBounty() != 0) {
+                Bukkit.broadcastMessage("§6§lBOUNTY CLAIMED! " + zl.getColorBracketAndLevel(damager.getUniqueId().toString())
+                        + "§7 " + damager.getName() + " killed " + zl.getColorBracketAndLevel(damaged.getUniqueId().toString())
+                        + "§7 " + damaged.getName() + " for §6§l" + zl.getFancyGoldString(damagedData.getBounty()) + "g");
+                damagedData.setBounty(0);
+            }
 
-            if (e.getCause() != DamageCause.FALL && (currentHP - finalDMG) <= 0) {
-                String uuid = damaged.getUniqueId().toString();
-                PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
-                PlayerData damagerData = Main.getInstance().getPlayerData(damager);
-                double calculatedGold = calculateGold(damaged, damager);
+            damager.sendMessage(calculateKillMessage(damager) + " §7on " + zl.getColorBracketAndLevel(uuid) + " §7" + damaged.getName()
+                    + " §b+" + calculateEXP(damaged, damager) + "§bXP §6+" + zl.getFancyGoldString(calculatedGold) + "§6g");
 
-                damagerData.setStreak(damagerData.getStreak() + 1);
-                damagerData.setExp(damagerData.getExp() - calculateEXP(damaged, damager));
-                damagerData.setGold(damagerData.getGold() + calculatedGold);
-                damagerData.setMultiKill(damagerData.getMultiKill() + 1);
-
-                if ((Math.floor(damagerData.getStreak()) % 10 == 0) || (damagerData.getStreak() < 6 && damagerData.getStreak() >= 5)) {
-                    Bukkit.broadcastMessage("§c§lSTREAK! §7of §c" + (int) Math.floor(damagerData.getStreak()) + " §7kills by "
-                    + zl.getColorBracketAndLevel(damager.getUniqueId().toString()) + " §7" + damager.getName());
-                }
-
-                if (damagedData.getBounty() != 0) {
-                    Bukkit.broadcastMessage("§6§lBOUNTY CLAIMED! " + zl.getColorBracketAndLevel(damager.getUniqueId().toString())
-                    + "§7 " + damager.getName() + " killed " + zl.getColorBracketAndLevel(damaged.getUniqueId().toString())
-                    + "§7 " + damaged.getName() + " for §6§l" + zl.getFancyGoldString(damagedData.getBounty()) + "g");
-                    damagedData.setBounty(0);
-                }
-
-                damager.sendMessage(calculateKillMessage(damager) + " §7on " + zl.getColorBracketAndLevel(uuid) + " §7" + damaged.getName()
-                + " §b+" + calculateEXP(damaged, damager) + "§bXP §6+" + zl.getFancyGoldString(calculatedGold) + "§6g");
-
-                if (!methods.hasID(damager.getUniqueId())) {
-                    new BountyRunnable(damager).runTaskTimer(Main.getInstance(),0, 1);
-                }
+            if (!methods.hasID(damager.getUniqueId())) {
+                new BountyRunnable(damager).runTaskTimer(Main.getInstance(), 0, 1);
             }
         }
     }
