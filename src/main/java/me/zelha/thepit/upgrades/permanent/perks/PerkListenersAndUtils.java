@@ -22,7 +22,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
@@ -337,12 +336,14 @@ public class PerkListenersAndUtils implements Listener {
         Entity damagerEntity = e.getDamager();
         Player damaged;
         Player damager;
+        Boolean damageCauseArrow = false;
 
         if (spawnUtils.spawnCheck(damagedEntity.getLocation()) || spawnUtils.spawnCheck(damagerEntity.getLocation())) return;
         if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
 
         if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player) {
             damager = (Player) ((Arrow) damagerEntity).getShooter();
+            damageCauseArrow = true;
         } else if (zl.playerCheck(damagerEntity)) {
             damager = (Player) damagerEntity;
         } else {
@@ -354,8 +355,9 @@ public class PerkListenersAndUtils implements Listener {
         double finalDMG = e.getFinalDamage();
         double damagedHP = damaged.getHealth();
 
-        if (e.getCause() == DamageCause.PROJECTILE && pData(damager).hasPerkEquipped(SPAMMER) && damagerEntity instanceof Arrow) {
-
+        if (e.getCause() == DamageCause.PROJECTILE && pData(damager).hasPerkEquipped(SPAMMER) && damageCauseArrow) {
+            damager.getInventory().addItem(new ItemStack(ARROW, 3));
+            spammerShotIdentifier.put(damager.getUniqueId(), damaged.getUniqueId());
         }
 
         if (pData(damaged).hasPerkEquipped(INSURANCE) && !insuranceTimer.containsKey(damagedUUID) && !insuranceCooldown.containsKey(damaged.getUniqueId())) {
@@ -441,19 +443,6 @@ public class PerkListenersAndUtils implements Listener {
                 }.runTaskTimer(Main.getInstance(), 20, 20);
             }
         }
-    }
-
-
-    @EventHandler
-    public void onArrowHit(ProjectileHitEvent e) {
-        if (!(e.getEntity() instanceof Arrow) || e.getHitEntity() == null || !(e.getHitEntity() instanceof Player)
-           || e.getEntity().getShooter() == null || !(e.getEntity().getShooter() instanceof Player)) return;
-
-        Player damaged = (Player) e.getHitEntity();
-        Player damager = (Player) e.getEntity().getShooter();
-
-        damager.getInventory().addItem(new ItemStack(ARROW, 3));
-        spammerShotIdentifier.put(damager.getUniqueId(), damaged.getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
