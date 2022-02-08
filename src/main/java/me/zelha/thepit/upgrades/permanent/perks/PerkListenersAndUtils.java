@@ -13,6 +13,7 @@ import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,6 +22,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
@@ -57,6 +59,7 @@ public class PerkListenersAndUtils implements Listener {
     private final Map<UUID, Material> previousLavaBlock = new HashMap<>();
     private final Map<UUID, Integer> strengthChaining = new HashMap<>();
     private final Map<UUID, Integer> strengthChainingTimer = new HashMap<>();
+    private final Map<UUID, UUID> spammerShotIdentifier = new HashMap<>();
 
     private final ItemStack minemanPickaxeItem = zl.itemBuilder(DIAMOND_PICKAXE, 1, null, Collections.singletonList("§7Perk item"),
             new Enchantment[] {Enchantment.DIG_SPEED}, new Integer[] {4}, true, true);
@@ -191,6 +194,12 @@ public class PerkListenersAndUtils implements Listener {
      */
     public Integer[] getStrengthChaining(Player p) {
         return new Integer[] {strengthChaining.get(p.getUniqueId()), strengthChainingTimer.get(p.getUniqueId())};
+    }
+
+    public boolean hasBeenShotBySpammer(Player damager, Player damaged) {
+        return spammerShotIdentifier.containsKey(damager.getUniqueId())
+                && spammerShotIdentifier.get(damager.getUniqueId()) == damaged.getUniqueId()
+                && pData(damager).hasPerkEquipped(SPAMMER);
     }
 
     private void removeAll(PlayerInventory inventory, ItemStack item) {
@@ -424,6 +433,18 @@ public class PerkListenersAndUtils implements Listener {
         }
     }
 
+    @EventHandler
+    public void onArrowHit(ProjectileHitEvent e) {
+        if (!(e.getEntity() instanceof Arrow) || e.getHitEntity() == null || !(e.getHitEntity() instanceof Player)
+           || e.getEntity().getShooter() == null || !(e.getEntity().getShooter() instanceof Player)) return;
+
+        Player damaged = (Player) e.getHitEntity();
+        Player damager = (Player) e.getEntity().getShooter();
+
+        damager.getInventory().addItem(new ItemStack(ARROW, 3));
+        spammerShotIdentifier.put(damager.getUniqueId(), damaged.getUniqueId());
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDeath(EntityDamageEvent e) {
         Entity entity = e.getEntity();
@@ -560,6 +581,7 @@ public class PerkListenersAndUtils implements Listener {
         lavaExistTimer.remove(uuid);
         previousLavaBlock.remove(uuid);
         placedLava.remove(uuid);
+        spammerShotIdentifier.remove(uuid);
         perkReset(e.getPlayer());
     }
 }

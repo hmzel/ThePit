@@ -4,6 +4,7 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.RunMethods;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.upgrades.permanent.perks.PerkListenersAndUtils;
 import me.zelha.thepit.zelenums.Passives;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -24,6 +25,7 @@ public class KillListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final SpawnListener spawnUtils = Main.getInstance().getSpawnListener();
+    private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
     private final RunMethods methods = Main.getInstance().generateRunMethods();
     private final RunMethods methods2 = Main.getInstance().generateRunMethods();
 
@@ -140,6 +142,8 @@ public class KillListener implements Listener {
 
         PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
         PlayerData damagerData = Main.getInstance().getPlayerData(damager);
+
+        if (perkUtils.hasBeenShotBySpammer(damager, damaged)) gold = gold * 3;
 
         if (zl.itemCheck(damaged.getInventory().getHelmet())
            && damaged.getInventory().getHelmet().getType() == Material.DIAMOND_HELMET) {
