@@ -26,7 +26,9 @@ public class AttackListener implements Listener {
     private double calculateAttackDamage(Player damaged, Player damager, double originalDamage) {
         double damageBoost = 1;
         double defenseBoost = 0;
+        PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
 
+        if (damagedData.getPrestige() == 0) defenseBoost+= 0.15;
         damageBoost += perkUtils.getPerkDamageBoost(damager);
 
         return originalDamage * (damageBoost - defenseBoost);
