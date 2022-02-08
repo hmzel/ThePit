@@ -16,6 +16,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -335,103 +336,110 @@ public class PerkListenersAndUtils implements Listener {
     public void onAttackAndKill(EntityDamageByEntityEvent e) {
         Entity damagedEntity = e.getEntity();
         Entity damagerEntity = e.getDamager();
+        Player damaged;
+        Player damager;
 
-        if (spawnUtils.spawnCheck(damagedEntity.getLocation()) || spawnUtils.spawnCheck(damagerEntity.getLocation())) {
+        if (spawnUtils.spawnCheck(damagedEntity.getLocation()) || spawnUtils.spawnCheck(damagerEntity.getLocation())) return;
+        if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
+
+        if (damagerEntity instanceof Projectile && ((Projectile) damagerEntity).getShooter() instanceof Player) {
+            damager = (Player) ((Projectile) damagerEntity).getShooter();
+        } else if (zl.playerCheck(damagerEntity)) {
+            damager = (Player) damagerEntity;
+        } else {
             return;
         }
 
-        if (zl.playerCheck(damagedEntity) && zl.playerCheck(damagerEntity)) {
-            Player damaged = (Player) e.getEntity();
-            Player damager = (Player) e.getDamager();
-            UUID damagedUUID = damaged.getUniqueId();
-            UUID damagerUUID = damager.getUniqueId();
-            double finalDMG = e.getFinalDamage();
-            double damagedHP = damaged.getHealth();
+        UUID damagedUUID = damaged.getUniqueId();
+        UUID damagerUUID = damager.getUniqueId();
+        double finalDMG = e.getFinalDamage();
+        double damagedHP = damaged.getHealth();
 
-            if (pData(damaged).hasPerkEquipped(INSURANCE) && !insuranceTimer.containsKey(damagedUUID) && !insuranceCooldown.containsKey(damaged.getUniqueId())) {
-                BukkitTask insuranceRunnable1 = new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        insuranceTimer.remove(damagedUUID);
+        if (pData(damaged).hasPerkEquipped(INSURANCE) && !insuranceTimer.containsKey(damagedUUID) && !insuranceCooldown.containsKey(damaged.getUniqueId())) {
+            BukkitTask insuranceRunnable1 = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    insuranceTimer.remove(damagedUUID);
 
-                        BukkitTask insuranceRunnable2 = new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                insuranceCooldown.remove(damagedUUID);
-                            }
-                        }.runTaskLater(Main.getInstance(), 400);
-
-                        insuranceCooldown.put(damagedUUID, insuranceRunnable2.getTaskId());
-                    }
-                }.runTaskLater(Main.getInstance(), 40);
-
-                insuranceTimer.put(damagedUUID, insuranceRunnable1.getTaskId());
-            }
-
-            if (e.getCause() != DamageCause.FALL && (damagedHP - finalDMG) <= 0) {
-                if (pData(damaged).hasPerkEquipped(INSURANCE) && insuranceTimer.containsKey(damagedUUID) && !insuranceCooldown.containsKey(damagedUUID)) {
-                    e.setDamage(0);
-                    damaged.setHealth(damaged.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-                    damaged.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 80, 2, false, false, true));
-
-                    for (Player player : Arrays.asList(damaged, damager)) {
-                        player.spawnParticle(Particle.HEART, damaged.getLocation(), 20, 0.3, 0.6, 0.3, 0);
-                        player.playSound(damaged.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CURE, 0.25F, 2F);
-
-                        new BukkitRunnable() {
-                            double i = 1;
-
-                            @Override
-                            public void run() {
-                                player.playSound(damaged.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.5F, (float) i);
-                                i+= 0.2;
-                                if (i >= 2) cancel();
-                            }
-                        }.runTaskTimer(Main.getInstance(), 0, 1);
-                    }
-
-                    BukkitTask insuranceRunnable3 = new BukkitRunnable() {
+                    BukkitTask insuranceRunnable2 = new BukkitRunnable() {
                         @Override
                         public void run() {
                             insuranceCooldown.remove(damagedUUID);
                         }
                     }.runTaskLater(Main.getInstance(), 400);
 
-                    damaged.sendMessage("§a§lINSURANCE! §7Triggered against " + zl.getColorBracketAndLevel(damagerUUID.toString()) + " §7" + damager.getName());
-                    insuranceCooldown.put(damagedUUID, insuranceRunnable3.getTaskId());
-                    return;
+                    insuranceCooldown.put(damagedUUID, insuranceRunnable2.getTaskId());
                 }
+            }.runTaskLater(Main.getInstance(), 40);
 
-                determineKillRewards(damager, damaged);
+            insuranceTimer.put(damagedUUID, insuranceRunnable1.getTaskId());
+        }
 
-                if (pData(damager).hasPerkEquipped(STRENGTH_CHAINING)) {
-                    if (getStrengthChaining(damager)[0] == null) {
-                        strengthChaining.put(damagerUUID, 1);
-                    } else if (getStrengthChaining(damager)[0] != 5) {
-                        strengthChaining.put(damagerUUID, getStrengthChaining(damager)[0] + 1);
-                    }
+        if (e.getCause() != DamageCause.FALL && (damagedHP - finalDMG) <= 0) {
+            if (pData(damaged).hasPerkEquipped(INSURANCE) && insuranceTimer.containsKey(damagedUUID) && !insuranceCooldown.containsKey(damagedUUID)) {
+                e.setDamage(0);
+                damaged.setHealth(damaged.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+                damaged.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 80, 2, false, false, true));
 
-                    if (methods2.hasID(damagerUUID)) methods2.stop(damagerUUID);
-                    strengthChainingTimer.put(damagerUUID, 7);
+                for (Player player : Arrays.asList(damaged, damager)) {
+                    player.spawnParticle(Particle.HEART, damaged.getLocation(), 20, 0.3, 0.6, 0.3, 0);
+                    player.playSound(damaged.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CURE, 0.25F, 2F);
 
                     new BukkitRunnable() {
+                        double i = 1;
+
                         @Override
                         public void run() {
-                            if (!methods2.hasID(damagerUUID)) methods2.setID(damagerUUID, getTaskId());
-
-                            strengthChainingTimer.put(damagerUUID, getStrengthChaining(damager)[1] - 1);
-
-                            if (strengthChainingTimer.get(damagerUUID) == 0) {
-                                strengthChaining.remove(damagerUUID);
-                                strengthChainingTimer.remove(damagerUUID);
-                                cancel();
-                            }
+                            player.playSound(damaged.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.5F, (float) i);
+                            i += 0.2;
+                            if (i >= 2) cancel();
                         }
-                    }.runTaskTimer(Main.getInstance(), 20, 20);
+                    }.runTaskTimer(Main.getInstance(), 0, 1);
                 }
+
+                BukkitTask insuranceRunnable3 = new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        insuranceCooldown.remove(damagedUUID);
+                    }
+                }.runTaskLater(Main.getInstance(), 400);
+
+                damaged.sendMessage("§a§lINSURANCE! §7Triggered against " + zl.getColorBracketAndLevel(damagerUUID.toString()) + " §7" + damager.getName());
+                insuranceCooldown.put(damagedUUID, insuranceRunnable3.getTaskId());
+                return;
+            }
+
+            determineKillRewards(damager, damaged);
+
+            if (pData(damager).hasPerkEquipped(STRENGTH_CHAINING)) {
+                if (getStrengthChaining(damager)[0] == null) {
+                    strengthChaining.put(damagerUUID, 1);
+                } else if (getStrengthChaining(damager)[0] != 5) {
+                    strengthChaining.put(damagerUUID, getStrengthChaining(damager)[0] + 1);
+                }
+
+                if (methods2.hasID(damagerUUID)) methods2.stop(damagerUUID);
+
+                strengthChainingTimer.put(damagerUUID, 7);
+
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (!methods2.hasID(damagerUUID)) methods2.setID(damagerUUID, getTaskId());
+
+                        strengthChainingTimer.put(damagerUUID, getStrengthChaining(damager)[1] - 1);
+
+                        if (strengthChainingTimer.get(damagerUUID) == 0) {
+                            strengthChaining.remove(damagerUUID);
+                            strengthChainingTimer.remove(damagerUUID);
+                            cancel();
+                        }
+                    }
+                }.runTaskTimer(Main.getInstance(), 20, 20);
             }
         }
     }
+
 
     @EventHandler
     public void onArrowHit(ProjectileHitEvent e) {
