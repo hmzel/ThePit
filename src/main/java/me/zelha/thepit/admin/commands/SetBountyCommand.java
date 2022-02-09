@@ -34,7 +34,6 @@ public class SetBountyCommand implements CommandExecutor {
             Player p = (Player) sender;
             PlayerData pData = Main.getInstance().getPlayerData(p);
             pData.setBounty(Integer.parseInt(args[0]));
-            return true;
         }
 
         if (args.length >= 2) {
