@@ -26,7 +26,7 @@ commands:
     usage: /<command> (name/empty) (integer) (true/false/empty)
   setstreak:
     description: sets your or the specified player's streak
-    usage: /<command>
+    usage: /<command> (name/empty) (integer/double)
   letmeplaceblocksplease:
     description: lets you place blocks because you asked nicely
     usage: /<command>
