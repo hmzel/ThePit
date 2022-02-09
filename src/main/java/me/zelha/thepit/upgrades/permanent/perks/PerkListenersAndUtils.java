@@ -297,7 +297,7 @@ public class PerkListenersAndUtils implements Listener {//strength>glad
         }
 
         if (pData(killer).hasPerkEquipped(VAMPIRE)) {
-
+            killer.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 160, 0, false, false));
         }
 
         if (pData(killer).hasPerkEquipped(RAMBO)) {
@@ -398,6 +398,14 @@ public class PerkListenersAndUtils implements Listener {//strength>glad
         UUID damagerUUID = damager.getUniqueId();
         double finalDMG = e.getFinalDamage();
         double damagedHP = damaged.getHealth();
+
+        if (pData(damager).hasPerkEquipped(VAMPIRE)) {
+            if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).isCritical()) {
+                damager.setHealth(Math.min(damager.getHealth() + 3, damager.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+            } else {
+                damager.setHealth(Math.min(damager.getHealth() + 1, damager.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+            }
+        }//weirdo
 
         if (e.getCause() == DamageCause.PROJECTILE && pData(damager).hasPerkEquipped(SPAMMER) && damageCauseArrow) {
             damager.getInventory().addItem(new ItemStack(ARROW, 3));
