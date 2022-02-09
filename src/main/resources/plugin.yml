@@ -46,4 +46,4 @@ commands:
     usage: /<command>
   setperk:
     description: sets your or the specified player's perk at the given slot
-    usage: /<command> (slot) (perk)
+    usage: /<command> (name/empty) (integer slot) (perk)
