@@ -8,7 +8,7 @@ website: E
 commands:
   setprestige:
     description: sets your or the specified player's prestige
-    usage: /<command>
+    usage: /<command> (name/empty) (integer)
   setlevel:
     description: sets your or the specified player's level
     usage: /<command> (name/empty) (integer)
