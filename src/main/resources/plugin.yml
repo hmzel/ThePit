@@ -14,16 +14,16 @@ commands:
     usage: /<command>
   setgold:
     description: sets your or the specified player's gold
-    usage: /<command>
+    usage: /<command> (name/empty) (integer/double)
   setexp:
     description: sets your or the specified player's exp
-    usage: /<command>
+    usage: /<command> (name/empty) (integer)
   setstatus:
     description: sets your or the specified player's status
     usage: /<command>
   setbounty:
     description: sets your or the specified player's bounty
-    usage: /<command> (name/empty) (number) (true/false/empty)
+    usage: /<command> (name/empty) (integer) (true/false/empty)
   setstreak:
     description: sets your or the specified player's streak
     usage: /<command>
