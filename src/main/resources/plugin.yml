@@ -37,7 +37,7 @@ commands:
       - spawn
   setpassive:
     description: sets your or the specified player's passive
-    usage: /<command> (passive) (number)
+    usage: /<command> (name/empty) (passive) (integer)
   npccheck:
     description: spawns npcs if theyre absent
     usage: /<command>
