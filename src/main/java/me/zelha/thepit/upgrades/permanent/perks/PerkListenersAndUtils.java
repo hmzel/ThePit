@@ -39,6 +39,7 @@ import static me.zelha.thepit.zelenums.Perks.*;
 import static org.bukkit.Material.*;
 
 //trickle down is handled in GoldIngotListener because thats just way easier
+//all resource-related stuff is handled in KillListener
 public class PerkListenersAndUtils implements Listener {
 
     private PlayerData pData(Player player) {

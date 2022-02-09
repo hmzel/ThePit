@@ -132,6 +132,8 @@ public class KillListener implements Listener {
             streakModifier = streakModifier + 60;
         }
 
+        if (damagerData.hasPerkEquipped(Perks.STREAKER)) streakModifier = streakModifier * 3;
+
         baseModifier = baseModifier + streakModifier;
 
         return Math.toIntExact(Math.round((exp + baseModifier) * percentageModifier));
