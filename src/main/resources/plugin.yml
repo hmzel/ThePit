@@ -20,7 +20,7 @@ commands:
     usage: /<command> (name/empty) (integer)
   setstatus:
     description: sets your or the specified player's status
-    usage: /<command>
+    usage: /<command> (name/empty) (string)
   setbounty:
     description: sets your or the specified player's bounty
     usage: /<command> (name/empty) (integer) (true/false/empty)
