@@ -21,7 +21,6 @@ public class AllowBlockEventsCommand implements CommandExecutor {
                 p.sendMessage("§5you no longer have block priviledges");
             }
         }
-
         return true;
     }
 }

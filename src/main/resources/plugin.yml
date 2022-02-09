@@ -23,7 +23,7 @@ commands:
     usage: /<command>
   setbounty:
     description: sets your or the specified player's bounty
-    usage: /<command>
+    usage: /<command> (name/empty) (number) (true/false/empty)
   setstreak:
     description: sets your or the specified player's streak
     usage: /<command>
