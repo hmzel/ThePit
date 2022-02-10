@@ -17,10 +17,8 @@ import java.util.List;
 public class StorageListener implements Listener {
 
     private final MongoCollection<Document> pDataCol = Main.getInstance().getPlayerDataCollection();
-
-    private final static Map<String, PlayerData> playerDataMap = new HashMap<>();
-    private final static List<String> playerUUIDList = new ArrayList<>();
-
+    private final Map<String, PlayerData> playerDataMap = new HashMap<>();
+    private final List<String> playerUUIDList = new ArrayList<>();
     private final List<String> slots = Arrays.asList("one", "two", "three", "four");
 
     public PlayerData getPlayerData(String uuid) {
@@ -117,17 +115,9 @@ public class StorageListener implements Listener {
         Document passivesEmbed = new Document();
         Document unlockedPerksEmbed = new Document();
 
-        for (String slot : slots) {
-            perkSlotsEmbed.append(slot, pData.getPerkAtSlot((slots.indexOf(slot) + 1)).getName());
-        }
-
-        for (Passives passive : Passives.values()) {
-            passivesEmbed.append(passive.getName(), pData.getPassiveTier(passive));
-        }
-
-        for (Perks perk : Perks.values()) {
-            unlockedPerksEmbed.append(perk.getName(), pData.getPerkUnlockStatus(perk));
-        }
+        for (String slot : slots) perkSlotsEmbed.append(slot, pData.getPerkAtSlot((slots.indexOf(slot) + 1)).getName());
+        for (Passives passive : Passives.values()) passivesEmbed.append(passive.getName(), pData.getPassiveTier(passive));
+        for (Perks perk : Perks.values()) unlockedPerksEmbed.append(perk.getName(), pData.getPerkUnlockStatus(perk));
 
         pDoc.put("prestige", pData.getPrestige());
         pDoc.put("level", pData.getLevel());
@@ -152,17 +142,9 @@ public class StorageListener implements Listener {
             Document passivesEmbed = new Document();
             Document unlockedPerksEmbed = new Document();
 
-            for (String slot : slots) {
-                perkSlotsEmbed.append(slot, "unset");
-            }
-
-            for (Passives passive : Passives.values()) {
-                passivesEmbed.append(passive.getName(), 0);
-            }
-
-            for (Perks perk : Perks.values()) {
-                unlockedPerksEmbed.append(perk.getName(), false);
-            }
+            for (String slot : slots) perkSlotsEmbed.append(slot, "unset");
+            for (Passives passive : Passives.values()) passivesEmbed.append(passive.getName(), 0);
+            for (Perks perk : Perks.values()) unlockedPerksEmbed.append(perk.getName(), false);
 
             pDataCol.insertOne(filter
                     .append("prestige", 0)
@@ -183,6 +165,7 @@ public class StorageListener implements Listener {
 
         if (!dataCheck(pDoc)) {
             playerDataMap.put(uuid, new PlayerData(pDoc));
+
             pDoc = updateDocument(pDoc, uuid);
 
             System.out.println("Successfully updated player data document assigned to " + uuid);
@@ -195,7 +178,6 @@ public class StorageListener implements Listener {
             System.out.println("BEPIS.");
             System.out.println("Did something go wrong inserting the document?");
         }
-
     }
 
     @EventHandler
