@@ -56,15 +56,10 @@ public class AttackListener implements Listener {
         }
 
         e.setDamage(calculateAttackDamage(damaged, damager, e.getDamage()));
-        Bukkit.broadcastMessage(String.valueOf(e.getDamage()));
+        Bukkit.broadcastMessage(String.valueOf(e.getDamage()));//testing line
 
-        if (methods.hasID(damaged.getUniqueId())) {
-            methods.stop(damaged.getUniqueId());
-        }
-
-        if (methods.hasID(damager.getUniqueId())) {
-            methods.stop(damager.getUniqueId());
-        }
+        if (methods.hasID(damaged.getUniqueId())) methods.stop(damaged.getUniqueId());
+        if (methods.hasID(damager.getUniqueId())) methods.stop(damager.getUniqueId());
 
         new CombatTimerRunnable(damaged.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
         new CombatTimerRunnable(damager.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
@@ -72,11 +67,7 @@ public class AttackListener implements Listener {
 
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
-        UUID uuid = e.getPlayer().getUniqueId();
-
-        if (methods.hasID(uuid)) {
-            methods.stop(uuid);
-        }
+        if (methods.hasID(e.getPlayer().getUniqueId())) methods.stop(e.getPlayer().getUniqueId());
     }
 
 
@@ -90,20 +81,14 @@ public class AttackListener implements Listener {
             this.hideTimer = 1;
         }
 
-        private int calculateTimer(PlayerData pData) {
-            return 15 + (int) Math.floor(pData.getBounty() / 100);
-        }
-
         @Override
         public void run() {
             PlayerData pData = Main.getInstance().getPlayerData(uuid);
 
-            if (!methods.hasID(uuid)) {
-                methods.setID(uuid, super.getTaskId());
-            }
+            if (!methods.hasID(uuid)) methods.setID(uuid, super.getTaskId());
 
             if (pData.getStatus().equals("idling") || pData.getStatus().equals("bountied")) {
-                pData.setCombatTimer(calculateTimer(pData));
+                pData.setCombatTimer(15 + (int) Math.floor(pData.getBounty() / 1000) * 10);
                 pData.setStatus("fighting");
             } else if (pData.getCombatTimer() > 1) {
                 pData.setCombatTimer(pData.getCombatTimer() - 1);
@@ -115,16 +100,16 @@ public class AttackListener implements Listener {
                 } else {
                     pData.setStatus("idling");
                 }
-
                 cancel();
             }
 
-            if (hideTimer < 10 && !pData.hideTimer()) {
+            if (pData.getBounty() != 0) {
+                pData.setHideTimer(pData.getCombatTimer() == 0);
+            } else if (hideTimer <= 10 && !pData.hideTimer()) {
                 pData.setHideTimer(true);
             } else if (hideTimer > 10) {
                 pData.setHideTimer(pData.getCombatTimer() == 0);
             }
-
             hideTimer++;
         }
     }
