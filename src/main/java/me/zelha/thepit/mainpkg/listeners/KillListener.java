@@ -6,9 +6,7 @@ import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.perks.PerkListenersAndUtils;
 import me.zelha.thepit.zelenums.Passives;
-import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -18,10 +16,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Random;
 import java.util.UUID;
+
+import static me.zelha.thepit.zelenums.Perks.BOUNTY_HUNTER;
+import static me.zelha.thepit.zelenums.Perks.STREAKER;
+import static org.bukkit.Material.*;
 
 public class KillListener implements Listener {
 
@@ -31,8 +35,8 @@ public class KillListener implements Listener {
     private final RunMethods methods = Main.getInstance().generateRunMethods();
     private final RunMethods methods2 = Main.getInstance().generateRunMethods();
 
-    private String calculateKillMessage(Player damager) {
-        PlayerData pData = Main.getInstance().getPlayerData(damager);
+    private String calculateKillMessage(Player killer) {
+        PlayerData pData = Main.getInstance().getPlayerData(killer);
 
         switch (pData.getMultiKill()) {
             case 1:
@@ -50,154 +54,62 @@ public class KillListener implements Listener {
         }
     }
 
-    private int calculateEXP(Player damaged, Player damager) {
+    private int calculateEXP(Player dead, Player killer) {
         int exp = 5;
         int baseModifier = 0;
         double percentageModifier = 1;
         int streakModifier = 0;
+        PlayerData deadData = Main.getInstance().getPlayerData(dead);
+        PlayerData killerData = Main.getInstance().getPlayerData(killer);
 
-        PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
-        PlayerData damagerData = Main.getInstance().getPlayerData(damager);
+        if (deadData.getPrestige() == 0) percentageModifier-= 0.09;
+        if (killerData.getStreak() <= 3 && killerData.getLevel() <= 30) baseModifier+= 4;
+        if (killerData.getStreak() <= (killerData.getPassiveTier(Passives.EL_GATO) - 1)) baseModifier+= 5;
+        if (killerData.getPassiveTier(Passives.XP_BOOST) > 0) percentageModifier+= (killerData.getPassiveTier(Passives.XP_BOOST) / 10.0);
+        if (deadData.getStreak() > 5) baseModifier+= (int) Math.min(Math.round(deadData.getStreak()), 25);
+        if (deadData.getLevel() > killerData.getLevel()) baseModifier+= (int) Math.round((deadData.getLevel() - killerData.getLevel()) / 4.5);
 
-        if (damagedData.getPrestige() == 0) {
-            percentageModifier = percentageModifier - 0.09;
-        }
-
-        if (damagerData.getStreak() <= 3 && damagerData.getLevel() <= 30) {
-            baseModifier = baseModifier + 4;
-        }
-
-        if (damagerData.getStreak() <= (damagerData.getPassiveTier(Passives.EL_GATO) - 1)) {
-            baseModifier = baseModifier + 5;
-        }
-
-        if (damagerData.getPassiveTier(Passives.XP_BOOST) > 0) {
-            percentageModifier = percentageModifier + (damagerData.getPassiveTier(Passives.XP_BOOST) / 10.0);
-        }
-
-        if (damagedData.getStreak() > 5) {
-
-            if (damagedData.getStreak() <= 25) {
-                baseModifier = baseModifier + (int) Math.round(damagedData.getStreak());
-            } else {
-                baseModifier = baseModifier + 25;
-            }
-        }
-
-        if (damagedData.getLevel() > damagerData.getLevel()) {
-            baseModifier = baseModifier + (int) Math.round((damagedData.getLevel() - damagerData.getLevel()) / 4.5);
-        }
-
-        if (damagerData.getStreak() < 5) {
-            streakModifier = streakModifier + 3;
-        } else if (damagerData.getStreak() < 20) {
-            streakModifier = streakModifier + 5;
-        } else if (damagerData.getStreak() < 30) {
-            streakModifier = streakModifier + 6;
-        } else if (damagerData.getStreak() < 40) {
-            streakModifier = streakModifier + 9;
-        } else if (damagerData.getStreak() < 50) {
-            streakModifier = streakModifier + 12;
-        } else if (damagerData.getStreak() < 60) {
-            streakModifier = streakModifier + 15;
-        } else if (damagerData.getStreak() < 70) {
-            streakModifier = streakModifier + 18;
-        } else if (damagerData.getStreak() < 80) {
-            streakModifier = streakModifier + 21;
-        } else if (damagerData.getStreak() < 90) {
-            streakModifier = streakModifier + 24;
-        } else if (damagerData.getStreak() < 100) {
-            streakModifier = streakModifier + 27;
-        } else if (damagerData.getStreak() < 110) {
-            streakModifier = streakModifier + 30;
-        } else if (damagerData.getStreak() < 120) {
-            streakModifier = streakModifier + 33;
-        } else if (damagerData.getStreak() < 130) {
-            streakModifier = streakModifier + 36;
-        } else if (damagerData.getStreak() < 140) {
-            streakModifier = streakModifier + 39;
-        } else if (damagerData.getStreak() < 150) {
-            streakModifier = streakModifier + 42;
-        } else if (damagerData.getStreak() < 160) {
-            streakModifier = streakModifier + 45;
-        } else if (damagerData.getStreak() < 170) {
-            streakModifier = streakModifier + 48;
-        } else if (damagerData.getStreak() < 180) {
-            streakModifier = streakModifier + 51;
-        } else if (damagerData.getStreak() < 190) {
-            streakModifier = streakModifier + 54;
-        } else if (damagerData.getStreak() < 200) {
-            streakModifier = streakModifier + 57;
+        if (killerData.getStreak() < 5) {
+            streakModifier+= 3;
+        } else if (killerData.getStreak() < 20) {
+            streakModifier+= 5;
+        } else if (killerData.getStreak() < 200) {
+            streakModifier+= (Math.floor(killerData.getStreak() / 10) - 1) * 3;
         } else {
-            streakModifier = streakModifier + 60;
+            streakModifier+= 60;
         }
 
-        if (damagerData.hasPerkEquipped(Perks.STREAKER)) streakModifier = streakModifier * 3;
+        if (killerData.hasPerkEquipped(STREAKER)) streakModifier*= 3;
 
-        baseModifier = baseModifier + streakModifier;
+        baseModifier+= streakModifier;
 
         return Math.toIntExact(Math.round((exp + baseModifier) * percentageModifier));
     }
 
-    private double calculateGold(Player damaged, Player damager) {
+    private double calculateGold(Player dead, Player killer) {
         int gold = 10;
         int baseModifier = 0;
         double percentageModifier = 1;
+        PlayerData deadData = Main.getInstance().getPlayerData(dead);
+        PlayerData killerData = Main.getInstance().getPlayerData(killer);
+        PlayerInventory deadInv = dead.getInventory();
+        PlayerInventory killerInv = killer.getInventory();
 
-        PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
-        PlayerData damagerData = Main.getInstance().getPlayerData(damager);
+        if (perkUtils.hasBeenShotBySpammer(killer, dead)) gold*= 3;
+        if (killerData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS) baseModifier+= 4;
 
-        if (perkUtils.hasBeenShotBySpammer(damager, damaged)) gold = gold * 3;
-        if (damagerData.hasPerkEquipped(Perks.BOUNTY_HUNTER) && zl.itemCheck(damager.getInventory().getLeggings())
-           && damager.getInventory().getLeggings().getType() == Material.GOLDEN_LEGGINGS) baseModifier+= 4;
-
-        if (zl.itemCheck(damaged.getInventory().getHelmet())
-           && damaged.getInventory().getHelmet().getType() == Material.DIAMOND_HELMET) {
-            baseModifier++;
-        }
-        if (zl.itemCheck(damaged.getInventory().getChestplate())
-           && damaged.getInventory().getChestplate().getType() == Material.DIAMOND_CHESTPLATE) {
-            baseModifier++;
-        }
-        if (zl.itemCheck(damaged.getInventory().getLeggings())
-           && damaged.getInventory().getLeggings().getType() == Material.DIAMOND_LEGGINGS) {
-            baseModifier++;
-        }
-        if (zl.itemCheck(damaged.getInventory().getBoots())
-           && damaged.getInventory().getBoots().getType() == Material.DIAMOND_BOOTS) {
-            baseModifier++;
+        for (ItemStack item : deadInv.getArmorContents()) {
+            if (zl.itemCheck(item) && item.getType().name().contains("DIAMOND")) baseModifier++;
         }
 
-        if (damagedData.getPrestige() == 0) {
-            percentageModifier = percentageModifier - 0.09;
-        }
+        if (deadData.getPrestige() == 0) percentageModifier-= 0.09;
+        if (killerData.getStreak() <= 3 && killerData.getLevel() <= 30) baseModifier+= 4;
+        if (killerData.getStreak() <= killerData.getPassiveTier(Passives.EL_GATO)) baseModifier+= 5;
+        if (killerData.getPassiveTier(Passives.GOLD_BOOST) > 0) percentageModifier+= (killerData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
+        if (deadData.getStreak() > 5) baseModifier+= Math.min((int) Math.round(deadData.getStreak()), 25);
+        if (deadData.getLevel() > killerData.getLevel()) baseModifier+= (int) Math.round((deadData.getLevel() - killerData.getLevel()) / 4.5);
 
-        if (damagerData.getStreak() <= 3 && damagerData.getLevel() <= 30) {
-            baseModifier = baseModifier + 4;
-        }
-
-        if (damagerData.getStreak() <= damagerData.getPassiveTier(Passives.EL_GATO)) {
-            baseModifier = baseModifier + 5;
-        }
-
-        if (damagerData.getPassiveTier(Passives.GOLD_BOOST) > 0) {
-            percentageModifier = percentageModifier + (damagerData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
-        }
-
-        if (damagedData.getStreak() > 5) {
-
-            if (damagedData.getStreak() <= 25) {
-                baseModifier = baseModifier + (int) Math.round(damagedData.getStreak());
-            } else {
-                baseModifier = baseModifier + 25;
-            }
-        }
-
-        if (damagedData.getLevel() > damagerData.getLevel()) {
-            baseModifier = baseModifier + (int) Math.round((damagedData.getLevel() - damagerData.getLevel()) / 4.5);
-        }
-
-        return ((gold + baseModifier) * percentageModifier) + damagedData.getBounty();
+        return ((gold + baseModifier) * percentageModifier) + deadData.getBounty();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -209,6 +121,7 @@ public class KillListener implements Listener {
 
         if (spawnUtils.spawnCheck(damagedEntity.getLocation()) || spawnUtils.spawnCheck(damagerEntity.getLocation())) return;
         if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
+        if (e.getCause() == DamageCause.FALL) return;
 
         if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player) {
             damager = (Player) ((Arrow) damagerEntity).getShooter();
@@ -225,7 +138,7 @@ public class KillListener implements Listener {
         double finalDMG = e.getFinalDamage();
         double currentHP = damaged.getHealth();
 
-        if (e.getCause() != DamageCause.FALL && (currentHP - finalDMG) <= 0) {
+        if (currentHP - finalDMG <= 0) {
             String uuid = damaged.getUniqueId().toString();
             PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
             PlayerData damagerData = Main.getInstance().getPlayerData(damager);
@@ -251,19 +164,13 @@ public class KillListener implements Listener {
             damager.sendMessage(calculateKillMessage(damager) + " §7on " + zl.getColorBracketAndLevel(uuid) + " §7" + damaged.getName()
                     + " §b+" + calculateEXP(damaged, damager) + "§bXP §6+" + zl.getFancyGoldString(calculatedGold) + "§6g");
 
-            if (!methods.hasID(damager.getUniqueId())) {
-                new BountyRunnable(damager).runTaskTimer(Main.getInstance(), 0, 1);
-            }
+            if (!methods.hasID(damager.getUniqueId())) new BountyRunnable(damager).runTaskTimer(Main.getInstance(), 0, 1);
         }
     }
 
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
-        UUID uuid = e.getPlayer().getUniqueId();
-
-        if (methods.hasID(uuid)) {
-            methods.stop(uuid);
-        }
+        if (methods.hasID(e.getPlayer().getUniqueId())) methods.stop(e.getPlayer().getUniqueId());
     }
 
 
@@ -286,9 +193,7 @@ public class KillListener implements Listener {
         private boolean randomBounty() {
             int rng = (streak == 0) ? 0 : (new Random().nextInt((int) Math.round(streak)) + 1) - (int) Math.round(secondsBetweenKills * 0.1);
 
-            if (rng <= 0) {
-                return false;
-            }
+            if (rng <= 0) return false;
 
             switch (rng) {
                 case 1:
@@ -303,9 +208,7 @@ public class KillListener implements Listener {
         }
 
         private int calculateBounty() {
-
             if (randomBounty()) {
-
                 if (streak < 10 && secondsBetweenKills < 5) {
                     return 50;
                 } else if (streak < 25 && secondsBetweenKills > 10) {
@@ -318,7 +221,6 @@ public class KillListener implements Listener {
                     return 250;
                 }
             }
-
             return 0;
         }
 
@@ -326,16 +228,13 @@ public class KillListener implements Listener {
         public void run() {
             PlayerData pData = Main.getInstance().getPlayerData(uuid);
 
-            if (!methods.hasID(uuid)) {
-                methods.setID(uuid, super.getTaskId());
-            }
+            if (!methods.hasID(uuid)) methods.setID(uuid, getTaskId());
 
             if (streak != pData.getStreak()) {
                 streak = pData.getStreak();
                 int calculatedBounty = calculateBounty();
 
                 if (calculatedBounty != 0) {
-
                     if (pData.getBounty() == 0) {
                         pData.setBounty(calculatedBounty);
                         Bukkit.broadcastMessage("§6§lBOUNTY! §7of §6§l " + calculatedBounty + "g §7on " + zl.getColorBracketAndLevel(uuid.toString())
@@ -350,11 +249,9 @@ public class KillListener implements Listener {
                         pData.setBounty(5000);
                     }
                 }
-
                 secondsBetweenKills = 0;
                 ticksBetweenKills = 0;
             }
-
             ticksBetweenKills++;
 
             if (ticksBetweenKills == 20) {
@@ -379,9 +276,7 @@ public class KillListener implements Listener {
         public void run() {
             PlayerData pData = Main.getInstance().getPlayerData(uuid);
 
-            if (!methods2.hasID(uuid)) {
-                methods2.setID(uuid, super.getTaskId());
-            }
+            if (!methods2.hasID(uuid)) methods2.setID(uuid, getTaskId());
 
             ticksBetweenKills++;
 
