@@ -2,7 +2,7 @@ package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
-import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.zelenums.Worlds;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -30,81 +30,91 @@ public class DeathListener implements Listener {
             CHAINMAIL_HELMET, CHAINMAIL_CHESTPLATE, CHAINMAIL_LEGGINGS, CHAINMAIL_BOOTS
     };
 
-    private boolean getThemPlayers(Player p, double x, double y, double z, double ax, double ay, double az) {
-        return p.getWorld().getNearbyEntities(new Location(p.getWorld(), x, y, z), ax, ay, az).contains(p);
-    }
-
-    private void randomMidSpawn(Player p, double y, double neg, double pos) {
-        Random rng = new Random();
-        int randomNumber = rng.nextInt(4) + 1;
-
-        switch (randomNumber) {
-            case 1:
-                p.teleport(new Location(p.getWorld(), 0.5, y, neg, 0, 0));
-                break;
-            case 2:
-                p.teleport(new Location(p.getWorld(), 0.5, y, pos, 180, 0));
-                break;
-            case 3:
-                p.teleport(new Location(p.getWorld(), neg, y, 0.5, -90, 0));
-                break;
-            case 4:
-                p.teleport(new Location(p.getWorld(), pos, y, 0.5, 90, 0));
-                break;
-        }
-    }
-
-
-    private void teleportBasedOnLocation(Player p, double baseY, double spawnY, double pSpawnX, double pSpawnZ, double npSpawnX, double npSpawnZ, double nSpawnX, double nSpawnZ, double pnSpawnX, double pnSpawnZ, double neg, double pos) {
-        // p = positive, n = negative (coordinates) ^
-        //dont blame me for the janky way this is set up its the builder's fault for being inconsistent with the maps
-
-        if (getThemPlayers(p, 0.5, baseY, 0.5, 21.5, 200, 21.5)) {
-            randomMidSpawn(p, spawnY, neg, pos);
-        } else if (getThemPlayers(p, 64.5, baseY, 64.5, 64.5, 200, 64.5)) {
-            p.teleport(new Location(p.getWorld(), pSpawnX, spawnY, pSpawnZ, -45, 0));
-        } else if (getThemPlayers(p, -64.5, baseY, 64, 64.5, 200, 64.5)) {
-            p.teleport(new Location(p.getWorld(), npSpawnX, spawnY, npSpawnZ, 45, 0));
-        } else if (getThemPlayers(p, -64.5, baseY, -64.5, 64.5, 200, 64.5)) {
-            p.teleport(new Location(p.getWorld(), nSpawnX, spawnY, nSpawnZ, 135, 0));
-        } else if (getThemPlayers(p, 64.5, baseY, -64.5, 64.5, 200, 64.5)) {
-            p.teleport(new Location(p.getWorld(), pnSpawnX, spawnY, pnSpawnZ, -135, 0));
-        }
-    }
-
-
     public void teleportToSpawnMethod(Player p) {
-        double maxHealth = p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-        PlayerData pData = Main.getInstance().getPlayerData(p);
+        Worlds world = Worlds.findByName(p.getWorld().getName());
+
+        if (world == null) {
+            p.sendMessage("§5World not supported.");
+            return;
+        }
 
         p.setFireTicks(0);
-        pData.setStreak(0);
+        Main.getInstance().getPlayerData(p).setStreak(0);
 
         new BukkitRunnable() {
             @Override
             public void run() {
-                p.setHealth(maxHealth);
+                p.setHealth(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
             }
         }.runTaskLater(Main.getInstance(), 1);
 
-        if (p.getWorld().getName().equals("Elementals")) {
-            teleportBasedOnLocation(p, 82, 114, 11.5, 14.5, -9.5, 10.5, -8.5, -8.5, 12.5, -12.5, -7.5, 8.5);
+        double spawnY;
+
+        if (world == Worlds.CASTLE) {
+            spawnY = 95;
+        } else if (world == Worlds.GENESIS) {
+            spawnY = 86;
+        } else {
+            spawnY = 114;
         }
 
-        if (p.getWorld().getName().equals("Corals")) {
-            teleportBasedOnLocation(p, 82, 114, 11.5, 14.5, -9.5, 10.5, -8.5, -8.5, 12.5, -12.5, -7.5, 8.5);
+        if (p.getLocation().distance(new Location(p.getWorld(), 0, p.getLocation().getY(), 0)) < 9) {
+            double spawnPerimeter;
+
+            if (world != Worlds.GENESIS) spawnPerimeter = 8.5; else spawnPerimeter = 9.5;
+
+            switch (new Random().nextInt(4)) {
+                case 0:
+                    p.teleport(new Location(p.getWorld(), 0.5, spawnY, -(spawnPerimeter - 1), 0, 0));
+                    break;
+                case 1:
+                    p.teleport(new Location(p.getWorld(), 0.5, spawnY, spawnPerimeter, 180, 0));
+                    break;
+                case 2:
+                    p.teleport(new Location(p.getWorld(), -(spawnPerimeter - 1), spawnY, 0.5, -90, 0));
+                    break;
+                case 3:
+                    p.teleport(new Location(p.getWorld(), spawnPerimeter, spawnY, 0.5, 90, 0));
+                    break;
+            }
+            return;
         }
 
-        if (p.getWorld().getName().equals("Seasons")) {
-            teleportBasedOnLocation(p, 82, 114, 12.5, 13.5, -9.5, 10.5, -9.5, -9.5, 12.5, -12.5, -7.5, 8.5);
+        double[] southEastSpawn;
+        double[] northEastSpawn;
+        double[] northWestSpawn;
+        double[] southWestSpawn;
+
+        if (world == Worlds.CASTLE) {
+            southEastSpawn = new double[] {12.5, 12.5};
+            southWestSpawn = new double[] {-11.5, 12.5};
+            northWestSpawn = new double[] {-11.5, -11.5};
+            northEastSpawn = new double[] {12.5, -11.5};
+        } else if (world == Worlds.GENESIS) {
+            southEastSpawn = new double[] {17.5, 15.5};
+            southWestSpawn = new double[] {-14.5, 16.5};
+            northWestSpawn = new double[] {-15.5, -14.5};
+            northEastSpawn = new double[] {15.5, -15.5};
+        } else {
+            southEastSpawn = new double[] {11.5, 14.5};
+            southWestSpawn = new double[] {-9.5, 10.5};
+            northWestSpawn = new double[] {-8.5, -8.5};
+            northEastSpawn = new double[] {12.5, -12.5};
         }
 
-        if (p.getWorld().getName().equals("Castle")) {
-            teleportBasedOnLocation(p, 71, 95, 12.5, 12.5, -11.5, 12.5, -11.5, -11.5, 12.5, -11.5, -7.5, 8.5);
-        }
-
-        if (p.getWorld().getName().equals("Genesis")) {
-            teleportBasedOnLocation(p, 43, 86, 17.5, 15.5, -14.5, 16.5, -15.5, -14.5, 15.5, -15.5, -8.5, 9.5);
+        switch (new Random().nextInt(4)) {
+            case 0:
+                p.teleport(new Location(p.getWorld(), southEastSpawn[0], spawnY, southEastSpawn[1], -45, 0));
+                break;
+            case 1:
+                p.teleport(new Location(p.getWorld(), southWestSpawn[0], spawnY, southWestSpawn[1], 45, 0));
+                break;
+            case 2:
+                p.teleport(new Location(p.getWorld(), northWestSpawn[0], spawnY, northWestSpawn[1], 135, 0));
+                break;
+            case 3:
+                p.teleport(new Location(p.getWorld(), northEastSpawn[0], spawnY, northEastSpawn[1], -135, 0));
+                break;
         }
     }
 
@@ -112,61 +122,59 @@ public class DeathListener implements Listener {
     public void onPlayerDeath(EntityDamageEvent e) {
         Entity entity = e.getEntity();
 
-        if (zl.playerCheck(entity)) {
-            if (Main.getInstance().getSpawnListener().spawnCheck(entity.getLocation())) {
-                e.setCancelled(true);
-                return;
-            }
+        if (!zl.playerCheck(entity)) return;
 
-            Player p = (Player) e.getEntity();
-            PlayerInventory inv = p.getInventory();
-            double finalDMG = e.getFinalDamage();
-            double currentHP = p.getHealth();
+        if (Main.getInstance().getSpawnListener().spawnCheck(entity.getLocation())) {
+            e.setCancelled(true);
+            return;
+        }
 
-            if (e.getCause() != DamageCause.FALL && (currentHP - finalDMG <= 0)) {
-                e.setCancelled(true);
-                teleportToSpawnMethod(p);
+        Player p = (Player) e.getEntity();
+        PlayerInventory inv = p.getInventory();
+        double finalDMG = e.getFinalDamage();
+        double currentHP = p.getHealth();
 
-                for (ItemStack item : inv.getArmorContents()) {
-                    if (zl.itemCheck(item) && item.getItemMeta().getEnchants().isEmpty()) {
-                        String name = item.getType().name();
+        if (e.getCause() != DamageCause.FALL && (currentHP - finalDMG <= 0)) {
+            e.setCancelled(true);
+            teleportToSpawnMethod(p);
 
-                        if ((name.contains("DIAMOND") || name.contains("IRON")) && new Random().nextInt(4) == 3) {
-                            p.getWorld().dropItemNaturally(p.getLocation(), zl.itemBuilder(item.getType(), 1));
-                        }
+            for (ItemStack item : inv.getArmorContents()) {
+                if (zl.itemCheck(item) && item.getItemMeta() != null && item.getItemMeta().getEnchants().isEmpty()) {
+                    String name = item.getType().name();
+
+                    if ((name.contains("DIAMOND") || name.contains("IRON")) && new Random().nextInt(4) == 3) {
+                        p.getWorld().dropItemNaturally(p.getLocation(), zl.itemBuilder(item.getType(), 1));
                     }
                 }
-
-                for (Material material : lostOnDeathList) {
-                    inv.remove(material);
-                    if (zl.itemCheck(inv.getHelmet()) && inv.getHelmet().getType() == material) inv.setHelmet(new ItemStack(AIR));
-                    if (zl.itemCheck(inv.getChestplate()) && inv.getChestplate().getType() == material) inv.setChestplate(new ItemStack(AIR));;
-                    if (zl.itemCheck(inv.getLeggings()) && inv.getLeggings().getType() == material) inv.setLeggings(new ItemStack(AIR));
-                    if (zl.itemCheck(inv.getBoots()) &&inv.getBoots().getType() == material) inv.setBoots(new ItemStack(AIR));
-                }
-
-                switch (new Random().nextInt(3)) {
-                    case 0:
-                        if (!zl.itemCheck(inv.getChestplate())) inv.setChestplate(zl.itemBuilder(IRON_CHESTPLATE, 1));
-                        break;
-                    case 1:
-                        if (!zl.itemCheck(inv.getLeggings())) inv.setLeggings(zl.itemBuilder(IRON_LEGGINGS, 1));
-                        break;
-                    case 2:
-                        if (!zl.itemCheck(inv.getBoots())) inv.setBoots(zl.itemBuilder(IRON_BOOTS, 1));
-                        break;
-                }
-
-                if (!zl.itemCheck(inv.getChestplate())) inv.setChestplate(zl.itemBuilder(CHAINMAIL_CHESTPLATE, 1));
-                if (!zl.itemCheck(inv.getLeggings())) inv.setLeggings(zl.itemBuilder(CHAINMAIL_LEGGINGS, 1));
-                if (!zl.itemCheck(inv.getBoots())) inv.setBoots(zl.itemBuilder(CHAINMAIL_BOOTS, 1));
-                //sword & bow & arrow are handled in PerkListenersAndUtils.perkReset for consistency's sake
             }
+
+            for (Material material : lostOnDeathList) {
+                inv.remove(material);
+                if (zl.itemCheck(inv.getHelmet()) && inv.getHelmet().getType() == material) inv.setHelmet(new ItemStack(AIR));
+                if (zl.itemCheck(inv.getChestplate()) && inv.getChestplate().getType() == material) inv.setChestplate(new ItemStack(AIR));
+                if (zl.itemCheck(inv.getLeggings()) && inv.getLeggings().getType() == material) inv.setLeggings(new ItemStack(AIR));
+                if (zl.itemCheck(inv.getBoots()) && inv.getBoots().getType() == material) inv.setBoots(new ItemStack(AIR));
+            }
+
+            switch (new Random().nextInt(3)) {
+                case 0:
+                    if (!zl.itemCheck(inv.getChestplate())) inv.setChestplate(zl.itemBuilder(IRON_CHESTPLATE, 1));
+                    break;
+                case 1:
+                    if (!zl.itemCheck(inv.getLeggings())) inv.setLeggings(zl.itemBuilder(IRON_LEGGINGS, 1));
+                    break;
+                case 2:
+                    if (!zl.itemCheck(inv.getBoots())) inv.setBoots(zl.itemBuilder(IRON_BOOTS, 1));
+                    break;
+            }
+
+            if (!zl.itemCheck(inv.getChestplate())) inv.setChestplate(zl.itemBuilder(CHAINMAIL_CHESTPLATE, 1));
+            if (!zl.itemCheck(inv.getLeggings())) inv.setLeggings(zl.itemBuilder(CHAINMAIL_LEGGINGS, 1));
+            if (!zl.itemCheck(inv.getBoots())) inv.setBoots(zl.itemBuilder(CHAINMAIL_BOOTS, 1));
+            //sword & bow & arrow are handled in PerkListenersAndUtils.perkReset for consistency's sake
         }
     }
-}
-
-//perk-related death handling is in PerkListenersAndUtils
+}//perk-related death handling is in PerkListenersAndUtils
 
 
 
