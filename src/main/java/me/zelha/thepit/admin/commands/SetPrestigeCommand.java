@@ -25,12 +25,12 @@ public class SetPrestigeCommand implements CommandExecutor {
                 sender.sendMessage("you cant run this command like this from console are you *trying* to cause errors? lol");
                 return true;
             } else if (!NumberUtils.isNumber(args[0])) {
-                sender.sendMessage("§5Must be a number");
+                sender.sendMessage("§5First argument must be a player or an integer");
                 return true;
             }
 
-            Main.getInstance().getPlayerData((Player) sender).setPrestige(Integer.parseInt(args[0]));
-            sender.sendMessage("§aSuccessfully set your §ePrestige §ato §e" + zl.toRoman(Integer.parseInt(args[0])));
+            Main.getInstance().getPlayerData((Player) sender).setPrestige(NumberUtils.toInt(args[0], 0));
+            sender.sendMessage("§aSuccessfully set your §ePrestige §ato §e" + zl.toRoman(NumberUtils.toInt(args[0], 0)));
         }
 
         if (args.length == 2) {
@@ -38,13 +38,13 @@ public class SetPrestigeCommand implements CommandExecutor {
                 sender.sendMessage("§5Offline players are currently not supported.");
                 return true;
             } else if (!NumberUtils.isNumber(args[1])) {
-                sender.sendMessage("§5Must be a number");
+                sender.sendMessage("§5Second argument must be an integer");
                 return true;
             }
 
             Player p2 = Bukkit.getPlayer(args[0]);
-            Main.getInstance().getPlayerData(p2).setPrestige(Integer.parseInt(args[1]));
-            sender.sendMessage("§aSuccessfully set §7" + p2.getName() + "§a's §ePrestige §ato §e" + zl.toRoman(Integer.parseInt(args[1])));
+            Main.getInstance().getPlayerData(p2).setPrestige(NumberUtils.toInt(args[1], 0));
+            sender.sendMessage("§aSuccessfully set §7" + p2.getName() + "§a's §ePrestige §ato §e" + zl.toRoman(NumberUtils.toInt(args[1], 0)));
         }
         return true;
     }

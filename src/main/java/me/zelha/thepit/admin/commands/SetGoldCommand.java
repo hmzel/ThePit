@@ -25,7 +25,7 @@ public class SetGoldCommand implements CommandExecutor {
                 sender.sendMessage("you cant run this command like this from console are you *trying* to cause errors? lol");
                 return true;
             } else if (!NumberUtils.isNumber(args[0])) {
-                sender.sendMessage("§5Must be a number");
+                sender.sendMessage("§5First argument must be a player, integer, or decimal");
                 return true;
             }
 
@@ -38,13 +38,13 @@ public class SetGoldCommand implements CommandExecutor {
                 sender.sendMessage("§5Offline players are currently not supported.");
                 return true;
             } else if (!NumberUtils.isNumber(args[1])) {
-                sender.sendMessage("§5Must be a number");
+                sender.sendMessage("§5Second argument must be an integer or a decimal");
                 return true;
             }
 
             Player p2 = Bukkit.getPlayer(args[0]);
-            Main.getInstance().getPlayerData(p2).setGold(Double.parseDouble(args[1]));
-            sender.sendMessage("§aSuccessfully set §7" + p2.getName() + "§a's §6Gold §ato §6" + zl.getFancyGoldString(Double.parseDouble(args[1])) + "g");
+            Main.getInstance().getPlayerData(p2).setGold(NumberUtils.toDouble(args[1], 0));
+            sender.sendMessage("§aSuccessfully set §7" + p2.getName() + "§a's §6Gold §ato §6" + zl.getFancyGoldString(NumberUtils.toDouble(args[1], 0)) + "g");
         }
         return true;
     }

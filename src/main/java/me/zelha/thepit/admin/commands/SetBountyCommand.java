@@ -26,12 +26,12 @@ public class SetBountyCommand implements CommandExecutor {
                 sender.sendMessage("you cant run this command like this from console are you *trying* to cause errors? lol");
                 return true;
             } else if (!NumberUtils.isNumber(args[0])) {
-                sender.sendMessage("§5Must be a number");
+                sender.sendMessage("§5First argument must be a player or an integer");
                 return true;
             }
 
-            Main.getInstance().getPlayerData((Player) sender).setBounty(Integer.parseInt(args[0]));
-            sender.sendMessage("§aSuccessfully set your §6§lBounty §ato §6§l" + Integer.parseInt(args[0]) + "g");
+            Main.getInstance().getPlayerData((Player) sender).setBounty(NumberUtils.toInt(args[0], 0));
+            sender.sendMessage("§aSuccessfully set your §6§lBounty §ato §6§l" + NumberUtils.toInt(args[0], 0) + "g");
         }
 
         if (args.length >= 2) {
@@ -39,13 +39,13 @@ public class SetBountyCommand implements CommandExecutor {
                 sender.sendMessage("§5Offline players are currently not supported.");
                 return true;
             } else if (!NumberUtils.isNumber(args[1])) {
-                sender.sendMessage("§5Must be a number");
+                sender.sendMessage("§5Second argument must be an integer");
                 return true;
             }
 
             Player p2 = Bukkit.getPlayer(args[0]);
-            Main.getInstance().getPlayerData(p2).setBounty(Integer.parseInt(args[1]));
-            sender.sendMessage("§aSuccessfully set §7" + p2.getName() + "§a's §6§lBounty §ato §6§l" + Integer.parseInt(args[1]) + "g");
+            Main.getInstance().getPlayerData(p2).setBounty(NumberUtils.toInt(args[1], 0));
+            sender.sendMessage("§aSuccessfully set §7" + p2.getName() + "§a's §6§lBounty §ato §6§l" + NumberUtils.toInt(args[1], 0) + "g");
 
             if (BooleanUtils.toBoolean(args[2])) {
                 Bukkit.broadcastMessage("§6§lBOUNTY! §7of §6§l " + Integer.parseInt(args[1]) + "g §7placed on " + zl.getColorBracketAndLevel(p2.getUniqueId().toString())
