@@ -20,37 +20,32 @@ public class RespawnCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player) {
-            Player p = (Player) sender;
-            PlayerData pData = Main.getInstance().getPlayerData(p);
+        if (!(sender instanceof Player)) return true;
 
-            if (!pData.getStatus().equals("fighting")) {
+        Player p = (Player) sender;
+        PlayerData pData = Main.getInstance().getPlayerData(p);
 
-                if (!Main.getInstance().getSpawnListener().spawnCheck(p.getLocation())) {
-
-                    if (!cooldown.contains(p.getUniqueId())) {
-                        Main.getInstance().getDeathListener().teleportToSpawnMethod(p);
-                        cooldown.add(p.getUniqueId());
-                        perkUtils.perkReset(p);
-
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                cooldown.remove(p.getUniqueId());
-                            }
-                        }.runTaskLater(Main.getInstance(), 200);
-                    } else {
-                        p.sendMessage("§cYou may only /respawn every 10 seconds.");
-                    }
-                } else {
-                    p.sendMessage("§cYou cannot /respawn here!");
-                }
-            } else {
-                p.sendMessage("§c§lHOLD UP! §7Can't /respawn while fighting (§c" + pData.getCombatTimer()
-                + "s §7left)");
-            }
+        if (pData.getStatus().equals("fighting")) {
+            p.sendMessage("§c§lHOLD UP! §7Can't /respawn while fighting (§c" + pData.getCombatTimer() + "s §7left)");
+            return true;
+        } else if (Main.getInstance().getSpawnListener().spawnCheck(p.getLocation())) {
+            p.sendMessage("§cYou cannot /respawn here!");
+            return true;
+        } else if (cooldown.contains(p.getUniqueId())) {
+            p.sendMessage("§cYou may only /respawn every 10 seconds.");
+            return true;
         }
 
+        Main.getInstance().getDeathListener().teleportToSpawnMethod(p);
+        cooldown.add(p.getUniqueId());
+        perkUtils.perkReset(p);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                cooldown.remove(p.getUniqueId());
+            }
+        }.runTaskLater(Main.getInstance(), 200);
         return true;
     }
 }
