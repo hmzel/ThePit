@@ -440,7 +440,7 @@ public class ZelLogic {//zel
         return "§5§l[§5§k|" + getColorLevel(level) + "§5§k|§5§l]";
     }
 
-    private String getColorLevel(int level) {
+    public String getColorLevel(int level) {
         if (level < 10) {
             return "§7" + level;
         } else if (level < 20) {

@@ -2,7 +2,6 @@ package me.zelha.thepit.admin.commands;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
-import me.zelha.thepit.mainpkg.data.PlayerData;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -17,7 +16,7 @@ public class SetPrestigeCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0 || args.length > 2) {
-            sender.sendMessage("§5Wrong args. try: /setprestige nerd 1");
+            sender.sendMessage("§5Wrong args. \ntry: /setprestige nerd 1");
             return true;
         }
 
@@ -30,9 +29,8 @@ public class SetPrestigeCommand implements CommandExecutor {
                 return true;
             }
 
-            Player p = (Player) sender;
-            PlayerData pData = Main.getInstance().getPlayerData(p);
-            pData.setPrestige(Integer.parseInt(args[0]));
+            Main.getInstance().getPlayerData((Player) sender).setPrestige(Integer.parseInt(args[0]));
+            sender.sendMessage("§aSuccessfully set your §ePrestige §ato §e" + zl.toRoman(Integer.parseInt(args[0])));
         }
 
         if (args.length == 2) {
@@ -45,8 +43,8 @@ public class SetPrestigeCommand implements CommandExecutor {
             }
 
             Player p2 = Bukkit.getPlayer(args[0]);
-            PlayerData pData2 = Main.getInstance().getPlayerData(p2);
-            pData2.setPrestige(Integer.parseInt(args[1]));
+            Main.getInstance().getPlayerData(p2).setPrestige(Integer.parseInt(args[1]));
+            sender.sendMessage("§aSuccessfully set §7" + p2.getName() + "§a's §ePrestige §ato §e" + zl.toRoman(Integer.parseInt(args[1])));
         }
         return true;
     }

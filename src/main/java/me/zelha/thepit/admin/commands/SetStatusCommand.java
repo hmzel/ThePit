@@ -2,8 +2,8 @@ package me.zelha.thepit.admin.commands;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
-import me.zelha.thepit.mainpkg.data.PlayerData;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,7 +16,7 @@ public class SetStatusCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0 || args.length > 2) {
-            sender.sendMessage("§5Wrong args. try: /setstatus nerd idling");
+            sender.sendMessage("§5Wrong args. \ntry: /setstatus nerd idling");
             return true;
         }
 
@@ -26,9 +26,8 @@ public class SetStatusCommand implements CommandExecutor {
                 return true;
             }
 
-            Player p = (Player) sender;
-            PlayerData pData = Main.getInstance().getPlayerData(p);
-            pData.setStatus(args[0]);
+            Main.getInstance().getPlayerData((Player) sender).setStatus(args[0]);
+            sender.sendMessage("§aSuccessfully set your Status to §r" + ChatColor.translateAlternateColorCodes('&', args[0]));
         }
 
         if (args.length == 2) {
@@ -38,8 +37,8 @@ public class SetStatusCommand implements CommandExecutor {
             }
 
             Player p2 = Bukkit.getPlayer(args[0]);
-            PlayerData pData2 = Main.getInstance().getPlayerData(p2);
-            pData2.setStatus(args[1]);
+            Main.getInstance().getPlayerData(p2).setStatus(args[1]);
+            sender.sendMessage("§aSuccessfully set §7" + p2.getName() + "§a's Status to §r" + ChatColor.translateAlternateColorCodes('&', args[1]));
         }
 
         return true;
