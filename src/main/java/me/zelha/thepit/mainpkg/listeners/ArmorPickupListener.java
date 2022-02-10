@@ -32,17 +32,10 @@ public class ArmorPickupListener implements Listener {
     private int determineWeight(ItemStack item) {
         Material type = item.getType();
 
-        for (Material material : armorWeight0) {
-            if (material == type) return 0;
-        }
+        for (Material material : armorWeight0) if (material == type) return 0;
+        for (Material material : armorWeight1) if (material == type) return 1;
+        for (Material material : armorWeight2) if (material == type) return 2;
 
-        for (Material material : armorWeight1) {
-            if (material == type) return 1;
-        }
-
-        for (Material material : armorWeight2) {
-            if (material == type) return 2;
-        }
         return 13;
     }
 
@@ -70,7 +63,6 @@ public class ArmorPickupListener implements Listener {
 
     @EventHandler
     public void onPickup(EntityPickupItemEvent e) {
-
         if (!zl.playerCheck(e.getEntity())) return;
         if (determineWeight(e.getItem().getItemStack()) == 13) return;
 
