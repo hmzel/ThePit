@@ -30,10 +30,8 @@ public class AntiVanillaListener implements Listener {
 
     @EventHandler
     public void onArrowItemPickup(EntityPickupItemEvent e) {
-
         if (!zl.playerCheck(e.getEntity())) return;
         if (e.getItem().getItemStack().getType() != ARROW) return;
-        //yes. i did this just for arrows. because its in regular pit. why? only god knows.
 
         Player p = (Player) e.getEntity();
         PlayerInventory inv = p.getInventory();
@@ -43,6 +41,7 @@ public class AntiVanillaListener implements Listener {
         e.getItem().setPickupDelay(999999);
         e.setCancelled(true);
 
+        //i hate how this looks but i literally cant think of a better way to do it
         for (ItemStack invItem : inv.getStorageContents()) {
             if (zl.itemCheck(invItem)) {
                 if (invItem.isSimilar(item) && invItem.getAmount() != invItem.getMaxStackSize()) {
@@ -63,9 +62,8 @@ public class AntiVanillaListener implements Listener {
 
     @EventHandler
     public void onArrowEntityPickup(PlayerPickupArrowEvent e) {
-
         if (!zl.playerCheck(e.getPlayer())) return;
-        //why did mini do this. why am i doing this. why am i so stubborn. why
+        //why did mini do this. why am i doing this. why
 
         Player p = e.getPlayer();
         PlayerInventory inv = p.getInventory();
@@ -89,10 +87,7 @@ public class AntiVanillaListener implements Listener {
 
     @EventHandler
     public void onDrop(PlayerDropItemEvent e) {
-
-        if (Arrays.asList(undroppable).contains(e.getItemDrop().getItemStack().getType())) {
-            e.setCancelled(true);
-        }
+        if (Arrays.asList(undroppable).contains(e.getItemDrop().getItemStack().getType())) e.setCancelled(true);
     }
 
     @EventHandler
@@ -102,9 +97,7 @@ public class AntiVanillaListener implements Listener {
 
     @EventHandler
     public void onBlockChange(BlockPhysicsEvent e) {
-        if (e.getSourceBlock().getType() == GRASS_BLOCK) {
-            e.setCancelled(true);
-        }
+        if (e.getSourceBlock().getType() == GRASS_BLOCK) e.setCancelled(true);
     }
 
     @EventHandler
