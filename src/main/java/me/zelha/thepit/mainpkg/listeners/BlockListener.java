@@ -13,6 +13,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.bukkit.Material.*;
@@ -21,14 +22,7 @@ public class BlockListener implements Listener {
     //note: block placement prevention in spawn is handled in SpawnListener
 
     public final static List<Block> placedBlocks = new ArrayList<>();
-    private final List<Material> placeable = new ArrayList<>();
-
-    private List<Material> getPlaceableBlocks() {
-        if (!placeable.contains(OBSIDIAN)) placeable.add(OBSIDIAN);
-        if (!placeable.contains(COBBLESTONE)) placeable.add(COBBLESTONE);
-        if (!placeable.contains(OAK_WOOD)) placeable.add(OAK_WOOD);
-     return placeable;
-    }//i... didnt know how to use arrays until recently
+    private final Material[] placeable = {OBSIDIAN, COBBLESTONE, OAK_WOOD};
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
@@ -43,17 +37,12 @@ public class BlockListener implements Listener {
         Location blockLocation = e.getBlock().getLocation();
         PlayerData pData = Main.getInstance().getPlayerData(e.getPlayer());
 
-        if (!getPlaceableBlocks().contains(blockType)) {
-            if (!Main.getInstance().blockPriviledges.contains(e.getPlayer())) {
-                e.setCancelled(true);
-            }
-        }
+        if (!Arrays.asList(placeable).contains(blockType) && !Main.getInstance().blockPriviledges.contains(e.getPlayer())) e.setCancelled(true);
 
-        if (blockLocation.distance(new Location(blockLocation.getWorld(), 0, blockLocation.getY(), 0)) < 9) {
-            if (!Main.getInstance().blockPriviledges.contains(e.getPlayer())) {
-                e.setCancelled(true);
-                return;
-            }
+        if (blockLocation.distance(new Location(blockLocation.getWorld(), 0, blockLocation.getY(), 0)) < 9
+           && !Main.getInstance().blockPriviledges.contains(e.getPlayer())) {
+            e.setCancelled(true);
+            return;
         }
 
         if (blockType == OBSIDIAN) {
