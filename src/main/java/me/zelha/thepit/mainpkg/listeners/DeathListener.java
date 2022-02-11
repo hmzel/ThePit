@@ -125,7 +125,7 @@ public class DeathListener implements Listener {
         if (!zl.playerCheck(entity)) return;
         if (e.getCause() == DamageCause.FALL) return;
 
-        if (Main.getInstance().getSpawnListener().spawnCheck(entity.getLocation())) {
+        if (zl.spawnCheck(entity.getLocation())) {
             e.setCancelled(true);
             return;
         }

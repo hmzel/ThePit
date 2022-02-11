@@ -94,7 +94,7 @@ public class ScoreboardListener implements Listener {
 
             if (perkUtils.getStrengthChaining(p)[0] != null) {
                 boardScores.add("§fStrength: §c" + zl.toRoman(perkUtils.getStrengthChaining(p)[0]) + " §7(" + perkUtils.getStrengthChaining(p)[1] + ")");
-            } else if (perkUtils.getGladiatorDamageReduction(p) != (double) 0 && !Main.getInstance().getSpawnListener().spawnCheck(p.getLocation())) {
+            } else if (perkUtils.getGladiatorDamageReduction(p) != (double) 0 && !zl.spawnCheck(p.getLocation())) {
                 boardScores.add("§fGladiator: §9-" + (int) (perkUtils.getGladiatorDamageReduction(p) * 100) + "%");
             }
 

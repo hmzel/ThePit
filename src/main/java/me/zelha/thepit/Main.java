@@ -32,7 +32,6 @@ public final class Main extends JavaPlugin {
     private PerkListenersAndUtils perkUtils;
     private StorageListener storage;
     private DeathListener deathListener;
-    private SpawnListener spawnListener;
 
     private MongoCollection<Document> playerDataCollection;
     private MongoClient mongoClient;
@@ -53,7 +52,6 @@ public final class Main extends JavaPlugin {
         instance = this;
         zelLogic = new ZelLogic();
         storage = new StorageListener();
-        spawnListener = new SpawnListener();
         perkUtils = new PerkListenersAndUtils();
         deathListener = new DeathListener();
 
@@ -65,7 +63,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(deathListener, this);
         getServer().getPluginManager().registerEvents(new AntiVanillaListener(), this);
         getServer().getPluginManager().registerEvents(new AttackListener(), this);
-        getServer().getPluginManager().registerEvents(spawnListener, this);
+        getServer().getPluginManager().registerEvents(new SpawnListener(), this);
         getServer().getPluginManager().registerEvents(new ItemsVillagerListener(), this);
         getServer().getPluginManager().registerEvents(new GoldenPickaxeListener(), this);
         getServer().getPluginManager().registerEvents(new UpgradesVillagerListener(), this);
@@ -114,9 +112,6 @@ public final class Main extends JavaPlugin {
     }
     public DeathListener getDeathListener() {
         return deathListener;
-    }
-    public SpawnListener getSpawnListener() {
-        return spawnListener;
     }
     public RunMethods generateRunMethods() {
         return new RunMethods();

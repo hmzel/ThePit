@@ -26,6 +26,8 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.TreeMap;
 
+import static me.zelha.thepit.zelenums.Worlds.CASTLE;
+import static me.zelha.thepit.zelenums.Worlds.GENESIS;
 import static org.bukkit.Material.*;
 
 public class ZelLogic {//zel
@@ -288,6 +290,23 @@ public class ZelLogic {//zel
         }
 
         return romanizer.get(nearestRoman) + toRoman(number - nearestRoman);
+    }
+
+    public boolean spawnCheck(Location location) {
+        Worlds world = Worlds.findByName(location.getWorld().getName());
+        double x = location.getX();
+        double y = location.getY();
+        double z = location.getZ();
+        double spawnY;
+
+        if (world == GENESIS) {
+            spawnY = 90.0;
+        } else if (world == CASTLE) {
+            spawnY = 105.0;
+        } else {
+            spawnY = 110.0;
+        }
+        return BoundingBox.of(new Location(location.getWorld(), 0.0, spawnY, 0.0), 25.0, 15.0, 25.0).contains(x, y, z);
     }
 
     public String getFancyGoldString(double gold) {

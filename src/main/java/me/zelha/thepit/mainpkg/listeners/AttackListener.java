@@ -20,7 +20,6 @@ import java.util.UUID;
 public class AttackListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-    private final SpawnListener spawnUtils = Main.getInstance().getSpawnListener();
     private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
     private final RunMethods runTracker = Main.getInstance().generateRunMethods();
 
@@ -44,7 +43,7 @@ public class AttackListener implements Listener {
         Player damaged;
         Player damager;
 
-        if (spawnUtils.spawnCheck(damagedEntity.getLocation()) || spawnUtils.spawnCheck(damagerEntity.getLocation())) return;
+        if (zl.spawnCheck(damagedEntity.getLocation()) || zl.spawnCheck(damagerEntity.getLocation())) return;
         if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
 
         if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player) {

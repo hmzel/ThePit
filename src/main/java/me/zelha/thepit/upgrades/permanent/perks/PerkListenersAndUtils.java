@@ -4,7 +4,6 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.RunMethods;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
-import me.zelha.thepit.mainpkg.listeners.SpawnListener;
 import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -47,7 +46,6 @@ public class PerkListenersAndUtils implements Listener {//strength>glad
     }
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-    private final SpawnListener spawnUtils = Main.getInstance().getSpawnListener();
     private final RunMethods runTracker = Main.getInstance().generateRunMethods();
     private final RunMethods runTracker2 = Main.getInstance().generateRunMethods();
 
@@ -382,7 +380,7 @@ public class PerkListenersAndUtils implements Listener {//strength>glad
         Player damager;
         boolean damageCauseArrow = false;
 
-        if (spawnUtils.spawnCheck(damagedEntity.getLocation()) || spawnUtils.spawnCheck(damagerEntity.getLocation())) return;
+        if (zl.spawnCheck(damagedEntity.getLocation()) || zl.spawnCheck(damagerEntity.getLocation())) return;
         if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
 
         if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player) {
@@ -502,7 +500,7 @@ public class PerkListenersAndUtils implements Listener {//strength>glad
         Entity entity = e.getEntity();
 
         if (zl.playerCheck(entity)) {
-            if (spawnUtils.spawnCheck(entity.getLocation())) {
+            if (zl.spawnCheck(entity.getLocation())) {
                 return;
             }
 
@@ -551,7 +549,7 @@ public class PerkListenersAndUtils implements Listener {//strength>glad
         Player p = e.getPlayer();
         Block block = e.getBlock();
 
-        if (spawnUtils.spawnCheck(block.getLocation())) return;
+        if (zl.spawnCheck(block.getLocation())) return;
         if (block.getType() == LAVA || block.getType() == WATER) return;
 
         if (e.getBucket() == Material.LAVA_BUCKET) {

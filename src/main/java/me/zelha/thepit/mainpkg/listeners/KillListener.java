@@ -31,7 +31,6 @@ import static org.bukkit.Material.GOLDEN_LEGGINGS;
 public class KillListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-    private final SpawnListener spawnUtils = Main.getInstance().getSpawnListener();
     private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
     private final RunMethods runTracker = Main.getInstance().generateRunMethods();
     private final RunMethods runTracker2 = Main.getInstance().generateRunMethods();
@@ -120,7 +119,7 @@ public class KillListener implements Listener {
         Player damaged;
         Player damager;
 
-        if (spawnUtils.spawnCheck(damagedEntity.getLocation()) || spawnUtils.spawnCheck(damagerEntity.getLocation())) return;
+        if (zl.spawnCheck(damagedEntity.getLocation()) || zl.spawnCheck(damagerEntity.getLocation())) return;
         if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
         if (e.getCause() == DamageCause.FALL) return;
 

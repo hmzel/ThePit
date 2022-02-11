@@ -28,7 +28,7 @@ public class RespawnCommand implements CommandExecutor {
         if (pData.getStatus().equals("fighting")) {
             p.sendMessage("§c§lHOLD UP! §7Can't /respawn while fighting (§c" + pData.getCombatTimer() + "s §7left)");
             return true;
-        } else if (Main.getInstance().getSpawnListener().spawnCheck(p.getLocation())) {
+        } else if (Main.getInstance().getZelLogic().spawnCheck(p.getLocation())) {
             p.sendMessage("§cYou cannot /respawn here!");
             return true;
         } else if (cooldown.contains(p.getUniqueId())) {

@@ -22,7 +22,6 @@ import java.util.Random;
 public class GoldIngotListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-    private final SpawnListener spawnUtils = Main.getInstance().getSpawnListener();
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
@@ -75,7 +74,7 @@ public class GoldIngotListener implements Listener {
 
             do rng = new Random().nextInt(61); while (rng < 10);
 
-            if (!spawnUtils.spawnCheck(p.getLocation())) {
+            if (!zl.spawnCheck(p.getLocation())) {
                 double decimal = new Random().nextInt(100);
                 double x;
                 double z;
@@ -89,7 +88,7 @@ public class GoldIngotListener implements Listener {
 
                 Location itemSpawnLoc = new Location(p.getWorld(), x, p.getLocation().getY(), z);
 
-                if (!spawnUtils.spawnCheck(itemSpawnLoc)) p.getWorld().dropItemNaturally(itemSpawnLoc, new ItemStack(Material.GOLD_INGOT, 1));
+                if (!zl.spawnCheck(itemSpawnLoc)) p.getWorld().dropItemNaturally(itemSpawnLoc, new ItemStack(Material.GOLD_INGOT, 1));
             }
             new ingotRunnable(p).runTaskLater(Main.getInstance(), rng * 20);
         }
