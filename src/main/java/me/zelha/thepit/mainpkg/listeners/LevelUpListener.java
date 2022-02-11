@@ -4,7 +4,6 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.RunMethods;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,22 +15,17 @@ import java.util.UUID;
 
 public class LevelUpListener implements Listener {
 
+    private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final RunMethods runTracker = Main.getInstance().generateRunMethods();
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        Player p = e.getPlayer();
-
-        new LevelUpRunnable(p).runTaskTimer(Main.getInstance(),0, 1);
+        new LevelUpRunnable(e.getPlayer()).runTaskTimer(Main.getInstance(),0, 1);
     }
 
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
-        Player p = e.getPlayer();
-
-        if (runTracker.hasID(p.getUniqueId())) {
-            runTracker.stop(p.getUniqueId());
-        }
+        if (runTracker.hasID(e.getPlayer().getUniqueId())) runTracker.stop(e.getPlayer().getUniqueId());
     }
 
 
@@ -39,8 +33,6 @@ public class LevelUpListener implements Listener {
 
         private final Player player;
         private final UUID uuid;
-
-        private final ZelLogic zl = Main.getInstance().getZelLogic();
 
         private LevelUpRunnable(Player player) {
             this.player = player;
@@ -51,9 +43,7 @@ public class LevelUpListener implements Listener {
         public void run() {
             PlayerData pData = Main.getInstance().getPlayerData(uuid);
 
-            if (!runTracker.hasID(uuid)) {
-                runTracker.setID(uuid, super.getTaskId());
-            }
+            if (!runTracker.hasID(uuid)) runTracker.setID(uuid, getTaskId());
 
             if (pData.getExp() <= 0 && pData.getLevel() < 120) {
                 String previousLevel = zl.getColorBracketAndLevel(uuid.toString());
@@ -61,16 +51,10 @@ public class LevelUpListener implements Listener {
 
                 pData.setLevel(level + 1);
                 pData.setExp(zl.maxXPReq(uuid.toString()));
-
-                if (zl.playerCheck(Bukkit.getPlayer(uuid))) {
-                    Player p = Bukkit.getPlayer(uuid);
-
-                    p.sendTitle("§b§lLEVEL UP!",
-                            previousLevel + " ➟ " + zl.getColorBracketAndLevel(uuid.toString()),
-                            10, 0, 20);
-
-                    p.sendMessage("§b§lPIT LEVEL UP! " + previousLevel + " ➟ " + zl.getColorBracketAndLevel(uuid.toString()));
-                }
+                player.sendTitle("§b§lLEVEL UP!",
+                        previousLevel + " ➟ " + zl.getColorBracketAndLevel(uuid.toString()),
+                        10, 40, 10);
+                player.sendMessage("§b§lPIT LEVEL UP! " + previousLevel + " ➟ " + zl.getColorBracketAndLevel(uuid.toString()));
             }
 
             player.setLevel(pData.getLevel());
