@@ -29,10 +29,10 @@ public class AttackListener implements Listener {
         double defenseBoost = 0;
         PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
 
-        if (damagedData.getPrestige() == 0) defenseBoost+= 0.15;
+        if (damagedData.getPrestige() == 0) defenseBoost += 0.15;
 
-        damageBoost+= perkUtils.getPerkDamageBoost(damager, damaged);
-        defenseBoost+= perkUtils.getPerkDamageReduction(damaged);
+        damageBoost += perkUtils.getPerkDamageBoost(damager, damaged);
+        defenseBoost += perkUtils.getPerkDamageReduction(damaged);
 
         return originalDamage * (damageBoost - defenseBoost);
     }

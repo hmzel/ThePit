@@ -19,13 +19,14 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Random;
 import java.util.UUID;
 
 import static me.zelha.thepit.zelenums.Perks.BOUNTY_HUNTER;
 import static me.zelha.thepit.zelenums.Perks.STREAKER;
-import static org.bukkit.Material.*;
+import static org.bukkit.Material.GOLDEN_LEGGINGS;
 
 public class KillListener implements Listener {
 
@@ -62,26 +63,26 @@ public class KillListener implements Listener {
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData killerData = Main.getInstance().getPlayerData(killer);
 
-        if (deadData.getPrestige() == 0) percentageModifier-= 0.09;
-        if (killerData.getStreak() <= 3 && killerData.getLevel() <= 30) baseModifier+= 4;
-        if (killerData.getStreak() <= (killerData.getPassiveTier(Passives.EL_GATO) - 1)) baseModifier+= 5;
-        if (killerData.getPassiveTier(Passives.XP_BOOST) > 0) percentageModifier+= (killerData.getPassiveTier(Passives.XP_BOOST) / 10.0);
-        if (deadData.getStreak() > 5) baseModifier+= (int) Math.min(Math.round(deadData.getStreak()), 25);
-        if (deadData.getLevel() > killerData.getLevel()) baseModifier+= (int) Math.round((deadData.getLevel() - killerData.getLevel()) / 4.5);
+        if (deadData.getPrestige() == 0) percentageModifier -= 0.09;
+        if (killerData.getStreak() <= 3 && killerData.getLevel() <= 30) baseModifier += 4;
+        if (killerData.getStreak() <= (killerData.getPassiveTier(Passives.EL_GATO) - 1)) baseModifier += 5;
+        if (killerData.getPassiveTier(Passives.XP_BOOST) > 0) percentageModifier += (killerData.getPassiveTier(Passives.XP_BOOST) / 10.0);
+        if (deadData.getStreak() > 5) baseModifier += (int) Math.min(Math.round(deadData.getStreak()), 25);
+        if (deadData.getLevel() > killerData.getLevel()) baseModifier += (int) Math.round((deadData.getLevel() - killerData.getLevel()) / 4.5);
 
         if (killerData.getStreak() < 5) {
-            streakModifier+= 3;
+            streakModifier += 3;
         } else if (killerData.getStreak() < 20) {
-            streakModifier+= 5;
+            streakModifier += 5;
         } else if (killerData.getStreak() < 200) {
-            streakModifier+= (Math.floor(killerData.getStreak() / 10) - 1) * 3;
+            streakModifier += (Math.floor(killerData.getStreak() / 10) - 1) * 3;
         } else {
-            streakModifier+= 60;
+            streakModifier += 60;
         }
 
-        if (killerData.hasPerkEquipped(STREAKER)) streakModifier*= 3;
+        if (killerData.hasPerkEquipped(STREAKER)) streakModifier *= 3;
 
-        baseModifier+= streakModifier;
+        baseModifier += streakModifier;
 
         return Math.toIntExact(Math.round((exp + baseModifier) * percentageModifier));
     }
@@ -95,19 +96,19 @@ public class KillListener implements Listener {
         PlayerInventory deadInv = dead.getInventory();
         PlayerInventory killerInv = killer.getInventory();
 
-        if (perkUtils.hasBeenShotBySpammer(killer, dead)) gold*= 3;
-        if (killerData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS) baseModifier+= 4;
+        if (perkUtils.hasBeenShotBySpammer(killer, dead)) gold *= 3;
+        if (killerData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS) baseModifier += 4;
 
         for (ItemStack item : deadInv.getArmorContents()) {
             if (zl.itemCheck(item) && item.getType().name().contains("DIAMOND")) baseModifier++;
         }
 
-        if (deadData.getPrestige() == 0) percentageModifier-= 0.09;
-        if (killerData.getStreak() <= 3 && killerData.getLevel() <= 30) baseModifier+= 4;
-        if (killerData.getStreak() <= killerData.getPassiveTier(Passives.EL_GATO)) baseModifier+= 5;
-        if (killerData.getPassiveTier(Passives.GOLD_BOOST) > 0) percentageModifier+= (killerData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
-        if (deadData.getStreak() > 5) baseModifier+= Math.min((int) Math.round(deadData.getStreak()), 25);
-        if (deadData.getLevel() > killerData.getLevel()) baseModifier+= (int) Math.round((deadData.getLevel() - killerData.getLevel()) / 4.5);
+        if (deadData.getPrestige() == 0) percentageModifier -= 0.09;
+        if (killerData.getStreak() <= 3 && killerData.getLevel() <= 30) baseModifier += 4;
+        if (killerData.getStreak() <= killerData.getPassiveTier(Passives.EL_GATO)) baseModifier += 5;
+        if (killerData.getPassiveTier(Passives.GOLD_BOOST) > 0) percentageModifier += (killerData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
+        if (deadData.getStreak() > 5) baseModifier += Math.min((int) Math.round(deadData.getStreak()), 25);
+        if (deadData.getLevel() > killerData.getLevel()) baseModifier += (int) Math.round((deadData.getLevel() - killerData.getLevel()) / 4.5);
 
         return ((gold + baseModifier) * percentageModifier) + deadData.getBounty();
     }
@@ -133,7 +134,14 @@ public class KillListener implements Listener {
 
         if (methods2.hasID(damager.getUniqueId())) methods2.stop(damager.getUniqueId());
 
-        new MultiKillRunnable(damager).runTaskTimer(Main.getInstance(), 0, 1);
+        BukkitTask multiKillTimer = new BukkitRunnable() {
+            @Override
+            public void run() {
+                Main.getInstance().getPlayerData(damager).setMultiKill(0);
+            }
+        }.runTaskLater(Main.getInstance(), 60);
+
+        methods2.setID(damager.getUniqueId(), multiKillTimer.getTaskId());
 
         double finalDMG = e.getFinalDamage();
         double currentHP = damaged.getHealth();
@@ -257,32 +265,6 @@ public class KillListener implements Listener {
             if (ticksBetweenKills == 20) {
                 secondsBetweenKills++;
                 ticksBetweenKills = 0;
-            }
-        }
-    }
-
-
-    private class MultiKillRunnable extends BukkitRunnable {
-
-        private final UUID uuid;
-        private int ticksBetweenKills;
-
-        private MultiKillRunnable(Player player) {
-            this.uuid = player.getUniqueId();
-            this.ticksBetweenKills = 0;
-        }
-
-        @Override
-        public void run() {
-            PlayerData pData = Main.getInstance().getPlayerData(uuid);
-
-            if (!methods2.hasID(uuid)) methods2.setID(uuid, getTaskId());
-
-            ticksBetweenKills++;
-
-            if (ticksBetweenKills == 60) {
-                pData.setMultiKill(0);
-                cancel();
             }
         }
     }
