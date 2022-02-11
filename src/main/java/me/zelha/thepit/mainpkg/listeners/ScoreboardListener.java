@@ -27,8 +27,8 @@ public class ScoreboardListener implements Listener {
 
     @EventHandler
     public void addOnJoin(PlayerJoinEvent e) {
-        new UpdateAndAnimation(e.getPlayer()).runTaskTimer(Main.getInstance(),0, 1);
-        new UpdateTab(e.getPlayer()).runTaskTimer(Main.getInstance(),0, 20);
+        new SidebarUpdater(e.getPlayer()).runTaskTimer(Main.getInstance(),0, 1);
+        new TabAndNameUpdater(e.getPlayer()).runTaskTimer(Main.getInstance(),0, 20);
     }
 
     @EventHandler
@@ -38,13 +38,13 @@ public class ScoreboardListener implements Listener {
     }
 
 
-    private class UpdateAndAnimation extends BukkitRunnable {
+    private class SidebarUpdater extends BukkitRunnable {
 
         private final Player p;
         int ticks = 0;
         private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("MM/dd/yy");
 
-        public UpdateAndAnimation(Player player) {
+        public SidebarUpdater(Player player) {
             this.p = player;
         }
 
@@ -71,7 +71,7 @@ public class ScoreboardListener implements Listener {
             if (pData.getGold() < 10000) {
                 boardScores.add("§fGold: §6" + zl.getFancyGoldString(pData.getGold()) + "g");
             } else {
-                boardScores.add("§fGold: §6" + zl.getFancyGoldString((int) Math.floor(pData.getGold())) + "g");
+                boardScores.add("§fGold: §6" + zl.getFancyGoldString((int) pData.getGold()) + "g");
             }
 
             boardScores.add("§3");
@@ -126,14 +126,9 @@ public class ScoreboardListener implements Listener {
 
         @Override
         public void run() {
+            if (!runTracker.hasID(p.getUniqueId())) runTracker.setID(p.getUniqueId(), super.getTaskId());
 
-            if (!runTracker.hasID(p.getUniqueId())) {
-                runTracker.setID(p.getUniqueId(), super.getTaskId());
-            }
-
-            if (ticks == 160) {
-                ticks = 0;
-            }
+            if (ticks == 160) ticks = 0;
 
             switch (ticks) {
                 case 0:
@@ -198,28 +193,24 @@ public class ScoreboardListener implements Listener {
                     setDisplay("§e§l  THE HYPIXEL PIT  ");
                     break;
             }
-
             ticks++;
         }
     }
 
 
-    private class UpdateTab extends BukkitRunnable {
+    private class TabAndNameUpdater extends BukkitRunnable {
 
         private final Player p;
         private final PlayerData pData;
 
-        public UpdateTab(Player player) {
+        public TabAndNameUpdater(Player player) {
             this.p = player;
             this.pData = Main.getInstance().getPlayerData(player);
         }
 
         @Override
         public void run() {
-
-            if (!runTracker2.hasID(p.getUniqueId())) {
-                runTracker2.setID(p.getUniqueId(), super.getTaskId());
-            }
+            if (!runTracker2.hasID(p.getUniqueId())) runTracker2.setID(p.getUniqueId(), super.getTaskId());
 
             if (pData.getBounty() == 0) {
                 p.setPlayerListName(zl.getColorBracketAndLevel(p.getUniqueId().toString()) + " §7" + p.getName());
