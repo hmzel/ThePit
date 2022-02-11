@@ -279,6 +279,7 @@ public class ZelLogic {//zel
         romanizer.putIfAbsent(5, "V");
         romanizer.putIfAbsent(4, "IV");
         romanizer.putIfAbsent(1, "I");
+        romanizer.putIfAbsent(0, "none");
 
         int nearestRoman = romanizer.floorKey(number);
 
