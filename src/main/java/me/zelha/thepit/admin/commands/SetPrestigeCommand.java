@@ -27,6 +27,9 @@ public class SetPrestigeCommand implements CommandExecutor {
             } else if (!NumberUtils.isNumber(args[0])) {
                 sender.sendMessage("§5First argument must be a player or an integer");
                 return true;
+            } else if (NumberUtils.toInt(args[0], 0) < 0) {
+                sender.sendMessage("§5are you §otrying §r§5to cause errors?? \ndont set your prestige to a negative");
+                return true;
             }
 
             Main.getInstance().getPlayerData((Player) sender).setPrestige(NumberUtils.toInt(args[0], 0));
@@ -39,6 +42,9 @@ public class SetPrestigeCommand implements CommandExecutor {
                 return true;
             } else if (!NumberUtils.isNumber(args[1])) {
                 sender.sendMessage("§5Second argument must be an integer");
+                return true;
+            } else if (NumberUtils.toInt(args[1], 0) < 0) {
+                sender.sendMessage("§5are you §otrying §r§5to cause errors?? \ndont set your prestige to a negative");
                 return true;
             }
 
