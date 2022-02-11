@@ -27,22 +27,14 @@ public class ScoreboardListener implements Listener {
 
     @EventHandler
     public void addOnJoin(PlayerJoinEvent e) {
-        Player p = e.getPlayer();
-
-        new UpdateAndAnimation(p).runTaskTimer(Main.getInstance(),0, 1);
-        new UpdateTab(p).runTaskTimer(Main.getInstance(),0, 20);
+        new UpdateAndAnimation(e.getPlayer()).runTaskTimer(Main.getInstance(),0, 1);
+        new UpdateTab(e.getPlayer()).runTaskTimer(Main.getInstance(),0, 20);
     }
 
     @EventHandler
     public void removeOnLeave(PlayerQuitEvent e) {
-        Player p = e.getPlayer();
-
-        if (runTracker.hasID(p.getUniqueId())) {
-            runTracker.stop(p.getUniqueId());
-        }
-        if (runTracker2.hasID(p.getUniqueId())) {
-            runTracker2.stop(p.getUniqueId());
-        }
+        if (runTracker.hasID(e.getPlayer().getUniqueId())) runTracker.stop(e.getPlayer().getUniqueId());
+        if (runTracker2.hasID(e.getPlayer().getUniqueId())) runTracker2.stop(e.getPlayer().getUniqueId());
     }
 
 
@@ -57,14 +49,13 @@ public class ScoreboardListener implements Listener {
         }
 
         private void setDisplay(String string) {
-            if (p.getScoreboard().getObjective(DisplaySlot.SIDEBAR) != null) {
-                p.getScoreboard().getObjective(DisplaySlot.SIDEBAR).setDisplayName(string);
-            }
+            if (p.getScoreboard().getObjective(DisplaySlot.SIDEBAR) != null) p.getScoreboard().getObjective(DisplaySlot.SIDEBAR).setDisplayName(string);
         }
 
-        private List<String> getBoardScores(PlayerData pData) {
+        private List<String> getBoardScores(Player player) {
             List<String> boardScores = new ArrayList<>();
             LocalDateTime now = LocalDateTime.now();
+            PlayerData pData = Main.getInstance().getPlayerData(player);
 
             boardScores.add("§7" + dateTimeFormat.format(now) + " §8mega13Z");
             boardScores.add("§1");
@@ -112,20 +103,24 @@ public class ScoreboardListener implements Listener {
             boardScores.add("§4");
             boardScores.add("§epet a cat");
 
+            for (String string : boardScores) {
+                if (string.length() > 40) {
+                    StringBuilder builder = new StringBuilder(string);
+
+                    builder.replace(builder.indexOf(":") + 2, builder.length(), "§cERROR");
+                    boardScores.set(boardScores.indexOf(string), builder.toString());
+                }
+            }
+
             return boardScores;
         }
 
         private void createBoard(Player p, String displayName) {
             Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
             Objective objective = scoreboard.registerNewObjective("heckyou", "dummy", displayName);
+            List<String> scoreList = getBoardScores(p);
 
-            PlayerData pData = Main.getInstance().getPlayerData(p);
-
-            List<String> scoreList = getBoardScores(pData);
-
-            for (int i = 0; i < scoreList.size(); i++) {
-                objective.getScore(scoreList.get(i)).setScore(scoreList.size() - i);
-            }
+            for (int i = 0; i < scoreList.size(); i++) objective.getScore(scoreList.get(i)).setScore(scoreList.size() - i);
 
             objective.setDisplaySlot(DisplaySlot.SIDEBAR);
             p.setScoreboard(scoreboard);
