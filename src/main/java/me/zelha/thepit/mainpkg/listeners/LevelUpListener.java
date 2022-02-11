@@ -57,7 +57,7 @@ public class LevelUpListener implements Listener {
                 player.sendMessage("§b§lPIT LEVEL UP! " + previousLevel + " ➟ " + zl.getColorBracketAndLevel(uuid.toString()));
             }
 
-            player.setLevel(pData.getLevel());
+            if (pData.getLevel() >= 0) player.setLevel(pData.getLevel());
 
             float percentage = zl.maxXPReq(uuid.toString()) - pData.getExp();
 
