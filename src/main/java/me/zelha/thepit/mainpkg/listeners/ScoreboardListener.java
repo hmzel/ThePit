@@ -60,20 +60,20 @@ public class ScoreboardListener implements Listener {
             boardScores.add("§7" + dateTimeFormat.format(now) + " §8mega13Z");
             boardScores.add("§1");
 
-            if (pData.getPrestige() >= 1) {
-                boardScores.add("§fPrestige: §e" + zl.toRoman(pData.getPrestige()));
-            }
+            if (pData.getPrestige() >= 1) boardScores.add("§fPrestige: §e" + zl.toRoman(pData.getPrestige()));
 
             boardScores.add("§fLevel: " + zl.getColorBracketAndLevel(p.getUniqueId().toString()));
 
-            if (pData.getLevel() >= 120) {
-                boardScores.add("§fXP: §bMAXED!");
-            } else {
-                boardScores.add("§fNeeded XP: §b" + pData.getExp());
-            }
+            if (pData.getLevel() < 120) boardScores.add("§fNeeded XP: §b" + pData.getExp()); else boardScores.add("§fXP: §bMAXED!");
 
             boardScores.add("§2");
-            boardScores.add("§fGold: §6" + zl.getFancyGoldString(pData.getGold()) + "g");
+
+            if (pData.getGold() < 10000) {
+                boardScores.add("§fGold: §6" + zl.getFancyGoldString(pData.getGold()) + "g");
+            } else {
+                boardScores.add("§fGold: §6" + zl.getFancyGoldString((int) Math.floor(pData.getGold())) + "g");
+            }
+
             boardScores.add("§3");
 
             if (!pData.hideTimer()) {
@@ -82,9 +82,7 @@ public class ScoreboardListener implements Listener {
                 boardScores.add("§fStatus: " + zl.getColorStatus(p.getUniqueId().toString()));
             }
 
-            if (pData.getBounty() != 0) {
-                boardScores.add("§fBounty: §6" + zl.getFancyGoldString(pData.getBounty()) + "g");
-            }
+            if (pData.getBounty() != 0) boardScores.add("§fBounty: §6" + zl.getFancyGoldString(pData.getBounty()) + "g");
 
             if (pData.getStreak() > 0) {
                 if (pData.getStreak() % 1 == 0) {
