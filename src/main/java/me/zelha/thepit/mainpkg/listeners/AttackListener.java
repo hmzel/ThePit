@@ -22,7 +22,7 @@ public class AttackListener implements Listener {
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final SpawnListener spawnUtils = Main.getInstance().getSpawnListener();
     private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
-    private final RunMethods methods = Main.getInstance().generateRunMethods();
+    private final RunMethods runTracker = Main.getInstance().generateRunMethods();
 
     private double calculateAttackDamage(Player damaged, Player damager, double originalDamage) {
         double damageBoost = 1;
@@ -58,8 +58,8 @@ public class AttackListener implements Listener {
         e.setDamage(calculateAttackDamage(damaged, damager, e.getDamage()));
         Bukkit.broadcastMessage(String.valueOf(e.getDamage()));//testing line
 
-        if (methods.hasID(damaged.getUniqueId())) methods.stop(damaged.getUniqueId());
-        if (methods.hasID(damager.getUniqueId())) methods.stop(damager.getUniqueId());
+        if (runTracker.hasID(damaged.getUniqueId())) runTracker.stop(damaged.getUniqueId());
+        if (runTracker.hasID(damager.getUniqueId())) runTracker.stop(damager.getUniqueId());
 
         new CombatTimerRunnable(damaged.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
         new CombatTimerRunnable(damager.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
@@ -67,7 +67,7 @@ public class AttackListener implements Listener {
 
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
-        if (methods.hasID(e.getPlayer().getUniqueId())) methods.stop(e.getPlayer().getUniqueId());
+        if (runTracker.hasID(e.getPlayer().getUniqueId())) runTracker.stop(e.getPlayer().getUniqueId());
     }
 
 
@@ -85,7 +85,7 @@ public class AttackListener implements Listener {
         public void run() {
             PlayerData pData = Main.getInstance().getPlayerData(uuid);
 
-            if (!methods.hasID(uuid)) methods.setID(uuid, super.getTaskId());
+            if (!runTracker.hasID(uuid)) runTracker.setID(uuid, super.getTaskId());
 
             if (pData.getStatus().equals("idling") || pData.getStatus().equals("bountied")) {
                 pData.setCombatTimer(15 + (int) Math.floor(pData.getBounty() / 1000) * 10);

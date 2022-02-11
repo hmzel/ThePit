@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public class LevelUpListener implements Listener {
 
-    private final RunMethods methods = Main.getInstance().generateRunMethods();
+    private final RunMethods runTracker = Main.getInstance().generateRunMethods();
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
@@ -29,8 +29,8 @@ public class LevelUpListener implements Listener {
     public void onLeave(PlayerQuitEvent e) {
         Player p = e.getPlayer();
 
-        if (methods.hasID(p.getUniqueId())) {
-            methods.stop(p.getUniqueId());
+        if (runTracker.hasID(p.getUniqueId())) {
+            runTracker.stop(p.getUniqueId());
         }
     }
 
@@ -51,8 +51,8 @@ public class LevelUpListener implements Listener {
         public void run() {
             PlayerData pData = Main.getInstance().getPlayerData(uuid);
 
-            if (!methods.hasID(uuid)) {
-                methods.setID(uuid, super.getTaskId());
+            if (!runTracker.hasID(uuid)) {
+                runTracker.setID(uuid, super.getTaskId());
             }
 
             if (pData.getExp() <= 0 && pData.getLevel() < 120) {

@@ -21,8 +21,8 @@ import java.util.*;
 public class ScoreboardListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-    private final RunMethods methods = Main.getInstance().generateRunMethods();
-    private final RunMethods methods2 = Main.getInstance().generateRunMethods();
+    private final RunMethods runTracker = Main.getInstance().generateRunMethods();
+    private final RunMethods runTracker2 = Main.getInstance().generateRunMethods();
     private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
 
     @EventHandler
@@ -37,11 +37,11 @@ public class ScoreboardListener implements Listener {
     public void removeOnLeave(PlayerQuitEvent e) {
         Player p = e.getPlayer();
 
-        if (methods.hasID(p.getUniqueId())) {
-            methods.stop(p.getUniqueId());
+        if (runTracker.hasID(p.getUniqueId())) {
+            runTracker.stop(p.getUniqueId());
         }
-        if (methods2.hasID(p.getUniqueId())) {
-            methods2.stop(p.getUniqueId());
+        if (runTracker2.hasID(p.getUniqueId())) {
+            runTracker2.stop(p.getUniqueId());
         }
     }
 
@@ -134,8 +134,8 @@ public class ScoreboardListener implements Listener {
         @Override
         public void run() {
 
-            if (!methods.hasID(p.getUniqueId())) {
-                methods.setID(p.getUniqueId(), super.getTaskId());
+            if (!runTracker.hasID(p.getUniqueId())) {
+                runTracker.setID(p.getUniqueId(), super.getTaskId());
             }
 
             if (ticks == 160) {
@@ -224,8 +224,8 @@ public class ScoreboardListener implements Listener {
         @Override
         public void run() {
 
-            if (!methods2.hasID(p.getUniqueId())) {
-                methods2.setID(p.getUniqueId(), super.getTaskId());
+            if (!runTracker2.hasID(p.getUniqueId())) {
+                runTracker2.setID(p.getUniqueId(), super.getTaskId());
             }
 
             if (pData.getBounty() == 0) {

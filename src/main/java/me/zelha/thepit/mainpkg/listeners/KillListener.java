@@ -33,8 +33,8 @@ public class KillListener implements Listener {
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final SpawnListener spawnUtils = Main.getInstance().getSpawnListener();
     private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
-    private final RunMethods methods = Main.getInstance().generateRunMethods();
-    private final RunMethods methods2 = Main.getInstance().generateRunMethods();
+    private final RunMethods runTracker = Main.getInstance().generateRunMethods();
+    private final RunMethods runTracker2 = Main.getInstance().generateRunMethods();
 
     private String calculateKillMessage(Player killer) {
         PlayerData pData = Main.getInstance().getPlayerData(killer);
@@ -132,7 +132,7 @@ public class KillListener implements Listener {
             return;
         }
 
-        if (methods2.hasID(damager.getUniqueId())) methods2.stop(damager.getUniqueId());
+        if (runTracker2.hasID(damager.getUniqueId())) runTracker2.stop(damager.getUniqueId());
 
         BukkitTask multiKillTimer = new BukkitRunnable() {
             @Override
@@ -141,7 +141,7 @@ public class KillListener implements Listener {
             }
         }.runTaskLater(Main.getInstance(), 60);
 
-        methods2.setID(damager.getUniqueId(), multiKillTimer.getTaskId());
+        runTracker2.setID(damager.getUniqueId(), multiKillTimer.getTaskId());
 
         double finalDMG = e.getFinalDamage();
         double currentHP = damaged.getHealth();
@@ -172,13 +172,13 @@ public class KillListener implements Listener {
             damager.sendMessage(calculateKillMessage(damager) + " §7on " + zl.getColorBracketAndLevel(uuid) + " §7" + damaged.getName()
                     + " §b+" + calculateEXP(damaged, damager) + "§bXP §6+" + zl.getFancyGoldString(calculatedGold) + "§6g");
 
-            if (!methods.hasID(damager.getUniqueId())) new BountyRunnable(damager).runTaskTimer(Main.getInstance(), 0, 1);
+            if (!runTracker.hasID(damager.getUniqueId())) new BountyRunnable(damager).runTaskTimer(Main.getInstance(), 0, 1);
         }
     }
 
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
-        if (methods.hasID(e.getPlayer().getUniqueId())) methods.stop(e.getPlayer().getUniqueId());
+        if (runTracker.hasID(e.getPlayer().getUniqueId())) runTracker.stop(e.getPlayer().getUniqueId());
     }
 
 
@@ -236,7 +236,7 @@ public class KillListener implements Listener {
         public void run() {
             PlayerData pData = Main.getInstance().getPlayerData(uuid);
 
-            if (!methods.hasID(uuid)) methods.setID(uuid, getTaskId());
+            if (!runTracker.hasID(uuid)) runTracker.setID(uuid, getTaskId());
 
             if (streak != pData.getStreak()) {
                 streak = pData.getStreak();

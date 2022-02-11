@@ -48,8 +48,8 @@ public class PerkListenersAndUtils implements Listener {//strength>glad
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final SpawnListener spawnUtils = Main.getInstance().getSpawnListener();
-    private final RunMethods methods = Main.getInstance().generateRunMethods();
-    private final RunMethods methods2 = Main.getInstance().generateRunMethods();
+    private final RunMethods runTracker = Main.getInstance().generateRunMethods();
+    private final RunMethods runTracker2 = Main.getInstance().generateRunMethods();
 
     private final Set<UUID> gheadCooldown = new HashSet<>();
     private final Map<UUID, Integer> insuranceTimer = new HashMap<>();
@@ -475,14 +475,14 @@ public class PerkListenersAndUtils implements Listener {//strength>glad
                     strengthChaining.put(damagerUUID, getStrengthChaining(damager)[0] + 1);
                 }
 
-                if (methods2.hasID(damagerUUID)) methods2.stop(damagerUUID);
+                if (runTracker2.hasID(damagerUUID)) runTracker2.stop(damagerUUID);
 
                 strengthChainingTimer.put(damagerUUID, 7);
 
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        if (!methods2.hasID(damagerUUID)) methods2.setID(damagerUUID, getTaskId());
+                        if (!runTracker2.hasID(damagerUUID)) runTracker2.setID(damagerUUID, getTaskId());
 
                         strengthChainingTimer.put(damagerUUID, getStrengthChaining(damager)[1] - 1);
 
@@ -565,13 +565,13 @@ public class PerkListenersAndUtils implements Listener {//strength>glad
                 @Override
                 public void run() {
 
-                    if (!methods.hasID(p.getUniqueId())) {
-                        methods.setID(p.getUniqueId(), getTaskId());
+                    if (!runTracker.hasID(p.getUniqueId())) {
+                        runTracker.setID(p.getUniqueId(), getTaskId());
                     }
 
                     if (block.getType() != LAVA) {
                         lavaExistTimer.put(p.getUniqueId(), 0);
-                        methods.stop(p.getUniqueId());
+                        runTracker.stop(p.getUniqueId());
                     }
 
                     if (!lavaExistTimer.containsKey(p.getUniqueId())) lavaExistTimer.put(p.getUniqueId(), 0);
@@ -583,7 +583,7 @@ public class PerkListenersAndUtils implements Listener {//strength>glad
                         previousLavaBlock.remove(p.getUniqueId());
                         lavaExistTimer.remove(p.getUniqueId());
                         placedLava.remove(p.getUniqueId());
-                        methods.stop(p.getUniqueId());
+                        runTracker.stop(p.getUniqueId());
                     }
                 }
             }.runTaskTimer(Main.getInstance(), 0, 1);
@@ -600,11 +600,11 @@ public class PerkListenersAndUtils implements Listener {//strength>glad
         Block block = e.getBlock();
 
         if (e.getBucket() == BUCKET) {
-            if (block.getType() == LAVA && methods.getID(p.getUniqueId()) != null && placedLava.containsValue(block)) {
+            if (block.getType() == LAVA && runTracker.getID(p.getUniqueId()) != null && placedLava.containsValue(block)) {
                 block.setType(previousLavaBlock.get(p.getUniqueId()));
                 previousLavaBlock.remove(p.getUniqueId());
                 placedLava.remove(p.getUniqueId());
-                methods.stop(p.getUniqueId());
+                runTracker.stop(p.getUniqueId());
                 p.getInventory().setItemInMainHand(lavaBucketItem);
             }
         }
