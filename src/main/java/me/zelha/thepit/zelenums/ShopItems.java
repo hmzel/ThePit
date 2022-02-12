@@ -5,7 +5,7 @@ import org.bukkit.Material;
 import java.util.Arrays;
 import java.util.List;
 
-public enum Items {
+public enum ShopItems {
     DIAMOND_SWORD(Material.DIAMOND_SWORD, "Diamond Sword", Arrays.asList(
             "§9+20% damage vs bountied"
     )
@@ -39,7 +39,7 @@ public enum Items {
     private final int cost;
     private final int amount;
 
-    Items(Material material, String name, List<String> lore, int cost, int amount) {
+    ShopItems(Material material, String name, List<String> lore, int cost, int amount) {
         this.material = material;
         this.name = name;
         this.lore = lore;
