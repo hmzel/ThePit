@@ -255,26 +255,22 @@ public class PerkListenersAndUtils implements Listener {
     private boolean containsLessThan(int amount, ItemStack item, Inventory inv) {
         int count = 0;
 
+        if (item.getType() == PLAYER_HEAD) {
+            for (ItemStack item2 : inv.all(PLAYER_HEAD).values()) {
+                if (zl.itemCheck(item2) && item2.getItemMeta().getDisplayName().equals(item.getItemMeta().getDisplayName())) {
+                    count += item2.getAmount();
+                }
+            }
+            return count < amount;
+        }
+
         for (ItemStack invItem : inv.all(item.getType()).values()) {
             if (zl.itemCheck(invItem) && invItem.isSimilar(item)) {
                 count += invItem.getAmount();
             }
         }
-
         return count < amount;
     }
-
-    private boolean containsLessThan(int amount, String name, Material material, Inventory inv) {
-        int count = 0;
-
-        for (ItemStack item : inv.all(material).values()) {
-            if (zl.itemCheck(item) && item.getItemMeta().getDisplayName().equals(name)) {
-                count += item.getAmount();
-            }
-        }
-
-        return count < amount;
-    }//i hate player heads. with a passion.
 
     private void determineKillRewards(Player killer, Player dead) {
         PlayerInventory inv = killer.getInventory();
@@ -283,7 +279,7 @@ public class PerkListenersAndUtils implements Listener {
             if (pData(killer).hasPerkEquipped(OLYMPUS)) {
 
             } else if (pData(killer).hasPerkEquipped(GOLDEN_HEADS)) {
-                if (containsLessThan(2, "§6Golden Head", PLAYER_HEAD, inv)) {
+                if (containsLessThan(2, goldenHeadItem, inv)) {
                     if (inv.first(PLAYER_HEAD) != -1) {
                         inv.getItem(inv.first(PLAYER_HEAD)).setAmount(inv.getItem(inv.first(PLAYER_HEAD)).getAmount() + 1);
                     } else {
