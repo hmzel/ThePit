@@ -40,6 +40,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
+
     private final Map<UUID, Double> costHandler = new HashMap<>();
     private final Map<UUID, Passives> passivesHandler = new HashMap<>();
     private final Map<UUID, Perks> perksHandler = new HashMap<>();
@@ -108,7 +109,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 lore.add("§7Tier: §a" + zl.toRoman(pData.getPassiveTier(BUILD_BATTLER)));
                 lore.add("");
             }
-            break;
+                break;
             case EL_GATO:
                 if (pData.getPassiveTier(EL_GATO) > 0) {
                     if (pData.getPassiveTier(EL_GATO) == 1) {
@@ -189,7 +190,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 lore.add("§cLevel too low to upgrade!");
             }
         } else {
-
             lore.add("§aMax tier unlocked!");
         }
 
@@ -256,6 +256,12 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 break;
         }
 
+        if (pData.getLevel() < level && perk == UNSET) {
+            return zl.itemBuilder(BEDROCK, 1, "§cPerk Slot #" + slot, Collections.singletonList(
+                    "§7Required level: " + zl.getColorBracketAndLevel(0, level)
+            ));
+        }
+
         if (pData.getPerkAtSlot(slot) != UNSET) {
             name = "§ePerk Slot #" + slot;
         } else {
@@ -272,11 +278,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         lore.add("§eClick to choose perk!");
 
         //special item handling
-        if (pData.getLevel() < level && perk == UNSET) {
-            return zl.itemBuilder(BEDROCK, 1, "§cPerk Slot #" + slot, Collections.singletonList(
-                    "§7Required level: " + zl.getColorBracketAndLevel(0, level)
-            ));
-        } else if (pData.getPerkAtSlot(slot) == GOLDEN_HEADS) {
+        if (pData.getPerkAtSlot(slot) == GOLDEN_HEADS) {
             return zl.headItemBuilder("PhantomTupac", slot, name, lore);
         } else if (pData.getPerkAtSlot(slot) == OLYMPUS) {
             return zl.potionItemBuilder(Color.LIME, null, slot, name, lore);
