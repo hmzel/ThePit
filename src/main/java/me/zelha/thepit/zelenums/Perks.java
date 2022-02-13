@@ -318,6 +318,13 @@ public enum Perks {
         }
         return result;
     }
+
+    public static Perks findByMaterial(Material material) {
+        for (Perks perk : values()) {
+            if (perk.getMaterial() == material) return perk;
+        }
+        return null;
+    }
 }
 
 
