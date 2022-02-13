@@ -550,37 +550,31 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         Player p = (Player) e.getWhoClicked();
         ItemStack clicked = e.getCurrentItem();
 
-        if (e.getView().getTitle().equals("Choose a perk") && e.getClickedInventory() != e.getView().getBottomInventory()) {
-            e.setCancelled(true);
+        if (!e.getView().getTitle().equals("Choose a perk")) return;
+        if (e.getClickedInventory() == e.getView().getBottomInventory()) return;
 
-            if (clicked == null) {
-                return;
-            }
+        e.setCancelled(true);
 
-            //special case handling
-            if (clicked.getType() == BEDROCK) {
-                p.sendMessage("§cYou are too low level to acquire this perk!");
-                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-                return;
-            } else if (clicked.getType() == DIAMOND_BLOCK) {
-                Main.getInstance().getPlayerData(p).setPerkAtSlot(slotHandler.get(p.getUniqueId()), UNSET);
-                perkUtils.perkReset(p);
-                slotHandler.remove(p.getUniqueId());
-                p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
-                openMainGUI(p);
-                return;
-            } else if (clicked.getType() == ARROW) {
-                openMainGUI(p);
-                return;
-            }
+        if (clicked == null) return;
 
-            for (Perks perk : Perks.values()) {
-                if (clicked.getItemMeta().getLore().containsAll(perk.getLore())) {//theres no logical case where this should be null so im ignoring the warning
-                    perkSelectHandler(p, perk);
-                    return;
-                }
-            }
+        //special case handling
+        if (clicked.getType() == BEDROCK) {
+            p.sendMessage("§cYou are too low level to acquire this perk!");
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            return;
+        } else if (clicked.getType() == DIAMOND_BLOCK) {
+            Main.getInstance().getPlayerData(p).setPerkAtSlot(slotHandler.get(p.getUniqueId()), UNSET);
+            perkUtils.perkReset(p);
+            slotHandler.remove(p.getUniqueId());
+            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
+            openMainGUI(p);
+            return;
+        } else if (clicked.getType() == ARROW) {
+            openMainGUI(p);
+            return;
         }
+
+        perkSelectHandler(p, Perks.findByMaterial(clicked.getType()));
     }
 
     @EventHandler
