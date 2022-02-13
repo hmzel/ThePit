@@ -583,36 +583,34 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         UUID uuid = p.getUniqueId();
         PlayerData pData = Main.getInstance().getPlayerData(p);
 
-        if (e.getView().getTitle().equals("Are you sure?") && e.getClickedInventory() != e.getView().getBottomInventory()) {
-            e.setCancelled(true);
+        if (!e.getView().getTitle().equals("Are you sure?")) return;
+        if (e.getClickedInventory() == e.getView().getBottomInventory()) return;
 
-            if (e.getCurrentItem() != null) {
-                if (e.getCurrentItem().getType() == GREEN_TERRACOTTA) {
-                    pData.setGold(pData.getGold() - costHandler.get(uuid));
+        e.setCancelled(true);
 
-                    if (passivesHandler.get(uuid) != null) {
-                        pData.setPassiveTier(passivesHandler.get(uuid), pData.getPassiveTier(passivesHandler.get(uuid)) + 1);
-                        openMainGUI(p);
-                    } else if (perksHandler.get(uuid) != null) {
-                        pData.setPerkUnlockStatus(perksHandler.get(uuid), true);
-                        pData.setPerkAtSlot(slotHandler.get(uuid), perksHandler.get(uuid));
-                        perkUtils.perkReset(p);
-                        openMainGUI(p);
-                    }
+        if (e.getCurrentItem() == null) return;
 
-                    p.playSound(p.getLocation(),  Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+        if (e.getCurrentItem().getType() == GREEN_TERRACOTTA) {
+            pData.setGold(pData.getGold() - costHandler.get(uuid));
 
-                } else if (e.getCurrentItem().getType() == RED_TERRACOTTA) {
-                    if (passivesHandler.get(uuid) != null || perksHandler.get(uuid) != null) {
-                        openMainGUI(p);
-                    }
-                }
-
-                costHandler.remove(uuid);
-                perksHandler.remove(uuid);
-                passivesHandler.remove(uuid);
+            if (passivesHandler.get(uuid) != null) {
+                pData.setPassiveTier(passivesHandler.get(uuid), pData.getPassiveTier(passivesHandler.get(uuid)) + 1);
+                openMainGUI(p);
+            } else if (perksHandler.get(uuid) != null) {
+                pData.setPerkUnlockStatus(perksHandler.get(uuid), true);
+                pData.setPerkAtSlot(slotHandler.get(uuid), perksHandler.get(uuid));
+                perkUtils.perkReset(p);
+                openMainGUI(p);
             }
+
+            p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+        } else if (e.getCurrentItem().getType() == RED_TERRACOTTA) {
+            openMainGUI(p);
         }
+
+        costHandler.remove(uuid);
+        perksHandler.remove(uuid);
+        passivesHandler.remove(uuid);
     }
 
     private final List<String> inventoryNames = Arrays.asList(
