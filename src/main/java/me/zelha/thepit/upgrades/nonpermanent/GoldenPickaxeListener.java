@@ -16,8 +16,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.bukkit.Material.AIR;
-import static org.bukkit.Material.GOLDEN_PICKAXE;
+import static org.bukkit.Material.*;
 
 public class GoldenPickaxeListener implements Listener {
 
@@ -37,37 +36,33 @@ public class GoldenPickaxeListener implements Listener {
 
     @EventHandler
     public void onClick(PlayerInteractEvent e) {
-        if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
-            if (!zl.itemCheck(e.getItem()) || e.getItem().getType() != GOLDEN_PICKAXE) {
-                return;
-            }
+        if (e.getAction() != Action.LEFT_CLICK_BLOCK) return;
+        if (!zl.blockCheck(e.getClickedBlock())) return;
+        if (e.getClickedBlock().getType() != OBSIDIAN) return;
+        if (!isPlacedBlock(e.getClickedBlock())) return;
+        if (!zl.itemCheck(e.getItem())) return;
+        if (e.getItem().getType() != GOLDEN_PICKAXE) return;
 
-            Player p = e.getPlayer();
-            Block clicked = e.getClickedBlock();
+        Player p = e.getPlayer();
+        Block clicked = e.getClickedBlock();
 
-            if (hitCount.containsKey(p) && isPlacedBlock(clicked)) {
-                hitCount.put(p, hitCount.get(p) + 1);
-            } else {
-                hitCount.put(p, 0);
-            }
+        hitCount.putIfAbsent(p, 0);
+        hitCount.put(p, hitCount.get(p) + 1);
 
-            if (hitCount.get(p) >= 2) {
-                hitCount.put(p, 0);
+        if (hitCount.get(p) >= 2) {
+            World world = clicked.getWorld();
+            double x = clicked.getX();
+            double y = clicked.getY();
+            double z = clicked.getZ();
 
-                if (zl.blockCheck(clicked) && isPlacedBlock(clicked)) {
-                    World world = clicked.getWorld();
-                    double x = clicked.getX();
-                    double y = clicked.getY();
-                    double z = clicked.getZ();
-                    stylishlyRemoveBlock(clicked);
+            hitCount.put(p, 0);
+            stylishlyRemoveBlock(clicked);
 
-                    for (int i = 1; i < 5; i++) {
-                        Block extra = world.getBlockAt(new Location(world, x, y + i, z));
+            for (int i = 1; i < 5; i++) {
+                Block extra = world.getBlockAt(new Location(world, x, y + i, z));
 
-                        if (zl.blockCheck(extra) && isPlacedBlock(extra)) {
-                            stylishlyRemoveBlock(extra);
-                        }
-                    }
+                if (zl.blockCheck(extra) && isPlacedBlock(extra) && extra.getType() == OBSIDIAN) {
+                    stylishlyRemoveBlock(extra);
                 }
             }
         }
