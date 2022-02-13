@@ -39,7 +39,7 @@ import static org.bukkit.Material.*;
 
 //trickle down is handled in GoldIngotListener because thats just way easier
 //all resource-related stuff is handled in KillListener
-public class PerkListenersAndUtils implements Listener {//strength>glad
+public class PerkListenersAndUtils implements Listener {
 
     private PlayerData pData(Player player) {
         return Main.getInstance().getPlayerData(player);
@@ -85,9 +85,7 @@ public class PerkListenersAndUtils implements Listener {//strength>glad
         PlayerData pData = Main.getInstance().getPlayerData(p);
         int arrowCount = 0;
 
-        for (ItemStack item : inv.all(ARROW).values()) {
-            arrowCount+= item.getAmount();
-        }
+        for (ItemStack item : inv.all(ARROW).values()) arrowCount+= item.getAmount();
 
         strengthChaining.remove(p.getUniqueId());
 
@@ -105,8 +103,11 @@ public class PerkListenersAndUtils implements Listener {//strength>glad
             }
         }
 
-        if (!inv.contains(IRON_SWORD) && !pData.hasPerkEquipped(Perks.BARBARIAN)) inv.addItem(zl.itemBuilder(IRON_SWORD, 1));
-        if (!inv.contains(BOW)) inv.addItem(zl.itemBuilder(BOW, 1));
+        if (!inv.contains(IRON_SWORD) && inv.contains(DIAMOND_SWORD) && !pData.hasPerkEquipped(Perks.BARBARIAN)) {
+            inv.addItem(zl.itemBuilder(IRON_SWORD, 1));
+        }
+
+        if (!inv.contains(zl.itemBuilder(BOW, 1))) inv.addItem(zl.itemBuilder(BOW, 1));
 
         if (pData.hasPerkEquipped(Perks.FISHING_ROD)) {
             if (!inv.contains(fishingRodItem)) {
