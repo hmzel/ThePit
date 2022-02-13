@@ -289,17 +289,14 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
     private void openMainGUI(Player p) {
         Inventory mainGUI = Bukkit.createInventory(p, 45, "Permanent upgrades");
+        int passiveIndex = 28;
 
-        mainGUI.setItem(12, perkSlotItemBuilder(p, 1));
-        mainGUI.setItem(13, perkSlotItemBuilder(p, 2));
-        mainGUI.setItem(14, perkSlotItemBuilder(p, 3));
-        mainGUI.setItem(28, passivesItemBuilder(p, XP_BOOST));
-        mainGUI.setItem(29, passivesItemBuilder(p, GOLD_BOOST));
-        mainGUI.setItem(30, passivesItemBuilder(p, MELEE_DAMAGE));
-        mainGUI.setItem(31, passivesItemBuilder(p, BOW_DAMAGE));
-        mainGUI.setItem(32, passivesItemBuilder(p, DAMAGE_REDUCTION));
-        mainGUI.setItem(33, passivesItemBuilder(p, BUILD_BATTLER));
-        mainGUI.setItem(34, passivesItemBuilder(p, EL_GATO));
+        for (int i = 12; i <= 14; i++) mainGUI.setItem(i, perkSlotItemBuilder(p, i - 11));
+
+        for (Passives passive : Passives.values()) {
+            mainGUI.setItem(passiveIndex, passivesItemBuilder(p, passive));
+            passiveIndex++;
+        }
 
         p.openInventory(mainGUI);
     }
