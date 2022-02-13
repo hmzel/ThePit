@@ -154,19 +154,30 @@ public class PerkListenersAndUtils implements Listener {//strength>glad
         }
 
         if (!pData.hasPerkEquipped(LUCKY_DIAMOND)) {
-            for (ItemStack item : inv.getArmorContents()) {
-                if (zl.itemCheck(item) && item.getType().name().contains("DIAMOND") && item.getItemMeta() != null
-                   && item.getItemMeta().getLore() != null && item.getItemMeta().getLore().contains("§7Perk item")) {
-                    if (zl.itemCheck(inv.getHelmet()) && inv.getHelmet().equals(item)) inv.setHelmet(new ItemStack(AIR));
-                    if (zl.itemCheck(inv.getChestplate()) && inv.getChestplate().equals(item)) inv.setChestplate(new ItemStack(AIR));
-                    if (zl.itemCheck(inv.getLeggings()) && inv.getLeggings().equals(item)) inv.setLeggings(new ItemStack(AIR));
-                    if (zl.itemCheck(inv.getBoots()) && inv.getBoots().equals(item)) inv.setBoots(new ItemStack(AIR));
-                }
-            }
+            // Commented out in case you want to compare.
+//            for (ItemStack item : inv.getArmorContents()) {
+//                if (zl.itemCheck(item) && item.getType().name().contains("DIAMOND") && item.getItemMeta() != null
+//                   && item.getItemMeta().getLore() != null && item.getItemMeta().getLore().contains("§7Perk item")) {
+//                    if (zl.itemCheck(inv.getHelmet()) && inv.getHelmet().equals(item)) inv.setHelmet(new ItemStack(AIR));
+//                    if (zl.itemCheck(inv.getChestplate()) && inv.getChestplate().equals(item)) inv.setChestplate(new ItemStack(AIR));
+//                    if (zl.itemCheck(inv.getLeggings()) && inv.getLeggings().equals(item)) inv.setLeggings(new ItemStack(AIR));
+//                    if (zl.itemCheck(inv.getBoots()) && inv.getBoots().equals(item)) inv.setBoots(new ItemStack(AIR));
+//                }
+//            }
+
+            // Check each slot individually instead of looping?
+            // I'm no expert, but sometimes I feel it's better to not loop rather than loop.
+            // You can use a method instead to repeat annoying tasks.
+            // I did leave the item.getType().name().contains("DIAMOND") check in each of these lines.. but if you really want to, feel free to put that check
+            // in the isPerkItem() method and rename it to isLuckyDiamondArmor() or something. Up to you!
+
+            if (isPerkItem(inv.getHelmet()) && inv.getHelmet().getType().name().contains("DIAMOND")) inv.setHelmet(new ItemStack(AIR));
+            if (isPerkItem(inv.getChestplate()) && inv.getChestplate().getType().name().contains("DIAMOND")) inv.setChestplate(new ItemStack(AIR));
+            if (isPerkItem(inv.getLeggings()) && inv.getLeggings().getType().name().contains("DIAMOND")) inv.setLeggings(new ItemStack(AIR));
+            if (isPerkItem(inv.getBoots()) && inv.getBoots().getType().name().contains("DIAMOND")) inv.setBoots(new ItemStack(AIR));
 
             for (ItemStack item : inv.getStorageContents()) {
-                if (zl.itemCheck(item) && item.getType().name().contains("DIAMOND") && item.getItemMeta() != null
-                   && item.getItemMeta().getLore() != null && item.getItemMeta().getLore().contains("§7Perk item")) {
+                if (isPerkItem(item) && item.getType().name().contains("DIAMOND")) {
                     inv.remove(item);
                 }
             }
@@ -274,6 +285,12 @@ public class PerkListenersAndUtils implements Listener {//strength>glad
 
         return count < amount;
     }//i hate player heads. with a passion.
+
+    // Please verify if this is actually true for all cases!
+    private boolean isPerkItem(ItemStack item) {
+        return zl.itemCheck(item) && item.getItemMeta() != null
+                && item.getItemMeta().getLore() != null && item.getItemMeta().getLore().contains("§7Perk item");
+    }
 
     private void determineKillRewards(Player killer, Player dead) {
         PlayerInventory inv = killer.getInventory();
