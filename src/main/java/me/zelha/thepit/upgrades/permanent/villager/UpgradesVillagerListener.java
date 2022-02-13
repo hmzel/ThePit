@@ -488,9 +488,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
             e.setCancelled(true);
 
-            if (zl.noObstructions(Worlds.findByName(worldName), NPCs.UPGRADES).contains(x, y, z)) {
-                openMainGUI(p);
-            }
+            if (zl.noObstructions(Worlds.findByName(worldName), NPCs.UPGRADES).contains(x, y, z)) openMainGUI(p);
         }
     }
 
@@ -501,9 +499,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         double y = e.getRightClicked().getLocation().getY();
         double z = e.getRightClicked().getLocation().getZ();
 
-        if (zl.noObstructions(Worlds.findByName(worldName), NPCs.UPGRADES).contains(x, y, z)) {
-            openMainGUI(e.getPlayer());
-        }
+        if (zl.noObstructions(Worlds.findByName(worldName), NPCs.UPGRADES).contains(x, y, z)) openMainGUI(e.getPlayer());
     }
 
     @EventHandler
@@ -511,17 +507,15 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         Entity damaged = e.getEntity();
         Entity damagerEntity = e.getDamager();
 
-        if (zl.playerCheck(damagerEntity)) {
-            Player damager = (Player) e.getDamager();
-            String worldName = damager.getWorld().getName();
-            double x = damaged.getLocation().getX();
-            double y = damaged.getLocation().getY();
-            double z = damaged.getLocation().getZ();
+        if (!zl.playerCheck(damagerEntity)) return;
 
-            if (zl.noObstructions(Worlds.findByName(worldName), NPCs.UPGRADES).contains(x, y, z)) {
-                openMainGUI(damager);
-            }
-        }
+        Player damager = (Player) e.getDamager();
+        String worldName = damager.getWorld().getName();
+        double x = damaged.getLocation().getX();
+        double y = damaged.getLocation().getY();
+        double z = damaged.getLocation().getZ();
+
+        if (zl.noObstructions(Worlds.findByName(worldName), NPCs.UPGRADES).contains(x, y, z)) openMainGUI(damager);
     }
 
     @EventHandler
