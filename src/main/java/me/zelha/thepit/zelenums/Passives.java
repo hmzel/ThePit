@@ -79,12 +79,5 @@ public enum Passives {//0 tierMultipler is just a placeholder dont hurt me pleas
         }
         return null;
     }
-
-    public static Passives findByName(String name) {
-        for (Passives passive : values()) {
-            if (passive.getName().equalsIgnoreCase(name)) return passive;
-        }
-        return null;
-    }
 }
 
