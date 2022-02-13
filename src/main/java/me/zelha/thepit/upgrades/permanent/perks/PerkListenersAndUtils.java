@@ -366,7 +366,7 @@ public class PerkListenersAndUtils implements Listener {
     }
 
     private boolean weightCheck(String name) {
-        return name.contains("IRON") || name.contains("CHAINMAIL") || name.contains("LEATHER");
+        return name.contains("IRON") || name.contains("CHAINMAIL");
     }
 
     @EventHandler
