@@ -354,8 +354,9 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         }
 
         if (pData.hasPerkEquipped(perk)) {
-            item.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1);
             ItemMeta meta = item.getItemMeta();
+
+            meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             item.setItemMeta(meta);
         }
