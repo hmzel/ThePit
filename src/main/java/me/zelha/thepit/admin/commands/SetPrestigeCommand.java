@@ -30,6 +30,9 @@ public class SetPrestigeCommand implements CommandExecutor {
             } else if (NumberUtils.toInt(args[0], 0) < 0) {
                 sender.sendMessage("§5are you §otrying §r§5to cause errors?? \ndont set your prestige to a negative");
                 return true;
+            } else if (NumberUtils.toInt(args[0], 0) > 131313) {
+                sender.sendMessage("§5Prestige cannot be above 131313! \ngoing above that is a bit much, dontcha think?");
+                return true;
             }
 
             Main.getInstance().getPlayerData((Player) sender).setPrestige(NumberUtils.toInt(args[0], 0));
