@@ -42,18 +42,6 @@ public enum Passives {//0 tierMultipler is just a placeholder dont hurt me pleas
         return material;
     }
 
-    public static Passives findByName(String name) {
-        Passives result = null;
-
-        for (Passives passive : values()) {
-            if (passive.name().equalsIgnoreCase(name)) {
-                result = passive;
-                break;
-            }
-        }
-        return result;
-    }
-
     public int getBaseLevelReq() {
         return baseLevelReq;
     }
@@ -61,12 +49,12 @@ public enum Passives {//0 tierMultipler is just a placeholder dont hurt me pleas
     public int getLevelRequirement(Player p) {
         PlayerData pData = Main.getInstance().getPlayerData(p);
 
-        return baseLevelReq + (levelTierMultiplier * pData.getPassiveTier(Passives.findByName(super.name())));
+        return baseLevelReq + (levelTierMultiplier * pData.getPassiveTier(Passives.findByEnumName(super.name())));
     }
 
     public int getCost(Player p) {
         PlayerData pData = Main.getInstance().getPlayerData(p);
-        Passives passive = Passives.findByName(super.name());
+        Passives passive = Passives.findByEnumName(super.name());
         int cost = 0;
 
         switch (passive) {//will update when i figure out all the costs
@@ -83,6 +71,20 @@ public enum Passives {//0 tierMultipler is just a placeholder dont hurt me pleas
                 break;
         }
         return cost;
+    }
+
+    public static Passives findByEnumName(String name) {
+        for (Passives passive : values()) {
+            if (passive.name().equalsIgnoreCase(name)) return passive;
+        }
+        return null;
+    }
+
+    public static Passives findByName(String name) {
+        for (Passives passive : values()) {
+            if (passive.getName().equalsIgnoreCase(name)) return passive;
+        }
+        return null;
     }
 }
 
