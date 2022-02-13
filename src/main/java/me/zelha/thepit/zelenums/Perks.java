@@ -296,27 +296,17 @@ public enum Perks {
     }
 
     public static Perks findByName(String name) {
-        Perks result = null;
-
         for (Perks perk : values()) {
-            if (perk.getName().equals(name)) {
-                result = perk;
-                break;
-            }
+            if (perk.getName().equals(name)) return perk;
         }
-        return result;
+        return null;
     }
 
     public static Perks findByEnumName(String name) {
-        Perks result = null;
-
         for (Perks perk : values()) {
-            if (perk.name().equalsIgnoreCase(name)) {
-                result = perk;
-                break;
-            }
+            if (perk.name().equalsIgnoreCase(name)) return perk;
         }
-        return result;
+        return null;
     }
 
     public static Perks findByMaterial(Material material) {
