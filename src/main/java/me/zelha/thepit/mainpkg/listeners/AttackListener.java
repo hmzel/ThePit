@@ -74,10 +74,12 @@ public class AttackListener implements Listener {
 
         private final UUID uuid;
         private int hideTimer;
+        private boolean reset;
 
         private CombatTimerRunnable(UUID uuid) {
             this.uuid = uuid;
             this.hideTimer = 1;
+            this.reset = true;
         }
 
         @Override
@@ -86,10 +88,13 @@ public class AttackListener implements Listener {
 
             if (!runTracker.hasID(uuid)) runTracker.setID(uuid, super.getTaskId());
 
-            if (pData.getStatus().equals("idling") || pData.getStatus().equals("bountied")) {
+            if (reset) {
                 pData.setCombatTimer(15 + (int) Math.floor(pData.getBounty() / 1000) * 10);
                 pData.setStatus("fighting");
-            } else if (pData.getCombatTimer() > 1) {
+                reset = false;
+            }
+
+            if (pData.getCombatTimer() > 1) {
                 pData.setCombatTimer(pData.getCombatTimer() - 1);
             } else {
                 pData.setCombatTimer(pData.getCombatTimer() - 1);
@@ -104,9 +109,9 @@ public class AttackListener implements Listener {
 
             if (pData.getBounty() != 0) {
                 pData.setHideTimer(pData.getCombatTimer() == 0);
-            } else if (hideTimer <= 10 && !pData.hideTimer()) {
+            } else if (hideTimer < 10 && !pData.hideTimer()) {
                 pData.setHideTimer(true);
-            } else if (hideTimer > 10) {
+            } else if (hideTimer >= 10) {
                 pData.setHideTimer(pData.getCombatTimer() == 0);
             }
             hideTimer++;
