@@ -522,43 +522,26 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     public void mainGUIInteract(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
 
-        if (e.getView().getTitle().equals("Permanent upgrades") && e.getClickedInventory() != e.getView().getBottomInventory()) {
-            e.setCancelled(true);
+        if (!e.getView().getTitle().equals("Permanent upgrades")) return;
+        if (e.getClickedInventory() == e.getView().getBottomInventory()) return;
 
-            if (e.getCurrentItem() != null) {//reminder: simplify this so passives do something like the perkguiinteract listener
-                switch (e.getSlot()) {
-                    case 12:
-                        openPerkGUI(p, 1);
-                        break;
-                    case 13:
-                        openPerkGUI(p, 2);
-                        break;
-                    case 14:
-                        openPerkGUI(p, 3);
-                        break;
-                    case 28:
-                        passivePurchaseHandler(p, XP_BOOST);
-                        break;
-                    case 29:
-                        passivePurchaseHandler(p, GOLD_BOOST);
-                        break;
-                    case 30:
-                        passivePurchaseHandler(p, MELEE_DAMAGE);
-                        break;
-                    case 31:
-                        passivePurchaseHandler(p, BOW_DAMAGE);
-                        break;
-                    case 32:
-                        passivePurchaseHandler(p, DAMAGE_REDUCTION);
-                        break;
-                    case 33:
-                        passivePurchaseHandler(p, BUILD_BATTLER);
-                        break;
-                    case 34:
-                        passivePurchaseHandler(p, EL_GATO);
-                        break;
-                }
+        e.setCancelled(true);
+
+        if (!zl.itemCheck(e.getCurrentItem())) return;
+
+        if (e.getSlot() >= 12 && e.getSlot() <= 14) {
+            openPerkGUI(p, e.getSlot() - 11);
+            return;
+        }
+
+        if (e.getSlot() > 27) {
+            if (e.getCurrentItem().getType() == BEDROCK) {
+                p.sendMessage("§cYou are too low level to acquire this!");
+                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+                return;
             }
+
+            passivePurchaseHandler(p, Passives.findByMaterial(e.getCurrentItem().getType()));
         }
     }
 
