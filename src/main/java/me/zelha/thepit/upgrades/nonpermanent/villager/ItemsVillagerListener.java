@@ -149,9 +149,10 @@ public class ItemsVillagerListener implements Listener {
 
     @EventHandler
     public void itemsGUIInteract(InventoryClickEvent e) {
-        Player p = (Player) e.getWhoClicked();
+        if (!e.getView().getTitle().equals("Non-permanent items")) return;
+        if (e.getClickedInventory() == e.getView().getBottomInventory()) return;
 
-        if (!e.getView().getTitle().equals("Non-permanent items") || e.getClickedInventory() == e.getView().getBottomInventory()) return;
+        Player p = (Player) e.getWhoClicked();
 
         e.setCancelled(true);
 
