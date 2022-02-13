@@ -19,9 +19,7 @@ public enum Worlds {
 
     public static Worlds findByName(String string) {
         for (Worlds world : Worlds.values()) {
-            if (world.getName().equals(string)) {
-                return world;
-            }
+            if (world.getName().equals(string)) return world;
         }
         return null;
     }
