@@ -110,9 +110,7 @@ public class PerkListenersAndUtils implements Listener {
         if (!inv.contains(zl.itemBuilder(BOW, 1))) inv.addItem(zl.itemBuilder(BOW, 1));
 
         if (pData.hasPerkEquipped(Perks.FISHING_ROD)) {
-            if (!inv.contains(fishingRodItem)) {
-                inv.addItem(fishingRodItem);
-            }
+            if (!inv.contains(fishingRodItem)) inv.addItem(fishingRodItem);
         } else {
             removeAll(inv, fishingRodItem);
         }
@@ -129,15 +127,15 @@ public class PerkListenersAndUtils implements Listener {
         }
 
         if (pData.hasPerkEquipped(SAFETY_FIRST)) {
-            if (!zl.itemCheck(inv.getHelmet())) inv.setHelmet(safetyFirstItem);
+            if (!zl.itemCheck(inv.getHelmet()) || inv.getHelmet().getType() == LEATHER_HELMET) {
+                inv.setHelmet(safetyFirstItem);
+            }
         } else {
             removeAll(inv, safetyFirstItem);
         }
 
         if (pData.hasPerkEquipped(MINEMAN)) {
-            if (!inv.contains(minemanPickaxeItem)) {
-                inv.addItem(minemanPickaxeItem);
-            }
+            if (!inv.contains(minemanPickaxeItem)) inv.addItem(minemanPickaxeItem);
 
             if (!inv.contains(minemanCobblestoneItem)) {
                 if (inv.first(COBBLESTONE) != -1) {
@@ -154,6 +152,7 @@ public class PerkListenersAndUtils implements Listener {
             removeAll(inv, minemanCobblestoneItem);
         }
 
+        //i honestly cant think of a better way to do this but i really hate it
         if (!pData.hasPerkEquipped(LUCKY_DIAMOND)) {
             for (ItemStack item : inv.getArmorContents()) {
                 if (zl.itemCheck(item) && item.getType().name().contains("DIAMOND") && item.getItemMeta() != null
@@ -197,11 +196,11 @@ public class PerkListenersAndUtils implements Listener {
     public double getPerkDamageBoost(Player damager, Player damaged) {
         double boost = 0;
 
-        if (getStrengthChaining(damager)[0] != null) boost+= 0.08 * getStrengthChaining(damager)[0];
+        if (getStrengthChaining(damager)[0] != null) boost += 0.08 * getStrengthChaining(damager)[0];
 
         if (pData(damager).hasPerkEquipped(Perks.BOUNTY_HUNTER) && zl.itemCheck(damager.getInventory().getLeggings())
            && damager.getInventory().getLeggings().getType() == Material.GOLDEN_LEGGINGS) {
-            boost+= Math.floor((double) pData(damaged).getBounty() / 100) / 100;
+            boost += Math.floor((double) pData(damaged).getBounty() / 100) / 100;
         }
         return boost;
     }
@@ -209,7 +208,7 @@ public class PerkListenersAndUtils implements Listener {
     public double getPerkDamageReduction(Player damaged) {
         double reduction = 0;
 
-        reduction+= getGladiatorDamageReduction(damaged);
+        reduction += getGladiatorDamageReduction(damaged);
 
         return reduction;
     }
@@ -224,10 +223,11 @@ public class PerkListenersAndUtils implements Listener {
             }
 
             if (nearbyPlayers >= 3 && nearbyPlayers <= 10) {
-                reduction+= nearbyPlayers * 0.03;
-            } else if (nearbyPlayers > 10) reduction+= 0.3;
+                reduction += nearbyPlayers * 0.03;
+            } else if (nearbyPlayers > 10) {
+                reduction += 0.3;
+            }
         }
-
         return reduction;
     }
 
@@ -246,9 +246,7 @@ public class PerkListenersAndUtils implements Listener {
 
     private void removeAll(PlayerInventory inventory, ItemStack item) {
         for (ItemStack items : inventory.all(item.getType()).values()) {
-            if (items.isSimilar(item)) {
-                inventory.remove(items);
-            }
+            if (items.isSimilar(item)) inventory.remove(items);
         }
     }
 
@@ -395,12 +393,12 @@ public class PerkListenersAndUtils implements Listener {
         double damagedHP = damaged.getHealth();
 
         if (pData(damager).hasPerkEquipped(VAMPIRE)) {
-            if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).isCritical()) {
+            if (damageCauseArrow && ((Arrow) damagerEntity).isCritical()) {
                 damager.setHealth(Math.min(damager.getHealth() + 3, damager.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
             } else {
                 damager.setHealth(Math.min(damager.getHealth() + 1, damager.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
             }
-        }//weirdo
+        }
 
         if (e.getCause() == DamageCause.PROJECTILE && pData(damager).hasPerkEquipped(SPAMMER) && damageCauseArrow) {
             damager.getInventory().addItem(new ItemStack(ARROW, 3));
@@ -496,19 +494,14 @@ public class PerkListenersAndUtils implements Listener {
     public void onPlayerDeath(EntityDamageEvent e) {
         Entity entity = e.getEntity();
 
-        if (zl.playerCheck(entity)) {
-            if (zl.spawnCheck(entity.getLocation())) {
-                return;
-            }
+        if (!zl.playerCheck(entity)) return;
+        if (zl.spawnCheck(entity.getLocation())) return;
 
-            Player p = (Player) e.getEntity();
-            double finalDMG = e.getFinalDamage();
-            double currentHP = p.getHealth();
+        Player p = (Player) e.getEntity();
+        double finalDMG = e.getFinalDamage();
+        double currentHP = p.getHealth();
 
-            if (e.getCause() != DamageCause.FALL && (currentHP - finalDMG <= 0)) {
-                perkReset(p);
-            }
-        }
+        if (e.getCause() != DamageCause.FALL && (currentHP - finalDMG <= 0)) perkReset(p);
     }
 
     @EventHandler
@@ -541,8 +534,6 @@ public class PerkListenersAndUtils implements Listener {
 
     @EventHandler
     public void onBucketEmpty(PlayerBucketEmptyEvent e) {
-
-        e.setCancelled(true);
         Player p = e.getPlayer();
         Block block = e.getBlock();
 
@@ -550,7 +541,6 @@ public class PerkListenersAndUtils implements Listener {
         if (block.getType() == LAVA || block.getType() == WATER) return;
 
         if (e.getBucket() == Material.LAVA_BUCKET) {
-
             previousLavaBlock.put(p.getUniqueId(), e.getBlock().getType());
             placedLava.put(p.getUniqueId(), block);
             block.setType(LAVA);
@@ -560,16 +550,14 @@ public class PerkListenersAndUtils implements Listener {
                 @Override
                 public void run() {
 
-                    if (!runTracker.hasID(p.getUniqueId())) {
-                        runTracker.setID(p.getUniqueId(), getTaskId());
-                    }
+                    if (!runTracker.hasID(p.getUniqueId())) runTracker.setID(p.getUniqueId(), getTaskId());
 
                     if (block.getType() != LAVA) {
                         lavaExistTimer.put(p.getUniqueId(), 0);
                         runTracker.stop(p.getUniqueId());
                     }
 
-                    if (!lavaExistTimer.containsKey(p.getUniqueId())) lavaExistTimer.put(p.getUniqueId(), 0);
+                    lavaExistTimer.putIfAbsent(p.getUniqueId(), 0);
                     lavaExistTimer.put(p.getUniqueId(), lavaExistTimer.get(p.getUniqueId()) + 1);
 
                     if (lavaExistTimer.get(p.getUniqueId()) == 240) {
@@ -590,18 +578,17 @@ public class PerkListenersAndUtils implements Listener {
 
     @EventHandler
     public void onBucketFill(PlayerBucketFillEvent e) {
-
         Player p = e.getPlayer();
         Block block = e.getBlock();
 
-        if (e.getBucket() == BUCKET) {
-            if (block.getType() == LAVA && runTracker.getID(p.getUniqueId()) != null && placedLava.containsValue(block)) {
-                block.setType(previousLavaBlock.get(p.getUniqueId()));
-                previousLavaBlock.remove(p.getUniqueId());
-                placedLava.remove(p.getUniqueId());
-                runTracker.stop(p.getUniqueId());
-                p.getInventory().setItemInMainHand(lavaBucketItem);
-            }
+        if (e.getBucket() != BUCKET) return;
+
+        if (block.getType() == LAVA && runTracker.getID(p.getUniqueId()) != null && placedLava.containsValue(block)) {
+            block.setType(previousLavaBlock.get(p.getUniqueId()));
+            previousLavaBlock.remove(p.getUniqueId());
+            placedLava.remove(p.getUniqueId());
+            runTracker.stop(p.getUniqueId());
+            p.getInventory().setItemInMainHand(lavaBucketItem);
         }
 
         e.setCancelled(true);
@@ -609,7 +596,6 @@ public class PerkListenersAndUtils implements Listener {
 
     @EventHandler
     public void onDrop(PlayerDropItemEvent e) {
-
         ItemMeta meta = e.getItemDrop().getItemStack().getItemMeta();
 
         if (meta != null && meta.getLore() != null && meta.getLore().contains("§7Perk item")) {
