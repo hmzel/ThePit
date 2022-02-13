@@ -103,7 +103,7 @@ public class PerkListenersAndUtils implements Listener {
             }
         }
 
-        if (!inv.contains(IRON_SWORD) && inv.contains(DIAMOND_SWORD) && !pData.hasPerkEquipped(Perks.BARBARIAN)) {
+        if (!inv.contains(IRON_SWORD) && inv.contains(DIAMOND_SWORD) && !pData.hasPerkEquipped(BARBARIAN)) {
             inv.addItem(zl.itemBuilder(IRON_SWORD, 1));
         }
 
@@ -152,23 +152,14 @@ public class PerkListenersAndUtils implements Listener {
             removeAll(inv, minemanCobblestoneItem);
         }
 
-        //i honestly cant think of a better way to do this but i really hate it
         if (!pData.hasPerkEquipped(LUCKY_DIAMOND)) {
-            for (ItemStack item : inv.getArmorContents()) {
-                if (zl.itemCheck(item) && item.getType().name().contains("DIAMOND") && item.getItemMeta() != null
-                   && item.getItemMeta().getLore() != null && item.getItemMeta().getLore().contains("§7Perk item")) {
-                    if (zl.itemCheck(inv.getHelmet()) && inv.getHelmet().equals(item)) inv.setHelmet(new ItemStack(AIR));
-                    if (zl.itemCheck(inv.getChestplate()) && inv.getChestplate().equals(item)) inv.setChestplate(new ItemStack(AIR));
-                    if (zl.itemCheck(inv.getLeggings()) && inv.getLeggings().equals(item)) inv.setLeggings(new ItemStack(AIR));
-                    if (zl.itemCheck(inv.getBoots()) && inv.getBoots().equals(item)) inv.setBoots(new ItemStack(AIR));
-                }
-            }
+            if (isLuckyDiamondItem(inv.getHelmet())) inv.setHelmet(new ItemStack(AIR));
+            if (isLuckyDiamondItem(inv.getChestplate())) inv.setChestplate(new ItemStack(AIR));
+            if (isLuckyDiamondItem(inv.getLeggings())) inv.setLeggings(new ItemStack(AIR));
+            if (isLuckyDiamondItem(inv.getBoots())) inv.setBoots(new ItemStack(AIR));
 
             for (ItemStack item : inv.getStorageContents()) {
-                if (zl.itemCheck(item) && item.getType().name().contains("DIAMOND") && item.getItemMeta() != null
-                   && item.getItemMeta().getLore() != null && item.getItemMeta().getLore().contains("§7Perk item")) {
-                    inv.remove(item);
-                }
+                if (isLuckyDiamondItem(item)) inv.remove(item);
             }
         }
 
@@ -191,6 +182,15 @@ public class PerkListenersAndUtils implements Listener {
         } else if (arrowCount == 0) {
             inv.addItem(new ItemStack(ARROW, 32));
         }
+    }
+
+    private boolean isLuckyDiamondItem(ItemStack item) {
+        return zl.itemCheck(item)
+                && item.getItemMeta() != null
+                && item.getItemMeta().getLore() != null
+                && item.getItemMeta().getLore().contains("§7Perk item")
+                && item.getType().name().contains("DIAMOND")
+                && !item.getType().name().contains("PICKAXE");
     }
 
     public double getPerkDamageBoost(Player damager, Player damaged) {
