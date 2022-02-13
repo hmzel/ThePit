@@ -526,7 +526,7 @@ public class PerkListenersAndUtils implements Listener {
             if (item.getAmount() > 1) {
                 item.setAmount(item.getAmount() - 1);
             } else {
-                item.setType(AIR);
+                p.getInventory().setItemInMainHand(new ItemStack(AIR));
             }
 
             p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 160, 1, false, false));
