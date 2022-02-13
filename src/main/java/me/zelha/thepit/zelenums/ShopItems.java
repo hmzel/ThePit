@@ -96,4 +96,11 @@ public enum ShopItems {
     public EquipmentSlot getSlot() {
         return slot;
     }
+
+    public static ShopItems findByMaterial(Material material) {
+        for (ShopItems item : ShopItems.values()) {
+            if (item.getMaterial() == material) return item;
+        }
+        return null;
+    }
 }
