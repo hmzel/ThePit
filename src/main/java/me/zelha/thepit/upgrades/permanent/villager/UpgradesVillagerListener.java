@@ -428,25 +428,29 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         }
 
         Inventory perkGUI = Bukkit.createInventory(p, 36, "Choose a perk");
+        int perkIndex = 10;
+        int overflowPrevention = 0;
 
-        perkGUI.setItem(10, perkItemBuilder(p, GOLDEN_HEADS));
-        perkGUI.setItem(11, perkItemBuilder(p, Perks.FISHING_ROD));
-        perkGUI.setItem(12, perkItemBuilder(p, Perks.LAVA_BUCKET));
-        perkGUI.setItem(13, perkItemBuilder(p, STRENGTH_CHAINING));
-        perkGUI.setItem(14, perkItemBuilder(p, SAFETY_FIRST));
-        perkGUI.setItem(15, perkItemBuilder(p, MINEMAN));
-        perkGUI.setItem(16, perkItemBuilder(p, INSURANCE));
-        perkGUI.setItem(19, perkItemBuilder(p, TRICKLE_DOWN));
-        perkGUI.setItem(20, perkItemBuilder(p, LUCKY_DIAMOND));
-        perkGUI.setItem(21, perkItemBuilder(p, SPAMMER));
-        perkGUI.setItem(22, perkItemBuilder(p, BOUNTY_HUNTER));
-        perkGUI.setItem(23, perkItemBuilder(p, STREAKER));
-        perkGUI.setItem(24, perkItemBuilder(p, GLADIATOR));
-        perkGUI.setItem(25, perkItemBuilder(p, VAMPIRE));
-        perkGUI.setItem(31, zl.itemBuilder(ARROW, 1, "§aGo Back", Collections.singletonList("§7To Permanent upgrades")));
+        //not bothering with prestige perks rn
+        for (Perks perk : Perks.values()) {
+            if (perk.getPrestige() == 0) {
+                perkGUI.setItem(perkIndex, perkItemBuilder(p, perk));
+                perkIndex++;
+                overflowPrevention++;
+            }
+
+            if (overflowPrevention == 7) {
+                perkIndex += 2;
+                overflowPrevention = 0;
+            }
+        }
+
+        perkGUI.setItem(perkGUI.getSize() - 5, zl.itemBuilder(ARROW, 1, "§aGo Back", Collections.singletonList(
+                "§7To Permanent upgrades"
+        )));
 
         if (pData.getPerkAtSlot(slot) != UNSET) {
-            perkGUI.setItem(32, zl.itemBuilder(DIAMOND_BLOCK, 1, "§cNo perk", Arrays.asList(
+            perkGUI.setItem(perkGUI.getSize() - 4, zl.itemBuilder(DIAMOND_BLOCK, 1, "§cNo perk", Arrays.asList(
                     "§7Are you hardcore enough that you",
                     "§7don't need any perk for this",
                     "§7slot?",
