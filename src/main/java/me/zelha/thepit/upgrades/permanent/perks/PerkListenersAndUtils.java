@@ -36,6 +36,8 @@ import java.util.*;
 
 import static me.zelha.thepit.zelenums.Perks.*;
 import static org.bukkit.Material.*;
+import static org.bukkit.inventory.EquipmentSlot.*;
+import static org.bukkit.inventory.EquipmentSlot.CHEST;
 
 //trickle down is handled in GoldIngotListener because thats just way easier
 //all resource-related stuff is handled in KillListener
@@ -85,7 +87,7 @@ public class PerkListenersAndUtils implements Listener {
         PlayerData pData = Main.getInstance().getPlayerData(p);
         int arrowCount = 0;
 
-        for (ItemStack item : inv.all(ARROW).values()) arrowCount+= item.getAmount();
+        for (ItemStack item : inv.all(ARROW).values()) arrowCount += item.getAmount();
 
         strengthChaining.remove(p.getUniqueId());
 
@@ -309,68 +311,40 @@ public class PerkListenersAndUtils implements Listener {
             inv.addItem(item);
         }
 
-        if (pData(killer).hasPerkEquipped(LUCKY_DIAMOND)) {//this is a mess.
-            for (ItemStack item : dead.getInventory().getArmorContents()) {
-                if (zl.itemCheck(item) && item.getType().name().contains("IRON") && new Random().nextInt(100) < 30) {
-                    Material itemType = Material.getMaterial(new StringBuilder(item.getType().name()).replace(0, 4, "DIAMOND").toString());
-                    String typeName = item.getType().name();
-                    EquipmentSlot slot = null;
-                    boolean armorDoesntHave = true;
+        if (pData(killer).hasPerkEquipped(LUCKY_DIAMOND)) {
+            EquipmentSlot[] slotsToCheck = {HEAD, CHEST, LEGS, FEET};
+            PlayerInventory deadInv = dead.getInventory();
 
-                    for (ItemStack armorItem : inv.getArmorContents()) {
-                        if (zl.itemCheck(armorItem) && armorItem.getType() == itemType)  armorDoesntHave = false;
-                    }
+            for (EquipmentSlot slot : slotsToCheck) {
+                ItemStack slotItem = deadInv.getItem(slot);
 
-                    if (!inv.contains(itemType) || armorDoesntHave) {
-                        if (typeName.contains("HELMET")) {
-                            if (zl.itemCheck(inv.getHelmet()) && weightCheck(inv.getHelmet().getType().name())) {
-                                inv.setItem(zl.firstEmptySlot(inv), inv.getHelmet());
-                                slot = EquipmentSlot.HEAD;
-                            } else if (!zl.itemCheck(inv.getHelmet())) {
-                                slot = EquipmentSlot.HEAD;
-                            }
-                            killer.sendMessage("§b§lLUCKY DIAMOND! §7Diamond Helmet");
-                        } else if (typeName.contains("CHESTPLATE")) {
-                            if (zl.itemCheck(inv.getChestplate()) && weightCheck(inv.getChestplate().getType().name())) {
-                                inv.setItem(zl.firstEmptySlot(inv), inv.getChestplate());
-                                slot = EquipmentSlot.CHEST;
-                            } else if (!zl.itemCheck(inv.getChestplate())) {
-                                slot = EquipmentSlot.CHEST;
-                            }
-                            killer.sendMessage("§b§lLUCKY DIAMOND! §7Diamond Chestplate");
-                        } else if (typeName.contains("LEGGINGS")) {
-                            if (zl.itemCheck(inv.getLeggings()) && weightCheck(inv.getLeggings().getType().name())) {
-                                inv.setItem(zl.firstEmptySlot(inv), inv.getLeggings());
-                                slot = EquipmentSlot.LEGS;
-                            } else if (!zl.itemCheck(inv.getLeggings())) {
-                                slot = EquipmentSlot.LEGS;
-                            }
-                            killer.sendMessage("§b§lLUCKY DIAMOND! §7Diamond Leggings");
-                        } else if (typeName.contains("BOOTS")) {
-                            if (zl.itemCheck(inv.getBoots()) && weightCheck(inv.getBoots().getType().name())) {
-                                inv.setItem(zl.firstEmptySlot(inv), inv.getBoots());
-                                slot = EquipmentSlot.FEET;
-                            } else if (!zl.itemCheck(inv.getBoots())) {
-                                slot = EquipmentSlot.FEET;
-                            }
-                            killer.sendMessage("§b§lLUCKY DIAMOND! §7Diamond Boots");
-                        }
+                if (zl.itemCheck(slotItem) && slotItem.getType().name().contains("IRON") && new Random().nextInt(100) < 30) {
+                    Material diamondType = Material.getMaterial(new StringBuilder(slotItem.getType().name()).replace(0, 4, "DIAMOND").toString());
+                    ItemStack diamondItem = zl.itemBuilder(diamondType, 1, null, Collections.singletonList("§7Perk item"), true);
+                    String stringedType = new StringBuilder(diamondType.name().toLowerCase(Locale.ROOT))
+                            .replace(7, 8, " ")
+                            .replace(0, 1, "D")
+                            .replace(8, 9, String.valueOf(diamondType.name().charAt(8)))
+                            .toString();
 
-                        if (slot != null) {
-                            inv.setItem(slot, zl.itemBuilder(itemType, 1, null, Collections.singletonList("§7Perk item"), true));
-                        } else {
-                            inv.setItem(zl.firstEmptySlot(inv), zl.itemBuilder(itemType, 1, null, Collections.singletonList("§7Perk item"), true));
-                        }
+                    if (!zl.itemCheck(inv.getItem(slot)) || weightCheck(inv.getItem(slot))) {
+                        if (zl.itemCheck(inv.getItem(slot))) inv.setItem(zl.firstEmptySlot(inv), inv.getItem(slot));
+
+                        inv.setItem(slot, diamondItem);
+                        killer.sendMessage("§b§lLUCKY DIAMOND! §7" + stringedType);
+                    } else if (!inv.contains(diamondItem)) {
+                        inv.setItem(zl.firstEmptySlot(inv), diamondItem);
+                        killer.sendMessage("§b§lLUCKY DIAMOND! §7" + stringedType);
                     } else {
-                        dead.getWorld().dropItemNaturally(dead.getLocation(), zl.itemBuilder(itemType, 1));
+                        dead.getWorld().dropItemNaturally(dead.getLocation(), zl.itemBuilder(diamondType, 1));
                     }
                 }
             }
         }
     }
 
-    private boolean weightCheck(String name) {
-        return name.contains("IRON") || name.contains("CHAINMAIL");
+    private boolean weightCheck(ItemStack item) {
+        return item.getType().name().contains("IRON") || item.getType().name().contains("CHAINMAIL");
     }
 
     @EventHandler
@@ -552,10 +526,8 @@ public class PerkListenersAndUtils implements Listener {
             block.setType(LAVA);
 
              new BukkitRunnable() {
-
                 @Override
                 public void run() {
-
                     if (!runTracker.hasID(p.getUniqueId())) runTracker.setID(p.getUniqueId(), getTaskId());
 
                     if (block.getType() != LAVA) {
