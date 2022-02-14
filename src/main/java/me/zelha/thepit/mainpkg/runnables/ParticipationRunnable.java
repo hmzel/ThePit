@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 
 public class ParticipationRunnable extends BukkitRunnable {
 
@@ -17,21 +16,17 @@ public class ParticipationRunnable extends BukkitRunnable {
     @Override
     public void run() {
         LocalDateTime now = LocalDateTime.now();
-        if (now.getMinute() % 5 == 0 && noRedos == 0) {
-            Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
 
-            for (Player p : onlinePlayers) {
+        if (now.getMinute() % 5 == 0 && noRedos == 0) {
+            for (Player p : Bukkit.getOnlinePlayers()) {
                 PlayerData pData = Main.getInstance().getPlayerData(p);
 
                 p.sendMessage("§a§lFREE XP! §7for participation §b+" + EXP + "XP");
                 pData.setExp(pData.getExp() - EXP);
             }
-
             noRedos++;
         }
 
-        if (now.getMinute() % 5 != 0 && noRedos != 0) {
-            noRedos = 0;
-        }
+        if (now.getMinute() % 5 != 0 && noRedos != 0) noRedos = 0;
     }
 }
