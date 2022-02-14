@@ -16,6 +16,7 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.BoundingBox;
 
 import java.util.Random;
 
@@ -88,7 +89,9 @@ public class GoldIngotListener implements Listener {
 
                 Location itemSpawnLoc = new Location(p.getWorld(), x, p.getLocation().getY(), z);
 
-                if (!zl.spawnCheck(itemSpawnLoc)) p.getWorld().dropItemNaturally(itemSpawnLoc, new ItemStack(Material.GOLD_INGOT, 1));
+                if (!zl.spawnCheck(itemSpawnLoc) && !new BoundingBox(0.5, 82.0, 0.5, 15, 255, 15).contains(x, p.getLocation().getY(), z)) {
+                    p.getWorld().dropItemNaturally(itemSpawnLoc, new ItemStack(Material.GOLD_INGOT, 1));
+                }
             }
             new ingotRunnable(p).runTaskLater(Main.getInstance(), rng * 20);
         }
