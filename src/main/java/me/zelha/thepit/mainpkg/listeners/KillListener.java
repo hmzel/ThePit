@@ -248,10 +248,10 @@ public class KillListener implements Listener {
                                 + " §7" + player.getName() + " for high streak");
                     } else if (pData.getBounty() + calculatedBounty <= 5000) {
                         pData.setBounty(pData.getBounty() + calculatedBounty);
-                        Bukkit.broadcastMessage("§6§lBOUNTY! §7bump §6§l " + calculatedBounty + "g §7on " + zl.getColorBracketAndLevel(uuid.toString())
+                        Bukkit.broadcastMessage("§6§lBOUNTY! §7bump §6§l" + calculatedBounty + "g §7on " + zl.getColorBracketAndLevel(uuid.toString())
                                 + " §7" + player.getName() + " for high streak");
                     } else if (pData.getBounty() < 5000) {
-                        Bukkit.broadcastMessage("§6§lBOUNTY! §7bump §6§l " + (5000 - pData.getBounty()) + "g §7on "
+                        Bukkit.broadcastMessage("§6§lBOUNTY! §7bump §6§l" + (5000 - pData.getBounty()) + "g §7on "
                                 + zl.getColorBracketAndLevel(uuid.toString()) + " §7" + player.getName() + " for high streak");
                         pData.setBounty(5000);
                     }
