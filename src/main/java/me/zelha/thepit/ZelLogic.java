@@ -299,9 +299,7 @@ public class ZelLogic {//zel
 
         int nearestRoman = romanizer.floorKey(number);
 
-        if (number == nearestRoman) {
-            return romanizer.get(number);
-        }
+        if (number == nearestRoman) return romanizer.get(number);
 
         return romanizer.get(nearestRoman) + toRoman(number - nearestRoman);
     }
@@ -313,9 +311,7 @@ public class ZelLogic {//zel
      * @return fancy gold string
      */
     public String getFancyGoldString(double gold) {
-        BigDecimal roundedGold = BigDecimal.valueOf(gold).setScale(2, RoundingMode.DOWN);
-
-        return new DecimalFormat("#,##0.00").format(roundedGold);
+        return new DecimalFormat("#,##0.00").format(BigDecimal.valueOf(gold).setScale(2, RoundingMode.DOWN));
     }
 
     /**
@@ -337,7 +333,6 @@ public class ZelLogic {//zel
      * @return colored status string
      */
     public String getColorStatus(String uuid) {
-
         PlayerData pData = Main.getInstance().getPlayerData(uuid);
 
         if (pData.getStatus().equals("idling")) {
@@ -365,13 +360,9 @@ public class ZelLogic {//zel
     public int firstEmptySlot(PlayerInventory inv) {
         ItemStack[] invItems = inv.getStorageContents();
 
-        for (int i = 9; i < 36; i++) {
-            if (!itemCheck(invItems[i])) return i;
-        }
+        for (int i = 9; i < 36; i++) if (!itemCheck(invItems[i])) return i;
+        for (int i = 0; i < 9; i++) if (!itemCheck(invItems[i])) return i;
 
-        for (int i = 0; i < 9; i++) {
-            if (!itemCheck(invItems[i])) return i;
-        }
         return -1;
     }
 
@@ -517,7 +508,6 @@ public class ZelLogic {//zel
                 }
                 break;
         }
-
         return new BoundingBox();
     }
 
@@ -528,7 +518,6 @@ public class ZelLogic {//zel
      * @return max XP req for the given player's level based on prestige
      */
     public int maxXPReq(String uuid) {
-
         PlayerData pData = Main.getInstance().getPlayerData(uuid);
 
         switch (pData.getPrestige()) {
@@ -632,7 +621,6 @@ public class ZelLogic {//zel
      * @return the combined form of the prestige bracket and level, colorized
      */
     public String getColorBracketAndLevel(String uuid) {
-
         PlayerData pData = Main.getInstance().getPlayerData(uuid);
 
         if (pData.getPrestige() < 1) {
@@ -740,7 +728,6 @@ public class ZelLogic {//zel
 
     //private stuff
     private String getColorLevel(String uuid) {
-
         PlayerData pData = Main.getInstance().getPlayerData(uuid);
 
         if (pData.getLevel() < 10) {
@@ -774,7 +761,6 @@ public class ZelLogic {//zel
     }
 
     private int baseMaxXPReq(String uuid) {
-
         PlayerData pData = Main.getInstance().getPlayerData(uuid);
 
         if (pData.getLevel() < 10) {
