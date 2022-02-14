@@ -346,40 +346,6 @@ public class ZelLogic {//zel
     }
 
     /**
-     * only used in {@link me.zelha.thepit.admin.commands.HologramCheckCommand}
-     * <p>
-     * maybe i should make it a method in that class? shrug. ill deal with that later
-     *
-     * @param name hologram name
-     * @param location location to spawn if hologram is absent
-     * @param player player who ran the command
-     */
-    public void spawnHologramIfAbsent(String name, Location location, Player player) {
-        List<Entity> entityList = location.getWorld().getEntities();
-
-        for (Entity entity : entityList) {
-            if (entity.getLocation().equals(location) && entity.getName().equals(name)) {
-                player.sendMessage("§cHologram " + name + " §cis not absent.");
-                return;
-            }
-        }
-
-        ArmorStand hologram = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-
-        hologram.setVisible(false);
-        hologram.setBasePlate(false);
-        hologram.setMarker(true);
-        hologram.setCustomName(name);
-        hologram.setCustomNameVisible(true);
-        hologram.setInvulnerable(true);
-        hologram.setSilent(true);
-        hologram.setPersistent(true);
-        hologram.setGravity(false);
-        hologram.addScoreboardTag("z-entity");
-        player.sendMessage("§aHologram " + name + " §asuccessfully spawned!");
-    }
-
-    /**
      * uses NMS to send fake pickup packets to the given player and all players within the given radius
      * <p></p>
      * note: highly recommended to make sure the event that runs this cant be fired again on the same entity, or else it will probably cause issues <p>
