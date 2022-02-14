@@ -11,6 +11,7 @@ import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.inventory.ItemStack;
@@ -103,6 +104,25 @@ public class AntiVanillaListener implements Listener {
     @EventHandler
     public void onFlow(BlockFromToEvent e) {
         if (e.getBlock().getType() == LAVA || e.getBlock().getType() == WATER) e.setCancelled(true);
+    }
+
+    private final String[] inventoryNames = {
+            "Non-permanent items",
+            "Permanent upgrades",
+            "Choose a perk",
+            "Are you sure?"
+    };
+
+    @EventHandler
+    public void onDrag(InventoryDragEvent e) {
+        if (e.getInventory() == e.getView().getBottomInventory()) return;
+
+        for (String name : inventoryNames) {
+            if (e.getView().getTitle().equals(name)) {
+                e.setCancelled(true);
+                return;
+            }
+        }
     }
 }
 

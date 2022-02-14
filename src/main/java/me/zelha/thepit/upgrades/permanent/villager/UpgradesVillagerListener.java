@@ -20,7 +20,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -611,22 +610,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         costHandler.remove(uuid);
         perksHandler.remove(uuid);
         passivesHandler.remove(uuid);
-    }
-
-    private final List<String> inventoryNames = Arrays.asList(
-            "Permanent upgrades",
-            "Choose a perk",
-            "Are you sure?"
-    );
-
-    @EventHandler
-    public void onDrag(InventoryDragEvent e) {
-        for (String name : inventoryNames) {
-            if (e.getView().getTitle().equals(name) && e.getInventory() != e.getView().getBottomInventory()) {
-                e.setCancelled(true);
-                return;
-            }
-        }
     }
 
     @EventHandler

@@ -15,7 +15,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -26,7 +25,8 @@ import org.bukkit.inventory.PlayerInventory;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.bukkit.Material.*;
+import static org.bukkit.Material.DIAMOND_SWORD;
+import static org.bukkit.Material.IRON_SWORD;
 
 
 public class ItemsVillagerListener implements Listener {
@@ -159,11 +159,6 @@ public class ItemsVillagerListener implements Listener {
         if (e.getCurrentItem() == null) return;
 
         itemPurchase(p, ShopItems.findByMaterial(e.getCurrentItem().getType()));
-    }
-
-    @EventHandler
-    public void onDrag(InventoryDragEvent e) {
-        if (e.getView().getTitle().equals("Non-permanent items") && e.getInventory() != e.getView().getBottomInventory()) e.setCancelled(true);
     }
 }
 
