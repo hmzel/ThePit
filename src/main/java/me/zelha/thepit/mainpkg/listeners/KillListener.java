@@ -223,10 +223,12 @@ public class KillListener implements Listener {
                     return 100;
                 } else if (streak < 25 && secondsBetweenKills < 5) {
                     return 150;
-                } else if (streak < 50) {
+                } else if (streak < 50 && secondsBetweenKills < 5) {
                     return 200;
-                } else {
+                } else if (streak < 50) {
                     return 250;
+                } else {
+                    return 300;
                 }
             }
             return 0;
