@@ -9,7 +9,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import static org.bukkit.Material.*;
@@ -29,9 +28,7 @@ public class ArmorPickupListener implements Listener {
             DIAMOND_HELMET, DIAMOND_CHESTPLATE, DIAMOND_LEGGINGS, DIAMOND_BOOTS
     };
 
-    private int determineWeight(ItemStack item) {
-        Material type = item.getType();
-
+    private int determineWeight(Material type) {
         for (Material material : armorWeight0) if (material == type) return 0;
         for (Material material : armorWeight1) if (material == type) return 1;
         for (Material material : armorWeight2) if (material == type) return 2;
@@ -46,11 +43,11 @@ public class ArmorPickupListener implements Listener {
         if (!zl.itemCheck(inventory.getItem(slot))) {
             inventory.setItem(slot, item.getItemStack());
             doFakePickup = true;
-        } else if (determineWeight(inventory.getItem(slot)) < determineWeight(item.getItemStack())) {
+        } else if (determineWeight(inventory.getItem(slot).getType()) < determineWeight(item.getItemStack().getType())) {
             inventory.setItem(zl.firstEmptySlot(inventory), inventory.getItem(slot));
             inventory.setItem(slot, item.getItemStack());
             doFakePickup = true;
-        } else if (!inventory.contains(item.getItemStack())) {
+        } else if (!inventory.contains(item.getItemStack().getType())) {
             inventory.setItem(zl.firstEmptySlot(inventory), item.getItemStack());
             doFakePickup = true;
         }
@@ -64,7 +61,7 @@ public class ArmorPickupListener implements Listener {
     @EventHandler
     public void onPickup(EntityPickupItemEvent e) {
         if (!zl.playerCheck(e.getEntity())) return;
-        if (determineWeight(e.getItem().getItemStack()) == 13) return;
+        if (determineWeight(e.getItem().getItemStack().getType()) == 13) return;
 
         e.setCancelled(true);
         Player p = (Player) e.getEntity();
