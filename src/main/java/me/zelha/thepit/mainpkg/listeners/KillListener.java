@@ -59,6 +59,7 @@ public class KillListener implements Listener {
         int baseModifier = 0;
         double percentageModifier = 1;
         int streakModifier = 0;
+        int maxEXP = 250;
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData killerData = Main.getInstance().getPlayerData(killer);
 
@@ -83,7 +84,7 @@ public class KillListener implements Listener {
 
         baseModifier += streakModifier;
 
-        return Math.toIntExact(Math.round((exp + baseModifier) * percentageModifier));
+        return Math.min(Math.toIntExact(Math.round((exp + baseModifier) * percentageModifier)), maxEXP);
     }
 
     private double calculateGold(Player dead, Player killer) {
