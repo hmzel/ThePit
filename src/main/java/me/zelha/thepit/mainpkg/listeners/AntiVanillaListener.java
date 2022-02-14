@@ -30,8 +30,14 @@ public class AntiVanillaListener implements Listener {
     };
 
     @EventHandler
-    public void onArrowItemPickup(EntityPickupItemEvent e) {
+    public void onItemPickup(EntityPickupItemEvent e) {
         if (!zl.playerCheck(e.getEntity())) return;
+
+        if (e.getItem().getItemStack().getItemMeta() != null && e.getItem().getItemStack().getItemMeta().getLore() != null && e.getItem().getItemStack().getItemMeta().getLore().contains("§7Perk item")) {
+            e.setCancelled(true);
+            return;
+        }
+
         if (e.getItem().getItemStack().getType() != ARROW) return;
 
         Player p = (Player) e.getEntity();
