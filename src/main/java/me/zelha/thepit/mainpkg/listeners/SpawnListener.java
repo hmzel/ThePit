@@ -3,12 +3,15 @@ package me.zelha.thepit.mainpkg.listeners;
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
+import org.bukkit.Sound;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -35,6 +38,17 @@ public class SpawnListener implements Listener {
                 }
             }
         }.runTaskTimer(Main.getInstance(), 0, 1);
+    }
+
+    @EventHandler
+    public void onShoot(ProjectileLaunchEvent e) {
+        if (e.getEntity() instanceof Arrow && zl.spawnCheck(e.getLocation())) {
+            e.setCancelled(true);
+
+            if (e.getEntity().getShooter() instanceof Player) {
+                ((Player) e.getEntity().getShooter()).playSound(e.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            }
+        }
     }
 
     @EventHandler
