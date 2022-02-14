@@ -29,9 +29,7 @@ public class StorageListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                for (String uuid : playerUUIDList) {
-                    saveDocument(uuid);
-                }
+                for (String uuid : playerUUIDList) saveDocument(uuid);
             }
         }.runTaskTimerAsynchronously(Main.getInstance(), 0, 1200);
 
@@ -39,7 +37,6 @@ public class StorageListener implements Listener {
     }
 
     private boolean dataCheck(Document document) {
-
         for (String slot : slots) {
             if (document.getEmbedded(Arrays.asList("perk_slots", slot), String.class) == null) {
                 return false;

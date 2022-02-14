@@ -172,9 +172,7 @@ public class PlayerData {
 
     public boolean hasPerkEquipped(Perks perk) {
         for (Perks slotPerk : perkSlots.values()) {
-            if (slotPerk == perk) {
-                return true;
-            }
+            if (slotPerk == perk) return true;
         }
         return false;
     }
