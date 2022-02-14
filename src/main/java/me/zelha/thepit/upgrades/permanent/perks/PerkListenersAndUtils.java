@@ -271,29 +271,36 @@ public class PerkListenersAndUtils implements Listener {
 
     private void determineKillRewards(Player killer, Player dead) {
         PlayerInventory inv = killer.getInventory();
-
-        if (!pData(killer).hasPerkEquipped(VAMPIRE) && !pData(killer).hasPerkEquipped(RAMBO)) {
-            if (pData(killer).hasPerkEquipped(OLYMPUS)) {
-
-            } else if (pData(killer).hasPerkEquipped(GOLDEN_HEADS)) {
-                if (containsLessThan(2, goldenHeadItem, inv)) {
-                    if (inv.first(PLAYER_HEAD) != -1) {
-                        inv.getItem(inv.first(PLAYER_HEAD)).setAmount(inv.getItem(inv.first(PLAYER_HEAD)).getAmount() + 1);
-                    } else {
-                        inv.addItem(goldenHeadItem);
-                    }
-                }
-            } else if (containsLessThan(2, gapple, inv)) {
-                inv.addItem(gapple);
-            }
-        }
+        boolean doHealingItem = true;
 
         if (pData(killer).hasPerkEquipped(VAMPIRE)) {
             killer.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 160, 0, false, false));
+            doHealingItem = false;
         }
 
         if (pData(killer).hasPerkEquipped(RAMBO)) {
 
+            doHealingItem = false;
+        }
+
+        if (doHealingItem && pData(killer).hasPerkEquipped(OLYMPUS)) {
+
+            doHealingItem = false;
+        }
+
+        if (doHealingItem && pData(killer).hasPerkEquipped(GOLDEN_HEADS)) {
+            if (containsLessThan(2, goldenHeadItem, inv)) {
+                if (inv.first(PLAYER_HEAD) != -1) {
+                    inv.getItem(inv.first(PLAYER_HEAD)).setAmount(inv.getItem(inv.first(PLAYER_HEAD)).getAmount() + 1);
+                } else {
+                    inv.addItem(goldenHeadItem);
+                }
+            }
+            doHealingItem = false;
+        }
+
+        if (doHealingItem && containsLessThan(2, gapple, inv)) {
+            inv.addItem(gapple);
         }
 
         if (pData(killer).hasPerkEquipped(MINEMAN) && containsLessThan(64, minemanCobblestoneItem, inv)) {
