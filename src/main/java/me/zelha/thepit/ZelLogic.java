@@ -323,27 +323,6 @@ public class ZelLogic {//zel
     public String getFancyGoldString(int gold) {
         return new DecimalFormat("#,##0").format(gold);
     }
-
-    /**
-     * only used in {@link me.zelha.thepit.mainpkg.listeners.ScoreboardListener}
-     * <p>
-     * maybe i should make it a method in that class? shrug. ill deal with that later
-     *
-     * @param uuid player uuid to get status from
-     * @return colored status string
-     */
-    public String getColorStatus(String uuid) {
-        PlayerData pData = Main.getInstance().getPlayerData(uuid);
-
-        if (pData.getStatus().equals("idling")) {
-            return "§aIdling";
-        } else if (pData.getStatus().equals("fighting")) {
-            return "§cFighting";
-        } else if (pData.getStatus().equals("bountied")) {
-            return "§cBountied";
-        }
-        return ChatColor.translateAlternateColorCodes('&', pData.getStatus());
-    }
     //string makers
 
 

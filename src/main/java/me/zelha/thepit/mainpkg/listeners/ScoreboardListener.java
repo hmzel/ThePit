@@ -6,6 +6,7 @@ import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.perks.PerkListenersAndUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -56,6 +57,22 @@ public class ScoreboardListener implements Listener {
             List<String> boardScores = new ArrayList<>();
             LocalDateTime now = LocalDateTime.now();
             PlayerData pData = Main.getInstance().getPlayerData(player);
+            String status;
+
+            switch (pData.getStatus()) {
+                case "idling":
+                    status = "§aIdling";
+                    break;
+                case "fighting":
+                    status = "§cFighting";
+                    break;
+                case "bountied":
+                    status = "§cBountied";
+                    break;
+                default:
+                    status = ChatColor.translateAlternateColorCodes('&', pData.getStatus());
+                    break;
+            }
 
             boardScores.add("§7" + dateTimeFormat.format(now) + " §8mega13Z");
             boardScores.add("§1");
@@ -77,9 +94,9 @@ public class ScoreboardListener implements Listener {
             boardScores.add("§3");
 
             if (!pData.hideTimer()) {
-                boardScores.add("§fStatus: " + zl.getColorStatus(p.getUniqueId().toString()) + " §7(" + pData.getCombatTimer() + ")");
+                boardScores.add("§fStatus: " + status + " §7(" + pData.getCombatTimer() + ")");
             } else {
-                boardScores.add("§fStatus: " + zl.getColorStatus(p.getUniqueId().toString()));
+                boardScores.add("§fStatus: " + status);
             }
 
             if (pData.getBounty() != 0) boardScores.add("§fBounty: §6" + zl.getFancyGoldString(pData.getBounty()) + "g");
