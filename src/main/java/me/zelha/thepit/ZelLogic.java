@@ -44,7 +44,9 @@ public class ZelLogic {//zel
      * @param player player to check
      * @return true if player wont cause errors, else false
      */
-    public boolean playerCheck(Player player) {return player != null && player.isValid();}
+    public boolean playerCheck(Player player) {
+        return player != null && player.isValid();
+    }
 
     /**
      * Checks if the entity is != null, valid, and instanceof Player
@@ -54,7 +56,9 @@ public class ZelLogic {//zel
      * @param entity entity to check
      * @return true if entity is a player and wont cause errors, else false
      */
-    public boolean playerCheck(Entity entity) {return entity != null && entity.isValid() && entity instanceof Player;}
+    public boolean playerCheck(Entity entity) {
+        return entity != null && entity.isValid() && entity instanceof Player;
+    }
 
     /**
      * Checks if the block is != null and if the block's material isn't air
@@ -63,7 +67,9 @@ public class ZelLogic {//zel
      * @param block block to check
      * @return true if block wont cause errors, else false
      */
-    public boolean blockCheck(Block block) {return block != null && block.getType() != Material.AIR;}
+    public boolean blockCheck(Block block) {
+        return block != null && block.getType() != Material.AIR;
+    }
 
     /**
      * Checks if the item is != null and if the item's material isn't air
@@ -73,7 +79,9 @@ public class ZelLogic {//zel
      * @param item item to check
      * @return true if item wont cause errors, else false
      */
-    public boolean itemCheck(ItemStack item) {return item != null && item.getType() != Material.AIR;}
+    public boolean itemCheck(ItemStack item) {
+        return item != null && item.getType() != Material.AIR;
+    }
 
     /**
      * Checks if the given location is in spawn
