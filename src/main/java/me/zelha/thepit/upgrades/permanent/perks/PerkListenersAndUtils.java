@@ -164,9 +164,8 @@ public class PerkListenersAndUtils implements Listener {
         }
 
         if (pData.hasPerkEquipped(BOUNTY_HUNTER)) {
-            if (!inv.contains(bountyHunterItem) && !zl.armorContentsContains(inv, bountyHunterItem.getType())) {
-                if (!zl.itemCheck(inv.getLeggings()) || inv.getLeggings().getType() == CHAINMAIL_LEGGINGS
-                   || inv.getLeggings().getType() == IRON_LEGGINGS) {
+            if (!inv.contains(bountyHunterItem)) {
+                if (!zl.itemCheck(inv.getLeggings()) || inv.getLeggings().getType() == CHAINMAIL_LEGGINGS || inv.getLeggings().getType() == IRON_LEGGINGS) {
                     inv.setLeggings(bountyHunterItem);
                 }
             }

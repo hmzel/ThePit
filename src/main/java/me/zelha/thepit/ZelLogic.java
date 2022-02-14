@@ -346,22 +346,6 @@ public class ZelLogic {//zel
     }
 
     /**
-     * only used in {@link me.zelha.thepit.upgrades.permanent.perks.PerkListenersAndUtils}
-     * <p>
-     * maybe i should make it a method in that class? shrug. ill deal with that later
-     *
-     * @param inventory inventory to check against
-     * @param material material to check for
-     * @return true if armor contents contains the given material, else false
-     */
-    public boolean armorContentsContains(PlayerInventory inventory, Material material) {
-        for (ItemStack item : inventory.getArmorContents()) {
-            if (itemCheck(item) && item.getType() == material) return true;
-        }
-        return false;
-    }
-
-    /**
      * only used in {@link me.zelha.thepit.admin.commands.HologramCheckCommand}
      * <p>
      * maybe i should make it a method in that class? shrug. ill deal with that later
