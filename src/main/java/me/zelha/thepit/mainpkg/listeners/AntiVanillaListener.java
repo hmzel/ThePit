@@ -22,9 +22,9 @@ import static org.bukkit.Material.*;
 
 public class AntiVanillaListener implements Listener {
 
-    ZelLogic zl = Main.getInstance().getZelLogic();
+    private final ZelLogic zl = Main.getInstance().getZelLogic();
 
-    Material[] undroppable = {
+    private final Material[] undroppable = {
             IRON_SWORD, BOW
     };
 
