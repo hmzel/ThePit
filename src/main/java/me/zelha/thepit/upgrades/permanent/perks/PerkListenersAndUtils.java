@@ -21,6 +21,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
@@ -579,6 +582,24 @@ public class PerkListenersAndUtils implements Listener {
         if (meta != null && meta.getLore() != null && meta.getLore().contains("§7Perk item")) {
             e.getPlayer().sendMessage("§c§lNOPE! §7You cannot drop this item!");
             e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void noGheadOnHead1(InventoryClickEvent e) {
+        if (!zl.itemCheck(e.getCursor()) || e.getCursor().getType() != PLAYER_HEAD) return;
+        if (e.getSlotType() == InventoryType.SlotType.ARMOR) e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void noGheadonHead2(InventoryDragEvent e) {
+        if (!zl.itemCheck(e.getCursor()) || e.getCursor().getType() != PLAYER_HEAD) return;
+
+        for (Integer slot : e.getRawSlots()) {
+            if (e.getView().getSlotType(slot) == InventoryType.SlotType.ARMOR) {
+                e.setCancelled(true);
+                return;
+            }
         }
     }
 
