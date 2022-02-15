@@ -3,6 +3,7 @@ package me.zelha.thepit.mainpkg.listeners;
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,7 +12,9 @@ import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.inventory.ItemStack;
@@ -120,7 +123,21 @@ public class AntiVanillaListener implements Listener {
     };
 
     @EventHandler
+    public void onClickInCraftingGrid(InventoryClickEvent e) {
+        if (e.getInventory().getType() != InventoryType.CRAFTING) return;
+
+        e.setCancelled(true);
+        ((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+    }
+
+    @EventHandler
     public void onDrag(InventoryDragEvent e) {
+        if (e.getInventory().getType() == InventoryType.CRAFTING) {
+            e.setCancelled(true);
+            ((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            return;
+        }
+
         if (e.getInventory() == e.getView().getBottomInventory()) return;
 
         for (String name : inventoryNames) {
