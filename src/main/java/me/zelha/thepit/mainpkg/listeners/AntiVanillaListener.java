@@ -32,6 +32,10 @@ public class AntiVanillaListener implements Listener {
             IRON_SWORD, BOW
     };
 
+    private final String[] inventoryNames = {
+            "Non-permanent items", "Permanent upgrades", "Choose a perk", "Are you sure?"
+    };
+
     @EventHandler
     public void onItemPickup(EntityPickupItemEvent e) {
         if (!zl.playerCheck(e.getEntity())) return;
@@ -115,16 +119,9 @@ public class AntiVanillaListener implements Listener {
         if (e.getBlock().getType() == LAVA || e.getBlock().getType() == WATER) e.setCancelled(true);
     }
 
-    private final String[] inventoryNames = {
-            "Non-permanent items",
-            "Permanent upgrades",
-            "Choose a perk",
-            "Are you sure?"
-    };
-
     @EventHandler
     public void onClickInCraftingGrid(InventoryClickEvent e) {
-        if (e.getInventory().getType() != InventoryType.CRAFTING) return;
+        if (e.getSlotType() != InventoryType.SlotType.CRAFTING) return;
 
         e.setCancelled(true);
         ((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
@@ -132,10 +129,12 @@ public class AntiVanillaListener implements Listener {
 
     @EventHandler
     public void onDrag(InventoryDragEvent e) {
-        if (e.getInventory().getType() == InventoryType.CRAFTING) {
-            e.setCancelled(true);
-            ((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-            return;
+        for (Integer slot : e.getRawSlots()) {
+            if (e.getView().getSlotType(slot) == InventoryType.SlotType.CRAFTING) {
+                e.setCancelled(true);
+                ((Player) e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+                return;
+            }
         }
 
         if (e.getInventory() == e.getView().getBottomInventory()) return;
