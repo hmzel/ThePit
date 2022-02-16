@@ -100,7 +100,7 @@ public final class Main extends JavaPlugin {
         return instance;
     }
 
-    public MongoCollection<Document> getPlayerDataCollection() {//i should clean this up later
+    public MongoCollection<Document> getPlayerDataCollection() {
         return playerDataCollection;
     }
 

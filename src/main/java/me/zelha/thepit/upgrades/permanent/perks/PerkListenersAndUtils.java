@@ -39,8 +39,8 @@ import java.util.*;
 
 import static me.zelha.thepit.zelenums.Perks.*;
 import static org.bukkit.Material.*;
-import static org.bukkit.inventory.EquipmentSlot.*;
 import static org.bukkit.inventory.EquipmentSlot.CHEST;
+import static org.bukkit.inventory.EquipmentSlot.*;
 
 //trickle down is handled in GoldIngotListener because thats just way easier
 //all resource-related stuff is handled in KillListener
@@ -592,7 +592,7 @@ public class PerkListenersAndUtils implements Listener {
     }
 
     @EventHandler
-    public void noGheadonHead2(InventoryDragEvent e) {
+    public void noGheadOnHead2(InventoryDragEvent e) {
         if (!zl.itemCheck(e.getCursor()) || e.getCursor().getType() != PLAYER_HEAD) return;
 
         for (Integer slot : e.getRawSlots()) {

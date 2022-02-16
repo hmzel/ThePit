@@ -12,12 +12,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ScoreboardListener implements Listener {
 
@@ -28,7 +30,7 @@ public class ScoreboardListener implements Listener {
 
     @EventHandler
     public void addOnJoin(PlayerJoinEvent e) {
-        new SidebarUpdater(e.getPlayer()).runTaskTimer(Main.getInstance(),0, 1);
+        new SidebarUpdater(e.getPlayer()).runTaskTimer(Main.getInstance(),0, 20);
         new TabAndNameUpdater(e.getPlayer()).runTaskTimer(Main.getInstance(),0, 20);
     }
 
@@ -36,6 +38,61 @@ public class ScoreboardListener implements Listener {
     public void removeOnLeave(PlayerQuitEvent e) {
         if (runTracker.hasID(e.getPlayer().getUniqueId())) runTracker.stop(e.getPlayer().getUniqueId());
         if (runTracker2.hasID(e.getPlayer().getUniqueId())) runTracker2.stop(e.getPlayer().getUniqueId());
+    }
+
+    @EventHandler
+    public void onPluginLoadStartAnimation(PluginEnableEvent e) {
+        new BukkitRunnable() {
+            int ticks = 0;
+            int anim = 0;
+
+            private void setDisplay(String name) {
+                Scoreboard mainBoard = Bukkit.getServer().getScoreboardManager().getMainScoreboard();
+                Objective mainObjective;
+
+                if (mainBoard.getObjective(DisplaySlot.SIDEBAR) != null) {
+                    mainObjective = mainBoard.getObjective(DisplaySlot.SIDEBAR);
+                } else {
+                    mainObjective = mainBoard.registerNewObjective("main", "dummy", name);
+                    mainObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
+                }
+
+                mainObjective.setDisplayName(name);
+            }
+
+            @Override
+            public void run() {
+                if (ticks == 160) ticks = 0;
+                if (Bukkit.getServer().getScoreboardManager() == null) return;
+
+                String display = "§e§l  THE HYPIXEL PIT  ";
+                StringBuilder builder = new StringBuilder(display);
+
+                if (ticks >= 100) display = builder.replace(1, 2, "f").toString();
+
+                if ((ticks >= 145 && ticks <= 150) || (ticks >= 155 && ticks <= 160)) {
+                    display = builder.replace(1, 2, "e").toString();
+                }
+
+                if (ticks >= 100 && ticks <= 124) {
+                    if (builder.charAt(5 + anim) == ' ') anim++;
+
+                    if (5 + anim < builder.length() && 6 + anim < builder.length()) {
+                        builder.replace(5 + anim, 5 + anim, "§6§l").replace(10 + anim, 10 + anim, "§e§l");
+                    } else if (5 + anim < builder.length()) {
+                        builder.replace(5 + anim, 5 + anim, "§6§l");
+                    }
+
+                    if (ticks % 2 == 0) anim++;
+                    if (anim == 16) anim = 0;
+
+                    display = builder.toString();
+                }
+
+                setDisplay(display);
+                ticks++;
+            }
+        }.runTaskTimer(Main.getInstance(), 0, 1);
     }
 
 
