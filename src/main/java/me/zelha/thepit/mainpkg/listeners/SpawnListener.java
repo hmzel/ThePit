@@ -26,7 +26,10 @@ public class SpawnListener implements Listener {
 
             @Override
             public void run() {
-                if (!zl.playerCheck(e.getPlayer())) cancel();
+                if (!zl.playerCheck(e.getPlayer())) {
+                    cancel();
+                    return;
+                }
 
                 Player p = e.getPlayer();
                 PlayerData pData = Main.getInstance().getPlayerData(p);
