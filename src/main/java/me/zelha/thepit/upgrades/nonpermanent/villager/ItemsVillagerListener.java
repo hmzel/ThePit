@@ -78,6 +78,8 @@ public class ItemsVillagerListener implements Listener {
             return;
         }
 
+        p.sendMessage("§a§lPURCHASE! §6" + item.getShopName());
+
         if (item == ShopItems.DIAMOND_SWORD && inv.contains(IRON_SWORD)) {
             inv.setItem(inv.first(IRON_SWORD), zl.itemBuilder(DIAMOND_SWORD, 1));
             inv.remove(IRON_SWORD);
