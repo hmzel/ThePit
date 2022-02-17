@@ -5,6 +5,7 @@ import me.zelha.thepit.RunMethods;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.perks.PerkListenersAndUtils;
+import me.zelha.thepit.zelenums.Passives;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
@@ -28,12 +29,15 @@ public class AttackListener implements Listener {
         double damageBoost = 1;
         double defenseBoost = 0;
         PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
+        PlayerData damagerData = Main.getInstance().getPlayerData(damager);
 
         if (zl.itemCheck(damager.getInventory().getItemInMainHand()) && damager.getInventory().getItemInMainHand().getType() == Material.DIAMOND_SWORD && damagedData.getBounty() != 0) {
             damageBoost += 0.2;
         }
+        if (damagerData.getPassiveTier(Passives.MELEE_DAMAGE) > 0) damageBoost += (damagerData.getPassiveTier(Passives.MELEE_DAMAGE) / 100.0);
 
         if (damagedData.getPrestige() == 0) defenseBoost += 0.15;
+        if (damagedData.getPassiveTier(Passives.DAMAGE_REDUCTION) > 0) defenseBoost += (damagedData.getPassiveTier(Passives.DAMAGE_REDUCTION) / 100.0);
 
         damageBoost += perkUtils.getPerkDamageBoost(damager, damaged);
         defenseBoost += perkUtils.getPerkDamageReduction(damaged);
