@@ -108,7 +108,6 @@ public class ScoreboardListener implements Listener {
         private final Player p;
         private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("MM/dd/yy");
         private List<String> previousScores;
-        boolean isSetUp = false;
 
         public SidebarUpdater(Player player) {
             this.p = player;
@@ -212,7 +211,6 @@ public class ScoreboardListener implements Listener {
                 scoreIndex--;
             }
 
-            isSetUp = true;
             previousScores = scoreList;
         }
     }
