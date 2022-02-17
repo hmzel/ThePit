@@ -5,8 +5,12 @@ import me.zelha.thepit.RunMethods;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.perks.PerkListenersAndUtils;
+import net.minecraft.network.protocol.game.PacketPlayOutScoreboardScore;
+import net.minecraft.server.ScoreboardServer;
+import net.minecraft.server.network.PlayerConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,7 +18,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.*;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -99,15 +106,12 @@ public class ScoreboardListener implements Listener {
     private class SidebarUpdater extends BukkitRunnable {
 
         private final Player p;
-        int ticks = 0;
         private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("MM/dd/yy");
+        private List<String> previousScores;
 
         public SidebarUpdater(Player player) {
             this.p = player;
-        }
-
-        private void setDisplay(String string) {
-            if (p.getScoreboard().getObjective(DisplaySlot.SIDEBAR) != null) p.getScoreboard().getObjective(DisplaySlot.SIDEBAR).setDisplayName(string);
+            this.previousScores = getBoardScores(player);
         }
 
         private List<String> getBoardScores(Player player) {
@@ -187,87 +191,22 @@ public class ScoreboardListener implements Listener {
             return boardScores;
         }
 
-        private void createBoard(Player p, String displayName) {
-            Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-            Objective objective = scoreboard.registerNewObjective("heckyou", "dummy", displayName);
-            List<String> scoreList = getBoardScores(p);
-
-            for (int i = 0; i < scoreList.size(); i++) objective.getScore(scoreList.get(i)).setScore(scoreList.size() - i);
-
-            objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-            p.setScoreboard(scoreboard);
-        }
-
         @Override
         public void run() {
             if (!runTracker.hasID(p.getUniqueId())) runTracker.setID(p.getUniqueId(), super.getTaskId());
 
-            if (ticks == 160) ticks = 0;
+            List<String> scoreList = getBoardScores(p);
+            PlayerConnection pConnect = ((CraftPlayer) p).getHandle().b;
 
-            switch (ticks) {
-                case 0:
-                case 20:
-                case 40:
-                case 60:
-                case 80:
-                    createBoard(p, "§e§l  THE HYPIXEL PIT  ");
-                    break;
-                case 100:
-                    createBoard(p, "§6§l  T§e§lHE HYPIXEL PIT  ");
-                    break;
-                case 102:
-                    setDisplay("§f§l  T§6§lH§e§lE HYPIXEL PIT  ");
-                    break;
-                case 104:
-                    setDisplay("§f§l  TH§6§lE§e§l HYPIXEL PIT  ");
-                    break;
-                case 106:
-                    setDisplay("§f§l  THE§6§l H§e§lYPIXEL PIT  ");
-                    break;
-                case 108:
-                    setDisplay("§f§l  THE H§6§lY§e§lPIXEL PIT  ");
-                    break;
-                case 110:
-                    setDisplay("§f§l  THE HY§6§lP§e§lIXEL PIT  ");
-                    break;
-                case 112:
-                    setDisplay("§f§l  THE HYP§6§lI§e§lXEL PIT  ");
-                    break;
-                case 114:
-                    setDisplay("§f§l  THE HYPI§6§lX§e§lEL PIT  ");
-                    break;
-                case 116:
-                    setDisplay("§f§l  THE HYPIX§6§lE§e§lL PIT  ");
-                    break;
-                case 118:
-                    setDisplay("§f§l  THE HYPIXE§6§lL§e§l PIT  ");
-                    break;
-                case 120:
-                    createBoard(p, "§f§l  THE HYPIXEL§6§l P§e§lIT  ");
-                    break;
-                case 122:
-                    setDisplay("§f§l  THE HYPIXEL P§6§lI§e§lT  ");
-                    break;
-                case 124:
-                    setDisplay("§f§l  THE HYPIXEL PI§6§lT  ");
-                    break;
-                case 126:
-                    setDisplay("§f§l  THE HYPIXEL PIT  ");
-                    break;
-                case 140:
-                    createBoard(p,"§f§l  THE HYPIXEL PIT  ");
-                    break;
-                case 146:
-                    setDisplay("§e§l  THE HYPIXEL PIT  ");
-                    break;
-                case 151:
-                    setDisplay("§f§l  THE HYPIXEL PIT  ");
-                    break;
-                case 156:
-                    setDisplay("§e§l  THE HYPIXEL PIT  ");
-                    break;
+            for (int i = 0; i < scoreList.size(); i++) {
+                if (!previousScores.get(i).equals(scoreList.get(i))) {
+                    pConnect.sendPacket(new PacketPlayOutScoreboardScore(ScoreboardServer.Action.b, "main", previousScores.get(i), 0));
+                }
+
+                pConnect.sendPacket(new PacketPlayOutScoreboardScore(ScoreboardServer.Action.a, "main", scoreList.get(i), scoreList.size() - i));
             }
-            ticks++;
+
+            previousScores = scoreList;
         }
     }
 
