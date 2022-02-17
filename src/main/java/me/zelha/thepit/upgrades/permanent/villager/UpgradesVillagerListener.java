@@ -97,7 +97,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 break;
             case DAMAGE_REDUCTION:
                 if (pData.getPassiveTier(DAMAGE_REDUCTION) > 0) {
-                    lore.add("§7Current: §9+" + pData.getPassiveTier(DAMAGE_REDUCTION) + "%");
+                    lore.add("§7Current: §9-" + pData.getPassiveTier(DAMAGE_REDUCTION) + "%");
                     lore.add("§7Tier: §a" + zl.toRoman(pData.getPassiveTier(DAMAGE_REDUCTION)));
                     lore.add("");
                 }
