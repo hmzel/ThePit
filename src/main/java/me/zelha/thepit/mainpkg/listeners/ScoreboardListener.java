@@ -225,11 +225,21 @@ public class ScoreboardListener implements Listener {
         public void run() {
             if (!runTracker2.hasID(p.getUniqueId())) runTracker2.setID(p.getUniqueId(), super.getTaskId());
 
-            if (pData.getBounty() == 0) {
-                p.setPlayerListName(zl.getColorBracketAndLevel(p.getUniqueId().toString()) + " §7" + p.getName());
-            } else {
-                p.setPlayerListName(zl.getColorBracketAndLevel(p.getUniqueId().toString()) + " §7" + p.getName() + " §6§l" + pData.getBounty() + "g");
-            }
+            String customName = zl.getColorBracketAndLevel(p.getUniqueId().toString()) + " §7" + p.getName();
+
+            if (pData.getBounty() != 0) customName += " §6§l" + pData.getBounty() + "g";
+
+            p.setPlayerListName(customName);
+
+            Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
+            Team team = (main.getTeam(p.getName()) != null) ? main.getTeam(p.getName()) : main.registerNewTeam(p.getName());
+
+            team.setPrefix(zl.getColorBracketAndLevel(p.getUniqueId().toString()) + " ");
+
+            if (pData.getBounty() != 0) team.setSuffix(" §6§l" + pData.getBounty() + "g");
+
+            team.addEntry(p.getName());
+            team.setColor(ChatColor.GRAY);
         }
     }
 }
