@@ -55,36 +55,35 @@ public class KillListener implements Listener {
     }
 
     private int calculateEXP(Player dead, Player killer) {
-        int exp = 5;
-        int baseModifier = 0;
-        double percentageModifier = 1;
+        double exp = 5;
         int streakModifier = 0;
         int maxEXP = 250;
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData killerData = Main.getInstance().getPlayerData(killer);
 
-        if (deadData.getPrestige() == 0) percentageModifier -= 0.09;
-        if (killerData.getStreak() <= 3 && killerData.getLevel() <= 30) baseModifier += 4;
-        if (killerData.getStreak() <= (killerData.getPassiveTier(Passives.EL_GATO) - 1)) baseModifier += 5;
-        if (killerData.getPassiveTier(Passives.XP_BOOST) > 0) percentageModifier += (killerData.getPassiveTier(Passives.XP_BOOST) / 10.0);
-        if (deadData.getStreak() > 5) baseModifier += (int) Math.min(Math.round(deadData.getStreak()), 25);
-        if (deadData.getLevel() > killerData.getLevel()) baseModifier += (int) Math.round((deadData.getLevel() - killerData.getLevel()) / 4.5);
+        if (killerData.getStreak() <= (killerData.getPassiveTier(Passives.EL_GATO) - 1)) exp += 5;
+        if (deadData.getStreak() > 5) exp += (int) Math.min(Math.round(deadData.getStreak()), 25);
+        if (killerData.getStreak() <= 3 && killerData.getLevel() <= 30) exp += 4;
+        if (deadData.getLevel() > killerData.getLevel()) exp += (int) Math.round((deadData.getLevel() - killerData.getLevel()) / 4.5);
 
-        if (killerData.getStreak() < 5) {
+        if (killerData.getStreak() >= 5) {
             streakModifier += 3;
-        } else if (killerData.getStreak() < 20) {
+        } else if (killerData.getStreak() >= 20) {
             streakModifier += 5;
         } else if (killerData.getStreak() < 200) {
             streakModifier += (Math.floor(killerData.getStreak() / 10) - 1) * 3;
-        } else {
+        } else if (killerData.getStreak() >= 200) {
             streakModifier += 60;
         }
 
-        if (killerData.hasPerkEquipped(STREAKER)) streakModifier *= 3;
+        if (killerData.hasPerkEquipped(STREAKER) && streakModifier != 0) streakModifier *= 3;
 
-        baseModifier += streakModifier;
+        if (deadData.getPrestige() == 0) exp *= 0.90;
+        if (killerData.getPassiveTier(Passives.XP_BOOST) > 0) exp *= (killerData.getPassiveTier(Passives.XP_BOOST) / 10.0);
 
-        return Math.min(Math.toIntExact(Math.round((exp + baseModifier) * percentageModifier)), maxEXP);
+        exp += streakModifier;
+
+        return (int) Math.min(Math.ceil(exp), maxEXP);
     }
 
     private double calculateGold(Player dead, Player killer) {
