@@ -383,6 +383,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         } else if (pData.getPerkUnlockStatus(perk)) {
             pData.setPerkAtSlot(slotHandler.get(p.getUniqueId()), perk);
             perkUtils.perkReset(p);
+            p.sendMessage("§a§lPURCHASE! §6" + perk.getName());
             p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
             openMainGUI(p);
             return;
@@ -601,6 +602,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 pData.setPerkUnlockStatus(perksHandler.get(uuid), true);
                 pData.setPerkAtSlot(slotHandler.get(uuid), perksHandler.get(uuid));
                 perkUtils.perkReset(p);
+                p.sendMessage("§a§lPURCHASE! §6" + perksHandler.get(uuid).getName());
                 openMainGUI(p);
             }
 
