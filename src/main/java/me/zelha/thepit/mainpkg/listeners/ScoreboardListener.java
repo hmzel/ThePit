@@ -108,6 +108,7 @@ public class ScoreboardListener implements Listener {
         private final Player p;
         private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("MM/dd/yy");
         private List<String> previousScores;
+        boolean isSetUp = false;
 
         public SidebarUpdater(Player player) {
             this.p = player;
@@ -193,19 +194,25 @@ public class ScoreboardListener implements Listener {
 
         @Override
         public void run() {
+            //i know this sends a lot of unnecessary packets but i genuinely couldnt find a better way to do it that didnt
+            //completely break with the slightest touch
+
             if (!runTracker.hasID(p.getUniqueId())) runTracker.setID(p.getUniqueId(), super.getTaskId());
 
             List<String> scoreList = getBoardScores(p);
+            int scoreIndex = scoreList.size();
             PlayerConnection pConnect = ((CraftPlayer) p).getHandle().b;
 
-            for (int i = 0; i < scoreList.size(); i++) {
-                if (!previousScores.get(i).equals(scoreList.get(i))) {
-                    pConnect.sendPacket(new PacketPlayOutScoreboardScore(ScoreboardServer.Action.b, "main", previousScores.get(i), 0));
-                }
-
-                pConnect.sendPacket(new PacketPlayOutScoreboardScore(ScoreboardServer.Action.a, "main", scoreList.get(i), scoreList.size() - i));
+            for (String prevScore : previousScores) {
+                pConnect.sendPacket(new PacketPlayOutScoreboardScore(ScoreboardServer.Action.b, "main", prevScore, 0));
             }
 
+            for (String score : scoreList) {
+                pConnect.sendPacket(new PacketPlayOutScoreboardScore(ScoreboardServer.Action.a, "main", score, scoreIndex));
+                scoreIndex--;
+            }
+
+            isSetUp = true;
             previousScores = scoreList;
         }
     }
@@ -226,8 +233,12 @@ public class ScoreboardListener implements Listener {
             if (!runTracker2.hasID(p.getUniqueId())) runTracker2.setID(p.getUniqueId(), super.getTaskId());
 
             String customName = zl.getColorBracketAndLevel(p.getUniqueId().toString()) + " §7" + p.getName();
+            String suffix = "";
 
-            if (pData.getBounty() != 0) customName += " §6§l" + pData.getBounty() + "g";
+            if (pData.getBounty() != 0) {
+                customName += " §6§l" + pData.getBounty() + "g";
+                suffix += " §6§l" + pData.getBounty() + "g";
+            }
 
             p.setPlayerListName(customName);
 
@@ -235,9 +246,7 @@ public class ScoreboardListener implements Listener {
             Team team = (main.getTeam(p.getName()) != null) ? main.getTeam(p.getName()) : main.registerNewTeam(p.getName());
 
             team.setPrefix(zl.getColorBracketAndLevel(p.getUniqueId().toString()) + " ");
-
-            if (pData.getBounty() != 0) team.setSuffix(" §6§l" + pData.getBounty() + "g");
-
+            team.setSuffix(suffix);
             team.addEntry(p.getName());
             team.setColor(ChatColor.GRAY);
         }
