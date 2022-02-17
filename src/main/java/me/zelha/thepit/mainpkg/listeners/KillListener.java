@@ -78,7 +78,7 @@ public class KillListener implements Listener {
 
         if (killerData.hasPerkEquipped(STREAKER) && streakModifier != 0) streakModifier *= 3;
 
-        if (deadData.getPrestige() == 0) exp *= 0.90;
+        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) exp *= 0.90;
         if (killerData.getPassiveTier(Passives.XP_BOOST) > 0) exp *= (killerData.getPassiveTier(Passives.XP_BOOST) / 10.0);
 
         exp += streakModifier;
@@ -88,28 +88,27 @@ public class KillListener implements Listener {
 
     private double calculateGold(Player dead, Player killer) {
         int gold = 10;
-        int baseModifier = 0;
-        double percentageModifier = 1;
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData killerData = Main.getInstance().getPlayerData(killer);
         PlayerInventory deadInv = dead.getInventory();
         PlayerInventory killerInv = killer.getInventory();
 
         if (perkUtils.hasBeenShotBySpammer(killer, dead)) gold *= 3;
-        if (killerData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS) baseModifier += 4;
+        if (killerData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS) gold += 4;
 
-        for (ItemStack item : deadInv.getArmorContents()) {
-            if (zl.itemCheck(item) && item.getType().name().contains("DIAMOND")) baseModifier++;
-        }
+        if (killerData.getStreak() <= killerData.getPassiveTier(Passives.EL_GATO)) gold += 5;
+        if (deadData.getLevel() > killerData.getLevel()) gold += (int) Math.round((deadData.getLevel() - killerData.getLevel()) / 4.5);
+        if (deadData.getStreak() > 5) gold += Math.min((int) Math.round(deadData.getStreak()), 25);
+        if (killerData.getStreak() <= 3 && killerData.getLevel() <= 30) gold += 4;
+        //genesis thing here
+        for (ItemStack item : deadInv.getArmorContents()) if (zl.itemCheck(item) && item.getType().name().contains("DIAMOND")) gold += 2;
 
-        if (deadData.getPrestige() == 0) percentageModifier -= 0.09;
-        if (killerData.getStreak() <= 3 && killerData.getLevel() <= 30) baseModifier += 4;
-        if (killerData.getStreak() <= killerData.getPassiveTier(Passives.EL_GATO)) baseModifier += 5;
-        if (killerData.getPassiveTier(Passives.GOLD_BOOST) > 0) percentageModifier += (killerData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
-        if (deadData.getStreak() > 5) baseModifier += Math.min((int) Math.round(deadData.getStreak()), 25);
-        if (deadData.getLevel() > killerData.getLevel()) baseModifier += (int) Math.round((deadData.getLevel() - killerData.getLevel()) / 4.5);
+        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) gold *= 0.09;
+        if (killerData.getPassiveTier(Passives.GOLD_BOOST) > 0) gold *= (killerData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
+        //renown gold boost
+        //celeb
 
-        return ((gold + baseModifier) * percentageModifier) + deadData.getBounty();
+        return gold + deadData.getBounty();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
