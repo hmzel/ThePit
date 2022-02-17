@@ -79,7 +79,7 @@ public class KillListener implements Listener {
         if (killerData.hasPerkEquipped(STREAKER) && streakModifier != 0) streakModifier *= 3;
 
         if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) exp *= 0.90;
-        if (killerData.getPassiveTier(Passives.XP_BOOST) > 0) exp *= (killerData.getPassiveTier(Passives.XP_BOOST) / 10.0);
+        if (killerData.getPassiveTier(Passives.XP_BOOST) > 0) exp *= 1 + (killerData.getPassiveTier(Passives.XP_BOOST) / 10.0);
 
         exp += streakModifier;
 
@@ -104,7 +104,7 @@ public class KillListener implements Listener {
         for (ItemStack item : deadInv.getArmorContents()) if (zl.itemCheck(item) && item.getType().name().contains("DIAMOND")) gold += 2;
 
         if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) gold *= 0.09;
-        if (killerData.getPassiveTier(Passives.GOLD_BOOST) > 0) gold *= (killerData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
+        if (killerData.getPassiveTier(Passives.GOLD_BOOST) > 0) gold *= 1 + (killerData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
         //renown gold boost
         //celeb
 
