@@ -2,8 +2,8 @@ package me.zelha.thepit.admin.commands;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
-import org.apache.commons.lang.math.NumberUtils;
-import org.apache.commons.lang3.BooleanUtils;
+import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.math.NumberUtils;
+import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.BooleanUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
