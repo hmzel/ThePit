@@ -214,6 +214,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         } else if (cost < 1000) {
             pData.setGold(pData.getGold() - cost);
             pData.setPassiveTier(passive, pData.getPassiveTier(passive) + 1);
+            p.sendMessage("§a§lPURCHASE! §6" + passive.getName() + zl.toRoman(pData.getPassiveTier(passive)));
             p.playSound(p.getLocation(),  Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
             openMainGUI(p);
             return;
@@ -594,6 +595,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
             if (passivesHandler.get(uuid) != null) {
                 pData.setPassiveTier(passivesHandler.get(uuid), pData.getPassiveTier(passivesHandler.get(uuid)) + 1);
+                p.sendMessage("§a§lPURCHASE! §6" + passivesHandler.get(uuid).getName() + zl.toRoman(pData.getPassiveTier(passivesHandler.get(uuid))));
                 openMainGUI(p);
             } else if (perksHandler.get(uuid) != null) {
                 pData.setPerkUnlockStatus(perksHandler.get(uuid), true);
