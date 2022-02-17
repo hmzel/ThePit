@@ -47,7 +47,7 @@ public class SetBountyCommand implements CommandExecutor {
             Main.getInstance().getPlayerData(p2).setBounty(NumberUtils.toInt(args[1], 0));
             sender.sendMessage("§aSuccessfully set §7" + p2.getName() + "§a's §6§lBounty §ato §6§l" + NumberUtils.toInt(args[1], 0) + "g");
 
-            if (BooleanUtils.toBoolean(args[2])) {
+            if (args.length >= 3 && BooleanUtils.toBoolean(args[2])) {
                 Bukkit.broadcastMessage("§6§lBOUNTY! §7of §6§l " + Integer.parseInt(args[1]) + "g §7placed on " + zl.getColorBracketAndLevel(p2.getUniqueId().toString())
                         + " §7" + p2.getName() + " by " + sender.getName());
             }
