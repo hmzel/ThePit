@@ -56,7 +56,7 @@ public class KillListener implements Listener {
 
     private int calculateEXP(Player dead, Player killer) {
         double exp = 5;
-        int streakModifier = 0;
+        double streakModifier = 0;
         int maxEXP = 250;
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData killerData = Main.getInstance().getPlayerData(killer);
@@ -66,17 +66,17 @@ public class KillListener implements Listener {
         if (killerData.getStreak() <= 3 && killerData.getLevel() <= 30) exp += 4;
         if (deadData.getLevel() > killerData.getLevel()) exp += (int) Math.round((deadData.getLevel() - killerData.getLevel()) / 4.5);
 
-        if (killerData.getStreak() >= 5) {
-            streakModifier += 3;
-        } else if (killerData.getStreak() >= 20) {
-            streakModifier += 5;
-        } else if (killerData.getStreak() < 200) {
-            streakModifier += (Math.floor(killerData.getStreak() / 10) - 1) * 3;
+        if (killerData.getStreak() >= 5 && killerData.getStreak() < 20) {
+            streakModifier = 3;
+        } else if (killerData.getStreak() >= 20 && killerData.getStreak() <= 30) {
+            streakModifier = 5;
+        } else if (killerData.getStreak() < 200 && killerData.getStreak() > 30) {
+            streakModifier = (Math.floor(killerData.getStreak() / 10.0D) - 1) * 3;
         } else if (killerData.getStreak() >= 200) {
-            streakModifier += 60;
+            streakModifier = 60;
         }
 
-        if (killerData.hasPerkEquipped(STREAKER) && streakModifier != 0) streakModifier *= 3;
+        if (killerData.hasPerkEquipped(STREAKER)) streakModifier *= 3;
 
         if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) exp *= 0.90;
         if (killerData.getPassiveTier(Passives.XP_BOOST) > 0) exp *= 1 + (killerData.getPassiveTier(Passives.XP_BOOST) / 10.0);
@@ -122,7 +122,7 @@ public class KillListener implements Listener {
         if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
         if (e.getCause() == DamageCause.FALL) return;
 
-        if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player) {
+        if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player && zl.playerCheck((Player) ((Arrow) damagerEntity).getShooter())) {
             damager = (Player) ((Arrow) damagerEntity).getShooter();
         } else if (zl.playerCheck(damagerEntity)) {
             damager = (Player) damagerEntity;
