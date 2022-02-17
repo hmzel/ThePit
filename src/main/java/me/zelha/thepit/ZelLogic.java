@@ -332,9 +332,11 @@ public class ZelLogic {//zel
      * as opposed to addItem(item) it will go into your inventory even if you have a free hotbar slot
      * <p>
      * for some reason some items do this in regular pit, so i use this method to mimic that
+     * <p>
+     * can also be used to check if the inventory is full, as it returns -1 if thats the case
      *
      * @param inv inventory to get the first empty slot from
-     * @return first empty slot
+     * @return first empty slot, -1 if inventory is full
      */
     public int firstEmptySlot(PlayerInventory inv) {
         ItemStack[] invItems = inv.getStorageContents();
