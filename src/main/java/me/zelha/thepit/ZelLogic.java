@@ -300,6 +300,7 @@ public class ZelLogic {//zel
         int nearestRoman = romanizer.floorKey(number);
 
         if (number == nearestRoman) return romanizer.get(number);
+        if (number > 1000000) return String.valueOf(number);
 
         return romanizer.get(nearestRoman) + toRoman(number - nearestRoman);
     }
