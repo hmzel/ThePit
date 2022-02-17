@@ -575,7 +575,7 @@ public class PerkListenersAndUtils implements Listener {
         e.setCancelled(true);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onDrop(PlayerDropItemEvent e) {
         ItemMeta meta = e.getItemDrop().getItemStack().getItemMeta();
 

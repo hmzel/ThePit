@@ -32,6 +32,10 @@ public class AntiVanillaListener implements Listener {
             IRON_SWORD, BOW
     };
 
+    private final Material[] disappearOnDrop = {
+        CHAINMAIL_HELMET, CHAINMAIL_CHESTPLATE, CHAINMAIL_LEGGINGS, CHAINMAIL_BOOTS
+    };
+
     private final String[] inventoryNames = {
             "Non-permanent items", "Permanent upgrades", "Choose a perk", "Are you sure?"
     };
@@ -101,6 +105,11 @@ public class AntiVanillaListener implements Listener {
 
     @EventHandler
     public void onDrop(PlayerDropItemEvent e) {
+        if (Arrays.asList(disappearOnDrop).contains(e.getItemDrop().getItemStack().getType())) {
+            e.getItemDrop().remove();
+            return;
+        }
+
         if (Arrays.asList(undroppable).contains(e.getItemDrop().getItemStack().getType())) e.setCancelled(true);
     }
 
