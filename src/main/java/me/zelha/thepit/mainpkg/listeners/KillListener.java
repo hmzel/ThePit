@@ -6,16 +6,19 @@ import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.perks.PerkListenersAndUtils;
 import me.zelha.thepit.zelenums.Passives;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
+import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -34,6 +37,7 @@ public class KillListener implements Listener {
     private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
     private final RunMethods runTracker = Main.getInstance().generateRunMethods();
     private final RunMethods runTracker2 = Main.getInstance().generateRunMethods();
+    private final RunMethods runTracker3 = Main.getInstance().generateRunMethods();
 
     private String calculateKillMessage(Player killer) {
         PlayerData pData = Main.getInstance().getPlayerData(killer);
@@ -169,9 +173,12 @@ public class KillListener implements Listener {
 
             damager.sendMessage(calculateKillMessage(damager) + " §7on " + zl.getColorBracketAndLevel(uuid) + " §7" + damaged.getName()
                     + " §b+" + calculateEXP(damaged, damager) + "§bXP §6+" + zl.getFancyGoldString(calculatedGold) + "§6g");
-
-            if (!runTracker.hasID(damager.getUniqueId())) new BountyRunnable(damager).runTaskTimer(Main.getInstance(), 0, 1);
         }
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e) {
+        new BountyRunnable(e.getPlayer()).runTaskTimer(Main.getInstance(), 0, 1);
     }
 
     @EventHandler
@@ -187,6 +194,7 @@ public class KillListener implements Listener {
         private int ticksBetweenKills;
         private int secondsBetweenKills;
         private double streak;
+        private boolean hasAnimation = false;
 
         private BountyRunnable(Player player) {
             this.player = player;
@@ -265,6 +273,76 @@ public class KillListener implements Listener {
             if (ticksBetweenKills == 20) {
                 secondsBetweenKills++;
                 ticksBetweenKills = 0;
+            }
+
+            if (pData.getBounty() != 0 && !zl.spawnCheck(player.getLocation()) && !hasAnimation) {
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (!zl.playerCheck(player)) {
+                            cancel();
+                            return;
+                        }
+
+                        if (!runTracker3.hasID(player.getUniqueId())) runTracker3.setID(player.getUniqueId(), getTaskId());
+
+                        double x;
+                        double z;
+
+                        do {
+                            x = new Random().nextInt(85) / 100D;
+                            z = new Random().nextInt(85) / 100D;
+                        } while (player.getLocation().distance(player.getLocation().add(x, -0.5, z)) < 0.6);
+
+                        if (new Random().nextBoolean()) x = -x;
+                        if (new Random().nextBoolean()) z = -z;
+
+                        double finalX = x;
+                        double finalZ = z;
+
+                        new BukkitRunnable() {
+                            private int timer = 0;
+                            private ArmorStand particle = null;
+                            private final Location location = player.getLocation().add(finalX, -0.5, finalZ);
+
+                            @Override
+                            public void run() {
+                                if (!zl.playerCheck(player) || timer == 10) {
+                                    if (particle != null) particle.remove();
+                                    cancel();
+                                    return;
+                                }
+
+                                if (particle == null) {
+                                    particle = (ArmorStand) player.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
+
+                                    ((CraftPlayer) player).getHandle().b.sendPacket(new PacketPlayOutEntityDestroy(particle.getEntityId()));
+
+                                    particle.setVisible(false);
+                                    particle.setGravity(false);
+                                    particle.setPersistent(true);
+                                    particle.setMarker(true);
+                                    particle.setInvulnerable(true);
+                                    particle.setAI(false);
+                                    particle.setCustomName("§6§l" + pData.getBounty() + "g");
+                                    particle.setCustomNameVisible(true);
+                                    particle.addScoreboardTag("bounty");
+
+                                    for (EquipmentSlot slots : EquipmentSlot.values()) particle.addEquipmentLock(slots, ArmorStand.LockType.ADDING_OR_CHANGING);
+                                }
+
+                                location.add(0, 0.25, 0);
+                                particle.teleport(location);
+                                timer++;
+                            }
+                        }.runTaskTimer(Main.getInstance(), 0, 1);
+                    }
+                }.runTaskTimer(Main.getInstance(), 0, 4);
+
+                hasAnimation = true;
+            } else if (pData.getBounty() == 0 || zl.spawnCheck(player.getLocation())) {
+                if (runTracker3.hasID(player.getUniqueId())) runTracker3.stop(player.getUniqueId());
+                hasAnimation = false;
             }
         }
     }
