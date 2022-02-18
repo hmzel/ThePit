@@ -6,14 +6,18 @@ import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.perks.PerkListenersAndUtils;
 import me.zelha.thepit.zelenums.Passives;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -71,6 +75,36 @@ public class AttackListener implements Listener {
 
         new CombatTimerRunnable(damaged.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
         new CombatTimerRunnable(damager.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
+
+        String bar = "§7" + damaged.getName() + " ";
+
+        if (damaged.getHealth() - e.getFinalDamage() <= 0) {
+            damager.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(bar + "§a§lKILL!"));
+            return;
+        }
+
+        StringBuilder barBuilder = new StringBuilder();
+        StringBuilder barBuilder2 = new StringBuilder();
+
+        int health = (int) damaged.getHealth() / 2;
+        int healthAfterDmg = (int) Math.max((health - (e.getFinalDamage() / 2D)), 0);
+        int maxHealth = (int) (damaged.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) / 2;
+
+        for (int i = 0; i < maxHealth; i++) barBuilder.append("❤");
+
+        if (damaged.getAbsorptionAmount() > 0) {
+            int absorption = (int) ((damaged.getAbsorptionAmount() + e.getDamage(EntityDamageEvent.DamageModifier.ABSORPTION)) / 2);
+
+            for (int i = 0; i < (int) damaged.getAbsorptionAmount() / 2; i++) barBuilder2.append("❤");
+
+            barBuilder2.replace(Math.max(absorption, 0), Math.max(absorption, 0), "§6");
+            barBuilder2.replace(0, 0, "§e");
+        }
+
+        barBuilder.replace(health, health, "§0");
+        barBuilder.replace(healthAfterDmg, healthAfterDmg, "§c");
+        barBuilder.replace(0, 0, "§4");
+        damager.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(bar + barBuilder + barBuilder2));
     }
 
     @EventHandler
