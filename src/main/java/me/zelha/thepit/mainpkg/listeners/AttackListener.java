@@ -35,6 +35,7 @@ public class AttackListener implements Listener {
         PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
         PlayerData damagerData = Main.getInstance().getPlayerData(damager);
 
+        if (damagerData.getPrestige() == 0) damageBoost += 0.15;
         if (zl.itemCheck(damager.getInventory().getItemInMainHand()) && damager.getInventory().getItemInMainHand().getType() == Material.DIAMOND_SWORD && damagedData.getBounty() != 0) {
             damageBoost += 0.2;
         }
