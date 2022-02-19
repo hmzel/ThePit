@@ -230,15 +230,9 @@ public class ScoreboardListener implements Listener {
         public void run() {
             if (!runTracker2.hasID(p.getUniqueId())) runTracker2.setID(p.getUniqueId(), super.getTaskId());
 
-            String customName = zl.getColorBracketAndLevel(p.getUniqueId().toString()) + " §7" + p.getName();
             String suffix = "";
 
-            if (pData.getBounty() != 0) {
-                customName += " §6§l" + pData.getBounty() + "g";
-                suffix += " §6§l" + pData.getBounty() + "g";
-            }
-
-            p.setPlayerListName(customName);
+            if (pData.getBounty() != 0) suffix += " §6§l" + pData.getBounty() + "g";
 
             Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
             Team team = (main.getTeam(p.getName()) != null) ? main.getTeam(p.getName()) : main.registerNewTeam(p.getName());
