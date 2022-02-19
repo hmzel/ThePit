@@ -9,6 +9,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -87,9 +89,15 @@ public class GoldIngotListener implements Listener {
                 if (xNegative) x = -x;
                 if (zNegative) z = -z;
 
-                Location itemSpawnLoc = new Location(p.getWorld(), x, p.getLocation().getY(), z);
+                Location itemSpawnLoc = p.getLocation().add(x, 0, z);
 
-                if (!zl.spawnCheck(itemSpawnLoc) && !new BoundingBox(0.5, 82.0, 0.5, 15, 255, 15).contains(x, p.getLocation().getY(), z)) {
+                for (Entity entity : itemSpawnLoc.getWorld().getNearbyEntities(itemSpawnLoc, 10, 10, 10)) {
+                    if (entity instanceof Item && ((Item) entity).getItemStack().getType() == Material.GOLD_INGOT) {
+                        return;
+                    }
+                }
+
+                if (!zl.spawnCheck(itemSpawnLoc) && !BoundingBox.of(new Location(p.getWorld(), 0.5, 82.0, 0.5), 15, 255, 15).contains(itemSpawnLoc.getX(), itemSpawnLoc.getY(), itemSpawnLoc.getZ())) {
                     p.getWorld().dropItemNaturally(itemSpawnLoc, new ItemStack(Material.GOLD_INGOT, 1));
                 }
             }
