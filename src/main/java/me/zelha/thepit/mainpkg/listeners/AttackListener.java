@@ -21,6 +21,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class AttackListener implements Listener {
@@ -29,23 +30,28 @@ public class AttackListener implements Listener {
     private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
     private final RunMethods runTracker = Main.getInstance().generateRunMethods();
 
-    private double calculateAttackDamage(Player damaged, Player damager, double originalDamage) {
+    private double calculateMeleeDamage(Player damaged, Player damager, double originalDamage, @Nullable Arrow arrow) {
         double damageBoost = 1;
         double defenseBoost = 0;
         PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
         PlayerData damagerData = Main.getInstance().getPlayerData(damager);
+
+        if (damagedData.getPrestige() == 0) defenseBoost += 0.15;
+        if (damagedData.getPassiveTier(Passives.DAMAGE_REDUCTION) > 0) defenseBoost += (damagedData.getPassiveTier(Passives.DAMAGE_REDUCTION) / 100.0);
+        defenseBoost += perkUtils.getPerkDamageReduction(damaged);
+
+        if (arrow != null) {
+            if (damagerData.getPassiveTier(Passives.BOW_DAMAGE) > 0) damageBoost += ((damagerData.getPassiveTier(Passives.MELEE_DAMAGE) * 3) / 100.0);
+
+            return originalDamage * (damageBoost - defenseBoost);
+        }
 
         if (damagerData.getPrestige() == 0) damageBoost += 0.15;
         if (zl.itemCheck(damager.getInventory().getItemInMainHand()) && damager.getInventory().getItemInMainHand().getType() == Material.DIAMOND_SWORD && damagedData.getBounty() != 0) {
             damageBoost += 0.2;
         }
         if (damagerData.getPassiveTier(Passives.MELEE_DAMAGE) > 0) damageBoost += (damagerData.getPassiveTier(Passives.MELEE_DAMAGE) / 100.0);
-
-        if (damagedData.getPrestige() == 0) defenseBoost += 0.15;
-        if (damagedData.getPassiveTier(Passives.DAMAGE_REDUCTION) > 0) defenseBoost += (damagedData.getPassiveTier(Passives.DAMAGE_REDUCTION) / 100.0);
-
         damageBoost += perkUtils.getPerkDamageBoost(damager, damaged);
-        defenseBoost += perkUtils.getPerkDamageReduction(damaged);
 
         return originalDamage * (damageBoost - defenseBoost);
     }
@@ -62,13 +68,14 @@ public class AttackListener implements Listener {
 
         if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player) {
             damager = (Player) ((Arrow) damagerEntity).getShooter();
+            e.setDamage(calculateMeleeDamage(damaged, damager, e.getDamage(), (Arrow) damagerEntity));
         } else if (zl.playerCheck(damagerEntity)) {
             damager = (Player) damagerEntity;
+            e.setDamage(calculateMeleeDamage(damaged, damager, e.getDamage(), null));
         } else {
             return;
         }
 
-        e.setDamage(calculateAttackDamage(damaged, damager, e.getDamage()));
         Bukkit.broadcastMessage(String.valueOf(e.getDamage()));//testing line
 
         if (runTracker.hasID(damaged.getUniqueId())) runTracker.stop(damaged.getUniqueId());
