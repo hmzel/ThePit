@@ -41,7 +41,7 @@ public class AttackListener implements Listener {
         defenseBoost += perkUtils.getPerkDamageReduction(damaged);
 
         if (arrow != null) {
-            if (damagerData.getPassiveTier(Passives.BOW_DAMAGE) > 0) damageBoost += ((damagerData.getPassiveTier(Passives.MELEE_DAMAGE) * 3) / 100.0);
+            if (damagerData.getPassiveTier(Passives.BOW_DAMAGE) > 0) damageBoost += ((damagerData.getPassiveTier(Passives.BOW_DAMAGE) * 3) / 100.0);
 
             return originalDamage * (damageBoost - defenseBoost);
         }
