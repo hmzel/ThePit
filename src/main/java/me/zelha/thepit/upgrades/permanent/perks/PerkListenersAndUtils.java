@@ -108,7 +108,7 @@ public class PerkListenersAndUtils implements Listener {
             }
         }
 
-        if (!inv.contains(IRON_SWORD) && inv.contains(DIAMOND_SWORD) && !pData.hasPerkEquipped(BARBARIAN)) {
+        if (!inv.contains(IRON_SWORD) && !inv.contains(DIAMOND_SWORD) && !pData.hasPerkEquipped(BARBARIAN)) {
             inv.addItem(zl.itemBuilder(IRON_SWORD, 1));
         }
 
