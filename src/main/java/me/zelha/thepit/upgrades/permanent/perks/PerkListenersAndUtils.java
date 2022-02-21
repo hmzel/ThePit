@@ -350,7 +350,7 @@ public class PerkListenersAndUtils implements Listener {
         return item.getType().name().contains("IRON") || item.getType().name().contains("CHAINMAIL");
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void onAttackAndKill(EntityDamageByEntityEvent e) {
         Entity damagedEntity = e.getEntity();
         Entity damagerEntity = e.getDamager();

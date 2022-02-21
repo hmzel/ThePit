@@ -115,7 +115,7 @@ public class KillListener implements Listener {
         //renown gold boost
         //celeb
 
-        return gold + deadData.getBounty();
+        return Math.min(gold, 2500) + deadData.getBounty();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
