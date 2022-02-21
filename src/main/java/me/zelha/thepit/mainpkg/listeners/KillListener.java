@@ -9,6 +9,7 @@ import me.zelha.thepit.zelenums.Passives;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -19,7 +20,6 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -67,7 +67,7 @@ public class KillListener implements Listener {
 
         if (killerData.getStreak() <= (killerData.getPassiveTier(Passives.EL_GATO) - 1)) exp += 5;
         if (deadData.getStreak() > 5) exp += (int) Math.min(Math.round(deadData.getStreak()), 25);
-        if (killerData.getStreak() <= 3 && killerData.getLevel() <= 30) exp += 4;
+        if (killerData.getStreak() <= 3 && (killerData.getLevel() <= 30 || killerData.getPrestige() == 0)) exp += 4;
         if (deadData.getLevel() > killerData.getLevel()) exp += (int) Math.round((deadData.getLevel() - killerData.getLevel()) / 4.5);
 
         if (killerData.getStreak() >= 5 && killerData.getStreak() < 20) {
@@ -82,7 +82,8 @@ public class KillListener implements Listener {
 
         if (killerData.hasPerkEquipped(STREAKER)) streakModifier *= 3;
 
-        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) exp *= 0.90;
+        //2x event
+        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) exp *= 0.09;
         if (killerData.getPassiveTier(Passives.XP_BOOST) > 0) exp *= 1 + (killerData.getPassiveTier(Passives.XP_BOOST) / 10.0);
 
         exp += streakModifier;
@@ -101,12 +102,14 @@ public class KillListener implements Listener {
         if (killerData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS) gold += 4;
 
         if (killerData.getStreak() <= killerData.getPassiveTier(Passives.EL_GATO)) gold += 5;
-        if (deadData.getLevel() > killerData.getLevel()) gold += (int) Math.round((deadData.getLevel() - killerData.getLevel()) / 4.5);
-        if (deadData.getStreak() > 5) gold += Math.min((int) Math.round(deadData.getStreak()), 25);
-        if (killerData.getStreak() <= 3 && killerData.getLevel() <= 30) gold += 4;
+        if (deadData.getStreak() > 5) gold += Math.min((int) Math.round(deadData.getStreak()), 30);
+        if (killerData.getStreak() <= 3 && (killerData.getLevel() <= 30 || killerData.getPrestige() == 0)) gold += 4;
         //genesis thing here
-        for (ItemStack item : deadInv.getArmorContents()) if (zl.itemCheck(item) && item.getType().name().contains("DIAMOND")) gold += 2;
+        if (dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() > killer.getAttribute(Attribute.GENERIC_ARMOR).getValue()) {
+            gold += Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - killer.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5);
+        }
 
+        //2x event
         if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) gold *= 0.09;
         if (killerData.getPassiveTier(Passives.GOLD_BOOST) > 0) gold *= 1 + (killerData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
         //renown gold boost
