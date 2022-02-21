@@ -76,7 +76,7 @@ public class AttackListener implements Listener {
             return;
         }
 
-        Bukkit.broadcastMessage(String.valueOf(e.getDamage()));//testing line
+        Bukkit.broadcastMessage(String.valueOf(e.getFinalDamage()));//testing line
 
         if (runTracker.hasID(damaged.getUniqueId())) runTracker.stop(damaged.getUniqueId());
         if (runTracker.hasID(damager.getUniqueId())) runTracker.stop(damager.getUniqueId());
