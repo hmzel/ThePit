@@ -453,22 +453,24 @@ public class PerkListenersAndUtils implements Listener {
 
                 if (runTracker2.hasID(damagerUUID)) runTracker2.stop(damagerUUID);
 
-                strengthChainingTimer.put(damagerUUID, 7);
-
                 new BukkitRunnable() {
+                    int timer = 7;
+
                     @Override
                     public void run() {
                         if (!runTracker2.hasID(damagerUUID)) runTracker2.setID(damagerUUID, getTaskId());
 
-                        strengthChainingTimer.put(damagerUUID, getStrengthChaining(damager)[1] - 1);
+                        strengthChainingTimer.put(damagerUUID, timer);
 
-                        if (strengthChainingTimer.get(damagerUUID) == 0) {
+                        if (timer <= 0) {
                             strengthChaining.remove(damagerUUID);
                             strengthChainingTimer.remove(damagerUUID);
                             cancel();
                         }
+
+                        timer--;
                     }
-                }.runTaskTimer(Main.getInstance(), 20, 20);
+                }.runTaskTimer(Main.getInstance(), 0, 20);
             }
         }
     }
@@ -504,6 +506,7 @@ public class PerkListenersAndUtils implements Listener {
             p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 160, 1, false, false));
             p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 100, 2, false, false));
             p.setAbsorptionAmount(6);
+            p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_BURP, 1, 1);
             gheadCooldown.add(p.getUniqueId());
 
             new BukkitRunnable() {
