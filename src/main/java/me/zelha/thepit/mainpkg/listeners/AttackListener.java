@@ -15,6 +15,7 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -83,6 +84,27 @@ public class AttackListener implements Listener {
 
         new CombatTimerRunnable(damaged.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
         new CombatTimerRunnable(damager.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onAttackActionbar(EntityDamageByEntityEvent e) {
+        Entity damagedEntity = e.getEntity();
+        Entity damagerEntity = e.getDamager();
+        Player damaged;
+        Player damager;
+
+        if (zl.spawnCheck(damagedEntity.getLocation()) || zl.spawnCheck(damagerEntity.getLocation())) return;
+        if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
+
+        if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player) {
+            damager = (Player) ((Arrow) damagerEntity).getShooter();
+            e.setDamage(calculateMeleeDamage(damaged, damager, e.getDamage(), (Arrow) damagerEntity));
+        } else if (zl.playerCheck(damagerEntity)) {
+            damager = (Player) damagerEntity;
+            e.setDamage(calculateMeleeDamage(damaged, damager, e.getDamage(), null));
+        } else {
+            return;
+        }
 
         String bar = "§7" + damaged.getName() + " ";
 
