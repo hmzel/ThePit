@@ -45,6 +45,10 @@ public class ScoreboardListener implements Listener {
     public void removeOnLeave(PlayerQuitEvent e) {
         if (runTracker.hasID(e.getPlayer().getUniqueId())) runTracker.stop(e.getPlayer().getUniqueId());
         if (runTracker2.hasID(e.getPlayer().getUniqueId())) runTracker2.stop(e.getPlayer().getUniqueId());
+
+        if (Bukkit.getScoreboardManager().getMainScoreboard().getTeam(e.getPlayer().getName()) != null) {
+            Bukkit.getScoreboardManager().getMainScoreboard().getTeam(e.getPlayer().getName()).unregister();
+        }
     }
 
     @EventHandler
