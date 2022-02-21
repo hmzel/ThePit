@@ -6,6 +6,7 @@ import me.zelha.thepit.mainpkg.data.PlayerData;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 public class ChatListener implements Listener {
 
@@ -84,5 +85,10 @@ public class ChatListener implements Listener {
         }
 
         e.setFormat(prefix + "§7 %s§f: %s");
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e) {
+        e.setJoinMessage(null);
     }
 }
