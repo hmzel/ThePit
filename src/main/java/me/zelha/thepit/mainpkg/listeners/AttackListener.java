@@ -8,7 +8,6 @@ import me.zelha.thepit.upgrades.permanent.perks.PerkListenersAndUtils;
 import me.zelha.thepit.zelenums.Passives;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Arrow;
@@ -77,8 +76,6 @@ public class AttackListener implements Listener {
             return;
         }
 
-        Bukkit.broadcastMessage(String.valueOf(e.getFinalDamage()));//testing line
-
         if (runTracker.hasID(damaged.getUniqueId())) runTracker.stop(damaged.getUniqueId());
         if (runTracker.hasID(damager.getUniqueId())) runTracker.stop(damager.getUniqueId());
 
@@ -86,7 +83,7 @@ public class AttackListener implements Listener {
         new CombatTimerRunnable(damager.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onAttackActionbar(EntityDamageByEntityEvent e) {
         Entity damagedEntity = e.getEntity();
         Entity damagerEntity = e.getDamager();
@@ -98,10 +95,8 @@ public class AttackListener implements Listener {
 
         if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player) {
             damager = (Player) ((Arrow) damagerEntity).getShooter();
-            e.setDamage(calculateMeleeDamage(damaged, damager, e.getDamage(), (Arrow) damagerEntity));
         } else if (zl.playerCheck(damagerEntity)) {
             damager = (Player) damagerEntity;
-            e.setDamage(calculateMeleeDamage(damaged, damager, e.getDamage(), null));
         } else {
             return;
         }
@@ -160,9 +155,10 @@ public class AttackListener implements Listener {
             PlayerData pData = Main.getInstance().getPlayerData(uuid);
 
             if (!runTracker.hasID(uuid)) runTracker.setID(uuid, super.getTaskId());
+            if (pData == null) return;
 
             if (reset) {
-                pData.setCombatTimer(15 + (int) Math.floor(pData.getBounty() / 1000) * 10);
+                pData.setCombatTimer(15 + (int) (Math.floor(pData.getBounty() / 1000D) * 10));
                 pData.setStatus("fighting");
                 reset = false;
             }
