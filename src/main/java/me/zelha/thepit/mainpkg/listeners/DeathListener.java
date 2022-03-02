@@ -119,7 +119,7 @@ public class DeathListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerDeath(EntityDamageEvent e) {
         Entity entity = e.getEntity();
 

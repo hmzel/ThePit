@@ -118,7 +118,7 @@ public class KillListener implements Listener {
         return Math.min(gold, 2500) + deadData.getBounty();
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerDeath(EntityDamageByEntityEvent e) {
         Entity damagedEntity = e.getEntity();
         Entity damagerEntity = e.getDamager();
@@ -150,6 +150,8 @@ public class KillListener implements Listener {
 
         double finalDMG = e.getFinalDamage();
         double currentHP = damaged.getHealth();
+
+        Bukkit.broadcastMessage(finalDMG + "");//testing line
 
         if (currentHP - finalDMG <= 0) {
             String uuid = damaged.getUniqueId().toString();
