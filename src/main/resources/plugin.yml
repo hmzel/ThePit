@@ -47,3 +47,6 @@ commands:
   setperk:
     description: sets your or the specified player's perk at the given slot
     usage: /<command> (name/empty) (integer slot) (perk)
+  killrecap:
+    description: kill recap
+    usage: /<command> UUID

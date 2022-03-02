@@ -3,6 +3,10 @@ package me.zelha.thepit.mainpkg.listeners;
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.zelenums.Worlds;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -175,6 +179,19 @@ public class DeathListener implements Listener {
             if (!zl.itemCheck(inv.getLeggings())) inv.setLeggings(zl.itemBuilder(CHAINMAIL_LEGGINGS, 1));
             if (!zl.itemCheck(inv.getBoots())) inv.setBoots(zl.itemBuilder(CHAINMAIL_BOOTS, 1));
             //sword & bow & arrow are handled in PerkListenersAndUtils.perkReset for consistency's sake
+
+            Player damager = Main.getInstance().getAssistUtils().getLastDamager(p);
+
+            if (damager != null) {
+                p.spigot().sendMessage(new ComponentBuilder("§c§lDEATH! by " + zl.getColorBracketAndLevel(damager.getUniqueId().toString()) + " §7" + damager.getName() + " §e§lVIEW RECAP")
+                        .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§eClick to view kill recap!")))
+                        .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/killrecap " + p.getUniqueId()))
+                        .create());
+            } else {
+                p.sendMessage("§c§lDEATH!");
+            }
+
+            p.sendTitle("§cYOU DIED", "", 0, 40, 20);
         }
     }
 }//perk-related death handling is in PerkListenersAndUtils
