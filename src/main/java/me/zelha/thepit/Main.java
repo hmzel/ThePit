@@ -8,6 +8,7 @@ import me.zelha.thepit.admin.commands.*;
 import me.zelha.thepit.admin.commands.HologramCheckCommand;
 import me.zelha.thepit.admin.commands.NPCCheckCommand;
 import me.zelha.thepit.mainpkg.commands.RespawnCommand;
+import me.zelha.thepit.mainpkg.data.KillRecap;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.mainpkg.data.StorageListener;
 import me.zelha.thepit.mainpkg.listeners.*;
@@ -32,6 +33,8 @@ public final class Main extends JavaPlugin {
     private PerkListenersAndUtils perkUtils;
     private StorageListener storage;
     private DeathListener deathListener;
+    private KillListener killListener;
+    private AssistListener assistListener;
 
     private MongoCollection<Document> playerDataCollection;
     private MongoClient mongoClient;
@@ -53,14 +56,17 @@ public final class Main extends JavaPlugin {
         zelLogic = new ZelLogic();
         storage = new StorageListener();
         perkUtils = new PerkListenersAndUtils();
+        killListener = new KillListener();
         deathListener = new DeathListener();
+        assistListener = new AssistListener();
+        KillRecap recap = new KillRecap();
 
         getServer().getPluginManager().registerEvents(storage, this);
         getServer().getPluginManager().registerEvents(new LevelUpListener(), this);
         getServer().getPluginManager().registerEvents(new ScoreboardListener(), this);
-        getServer().getPluginManager().registerEvents(new KillListener(), this);
-        getServer().getPluginManager().registerEvents(perkUtils, this);
+        getServer().getPluginManager().registerEvents(killListener, this);
         getServer().getPluginManager().registerEvents(deathListener, this);
+        getServer().getPluginManager().registerEvents(perkUtils, this);
         getServer().getPluginManager().registerEvents(new AntiVanillaListener(), this);
         getServer().getPluginManager().registerEvents(new AttackListener(), this);
         getServer().getPluginManager().registerEvents(new SpawnListener(), this);
@@ -71,7 +77,8 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ArmorPickupListener(), this);
         getServer().getPluginManager().registerEvents(new GoldIngotListener(), this);
         getServer().getPluginManager().registerEvents(new ChatListener(), this);
-        getServer().getPluginManager().registerEvents(new AssistListener(), this);
+        getServer().getPluginManager().registerEvents(assistListener, this);
+        getServer().getPluginManager().registerEvents(recap, this);
 
         getCommand("setprestige").setExecutor(new SetPrestigeCommand());
         getCommand("setlevel").setExecutor(new SetLevelCommand());
@@ -86,6 +93,7 @@ public final class Main extends JavaPlugin {
         getCommand("npccheck").setExecutor(new NPCCheckCommand());
         getCommand("hologramcheck").setExecutor(new HologramCheckCommand());
         getCommand("setperk").setExecutor(new SetPerkCommand());
+        getCommand("killrecap").setExecutor(recap);
 
         storage.runDataSaver();
         new ParticipationRunnable().runTaskTimerAsynchronously(this, 0, 1);
@@ -113,8 +121,14 @@ public final class Main extends JavaPlugin {
     public PerkListenersAndUtils getPerkUtils() {
         return perkUtils;
     }
-    public DeathListener getDeathListener() {
+    public DeathListener getDeathUtils() {
         return deathListener;
+    }
+    public KillListener getKillUtils() {
+        return killListener;
+    }
+    public AssistListener getAssistUtils() {
+        return assistListener;
     }
     public RunMethods generateRunMethods() {
         return new RunMethods();

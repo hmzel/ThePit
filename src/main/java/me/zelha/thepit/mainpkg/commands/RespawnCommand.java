@@ -36,7 +36,7 @@ public class RespawnCommand implements CommandExecutor {
             return true;
         }
 
-        Main.getInstance().getDeathListener().teleportToSpawnMethod(p);
+        Main.getInstance().getDeathUtils().teleportToSpawnMethod(p);
         cooldown.add(p.getUniqueId());
         perkUtils.perkReset(p);
 
