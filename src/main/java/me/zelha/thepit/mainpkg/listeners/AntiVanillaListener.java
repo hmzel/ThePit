@@ -2,23 +2,28 @@ package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.util.BoundingBox;
 
 import java.util.Arrays;
 
@@ -27,6 +32,7 @@ import static org.bukkit.Material.*;
 public class AntiVanillaListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
+    private final DeathListener deathUtils = Main.getInstance().getDeathUtils();
 
     private final Material[] undroppable = {
             IRON_SWORD, BOW
@@ -111,6 +117,21 @@ public class AntiVanillaListener implements Listener {
         }
 
         if (Arrays.asList(undroppable).contains(e.getItemDrop().getItemStack().getType())) e.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onVoidDamage(EntityDamageEvent e) {
+        if (e.getCause() == EntityDamageEvent.DamageCause.VOID) e.setDamage(131313);
+    }
+
+    @EventHandler
+    public void onMove(PlayerMoveEvent e) {
+        Player p = e.getPlayer();
+
+        if (p.getLocation().add(0, -1, 0).getBlock().getType() == BARRIER || !BoundingBox.of(new Location(p.getWorld(), 0, 0, 0), 228, 1000, 228).contains(p.getLocation().toVector())) {
+            deathUtils.teleportToSpawnMethod(p);
+            p.sendMessage("§cCongrats you went out of the map!");
+        }
     }
 
     @EventHandler
