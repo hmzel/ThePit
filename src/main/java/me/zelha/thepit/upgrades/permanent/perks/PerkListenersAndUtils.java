@@ -243,9 +243,18 @@ public class PerkListenersAndUtils implements Listener {
     }
 
     public boolean hasBeenShotBySpammer(Player damager, Player damaged) {
-        return spammerShotIdentifier.containsKey(damager.getUniqueId())
+        boolean bool = spammerShotIdentifier.containsKey(damager.getUniqueId())
                 && spammerShotIdentifier.get(damager.getUniqueId()) == damaged.getUniqueId()
                 && pData(damager).hasPerkEquipped(SPAMMER);
+
+        if (bool) new BukkitRunnable() {
+            @Override
+            public void run() {
+                spammerShotIdentifier.remove(damager.getUniqueId());
+            }
+        }.runTaskLater(Main.getInstance(), 1);
+
+        return bool;
     }
 
     private void removeAll(PlayerInventory inventory, ItemStack item) {
