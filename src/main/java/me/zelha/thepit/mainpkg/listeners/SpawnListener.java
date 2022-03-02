@@ -40,7 +40,7 @@ public class SpawnListener implements Listener {
                     e.getPlayer().sendMessage("§c§lRESET! §7streak reset for standing in the spawn area!");
                 }
             }
-        }.runTaskTimer(Main.getInstance(), 0, 1);
+        }.runTaskTimer(Main.getInstance(), 0, 10);
     }
 
     @EventHandler
