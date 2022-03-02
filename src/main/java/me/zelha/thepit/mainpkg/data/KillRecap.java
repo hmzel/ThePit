@@ -37,11 +37,13 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static me.zelha.thepit.zelenums.Perks.BOUNTY_HUNTER;
 import static me.zelha.thepit.zelenums.Perks.STREAKER;
@@ -225,8 +227,8 @@ public class KillRecap implements CommandExecutor, Listener {
             return;
         }
 
-        DamageLog currentLog1 = new DamageLog(e, false);
-        DamageLog currentLog2 = new DamageLog(e, true);
+        DamageLog currentLog1 = new DamageLog(e, false, null);
+        DamageLog currentLog2 = new DamageLog(e, true, null);
 
         damageTrackerMap.get(damaged.getUniqueId()).add(currentLog1);
         damageTrackerMap.get(damager.getUniqueId()).add(currentLog2);
@@ -248,7 +250,6 @@ public class KillRecap implements CommandExecutor, Listener {
 
         Player dead = (Player) e.getEntity();
         Player killer = assistUtils.getLastDamager(dead);
-        PlayerData deadData = Main.getInstance().getPlayerData(dead);
         ItemStack recapBook = new ItemStack(Material.WRITTEN_BOOK);
         BookMeta bookMeta = (BookMeta) recapBook.getItemMeta();
         List<BaseComponent[]> raw = new ArrayList<>();
@@ -268,28 +269,16 @@ public class KillRecap implements CommandExecutor, Listener {
         raw.add(goldComponent(dead, killer));
         raw.add(new ComponentBuilder("\n").create());
 
-        List<Double> sortedAssists = new ArrayList<>(assistUtils.getAssistMap(dead).values());
-        Map<UUID, Double> sortedAssistsMap = new HashMap<>();
+        Map<UUID, Double> sortedAssistsMap = assistUtils.getAssistMap(dead).entrySet().stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
         boolean addAssistTitle = true;
 
-        Collections.sort(sortedAssists);
-        Collections.reverse(sortedAssists);
-
-        for (Double assist : sortedAssists) {
-            for (UUID uuid : assistUtils.getAssistMap(dead).keySet()) {
-                if (!assistUtils.getAssistMap(dead).get(uuid).equals(assist)) continue;
-
-                sortedAssistsMap.put(uuid, assist);
-            }
-        }
-
-        for (UUID uuid : new ArrayList<>(sortedAssistsMap.keySet())) {
-            if (Bukkit.getPlayer(uuid) == null || uuid.equals(dead.getUniqueId()) || uuid.equals(killer.getUniqueId())) {
-                sortedAssistsMap.remove(uuid);
-            }
-        }
-
         for (UUID uuid : sortedAssistsMap.keySet()) {
+            if (Bukkit.getPlayer(uuid) == null || uuid.equals(dead.getUniqueId()) || uuid.equals(killer.getUniqueId())) {
+                continue;
+            }
+
             if (addAssistTitle) raw.add(new ComponentBuilder("Assists:\n").create());
 
             raw.add(new ComponentBuilder((int) ((Double.parseDouble(BigDecimal.valueOf(sortedAssistsMap.get(uuid) / dead.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()).setScale(2, RoundingMode.HALF_EVEN).toString())) * 100) + "% ").create());
@@ -305,16 +294,7 @@ public class KillRecap implements CommandExecutor, Listener {
 
         for (DamageLog damageLog : damageTrackerMap.get(dead.getUniqueId())) {
             int timeBeforeDeath = (MinecraftServer.currentTick - damageLog.time) / 20;
-            String damageType;
             NBTTagCompound nbt = (CraftItemStack.asNMSCopy(damageLog.item).hasTag()) ? CraftItemStack.asNMSCopy(damageLog.item).getTag() : new NBTTagCompound();
-
-            if (zl.itemCheck(damageLog.item) && damageLog.cause == EntityDamageEvent.DamageCause.PROJECTILE) {
-                damageType = "§6Arrow";
-            } else if (zl.itemCheck(damageLog.item)) {
-                damageType = "§cMelee";
-            } else {
-                damageType = "§rHand";
-            }
 
             raw.add(new ComponentBuilder("§7" + timeBeforeDeath + "s ")
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§7Happened " + timeBeforeDeath + " second(s) before death"))).create());
@@ -322,13 +302,13 @@ public class KillRecap implements CommandExecutor, Listener {
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§cDamage"))).create());
 
             if (zl.itemCheck(damageLog.item)) {
-                raw.add(new ComponentBuilder(damageType + "\n")
+                raw.add(new ComponentBuilder(damageLog.pitDamageType + "\n")
                         .event(new HoverEvent(HoverEvent.Action.SHOW_ITEM
                                 , new Item(damageLog.item.getType().getKey().toString()
                                 , damageLog.item.getAmount()
                                 , ItemTag.ofNbt(nbt.toString())))).create());
             } else {
-                raw.add(new ComponentBuilder(damageType + "\n").create());
+                raw.add(new ComponentBuilder(damageLog.pitDamageType + "\n").create());
             }
 
             if (damageLog.isAttacker) {
@@ -405,8 +385,9 @@ public class KillRecap implements CommandExecutor, Listener {
         private final String prestigeToShow;
         private final Double damagedHealth;
         private final boolean isAttacker;
+        private final String pitDamageType;
 
-        public DamageLog(EntityDamageByEntityEvent event, boolean isAttacker) {
+        public DamageLog(EntityDamageByEntityEvent event, boolean isAttacker, @Nullable String pitDamageType) {
             Entity damagerEntity = event.getDamager();
             Player damaged = (Player) event.getEntity();
             Player damager;
@@ -433,6 +414,18 @@ public class KillRecap implements CommandExecutor, Listener {
 
             this.damagedHealth = damaged.getHealth() - event.getFinalDamage();
             this.isAttacker = isAttacker;
+
+            if (pitDamageType == null) {
+                if (zl.itemCheck(item) && cause == EntityDamageEvent.DamageCause.PROJECTILE) {
+                    this.pitDamageType = "§6Arrow";
+                } else if (zl.itemCheck(item)) {
+                    this.pitDamageType = "§cMelee";
+                } else {
+                    this.pitDamageType = "§rHand";
+                }
+            } else {
+                this.pitDamageType = pitDamageType;
+            }
         }
     }
 }
