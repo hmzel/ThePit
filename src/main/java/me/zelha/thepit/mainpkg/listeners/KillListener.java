@@ -93,8 +93,8 @@ public class KillListener implements Listener {
         return (int) Math.min(Math.ceil(exp), maxEXP);
     }
 
-    private double calculateGold(Player dead, Player killer) {
-        int gold = 10;
+    public double calculateGold(Player dead, Player killer) {
+        double gold = 10;
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData killerData = Main.getInstance().getPlayerData(killer);
         PlayerInventory deadInv = dead.getInventory();
@@ -106,16 +106,12 @@ public class KillListener implements Listener {
         if (killerData.getStreak() <= killerData.getPassiveTier(Passives.EL_GATO)) gold += 5;
         if (deadData.getStreak() > 5) gold += Math.min((int) Math.round(deadData.getStreak()), 30);
         if (killerData.getStreak() <= 3 && (killerData.getLevel() <= 30 || killerData.getPrestige() == 0)) gold += 4;
-        //genesis thing here
         if (dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() > killer.getAttribute(Attribute.GENERIC_ARMOR).getValue()) {
             gold += Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - killer.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5);
         }
 
-        //2x event
-        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) gold *= 0.09;
+        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) gold *= 0.91;
         if (killerData.getPassiveTier(Passives.GOLD_BOOST) > 0) gold *= 1 + (killerData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
-        //renown gold boost
-        //celeb
 
         return Math.min(gold, 2500) + deadData.getBounty();
     }
