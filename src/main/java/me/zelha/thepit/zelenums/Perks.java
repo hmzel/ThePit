@@ -57,11 +57,10 @@ public enum Perks {
             , 3000
             , 20
             , 0),
-    INSURANCE("Insurance", SADDLE, Arrays.asList(
-            "§7If you die within §a2s §7of",
-            "§7being damaged, §cfull heal §7and",
-            "§7gain §9Resistance II §7(4s).",
-            "§820s cooldown."
+    BONK("Bonk!", ANVIL, Arrays.asList(
+            "§7The first hit you receive from a",
+            "§7player is blocked and grants",
+            "§9Resistance I §7(1s)."
     )
             , 2000
             , 35

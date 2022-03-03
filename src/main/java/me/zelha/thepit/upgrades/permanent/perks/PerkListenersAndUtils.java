@@ -55,8 +55,7 @@ public class PerkListenersAndUtils implements Listener {
     private final RunMethods runTracker2 = Main.getInstance().generateRunMethods();
 
     private final Set<UUID> gheadCooldown = new HashSet<>();
-    private final Map<UUID, Integer> insuranceTimer = new HashMap<>();
-    private final Map<UUID, Integer> insuranceCooldown = new HashMap<>();
+    private final Map<UUID, Set<UUID>> bonkMap = new HashMap<>();
     private final Map<UUID, Integer> lavaExistTimer = new HashMap<>();
     private final Map<UUID, Block> placedLava = new HashMap<>();
     private final Map<UUID, Material> previousLavaBlock = new HashMap<>();
@@ -93,12 +92,7 @@ public class PerkListenersAndUtils implements Listener {
         for (ItemStack item : inv.all(ARROW).values()) arrowCount += item.getAmount();
 
         strengthChaining.remove(p.getUniqueId());
-
-        if (insuranceTimer.get(p.getUniqueId()) != null) Bukkit.getScheduler().cancelTask(insuranceTimer.get(p.getUniqueId()));
-        if (insuranceCooldown.get(p.getUniqueId()) != null) Bukkit.getScheduler().cancelTask(insuranceCooldown.get(p.getUniqueId()));
-
-        insuranceTimer.remove(p.getUniqueId());
-        insuranceCooldown.remove(p.getUniqueId());
+        bonkMap.get(p.getUniqueId()).clear();
 
         removeAll(inv, gapple);
 
@@ -384,6 +378,43 @@ public class PerkListenersAndUtils implements Listener {
         double finalDMG = e.getFinalDamage();
         double damagedHP = damaged.getHealth();
 
+        if (pData(damaged).hasPerkEquipped(BONK) && !bonkMap.get(damagedUUID).contains(damagerUUID)) {
+            for (Entity entity : damaged.getNearbyEntities(32, 32, 32)) {
+                if (!zl.playerCheck(entity) || ((Player) entity).getUniqueId().equals(damagedUUID)) continue;
+
+                ((Player) entity).spawnParticle(Particle.EXPLOSION_LARGE, damaged.getLocation(), 1, 0, 0, 0, 0);
+            }
+
+            bonkMap.get(damagedUUID).add(damagerUUID);
+            damaged.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20, 1, false, false, true));
+            e.setDamage(0);
+            e.setCancelled(true);
+            damaged.setInvulnerable(true);
+
+            new BukkitRunnable() {
+                int runs = 0;
+
+                @Override
+                public void run() {
+                    if (runs == 0) damaged.setInvulnerable(false);
+
+                    if (!bonkMap.get(damagedUUID).contains(damagerUUID)) {
+                        cancel();
+                        return;
+                    }
+
+                    if (runs == 30) {
+                        bonkMap.get(damagedUUID).remove(damagerUUID);
+                        cancel();
+                    }
+
+                    runs++;
+                }
+            }.runTaskTimer(Main.getInstance(), 10, 10);
+
+            return;
+        }
+
         if (pData(damager).hasPerkEquipped(VAMPIRE)) {
             if (damageCauseArrow && ((Arrow) damagerEntity).isCritical()) {
                 damager.setHealth(Math.min(damager.getHealth() + 3, damager.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
@@ -397,60 +428,7 @@ public class PerkListenersAndUtils implements Listener {
             spammerShotIdentifier.put(damager.getUniqueId(), damaged.getUniqueId());
         }
 
-        if (pData(damaged).hasPerkEquipped(INSURANCE) && !insuranceTimer.containsKey(damagedUUID) && !insuranceCooldown.containsKey(damaged.getUniqueId())) {
-            BukkitTask insuranceRunnable1 = new BukkitRunnable() {
-                @Override
-                public void run() {
-                    insuranceTimer.remove(damagedUUID);
-
-                    BukkitTask insuranceRunnable2 = new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            insuranceCooldown.remove(damagedUUID);
-                        }
-                    }.runTaskLater(Main.getInstance(), 400);
-
-                    insuranceCooldown.put(damagedUUID, insuranceRunnable2.getTaskId());
-                }
-            }.runTaskLater(Main.getInstance(), 40);
-
-            insuranceTimer.put(damagedUUID, insuranceRunnable1.getTaskId());
-        }
-
         if (e.getCause() != DamageCause.FALL && (damagedHP - finalDMG) <= 0) {
-            if (pData(damaged).hasPerkEquipped(INSURANCE) && insuranceTimer.containsKey(damagedUUID) && !insuranceCooldown.containsKey(damagedUUID)) {
-                e.setDamage(0);
-                damaged.setHealth(damaged.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-                damaged.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 80, 2, false, false, true));
-
-                for (Player player : Arrays.asList(damaged, damager)) {
-                    player.spawnParticle(Particle.HEART, damaged.getLocation(), 20, 0.3, 0.6, 0.3, 0);
-                    player.playSound(damaged.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CURE, 0.25F, 2F);
-
-                    new BukkitRunnable() {
-                        double i = 1;
-
-                        @Override
-                        public void run() {
-                            player.playSound(damaged.getLocation(), Sound.ENTITY_ITEM_PICKUP, 0.5F, (float) i);
-                            i += 0.2;
-                            if (i >= 2) cancel();
-                        }
-                    }.runTaskTimer(Main.getInstance(), 0, 1);
-                }
-
-                BukkitTask insuranceRunnable3 = new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        insuranceCooldown.remove(damagedUUID);
-                    }
-                }.runTaskLater(Main.getInstance(), 400);
-
-                damaged.sendMessage("§a§lINSURANCE! §7Triggered against " + zl.getColorBracketAndLevel(damagerUUID.toString()) + " §7" + damager.getName());
-                insuranceCooldown.put(damagedUUID, insuranceRunnable3.getTaskId());
-                return;
-            }
-
             determineKillRewards(damager, damaged);
 
             if (pData(damager).hasPerkEquipped(STRENGTH_CHAINING)) {
@@ -491,11 +469,10 @@ public class PerkListenersAndUtils implements Listener {
         if (!zl.playerCheck(entity)) return;
         if (zl.spawnCheck(entity.getLocation())) return;
 
-        Player p = (Player) e.getEntity();
         double finalDMG = e.getFinalDamage();
-        double currentHP = p.getHealth();
+        double currentHP = ((Player) e.getEntity()).getHealth();
 
-        if (e.getCause() != DamageCause.FALL && (currentHP - finalDMG <= 0)) perkReset(p);
+        if (e.getCause() != DamageCause.FALL && (currentHP - finalDMG <= 0)) perkReset(((Player) e.getEntity()));
     }
 
     @EventHandler
@@ -615,6 +592,11 @@ public class PerkListenersAndUtils implements Listener {
         }
     }
 
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e) {
+        bonkMap.put(e.getPlayer().getUniqueId(), new HashSet<>());
+    }
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void onLeave(PlayerQuitEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
@@ -626,6 +608,7 @@ public class PerkListenersAndUtils implements Listener {
         previousLavaBlock.remove(uuid);
         placedLava.remove(uuid);
         spammerShotIdentifier.remove(uuid);
+        bonkMap.remove(uuid);
         perkReset(e.getPlayer());
     }
 }
