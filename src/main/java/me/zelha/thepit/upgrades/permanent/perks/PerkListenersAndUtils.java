@@ -87,6 +87,8 @@ public class PerkListenersAndUtils implements Listener {
         PlayerData pData = Main.getInstance().getPlayerData(p);
         int arrowCount = 0;
 
+        pData.setStreak(0);
+
         for (ItemStack item : inv.all(ARROW).values()) arrowCount += item.getAmount();
 
         strengthChaining.remove(p.getUniqueId());
