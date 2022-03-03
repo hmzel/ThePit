@@ -9,6 +9,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -193,6 +194,7 @@ public class DeathListener implements Listener {
             }
 
             p.sendTitle("§cYOU DIED", "", 0, 40, 20);
+            p.playSound(p.getLocation(), Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1.8F);
         }
     }
 }//perk-related death handling is in PerkListenersAndUtils
