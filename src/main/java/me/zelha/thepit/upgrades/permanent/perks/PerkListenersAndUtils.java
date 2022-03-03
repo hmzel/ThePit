@@ -5,7 +5,6 @@ import me.zelha.thepit.RunMethods;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.Perks;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -33,7 +32,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 
@@ -372,6 +370,8 @@ public class PerkListenersAndUtils implements Listener {
         } else {
             return;
         }
+
+        if (damaged.equals(damager)) return;
 
         UUID damagedUUID = damaged.getUniqueId();
         UUID damagerUUID = damager.getUniqueId();

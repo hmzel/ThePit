@@ -131,6 +131,8 @@ public class AssistListener implements Listener {
             return;
         }
 
+        if (damaged.equals(damager)) return;
+
         if (damaged.getHealth() - e.getFinalDamage() > 0) damage = e.getFinalDamage(); else damage = damaged.getHealth();
 
         assistMap.get(damaged.getUniqueId()).add(Pair.of(damager.getUniqueId(), damage));

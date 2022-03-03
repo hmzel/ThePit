@@ -139,6 +139,8 @@ public class KillListener implements Listener {
             return;
         }
 
+        if (damaged.equals(damager)) return;
+
         if (runTracker2.hasID(damager.getUniqueId())) runTracker2.stop(damager.getUniqueId());
 
         BukkitTask multiKillTimer = new BukkitRunnable() {
