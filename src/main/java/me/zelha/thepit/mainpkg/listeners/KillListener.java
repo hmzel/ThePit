@@ -13,6 +13,7 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.*;
@@ -185,6 +186,7 @@ public class KillListener implements Listener {
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§eClick to view kill recap!")))
                     .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/killrecap " + damaged.getUniqueId()))
                     .create());
+            damager.playSound(damager.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1F, 1.8F);
         }
     }
 
