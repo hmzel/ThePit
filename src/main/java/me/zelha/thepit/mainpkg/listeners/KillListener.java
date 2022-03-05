@@ -21,6 +21,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -40,6 +41,7 @@ public class KillListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
+    private final AssistListener assistUtils = Main.getInstance().getAssistUtils();
     private final RunMethods runTracker = Main.getInstance().generateRunMethods();
     private final RunMethods runTracker2 = Main.getInstance().generateRunMethods();
     private final RunMethods runTracker3 = Main.getInstance().generateRunMethods();
@@ -121,6 +123,51 @@ public class KillListener implements Listener {
         return Math.min(gold, 2500) + deadData.getBounty();
     }
 
+    public void pitKill(Player damaged, Player damager) {
+        String uuid = damaged.getUniqueId().toString();
+        PlayerData damagerData = Main.getInstance().getPlayerData(damager);
+        PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
+        double calculatedGold = calculateGold(damaged, damager);
+
+        damagerData.setStreak(damagerData.getStreak() + 1);
+        damagerData.setExp(damagerData.getExp() - calculateEXP(damaged, damager));
+        damagerData.setGold(damagerData.getGold() + calculatedGold);
+        damagerData.setMultiKill(damagerData.getMultiKill() + 1);
+        multiKillTimer(damager);
+
+        if ((Math.floor(damagerData.getStreak()) % 10 == 0) || (damagerData.getStreak() < 6 && damagerData.getStreak() >= 5)) {
+            Bukkit.broadcastMessage("§c§lSTREAK! §7of §c" + (int) Math.floor(damagerData.getStreak()) + " §7kills by "
+                    + zl.getColorBracketAndLevel(damager.getUniqueId().toString()) + " §7" + damager.getName());
+        }
+
+        if (damagedData.getBounty() != 0) {
+            Bukkit.broadcastMessage("§6§lBOUNTY CLAIMED! " + zl.getColorBracketAndLevel(damager.getUniqueId().toString())
+                    + "§7 " + damager.getName() + " killed " + zl.getColorBracketAndLevel(damaged.getUniqueId().toString())
+                    + "§7 " + damaged.getName() + " for §6§l" + zl.getFancyGoldString(damagedData.getBounty()) + "g");
+            damagedData.setBounty(0);
+        }
+
+        damager.spigot().sendMessage(new ComponentBuilder(calculateKillMessage(damager) + " §7on " + zl.getColorBracketAndLevel(uuid) + " §7" + damaged.getName()
+                + " §b+" + calculateEXP(damaged, damager) + "§bXP §6+" + zl.getFancyGoldString(calculatedGold) + "§6g")
+                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§eClick to view kill recap!")))
+                .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/killrecap " + damaged.getUniqueId()))
+                .create());
+        damager.playSound(damager.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1F, 1.8F);
+    }
+
+    private void multiKillTimer(Player player) {
+        if (runTracker2.hasID(player.getUniqueId())) runTracker2.stop(player.getUniqueId());
+
+        BukkitTask multiKillTimer = new BukkitRunnable() {
+            @Override
+            public void run() {
+                Main.getInstance().getPlayerData(player).setMultiKill(0);
+            }
+        }.runTaskLater(Main.getInstance(), 60);
+
+        runTracker2.setID(player.getUniqueId(), multiKillTimer.getTaskId());
+    }
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerDeath(EntityDamageByEntityEvent e) {
         Entity damagedEntity = e.getEntity();
@@ -142,52 +189,27 @@ public class KillListener implements Listener {
 
         if (damaged.equals(damager)) return;
 
-        if (runTracker2.hasID(damager.getUniqueId())) runTracker2.stop(damager.getUniqueId());
+        multiKillTimer(damager);
 
-        BukkitTask multiKillTimer = new BukkitRunnable() {
-            @Override
-            public void run() {
-                Main.getInstance().getPlayerData(damager).setMultiKill(0);
-            }
-        }.runTaskLater(Main.getInstance(), 60);
+        Bukkit.broadcastMessage(e.getFinalDamage() + "");//testing line
 
-        runTracker2.setID(damager.getUniqueId(), multiKillTimer.getTaskId());
-
-        double finalDMG = e.getFinalDamage();
-        double currentHP = damaged.getHealth();
-
-        Bukkit.broadcastMessage(finalDMG + "");//testing line
-
-        if (currentHP - finalDMG <= 0) {
-            String uuid = damaged.getUniqueId().toString();
-            PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
-            PlayerData damagerData = Main.getInstance().getPlayerData(damager);
-            double calculatedGold = calculateGold(damaged, damager);
-
-            damagerData.setStreak(damagerData.getStreak() + 1);
-            damagerData.setExp(damagerData.getExp() - calculateEXP(damaged, damager));
-            damagerData.setGold(damagerData.getGold() + calculatedGold);
-            damagerData.setMultiKill(damagerData.getMultiKill() + 1);
-
-            if ((Math.floor(damagerData.getStreak()) % 10 == 0) || (damagerData.getStreak() < 6 && damagerData.getStreak() >= 5)) {
-                Bukkit.broadcastMessage("§c§lSTREAK! §7of §c" + (int) Math.floor(damagerData.getStreak()) + " §7kills by "
-                        + zl.getColorBracketAndLevel(damager.getUniqueId().toString()) + " §7" + damager.getName());
-            }
-
-            if (damagedData.getBounty() != 0) {
-                Bukkit.broadcastMessage("§6§lBOUNTY CLAIMED! " + zl.getColorBracketAndLevel(damager.getUniqueId().toString())
-                        + "§7 " + damager.getName() + " killed " + zl.getColorBracketAndLevel(damaged.getUniqueId().toString())
-                        + "§7 " + damaged.getName() + " for §6§l" + zl.getFancyGoldString(damagedData.getBounty()) + "g");
-                damagedData.setBounty(0);
-            }
-
-            damager.spigot().sendMessage(new ComponentBuilder(calculateKillMessage(damager) + " §7on " + zl.getColorBracketAndLevel(uuid) + " §7" + damaged.getName()
-                    + " §b+" + calculateEXP(damaged, damager) + "§bXP §6+" + zl.getFancyGoldString(calculatedGold) + "§6g")
-                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§eClick to view kill recap!")))
-                    .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/killrecap " + damaged.getUniqueId()))
-                    .create());
-            damager.playSound(damager.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1F, 1.8F);
+        if (damaged.getHealth() - e.getFinalDamage() <= 0) {
+            pitKill(damaged, damager);
         }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onOtherDeath(EntityDamageEvent e) {
+        Player p;
+
+        if (zl.playerCheck(e.getEntity())) p = (Player) e.getEntity(); else return;
+        if (e.getCause() == DamageCause.FALL) return;
+        if (e.getCause() == DamageCause.PROJECTILE) return;
+        if (e.getCause() == DamageCause.ENTITY_ATTACK) return;
+        if (p.getHealth() - e.getFinalDamage() > 0) return;
+        if (assistUtils.getLastDamager(p) == null) return;
+
+        pitKill(p, assistUtils.getLastDamager(p));
     }
 
     @EventHandler

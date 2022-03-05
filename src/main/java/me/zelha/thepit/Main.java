@@ -5,15 +5,12 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import me.zelha.thepit.admin.commands.*;
-import me.zelha.thepit.admin.commands.HologramCheckCommand;
-import me.zelha.thepit.admin.commands.NPCCheckCommand;
 import me.zelha.thepit.mainpkg.commands.RespawnCommand;
 import me.zelha.thepit.mainpkg.data.KillRecap;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.mainpkg.data.StorageListener;
 import me.zelha.thepit.mainpkg.listeners.*;
 import me.zelha.thepit.mainpkg.runnables.ParticipationRunnable;
-import me.zelha.thepit.mainpkg.listeners.BlockListener;
 import me.zelha.thepit.upgrades.nonpermanent.GoldenPickaxeListener;
 import me.zelha.thepit.upgrades.nonpermanent.villager.ItemsVillagerListener;
 import me.zelha.thepit.upgrades.permanent.perks.PerkListenersAndUtils;
@@ -29,20 +26,17 @@ import java.util.UUID;
 
 public final class Main extends JavaPlugin {
 
+    public List<Player> blockPriviledges = new ArrayList<>();
+
+    private static Main instance;
     private ZelLogic zelLogic;
     private PerkListenersAndUtils perkUtils;
     private StorageListener storage;
     private DeathListener deathListener;
     private KillListener killListener;
     private AssistListener assistListener;
-
     private MongoCollection<Document> playerDataCollection;
     private MongoClient mongoClient;
-
-    public List<Player> blockPriviledges = new ArrayList<>();
-
-    private static Main instance;
-
 
     @Override
     public void onEnable() {
@@ -56,9 +50,9 @@ public final class Main extends JavaPlugin {
         zelLogic = new ZelLogic();
         storage = new StorageListener();
         perkUtils = new PerkListenersAndUtils();
+        assistListener = new AssistListener();
         killListener = new KillListener();
         deathListener = new DeathListener();
-        assistListener = new AssistListener();
         KillRecap recap = new KillRecap();
 
         getServer().getPluginManager().registerEvents(storage, this);
