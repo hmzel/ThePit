@@ -236,8 +236,8 @@ public class KillRecap implements CommandExecutor, Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                damageTrackerMap.get(damaged.getUniqueId()).remove(currentLog1);
-                damageTrackerMap.get(damager.getUniqueId()).remove(currentLog2);
+                if (damageTrackerMap.get(damaged.getUniqueId()) != null) damageTrackerMap.get(damaged.getUniqueId()).remove(currentLog1);
+                if (damageTrackerMap.get(damager.getUniqueId()) != null) damageTrackerMap.get(damager.getUniqueId()).remove(currentLog2);
             }
         }.runTaskLater(Main.getInstance(), 200);
     }
