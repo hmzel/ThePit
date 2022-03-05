@@ -112,12 +112,12 @@ public class AssistListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onAttackAndDeath(EntityDamageByEntityEvent e) {
+    public void onAttack(EntityDamageByEntityEvent e) {
         Entity damagedEntity = e.getEntity();
         Entity damagerEntity = e.getDamager();
         Player damaged;
         Player damager;
-        Double damage;
+        double damage;
 
         if (zl.spawnCheck(damagedEntity.getLocation()) || zl.spawnCheck(damagerEntity.getLocation())) return;
         if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
@@ -132,13 +132,24 @@ public class AssistListener implements Listener {
             return;
         }
 
-        if (damaged.equals(damager)) return;
+        if (damaged.getUniqueId().equals(damager.getUniqueId())) return;
 
         if (damaged.getHealth() - e.getFinalDamage() > 0) damage = e.getFinalDamage(); else damage = damaged.getHealth();
 
         assistMap.get(damaged.getUniqueId()).add(Pair.of(damager.getUniqueId(), damage));
+    }
 
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onDeath(EntityDamageEvent e) {
+        Player damaged;
+        Player damager;
+
+        if (zl.playerCheck(e.getEntity())) damaged = (Player) e.getEntity(); else return;
+        if (e.getCause() == EntityDamageEvent.DamageCause.FALL) return;
+        if (e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE) return;
+        if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) return;
         if (damaged.getHealth() - e.getFinalDamage() > 0) return;
+        if (getLastDamager(damaged) != null) damager = getLastDamager(damaged); else return;
 
         for (UUID uuid : getAssistMap(damaged).keySet()) {
             Player p = Bukkit.getPlayer(uuid);
@@ -157,7 +168,7 @@ public class AssistListener implements Listener {
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§eClick to view kill recap!")))
                     .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/killrecap " + damaged.getUniqueId()))
                     .create());
-            p.playSound(damager.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1F, 1.8F);
+            p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1F, 1.8F);
         }
 
         new BukkitRunnable() {
