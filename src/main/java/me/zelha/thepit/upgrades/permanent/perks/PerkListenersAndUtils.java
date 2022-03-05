@@ -401,13 +401,13 @@ public class PerkListenersAndUtils implements Listener {
                 public void run() {
                     if (runs == 0) damaged.setInvulnerable(false);
 
-                    if (!bonkMap.get(damagedUUID).contains(damagerUUID)) {
+                    if (bonkMap.get(damagedUUID) == null || !bonkMap.get(damagedUUID).contains(damagerUUID)) {
                         cancel();
                         return;
                     }
 
                     if (runs == 30) {
-                        bonkMap.get(damagedUUID).remove(damagerUUID);
+                        if (bonkMap.get(damagedUUID) != null) bonkMap.get(damagedUUID).remove(damagerUUID);
                         cancel();
                     }
 
