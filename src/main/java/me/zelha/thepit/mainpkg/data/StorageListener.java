@@ -62,8 +62,7 @@ public class StorageListener implements Listener {
                 && document.get("bounty") != null;
     }
 
-    private Document updateDocument(Document document, String uuid) {
-        PlayerData pData = getPlayerData(uuid);
+    private Document updateDocument(Document document) {
         Document perkSlotsEmbed = new Document();
         Document passivesEmbed = new Document();
         Document unlockedPerksEmbed = new Document();
@@ -72,7 +71,7 @@ public class StorageListener implements Listener {
             if (document.getEmbedded(Arrays.asList("perk_slots", slot), String.class) == null) {
                 perkSlotsEmbed.append(slot, "unset");
             } else {
-                perkSlotsEmbed.append(slot, pData.getPerkAtSlot((slots.indexOf(slot) + 1)).getName());
+                perkSlotsEmbed.append(slot, document.getEmbedded(Arrays.asList("perk_slots", slot), String.class));
             }
         }
 
@@ -80,7 +79,7 @@ public class StorageListener implements Listener {
             if (document.getEmbedded(Arrays.asList("passives", passive.getName()), Integer.class) == null) {
                 passivesEmbed.append(passive.getName(), 0);
             } else {
-                passivesEmbed.append(passive.getName(), pData.getPassiveTier(passive));
+                passivesEmbed.append(passive.getName(), document.getEmbedded(Arrays.asList("passives", passive.getName()), Integer.class));
             }
         }
 
@@ -88,7 +87,7 @@ public class StorageListener implements Listener {
             if (document.getEmbedded(Arrays.asList("perk_unlocks", perk.getName()), Boolean.class) == null) {
                 unlockedPerksEmbed.append(perk.getName(), false);
             } else {
-                unlockedPerksEmbed.append(perk.getName(), pData.getPerkUnlockStatus(perk));
+                unlockedPerksEmbed.append(perk.getName(), document.getEmbedded(Arrays.asList("perk_unlocks", perk.getName()), Boolean.class));
             }
         }
 
@@ -128,7 +127,7 @@ public class StorageListener implements Listener {
         pDataCol.replaceOne(new Document("uuid", uuid), pDoc);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void assignDataDocument(PlayerJoinEvent e) {
         String uuid = e.getPlayer().getUniqueId().toString();
         Document filter = new Document("uuid", uuid);
@@ -161,9 +160,7 @@ public class StorageListener implements Listener {
         }
 
         if (!dataCheck(pDoc)) {
-            playerDataMap.put(uuid, new PlayerData(pDoc));
-
-            pDoc = updateDocument(pDoc, uuid);
+            pDoc = updateDocument(pDoc);
 
             System.out.println("Successfully updated player data document assigned to " + uuid);
         }
@@ -177,7 +174,7 @@ public class StorageListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void saveDataDocument(PlayerQuitEvent e) {
         saveDocument(e.getPlayer().getUniqueId().toString());
         playerDataMap.remove(e.getPlayer().getUniqueId().toString());
