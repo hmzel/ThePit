@@ -92,7 +92,8 @@ public class PerkListenersAndUtils implements Listener {
         for (ItemStack item : inv.all(ARROW).values()) arrowCount += item.getAmount();
 
         strengthChaining.remove(p.getUniqueId());
-        bonkMap.get(p.getUniqueId()).clear();
+
+        if (bonkMap.get(p.getUniqueId()) != null) bonkMap.get(p.getUniqueId()).clear();
 
         removeAll(inv, gapple);
 
