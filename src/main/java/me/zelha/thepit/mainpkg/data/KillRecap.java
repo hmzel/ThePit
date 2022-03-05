@@ -59,7 +59,7 @@ public class KillRecap implements CommandExecutor, Listener {
     Map<UUID, List<DamageLog>> damageTrackerMap = new HashMap<>();
 
     private BaseComponent[] expComponent(Player dead, Player receiver) {
-        Boolean isKiller = receiver.getUniqueId().equals(assistUtils.getLastDamager(dead).getUniqueId());
+        boolean isKiller = receiver.getUniqueId().equals(assistUtils.getLastDamager(dead).getUniqueId());
         StringBuilder builder = new StringBuilder();
         double streakModifier = 0;
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
@@ -376,7 +376,6 @@ public class KillRecap implements CommandExecutor, Listener {
 
     private class DamageLog {
 
-        private final EntityDamageEvent.DamageCause cause;
         private final ItemStack item;
         private final double damage;
         private final int time;
@@ -398,7 +397,6 @@ public class KillRecap implements CommandExecutor, Listener {
                 damager = (Player) damagerEntity;
             }
 
-            this.cause = event.getCause();
             this.item = damager.getInventory().getItemInMainHand();
             this.damage = event.getFinalDamage();
             this.time = MinecraftServer.currentTick;
@@ -416,7 +414,7 @@ public class KillRecap implements CommandExecutor, Listener {
             this.isAttacker = isAttacker;
 
             if (pitDamageType == null) {
-                if (zl.itemCheck(item) && cause == EntityDamageEvent.DamageCause.PROJECTILE) {
+                if (zl.itemCheck(item) && event.getCause() == EntityDamageEvent.DamageCause.PROJECTILE) {
                     this.pitDamageType = "§6Arrow";
                 } else if (zl.itemCheck(item)) {
                     this.pitDamageType = "§cMelee";
