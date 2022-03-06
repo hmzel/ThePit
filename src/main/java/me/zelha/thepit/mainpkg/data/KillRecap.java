@@ -37,7 +37,6 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -252,34 +251,39 @@ public class KillRecap implements CommandExecutor, Listener {
         raw.add(new ComponentBuilder("Damage Log:\n").create());
 
         for (DamageLog damageLog : damageTrackerMap.get(player.getUniqueId())) {
-            int timeBeforeDeath = (MinecraftServer.currentTick - damageLog.time) / 20;
-            NBTTagCompound nbt = (CraftItemStack.asNMSCopy(damageLog.item).hasTag()) ? CraftItemStack.asNMSCopy(damageLog.item).getTag() : new NBTTagCompound();
+            int timeBeforeDeath = (MinecraftServer.currentTick - damageLog.time()) / 20;
+            NBTTagCompound nbt = (damageLog.item() != null && CraftItemStack.asNMSCopy(damageLog.item()).hasTag()) ? CraftItemStack.asNMSCopy(damageLog.item()).getTag() : new NBTTagCompound();
 
             raw.add(new ComponentBuilder("§8" + timeBeforeDeath + "s ")
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§7Happened " + timeBeforeDeath + " second(s) before death"))).create());
-            raw.add(new ComponentBuilder("§c" + BigDecimal.valueOf(damageLog.damage).setScale(1, RoundingMode.DOWN) + " ")
+            raw.add(new ComponentBuilder("§c" + BigDecimal.valueOf(damageLog.damage()).setScale(1, RoundingMode.DOWN) + " ")
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§cDamage"))).create());
 
-            if (zl.itemCheck(damageLog.item)) {
-                raw.add(new ComponentBuilder(damageLog.pitDamageType + "\n")
+            if (zl.itemCheck(damageLog.item())) {
+                raw.add(new ComponentBuilder(damageLog.pitDamageType() + "\n")
                         .event(new HoverEvent(HoverEvent.Action.SHOW_ITEM
-                                , new Item(damageLog.item.getType().getKey().toString()
-                                , damageLog.item.getAmount()
+                                , new Item(damageLog.item().getType().getKey().toString()
+                                , damageLog.item().getAmount()
                                 , ItemTag.ofNbt(nbt.toString())))).create());
             } else {
-                raw.add(new ComponentBuilder(damageLog.pitDamageType + "\n").create());
+                raw.add(new ComponentBuilder(damageLog.pitDamageType() + "\n").create());
             }
 
-            if (damageLog.isAttacker) {
+            if (!damageLog.hasPlayer()) {
+                raw.add(new ComponentBuilder("\n").create());
+                continue;
+            }
+
+            if (damageLog.isAttacker()) {
                 raw.add(new ComponentBuilder("§8to ").create());
             } else {
                 raw.add(new ComponentBuilder("§8by ").create());
             }
 
-            raw.add(new ComponentBuilder("§7" + damageLog.mainName + "\n")
-                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(damageLog.prestigeToShow + " §7" + damageLog.mainName + "\n"
-                            + "§7" + damageLog.subName + " §fHP after: §c"
-                            + Math.max(Double.parseDouble(BigDecimal.valueOf(damageLog.damagedHealth).setScale(1, RoundingMode.DOWN).toString()), 0.0))))
+            raw.add(new ComponentBuilder("§7" + damageLog.mainName() + "\n")
+                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(damageLog.prestigeToShow() + " §7" + damageLog.mainName() + "\n"
+                            + "§7" + damageLog.subName() + " §fHP after: §c"
+                            + Math.max(Double.parseDouble(BigDecimal.valueOf(damageLog.damagedHealth()).setScale(1, RoundingMode.DOWN).toString()), 0.0))))
                     .create());
             raw.add(new ComponentBuilder("\n").create());
         }
@@ -360,8 +364,8 @@ public class KillRecap implements CommandExecutor, Listener {
             return;
         }
 
-        DamageLog currentLog1 = new DamageLog(e, false, null);
-        DamageLog currentLog2 = new DamageLog(e, true, null);
+        DamageLog currentLog1 = new DamageLog(e, false);
+        DamageLog currentLog2 = new DamageLog(e, true);
 
         damageTrackerMap.get(damaged.getUniqueId()).add(currentLog1);
         damageTrackerMap.get(damager.getUniqueId()).add(currentLog2);
