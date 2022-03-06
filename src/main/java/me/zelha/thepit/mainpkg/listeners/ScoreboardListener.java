@@ -27,6 +27,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class ScoreboardListener implements Listener {
 
@@ -224,6 +225,8 @@ public class ScoreboardListener implements Listener {
 
         private final Player p;
         private final PlayerData pData;
+        private final char[] randomCharList = {'', 'ঙ', 'މ', 'ॄ', 'ͩ', 'ٖ', 'ࡒ', '̡', 'ɘ', '॑', 'ݓ', '¡', 'ڕ', 'ॖ', '㉘', 'ᅖ', '入', 'ᙔ', '̡', 'æ', 'ঈ', 'Ⅵ', '⅘', '﴿', '﴾', 'ꬾ', 'ꟿ', 'Ꞩ', 'ꜳ', 'ꜩ', 'ꝙ', 'Ꝏ', 'ꝰ', '▓', '▼', '♥', '♪', '≈', '≡', '╬', '₯', '№', '₻', '↕', '↔', '∏', '∆', '∑', '₪', '₢', '₡', 'ᵺ', 'ᴥ', 'ᴨ', '۩', '۝', '۞', '֎', 'Җ', '҂', '҈', 'ϡ'};
+        private boolean hasHeaderAndFooter = false;
 
         public TabAndNameUpdater(Player player) {
             this.p = player;
@@ -233,6 +236,28 @@ public class ScoreboardListener implements Listener {
         @Override
         public void run() {
             if (!runTracker2.hasID(p.getUniqueId())) runTracker2.setID(p.getUniqueId(), super.getTaskId());
+
+            if (!hasHeaderAndFooter) {
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (!zl.playerCheck(p)) {
+                            cancel();
+                            return;
+                        }
+
+                        StringBuilder builder = new StringBuilder("§" + ChatColor.values()[new Random().nextInt(ChatColor.values().length)].getChar());
+
+                        for (int i = 0; i < 10; i++) builder.append(randomCharList[new Random().nextInt(randomCharList.length)]);
+
+                        p.setPlayerListHeader("§bYou are playing on " + builder);
+                    }
+                }.runTaskTimer(Main.getInstance(), 0, 1);
+
+                p.setPlayerListFooter("§ebunnies deserve pets too");
+
+                hasHeaderAndFooter = true;
+            }
 
             String suffix = "";
 
