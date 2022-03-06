@@ -205,13 +205,13 @@ public class KillRecap implements CommandExecutor, Listener {
         bookMeta.setAuthor("13");
 
         raw.add(new ComponentBuilder("§c§lKILL RECAP\n").create());
-        raw.add(new ComponentBuilder("§7" + DateTimeFormatter.ofPattern("MM/dd/yy h:mm a").format(LocalDateTime.now()) + "\n")
+        raw.add(new ComponentBuilder("§8" + DateTimeFormatter.ofPattern("MM/dd/yy h:mm a").format(LocalDateTime.now()) + "\n")
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§7Hypixel server time"))).create());
         raw.add(playerComponent(player));
         raw.add(new ComponentBuilder("\n").create());
         raw.add(new ComponentBuilder("Killer:\n").create());
         raw.add(playerComponent(killer));
-        raw.add(new ComponentBuilder("§7for ").create());
+        raw.add(new ComponentBuilder("§8for ").create());
         raw.add(expComponent(player, killer));
         raw.add(goldComponent(player, killer));
         raw.add(new ComponentBuilder("\n").create());
@@ -230,7 +230,7 @@ public class KillRecap implements CommandExecutor, Listener {
 
             raw.add(new ComponentBuilder((int) ((Double.parseDouble(BigDecimal.valueOf(sortedAssistsMap.get(uuid) / player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()).setScale(2, RoundingMode.HALF_EVEN).toString())) * 100) + "% ").create());
             raw.add(playerComponent(Bukkit.getPlayer(uuid)));
-            raw.add(new ComponentBuilder("§7for ").create());
+            raw.add(new ComponentBuilder("§8for ").create());
             raw.add(expComponent(player, Bukkit.getPlayer(uuid)));
             raw.add(goldComponent(player, Bukkit.getPlayer(uuid)));
 
@@ -243,7 +243,7 @@ public class KillRecap implements CommandExecutor, Listener {
             int timeBeforeDeath = (MinecraftServer.currentTick - damageLog.time) / 20;
             NBTTagCompound nbt = (CraftItemStack.asNMSCopy(damageLog.item).hasTag()) ? CraftItemStack.asNMSCopy(damageLog.item).getTag() : new NBTTagCompound();
 
-            raw.add(new ComponentBuilder("§7" + timeBeforeDeath + "s ")
+            raw.add(new ComponentBuilder("§8" + timeBeforeDeath + "s ")
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§7Happened " + timeBeforeDeath + " second(s) before death"))).create());
             raw.add(new ComponentBuilder("§c" + BigDecimal.valueOf(damageLog.damage).setScale(1, RoundingMode.DOWN) + " ")
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§cDamage"))).create());
@@ -259,9 +259,9 @@ public class KillRecap implements CommandExecutor, Listener {
             }
 
             if (damageLog.isAttacker) {
-                raw.add(new ComponentBuilder("§7to ").create());
+                raw.add(new ComponentBuilder("§8to ").create());
             } else {
-                raw.add(new ComponentBuilder("§7by ").create());
+                raw.add(new ComponentBuilder("§8by ").create());
             }
 
             raw.add(new ComponentBuilder("§7" + damageLog.mainName + "\n")
@@ -273,9 +273,9 @@ public class KillRecap implements CommandExecutor, Listener {
         }
 
         if (disconnected) {
-            raw.add(new ComponentBuilder("§70s §cDISCONNECTED").create());
+            raw.add(new ComponentBuilder("§80s §cDISCONNECTED").create());
         } else {
-            raw.add(new ComponentBuilder("§70s §cDEAD").create());
+            raw.add(new ComponentBuilder("§80s §cDEAD").create());
         }
 
         List<BaseComponent[]> pages = new ArrayList<>();
