@@ -394,60 +394,6 @@ public class KillRecap implements CommandExecutor, Listener {
 
         damageTrackerMap.remove(e.getPlayer().getUniqueId());
     }
-
-
-    private class DamageLog {
-
-        private final ItemStack item;
-        private final double damage;
-        private final int time;
-        private final String mainName;
-        private final String subName;
-        private final String prestigeToShow;
-        private final Double damagedHealth;
-        private final boolean isAttacker;
-        private final String pitDamageType;
-
-        public DamageLog(EntityDamageByEntityEvent event, boolean isAttacker, @Nullable String pitDamageType) {
-            Entity damagerEntity = event.getDamager();
-            Player damaged = (Player) event.getEntity();
-            Player damager;
-
-            if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player && zl.playerCheck((Player) ((Arrow) damagerEntity).getShooter())) {
-                damager = (Player) ((Arrow) damagerEntity).getShooter();
-            } else {
-                damager = (Player) damagerEntity;
-            }
-
-            this.item = damager.getInventory().getItemInMainHand();
-            this.damage = event.getFinalDamage();
-            this.time = MinecraftServer.currentTick;
-            this.subName = damaged.getName();
-
-            if (isAttacker) {
-                this.mainName = damaged.getName();
-                this.prestigeToShow = zl.getColorBracketAndLevel(damager.getUniqueId().toString());
-            } else {
-                this.mainName = damager.getName();
-                this.prestigeToShow = zl.getColorBracketAndLevel(damaged.getUniqueId().toString());
-            }
-
-            this.damagedHealth = damaged.getHealth() - event.getFinalDamage();
-            this.isAttacker = isAttacker;
-
-            if (pitDamageType == null) {
-                if (zl.itemCheck(item) && event.getCause() == EntityDamageEvent.DamageCause.PROJECTILE) {
-                    this.pitDamageType = "§6Arrow";
-                } else if (zl.itemCheck(item)) {
-                    this.pitDamageType = "§cMelee";
-                } else {
-                    this.pitDamageType = "§rHand";
-                }
-            } else {
-                this.pitDamageType = pitDamageType;
-            }
-        }
-    }
 }
 
 
