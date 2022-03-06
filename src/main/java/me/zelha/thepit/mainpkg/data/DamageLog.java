@@ -23,6 +23,7 @@ public class DamageLog {
     private final double damagedHealth;
     private final boolean isAttacker;
     private final String pitDamageType;
+    private final boolean environmental;
 
     public DamageLog(EntityDamageByEntityEvent event, boolean isAttacker) {
         Entity damagerEntity = event.getDamager();
@@ -60,9 +61,11 @@ public class DamageLog {
         } else {
             this.pitDamageType = "§rHand";
         }
+
+        this.environmental = false;
     }
 
-    public DamageLog(double damage, String damageType) {
+    public DamageLog(double damage, String damageType, boolean environmental) {
         this.hasPlayer = false;
         this.item = null;
         this.damage = damage;
@@ -73,6 +76,7 @@ public class DamageLog {
         this.damagedHealth = 1313;
         this.isAttacker = false;
         this.pitDamageType = damageType;
+        this.environmental = environmental;
     }
 
     public boolean hasPlayer() {

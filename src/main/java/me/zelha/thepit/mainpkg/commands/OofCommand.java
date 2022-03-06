@@ -31,7 +31,7 @@ public class OofCommand implements CommandExecutor {
             return true;
         }
 
-        KillRecap.addDamageLog(p, new DamageLog(1000000, "oof"));
+        KillRecap.addDamageLog(p, new DamageLog(1000000, "oof", false));
         p.damage(1000000);
         cooldown.add(p.getUniqueId());
 
