@@ -62,6 +62,19 @@ public class DamageLog {
         }
     }
 
+    public DamageLog(double damage, String damageType) {
+        this.hasPlayer = false;
+        this.item = null;
+        this.damage = damage;
+        this.time = MinecraftServer.currentTick;
+        this.mainName = null;
+        this.subName = null;
+        this.prestigeToShow = null;
+        this.damagedHealth = 1313;
+        this.isAttacker = false;
+        this.pitDamageType = damageType;
+    }
+
     public boolean hasPlayer() {
         return hasPlayer;
     }
