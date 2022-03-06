@@ -11,13 +11,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -125,79 +125,93 @@ public class DeathListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerDeath(EntityDamageEvent e) {
-        Entity entity = e.getEntity();
+    private void deathMethod(Player player, boolean combatLogged) {
+        PlayerInventory inv = player.getInventory();
 
-        if (!zl.playerCheck(entity)) return;
-        if (e.getCause() == DamageCause.FALL) return;
-
-        if (zl.spawnCheck(entity.getLocation())) {
-            e.setCancelled(true);
-            return;
-        }
-
-        Player p = (Player) e.getEntity();
-        PlayerInventory inv = p.getInventory();
-        double finalDMG = e.getFinalDamage();
-        double currentHP = p.getHealth();
-
-        if (currentHP - finalDMG <= 0) {
-            e.setCancelled(true);
-
+        if (!combatLogged) {
             for (ItemStack item : inv.getArmorContents()) {
                 if (zl.itemCheck(item) && item.getItemMeta() != null && item.getItemMeta().getEnchants().isEmpty()) {
                     String name = item.getType().name();
 
                     if ((name.contains("DIAMOND") || name.contains("IRON")) && new Random().nextInt(4) == 3) {
-                        p.getWorld().dropItemNaturally(p.getLocation(), zl.itemBuilder(item.getType(), 1));
+                        player.getWorld().dropItemNaturally(player.getLocation(), zl.itemBuilder(item.getType(), 1));
                     }
                 }
             }
+        }
 
-            for (Material material : lostOnDeathList) {
-                inv.remove(material);
+        for (Material material : lostOnDeathList) {
+            inv.remove(material);
 
-                for (EquipmentSlot slot : EquipmentSlot.values()) {
-                    if (zl.itemCheck(inv.getItem(slot)) && inv.getItem(slot).getType() == material) inv.setItem(slot, new ItemStack(AIR));
-                }
+            for (EquipmentSlot slot : EquipmentSlot.values()) {
+                if (zl.itemCheck(inv.getItem(slot)) && inv.getItem(slot).getType() == material) inv.setItem(slot, new ItemStack(AIR));
             }
+        }
 
-            teleportToSpawnMethod(p);
+        if (!combatLogged) teleportToSpawnMethod(player);
 
-            switch (new Random().nextInt(3)) {
-                case 0:
-                    if (!zl.itemCheck(inv.getChestplate())) inv.setChestplate(zl.itemBuilder(IRON_CHESTPLATE, 1));
-                    break;
-                case 1:
-                    if (!zl.itemCheck(inv.getLeggings())) inv.setLeggings(zl.itemBuilder(IRON_LEGGINGS, 1));
-                    break;
-                case 2:
-                    if (!zl.itemCheck(inv.getBoots())) inv.setBoots(zl.itemBuilder(IRON_BOOTS, 1));
-                    break;
-            }
+        switch (new Random().nextInt(3)) {
+            case 0:
+                if (!zl.itemCheck(inv.getChestplate())) inv.setChestplate(zl.itemBuilder(IRON_CHESTPLATE, 1));
+                break;
+            case 1:
+                if (!zl.itemCheck(inv.getLeggings())) inv.setLeggings(zl.itemBuilder(IRON_LEGGINGS, 1));
+                break;
+            case 2:
+                if (!zl.itemCheck(inv.getBoots())) inv.setBoots(zl.itemBuilder(IRON_BOOTS, 1));
+                break;
+        }
 
-            if (!zl.itemCheck(inv.getChestplate())) inv.setChestplate(zl.itemBuilder(CHAINMAIL_CHESTPLATE, 1));
-            if (!zl.itemCheck(inv.getLeggings())) inv.setLeggings(zl.itemBuilder(CHAINMAIL_LEGGINGS, 1));
-            if (!zl.itemCheck(inv.getBoots())) inv.setBoots(zl.itemBuilder(CHAINMAIL_BOOTS, 1));
-            //sword & bow & arrow are handled in PerkListenersAndUtils.perkReset for consistency's sake
+        if (!zl.itemCheck(inv.getChestplate())) inv.setChestplate(zl.itemBuilder(CHAINMAIL_CHESTPLATE, 1));
+        if (!zl.itemCheck(inv.getLeggings())) inv.setLeggings(zl.itemBuilder(CHAINMAIL_LEGGINGS, 1));
+        if (!zl.itemCheck(inv.getBoots())) inv.setBoots(zl.itemBuilder(CHAINMAIL_BOOTS, 1));
 
-            Player damager = Main.getInstance().getAssistUtils().getLastDamager(p);
+        if (combatLogged) {
+            player.sendMessage("§c§lALERT! §r§cInventory/bounty reset for quitting mid-fight!");
+            player.sendMessage("§e§lWARNING! §r§eThis action is logged for moderation.");
+            return;
+        }
 
-            if (damager != null) {
-                p.spigot().sendMessage(new ComponentBuilder("§c§lDEATH! §7by " + zl.getColorBracketAndLevel(damager.getUniqueId().toString()) + " §7" + damager.getName() + " §e§lVIEW RECAP")
-                        .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§eClick to view kill recap!")))
-                        .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/killrecap " + p.getUniqueId()))
-                        .create());
-            } else {
-                p.sendMessage("§c§lDEATH!");
-            }
+        Player damager = Main.getInstance().getAssistUtils().getLastDamager(player);
 
-            p.sendTitle("§cYOU DIED", "", 0, 40, 20);
-            p.playSound(p.getLocation(), Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1.8F);
+        if (damager != null) {
+            player.spigot().sendMessage(new ComponentBuilder("§c§lDEATH! §7by " + zl.getColorBracketAndLevel(damager.getUniqueId().toString()) + " §7" + damager.getName() + " §e§lVIEW RECAP")
+                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§eClick to view kill recap!")))
+                    .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/killrecap " + player.getUniqueId()))
+                    .create());
+        } else {
+            player.sendMessage("§c§lDEATH!");
+        }
+
+        player.sendTitle("§cYOU DIED", "", 0, 40, 20);
+        player.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1.8F);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerDeath(EntityDamageEvent e) {
+        Player p;
+
+        if (zl.playerCheck(e.getEntity())) p = (Player) e.getEntity(); else return;
+        if (e.getCause() == DamageCause.FALL) return;
+
+        if (zl.spawnCheck(p.getLocation())) {
+            e.setCancelled(true);
+            return;
+        }
+
+        if (p.getHealth() - e.getFinalDamage() <= 0) {
+            e.setCancelled(true);
+            deathMethod(p, false);
         }
     }
-}//perk-related death handling is in PerkListenersAndUtils
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e) {
+        if (Main.getInstance().getPlayerData(e.getPlayer()).getCombatLogged()) deathMethod(e.getPlayer(), true);
+
+        Main.getInstance().getPlayerData(e.getPlayer()).setCombatLogged(false);
+    }
+}
 
 
 

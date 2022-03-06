@@ -132,8 +132,14 @@ public class AttackListener implements Listener {
         damager.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(bar + barBuilder + barBuilder2));
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onLeave(PlayerQuitEvent e) {
+        PlayerData pData = Main.getInstance().getPlayerData(e.getPlayer());
+
+        if (!pData.getStatus().equals("bountied") && !pData.getStatus().equals("idling")) {
+            pData.setCombatLogged(true);
+        }
+
         if (runTracker.hasID(e.getPlayer().getUniqueId())) runTracker.stop(e.getPlayer().getUniqueId());
     }
 

@@ -24,6 +24,7 @@ public class PlayerData {
     private final Map<Integer, Perks> perkSlots = new HashMap<>();
     private final Map<Passives, Integer> passivesMap = new HashMap<>();
     private final Map<Perks, Boolean> perkUnlocks = new HashMap<>();
+    private boolean combatLogged;
 
     List<String> slots = Arrays.asList(
             "one",
@@ -42,6 +43,7 @@ public class PlayerData {
         combatTimer = 0;
         hideTimer = true;
         multikill = 0;
+        combatLogged = document.getBoolean("combat_logged");
 
         for (String slot : slots) {
             perkSlots.put((slots.indexOf(slot) + 1), Perks.findByName(document.getEmbedded(Arrays.asList("perk_slots", slot), String.class)));
@@ -84,7 +86,9 @@ public class PlayerData {
         return status;
     }
 
-    public int getBounty() {return bounty;}
+    public int getBounty() {
+        return bounty;
+    }
 
     public int getCombatTimer() {
         return combatTimer;
@@ -112,6 +116,10 @@ public class PlayerData {
 
     public boolean getPerkUnlockStatus(Perks perk) {
         return perkUnlocks.get(perk);
+    }
+
+    public boolean getCombatLogged() {
+        return combatLogged;
     }
 
     //setters
@@ -166,6 +174,10 @@ public class PlayerData {
 
     public void setPerkUnlockStatus(Perks perk, boolean bool) {
         perkUnlocks.put(perk, bool);
+    }
+
+    public void setCombatLogged(boolean bool) {
+        this.combatLogged = bool;
     }
 
     //other

@@ -6,6 +6,7 @@ import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import org.bson.Document;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -59,7 +60,8 @@ public class StorageListener implements Listener {
                 && document.get("level") != null
                 && document.get("exp") != null
                 && document.get("gold") != null
-                && document.get("bounty") != null;
+                && document.get("bounty") != null
+                && document.get("combat_logged") != null;
     }
 
     private Document updateDocument(Document document) {
@@ -101,6 +103,8 @@ public class StorageListener implements Listener {
         document.append("passives", passivesEmbed);
         document.append("perk_unlocks", unlockedPerksEmbed);
 
+        if (document.get("combat_logged") == null) document.append("combat_logged", false);
+
         return document;
     }
 
@@ -123,6 +127,7 @@ public class StorageListener implements Listener {
         pDoc.put("perk_slots", perkSlotsEmbed);
         pDoc.put("passives", passivesEmbed);
         pDoc.put("perk_unlocks", unlockedPerksEmbed);
+        pDoc.put("combat_logged", pData.getCombatLogged());
 
         pDataCol.replaceOne(new Document("uuid", uuid), pDoc);
     }
@@ -150,7 +155,8 @@ public class StorageListener implements Listener {
                     .append("bounty", 0)
                     .append("perk_slots", perkSlotsEmbed)
                     .append("passives", passivesEmbed)
-                    .append("perk_unlocks", unlockedPerksEmbed));
+                    .append("perk_unlocks", unlockedPerksEmbed)
+                    .append("combat_logged", false));
 
             pDoc = pDataCol.find(filter).first();
 

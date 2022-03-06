@@ -193,6 +193,127 @@ public class KillRecap implements CommandExecutor, Listener {
         return new ComponentBuilder("§7" + player.getName() + "\n").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
     }
 
+    private void deathMethod(Player player, boolean disconnected) {
+        if (assistUtils.getLastDamager(player) == null) return;
+
+        Player killer = assistUtils.getLastDamager(player);
+        ItemStack recapBook = new ItemStack(Material.WRITTEN_BOOK);
+        BookMeta bookMeta = (BookMeta) recapBook.getItemMeta();
+        List<BaseComponent[]> raw = new ArrayList<>();
+
+        bookMeta.setTitle(player.getName());
+        bookMeta.setAuthor("13");
+
+        raw.add(new ComponentBuilder("§c§lKILL RECAP\n").create());
+        raw.add(new ComponentBuilder("§7" + DateTimeFormatter.ofPattern("MM/dd/yy h:mm a").format(LocalDateTime.now()) + "\n")
+                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§7Hypixel server time"))).create());
+        raw.add(playerComponent(player));
+        raw.add(new ComponentBuilder("\n").create());
+        raw.add(new ComponentBuilder("Killer:\n").create());
+        raw.add(playerComponent(killer));
+        raw.add(new ComponentBuilder("§7for ").create());
+        raw.add(expComponent(player, killer));
+        raw.add(goldComponent(player, killer));
+        raw.add(new ComponentBuilder("\n").create());
+
+        Map<UUID, Double> sortedAssistsMap = assistUtils.getAssistMap(player).entrySet().stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        boolean addAssistTitle = true;
+
+        for (UUID uuid : sortedAssistsMap.keySet()) {
+            if (Bukkit.getPlayer(uuid) == null || uuid.equals(player.getUniqueId()) || uuid.equals(killer.getUniqueId())) {
+                continue;
+            }
+
+            if (addAssistTitle) raw.add(new ComponentBuilder("Assists:\n").create());
+
+            raw.add(new ComponentBuilder((int) ((Double.parseDouble(BigDecimal.valueOf(sortedAssistsMap.get(uuid) / player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()).setScale(2, RoundingMode.HALF_EVEN).toString())) * 100) + "% ").create());
+            raw.add(playerComponent(Bukkit.getPlayer(uuid)));
+            raw.add(new ComponentBuilder("§7for ").create());
+            raw.add(expComponent(player, Bukkit.getPlayer(uuid)));
+            raw.add(goldComponent(player, Bukkit.getPlayer(uuid)));
+
+            addAssistTitle = false;
+        }
+
+        raw.add(new ComponentBuilder("Damage Log:\n").create());
+
+        for (DamageLog damageLog : damageTrackerMap.get(player.getUniqueId())) {
+            int timeBeforeDeath = (MinecraftServer.currentTick - damageLog.time) / 20;
+            NBTTagCompound nbt = (CraftItemStack.asNMSCopy(damageLog.item).hasTag()) ? CraftItemStack.asNMSCopy(damageLog.item).getTag() : new NBTTagCompound();
+
+            raw.add(new ComponentBuilder("§7" + timeBeforeDeath + "s ")
+                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§7Happened " + timeBeforeDeath + " second(s) before death"))).create());
+            raw.add(new ComponentBuilder("§c" + BigDecimal.valueOf(damageLog.damage).setScale(1, RoundingMode.DOWN) + " ")
+                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§cDamage"))).create());
+
+            if (zl.itemCheck(damageLog.item)) {
+                raw.add(new ComponentBuilder(damageLog.pitDamageType + "\n")
+                        .event(new HoverEvent(HoverEvent.Action.SHOW_ITEM
+                                , new Item(damageLog.item.getType().getKey().toString()
+                                , damageLog.item.getAmount()
+                                , ItemTag.ofNbt(nbt.toString())))).create());
+            } else {
+                raw.add(new ComponentBuilder(damageLog.pitDamageType + "\n").create());
+            }
+
+            if (damageLog.isAttacker) {
+                raw.add(new ComponentBuilder("§7to ").create());
+            } else {
+                raw.add(new ComponentBuilder("§7by ").create());
+            }
+
+            raw.add(new ComponentBuilder("§7" + damageLog.mainName + "\n")
+                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(damageLog.prestigeToShow + " §7" + damageLog.mainName + "\n"
+                            + "§7" + damageLog.subName + " §fHP after: §c"
+                            + Math.max(Double.parseDouble(BigDecimal.valueOf(damageLog.damagedHealth).setScale(1, RoundingMode.DOWN).toString()), 0.0))))
+                    .create());
+            raw.add(new ComponentBuilder("\n").create());
+        }
+
+        if (disconnected) {
+            raw.add(new ComponentBuilder("§70s §cDISCONNECTED").create());
+        } else {
+            raw.add(new ComponentBuilder("§70s §cDEAD").create());
+        }
+
+        List<BaseComponent[]> pages = new ArrayList<>();
+        ComponentBuilder builder = new ComponentBuilder();
+        int lines = 0;
+
+        //yeah yeah i know duplicate code is bad but this is a lot less janky than anything else i could do im pretty sure
+        for (BaseComponent[] rawComponent : raw) {
+            if (rawComponent[0].toPlainText().contains("Damage Log:") && !addAssistTitle && lines < 13 && lines != 0) {
+                pages.add(builder.create());
+                builder = new ComponentBuilder();
+                lines = 0;
+            }
+
+            if (rawComponent[0].toPlainText().contains("\n")) lines++;
+
+            if (rawComponent[0].getHoverEvent() != null) {
+                builder.append(rawComponent);
+            } else {
+                builder.append(new ComponentBuilder(rawComponent[0]).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(""))).create());
+            }
+
+            if (lines == 13) {
+                pages.add(builder.create());
+                builder = new ComponentBuilder();
+                lines = 0;
+            }
+        }
+
+        if (!builder.getParts().isEmpty()) pages.add(builder.create());
+
+        for (BaseComponent[] page : pages) bookMeta.spigot().addPage(page);
+
+        recapBook.setItemMeta(bookMeta);
+        bookMap.put(player.getUniqueId(), recapBook);
+        damageTrackerMap.put(player.getUniqueId(), new ArrayList<>());
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) return true;
@@ -237,7 +358,7 @@ public class KillRecap implements CommandExecutor, Listener {
             @Override
             public void run() {
                 if (damageTrackerMap.get(damaged.getUniqueId()) != null) damageTrackerMap.get(damaged.getUniqueId()).remove(currentLog1);
-                if (damageTrackerMap.get(damager.getUniqueId()) != null) damageTrackerMap.get(damager.getUniqueId()).remove(currentLog2);
+                if (damageTrackerMap.get(damaged.getUniqueId()) != null) damageTrackerMap.get(damager.getUniqueId()).remove(currentLog2);
             }
         }.runTaskLater(Main.getInstance(), 200);
     }
@@ -245,122 +366,9 @@ public class KillRecap implements CommandExecutor, Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onDeath(EntityDamageEvent e) {
         if (!zl.playerCheck(e.getEntity())) return;
-        if (assistUtils.getLastDamager((Player) e.getEntity()) == null) return;
         if (((Player) e.getEntity()).getHealth() - e.getFinalDamage() > 0) return;
 
-        Player dead = (Player) e.getEntity();
-        Player killer = assistUtils.getLastDamager(dead);
-        ItemStack recapBook = new ItemStack(Material.WRITTEN_BOOK);
-        BookMeta bookMeta = (BookMeta) recapBook.getItemMeta();
-        List<BaseComponent[]> raw = new ArrayList<>();
-
-        bookMeta.setTitle(dead.getName());
-        bookMeta.setAuthor("13");
-
-        raw.add(new ComponentBuilder("§c§lKILL RECAP\n").create());
-        raw.add(new ComponentBuilder("§7" + DateTimeFormatter.ofPattern("MM/dd/yy h:mm a").format(LocalDateTime.now()) + "\n")
-                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§7Hypixel server time"))).create());
-        raw.add(playerComponent(dead));
-        raw.add(new ComponentBuilder("\n").create());
-        raw.add(new ComponentBuilder("Killer:\n").create());
-        raw.add(playerComponent(killer));
-        raw.add(new ComponentBuilder("§7for ").create());
-        raw.add(expComponent(dead, killer));
-        raw.add(goldComponent(dead, killer));
-        raw.add(new ComponentBuilder("\n").create());
-
-        Map<UUID, Double> sortedAssistsMap = assistUtils.getAssistMap(dead).entrySet().stream()
-                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-        boolean addAssistTitle = true;
-
-        for (UUID uuid : sortedAssistsMap.keySet()) {
-            if (Bukkit.getPlayer(uuid) == null || uuid.equals(dead.getUniqueId()) || uuid.equals(killer.getUniqueId())) {
-                continue;
-            }
-
-            if (addAssistTitle) raw.add(new ComponentBuilder("Assists:\n").create());
-
-            raw.add(new ComponentBuilder((int) ((Double.parseDouble(BigDecimal.valueOf(sortedAssistsMap.get(uuid) / dead.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()).setScale(2, RoundingMode.HALF_EVEN).toString())) * 100) + "% ").create());
-            raw.add(playerComponent(Bukkit.getPlayer(uuid)));
-            raw.add(new ComponentBuilder("§7for ").create());
-            raw.add(expComponent(dead, Bukkit.getPlayer(uuid)));
-            raw.add(goldComponent(dead, Bukkit.getPlayer(uuid)));
-
-            addAssistTitle = false;
-        }
-
-        raw.add(new ComponentBuilder("Damage Log:\n").create());
-
-        for (DamageLog damageLog : damageTrackerMap.get(dead.getUniqueId())) {
-            int timeBeforeDeath = (MinecraftServer.currentTick - damageLog.time) / 20;
-            NBTTagCompound nbt = (CraftItemStack.asNMSCopy(damageLog.item).hasTag()) ? CraftItemStack.asNMSCopy(damageLog.item).getTag() : new NBTTagCompound();
-
-            raw.add(new ComponentBuilder("§7" + timeBeforeDeath + "s ")
-                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§7Happened " + timeBeforeDeath + " second(s) before death"))).create());
-            raw.add(new ComponentBuilder("§c" + BigDecimal.valueOf(damageLog.damage).setScale(1, RoundingMode.DOWN) + " ")
-                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§cDamage"))).create());
-
-            if (zl.itemCheck(damageLog.item)) {
-                raw.add(new ComponentBuilder(damageLog.pitDamageType + "\n")
-                        .event(new HoverEvent(HoverEvent.Action.SHOW_ITEM
-                                , new Item(damageLog.item.getType().getKey().toString()
-                                , damageLog.item.getAmount()
-                                , ItemTag.ofNbt(nbt.toString())))).create());
-            } else {
-                raw.add(new ComponentBuilder(damageLog.pitDamageType + "\n").create());
-            }
-
-            if (damageLog.isAttacker) {
-                raw.add(new ComponentBuilder("§7to ").create());
-            } else {
-                raw.add(new ComponentBuilder("§7by ").create());
-            }
-
-            raw.add(new ComponentBuilder("§7" + damageLog.mainName + "\n")
-                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(damageLog.prestigeToShow + " §7" + damageLog.mainName + "\n"
-                    + "§7" + damageLog.subName + " §fHP after: §c"
-                    + Math.max(Double.parseDouble(BigDecimal.valueOf(damageLog.damagedHealth).setScale(1, RoundingMode.DOWN).toString()), 0.0))))
-                    .create());
-            raw.add(new ComponentBuilder("\n").create());
-        }
-
-        raw.add(new ComponentBuilder("§70s §cDEAD").create());
-
-        List<BaseComponent[]> pages = new ArrayList<>();
-        ComponentBuilder builder = new ComponentBuilder();
-        int lines = 0;
-
-        //yeah yeah i know duplicate code is bad but this is a lot less janky than anything else i could do im pretty sure
-        for (BaseComponent[] rawComponent : raw) {
-            if (rawComponent[0].toPlainText().contains("Damage Log:") && !addAssistTitle && lines < 13 && lines != 0) {
-                pages.add(builder.create());
-                builder = new ComponentBuilder();
-                lines = 0;
-            }
-
-            if (rawComponent[0].toPlainText().contains("\n")) lines++;
-
-            if (rawComponent[0].getHoverEvent() != null) {
-                builder.append(rawComponent);
-            } else {
-                builder.append(new ComponentBuilder(rawComponent[0]).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(""))).create());
-            }
-
-            if (lines == 13) {
-                pages.add(builder.create());
-                builder = new ComponentBuilder();
-                lines = 0;
-            }
-        }
-
-        if (!builder.getParts().isEmpty()) pages.add(builder.create());
-
-        for (BaseComponent[] page : pages) bookMeta.spigot().addPage(page);
-
-        recapBook.setItemMeta(bookMeta);
-        bookMap.put(dead.getUniqueId(), recapBook);
-        damageTrackerMap.put(dead.getUniqueId(), new ArrayList<>());
+        deathMethod((Player) e.getEntity(), false);
     }
 
     @EventHandler
@@ -368,8 +376,10 @@ public class KillRecap implements CommandExecutor, Listener {
         damageTrackerMap.put(e.getPlayer().getUniqueId(), new ArrayList<>());
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onLeave(PlayerQuitEvent e) {
+        if (Main.getInstance().getPlayerData(e.getPlayer()).getCombatLogged()) deathMethod(e.getPlayer(), true);
+
         damageTrackerMap.remove(e.getPlayer().getUniqueId());
     }
 

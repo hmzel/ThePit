@@ -219,7 +219,11 @@ public class KillListener implements Listener {
 
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
+        Player p = e.getPlayer();
+
         if (runTracker.hasID(e.getPlayer().getUniqueId())) runTracker.stop(e.getPlayer().getUniqueId());
+        if (assistUtils.getLastDamager(p) == null) return;
+        if (Main.getInstance().getPlayerData(p).getCombatLogged()) pitKill(p, assistUtils.getLastDamager(p));
     }
 
 
