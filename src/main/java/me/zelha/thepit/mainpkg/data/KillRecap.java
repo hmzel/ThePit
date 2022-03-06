@@ -55,8 +55,20 @@ public class KillRecap implements CommandExecutor, Listener {
     private final KillListener killUtils = Main.getInstance().getKillUtils();
     private final AssistListener assistUtils = Main.getInstance().getAssistUtils();
     private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
-    Map<UUID, ItemStack> bookMap = new HashMap<>();
-    Map<UUID, List<DamageLog>> damageTrackerMap = new HashMap<>();
+    private final Map<UUID, ItemStack> bookMap = new HashMap<>();
+    private static final Map<UUID, List<DamageLog>> damageTrackerMap = new HashMap<>();
+
+    //i dislike using static but i think its fine here since its only one method
+    /**
+     * adds a new DamageLog to the given player's recap log <p>
+     * note: must be called before damage is dealt,
+     * in case the player is killed by the dealt damage and the death method is called before the log is added
+     * @param player player to add the log to
+     * @param log new log to add
+     */
+    public static void addDamageLog(Player player, DamageLog log) {
+        damageTrackerMap.get(player.getUniqueId()).add(log);
+    }
 
     private BaseComponent[] expComponent(Player dead, Player receiver) {
         boolean isKiller = receiver.getUniqueId().equals(assistUtils.getLastDamager(dead).getUniqueId());
