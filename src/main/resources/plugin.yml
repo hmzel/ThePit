@@ -50,3 +50,6 @@ commands:
   killrecap:
     description: kill recap
     usage: /<command> UUID
+  oof:
+    description: kills the player
+    usage: /<command>

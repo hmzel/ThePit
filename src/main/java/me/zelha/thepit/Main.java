@@ -5,6 +5,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import me.zelha.thepit.admin.commands.*;
+import me.zelha.thepit.mainpkg.commands.OofCommand;
 import me.zelha.thepit.mainpkg.commands.RespawnCommand;
 import me.zelha.thepit.mainpkg.data.KillRecap;
 import me.zelha.thepit.mainpkg.data.PlayerData;
@@ -29,14 +30,14 @@ public final class Main extends JavaPlugin {
     public List<Player> blockPriviledges = new ArrayList<>();
 
     private static Main instance;
+    private MongoCollection<Document> playerDataCollection;
+    private MongoClient mongoClient;
     private ZelLogic zelLogic;
     private PerkListenersAndUtils perkUtils;
     private StorageListener storage;
     private DeathListener deathListener;
     private KillListener killListener;
     private AssistListener assistListener;
-    private MongoCollection<Document> playerDataCollection;
-    private MongoClient mongoClient;
 
     @Override
     public void onEnable() {
@@ -88,6 +89,7 @@ public final class Main extends JavaPlugin {
         getCommand("hologramcheck").setExecutor(new HologramCheckCommand());
         getCommand("setperk").setExecutor(new SetPerkCommand());
         getCommand("killrecap").setExecutor(recap);
+        getCommand("oof").setExecutor(new OofCommand());
 
         storage.runDataSaver();
         new ParticipationRunnable().runTaskTimerAsynchronously(this, 0, 1);
