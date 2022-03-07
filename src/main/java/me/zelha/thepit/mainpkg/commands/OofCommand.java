@@ -3,6 +3,7 @@ package me.zelha.thepit.mainpkg.commands;
 import me.zelha.thepit.Main;
 import me.zelha.thepit.mainpkg.data.DamageLog;
 import me.zelha.thepit.mainpkg.data.KillRecap;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -25,9 +26,11 @@ public class OofCommand implements CommandExecutor {
 
         if (Main.getInstance().getZelLogic().spawnCheck(p.getLocation())) {
             p.sendMessage("§c§lNOPE! §7Can't /oof in spawn!");
+            p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
             return true;
         } else if (cooldown.contains(p.getUniqueId())) {
             p.sendMessage("§c§lCHILL OUT! §7You may only /oof every 10 seconds!");
+            p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
             return true;
         }
 
