@@ -386,6 +386,24 @@ public class KillRecap implements CommandExecutor, Listener {
         }.runTaskLater(Main.getInstance(), 200);
     }
 
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onDamage(EntityDamageEvent e) {
+        if (zl.spawnCheck(e.getEntity().getLocation())) return;
+        if (!zl.playerCheck(e.getEntity())) return;
+        if (e.getCause() == EntityDamageEvent.DamageCause.FALL) return;
+        if (e.getFinalDamage() <= 0) return;
+
+        Player p = (Player) e.getEntity();
+        String damageType = null;
+
+        switch (e.getCause()) {
+            case DROWNING:
+                damageType = "§9Drowned";
+        }
+
+        if (damageType != null) addDamageLog(p, new DamageLog(e.getDamage(), damageType, true));
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onDeath(EntityDamageEvent e) {
         if (!zl.playerCheck(e.getEntity())) return;
