@@ -14,6 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -153,6 +154,16 @@ public class AntiVanillaListener implements Listener {
     @EventHandler
     public void onFlow(BlockFromToEvent e) {
         if (e.getBlock().getType() == LAVA || e.getBlock().getType() == WATER) e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onFire(EntityDamageEvent e) {
+        if (!zl.playerCheck(e.getEntity())) return;
+
+        if (e.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK) {
+            e.setCancelled(true);
+            e.getEntity().setFireTicks(0);
+        }
     }
 
     @EventHandler
