@@ -2,6 +2,8 @@ package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
+import me.zelha.thepit.mainpkg.data.DamageLog;
+import me.zelha.thepit.mainpkg.data.KillRecap;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -12,7 +14,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -120,8 +121,13 @@ public class AntiVanillaListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onVoidDamage(EntityDamageEvent e) {
-        if (e.getCause() == EntityDamageEvent.DamageCause.VOID) e.setDamage(131313);
+    public void onVoid(PlayerMoveEvent e) {
+        Player p = e.getPlayer();
+
+        if (p.getLocation().getY() > 64) return;
+
+        KillRecap.addDamageLog(p, new DamageLog(p.getHealth(), "Fell out", false));
+        p.damage(p.getHealth());
     }
 
     @EventHandler
