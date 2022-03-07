@@ -118,4 +118,8 @@ public class DamageLog {
     public String pitDamageType() {
         return pitDamageType;
     }
+
+    public boolean environmental() {
+        return environmental;
+    }
 }

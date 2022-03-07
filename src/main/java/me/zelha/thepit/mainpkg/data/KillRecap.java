@@ -273,7 +273,11 @@ public class KillRecap implements CommandExecutor, Listener {
                                 , damageLog.item().getAmount()
                                 , ItemTag.ofNbt(nbt.toString())))).create());
             } else {
-                raw.add(new ComponentBuilder(damageLog.pitDamageType() + "\n").create());
+                ComponentBuilder builder2 = new ComponentBuilder(damageLog.pitDamageType() + "\n");
+
+                if (damageLog.environmental()) builder2.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§aEnvironmental damage")));
+
+                raw.add(builder2.create());
             }
 
             if (!damageLog.hasPlayer()) {
