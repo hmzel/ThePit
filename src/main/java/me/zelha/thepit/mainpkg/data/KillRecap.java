@@ -401,8 +401,21 @@ public class KillRecap implements CommandExecutor, Listener {
         String damageType = null;
 
         switch (e.getCause()) {
+            case SUFFOCATION:
+                damageType = "§fSuffocation";
+                break;
+            case FIRE:
+                damageType = "§6Fire";
+                break;
+            case LAVA:
+                damageType = "§6Lava";
+                break;
             case DROWNING:
                 damageType = "§9Drowned";
+                break;
+            case VOID:
+                damageType = "§fVoid";
+                break;
         }
 
         if (damageType != null) addDamageLog(p, new DamageLog(e.getDamage(), damageType, true));
