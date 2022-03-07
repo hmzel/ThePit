@@ -67,6 +67,13 @@ public class KillRecap implements CommandExecutor, Listener {
      */
     public static void addDamageLog(Player player, DamageLog log) {
         damageTrackerMap.get(player.getUniqueId()).add(log);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (damageTrackerMap.get(player.getUniqueId()) != null) damageTrackerMap.get(player.getUniqueId()).remove(log);
+            }
+        }.runTaskLater(Main.getInstance(), 200);
     }
 
     private BaseComponent[] expComponent(Player dead, Player receiver) {
