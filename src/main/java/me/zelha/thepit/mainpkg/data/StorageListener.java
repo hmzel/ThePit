@@ -30,7 +30,7 @@ public class StorageListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                for (String uuid : playerUUIDList) saveDocument(uuid);
+                for (String uuid : new ArrayList<>(playerUUIDList)) saveDocument(uuid);
             }
         }.runTaskTimerAsynchronously(Main.getInstance(), 0, 1200);
 
