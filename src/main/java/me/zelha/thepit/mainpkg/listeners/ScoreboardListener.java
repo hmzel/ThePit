@@ -25,9 +25,7 @@ import org.bukkit.scoreboard.Team;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class ScoreboardListener implements Listener {
 
@@ -35,6 +33,7 @@ public class ScoreboardListener implements Listener {
     private final RunMethods runTracker = Main.getInstance().generateRunMethods();
     private final RunMethods runTracker2 = Main.getInstance().generateRunMethods();
     private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
+    private final Map<UUID, Team> teamMap = new HashMap<>();
 
     @EventHandler
     public void addOnJoin(PlayerJoinEvent e) {
@@ -44,11 +43,14 @@ public class ScoreboardListener implements Listener {
 
     @EventHandler
     public void removeOnLeave(PlayerQuitEvent e) {
-        if (runTracker.hasID(e.getPlayer().getUniqueId())) runTracker.stop(e.getPlayer().getUniqueId());
-        if (runTracker2.hasID(e.getPlayer().getUniqueId())) runTracker2.stop(e.getPlayer().getUniqueId());
+        UUID uuid = e.getPlayer().getUniqueId();
 
-        if (Bukkit.getScoreboardManager().getMainScoreboard().getTeam(e.getPlayer().getName()) != null) {
-            Bukkit.getScoreboardManager().getMainScoreboard().getTeam(e.getPlayer().getName()).unregister();
+        if (runTracker.hasID(uuid)) runTracker.stop(uuid);
+        if (runTracker2.hasID(uuid)) runTracker2.stop(uuid);
+
+        if (teamMap.containsKey(uuid)) {
+            teamMap.get(uuid).unregister();
+            teamMap.remove(uuid);
         }
     }
 
@@ -226,6 +228,7 @@ public class ScoreboardListener implements Listener {
         private final Player p;
         private final PlayerData pData;
         private final char[] randomCharList = {'', 'ঙ', 'މ', 'ॄ', 'ͩ', 'ٖ', 'ࡒ', '̡', 'ɘ', '॑', 'ݓ', '¡', 'ڕ', 'ॖ', '㉘', 'ᅖ', '入', 'ᙔ', '̡', 'æ', 'ঈ', 'Ⅵ', '⅘', '﴿', '﴾', 'ꬾ', 'ꟿ', 'Ꞩ', 'ꜳ', 'ꜩ', 'ꝙ', 'Ꝏ', 'ꝰ', '▓', '▼', '♥', '♪', '≈', '≡', '╬', '₯', '№', '₻', '↕', '↔', '∏', '∆', '∑', '₪', '₢', '₡', 'ᵺ', 'ᴥ', 'ᴨ', '۩', '۝', '۞', '֎', 'Җ', '҂', '҈', 'ϡ'};
+        private final char[] sortHelp = {'z', 'y', 'x', 'w', 'v', 'u', 't', 's', 'r', 'q'};
         private boolean hasHeaderAndFooter = false;
 
         public TabAndNameUpdater(Player player) {
@@ -235,7 +238,7 @@ public class ScoreboardListener implements Listener {
 
         @Override
         public void run() {
-            if (!runTracker2.hasID(p.getUniqueId())) runTracker2.setID(p.getUniqueId(), super.getTaskId());
+            if (!runTracker2.hasID(p.getUniqueId())) runTracker2.setID(p.getUniqueId(), getTaskId());
 
             if (!hasHeaderAndFooter) {
                 new BukkitRunnable() {
@@ -259,14 +262,44 @@ public class ScoreboardListener implements Listener {
                 hasHeaderAndFooter = true;
             }
 
+            UUID uuid = p.getUniqueId();
+            Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
+            int level = pData.getLevel();
+            Team team;
             String suffix = "";
+            StringBuilder sort = new StringBuilder();
 
             if (pData.getBounty() != 0) suffix += " §6§l" + pData.getBounty() + "g";
 
-            Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
-            Team team = (main.getTeam(p.getName()) != null) ? main.getTeam(p.getName()) : main.registerNewTeam(p.getName());
+            if (level >= 100) {
+                sort.append("a");
+                level -= 100;
+            }
 
-            team.setPrefix(zl.getColorBracketAndLevel(p.getUniqueId().toString()) + " ");
+            for (int i = 0; i < String.valueOf(level).length(); i++) {
+                sort.append(sortHelp[Integer.parseInt(String.valueOf(String.valueOf(level).charAt(i)))]);
+            }
+
+
+            if (!teamMap.containsKey(uuid)) {
+                if (main.getTeam(sort + p.getName()) != null) {
+                    team = main.getTeam(sort + p.getName());
+                } else {
+                    team = main.registerNewTeam(sort + p.getName());
+                }
+
+                teamMap.put(uuid, team);
+            } else if (teamMap.containsKey(uuid) && !teamMap.get(uuid).getName().equals(sort + p.getName())) {
+                teamMap.get(uuid).unregister();
+
+                team = main.registerNewTeam(sort + p.getName());
+
+                teamMap.put(uuid, team);
+            } else {
+                team = teamMap.get(uuid);
+            }
+
+            team.setPrefix(zl.getColorBracketAndLevel(uuid.toString()) + " ");
             team.setSuffix(suffix);
             team.addEntry(p.getName());
             team.setColor(ChatColor.GRAY);
