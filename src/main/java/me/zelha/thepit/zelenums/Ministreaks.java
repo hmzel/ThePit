@@ -6,26 +6,27 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.bukkit.Material.*;
+import static me.zelha.thepit.zelenums.StreakBundles.*;
 
 public enum Ministreaks {
-    SECOND_GAPPLE(3, "Second Gapple", GOLDEN_APPLE, 0, 0, 1500, Arrays.asList(
+    SECOND_GAPPLE(null, 3, "Second Gapple", GOLDEN_APPLE, 0, 0, 1500, Arrays.asList(
             "§7Every: §c3 kills",
             " ",
             "§7Gain §b50 XP§7, §6+5g §7and an",
             "§7extra golden apple."
     )),
-    EXPLICIOUS(3, "Explicious", LIGHT_BLUE_DYE, 0, 0, 3000, Arrays.asList(
+    EXPLICIOUS(null, 3, "Explicious", LIGHT_BLUE_DYE, 0, 0, 3000, Arrays.asList(
             "§7Every: §c3 kills",
             " ",
             "§7Gain §b+12 XP§7."
     )),
-    R_AND_R(3, "R&R", GOLDEN_CARROT, 3, 40, 4000, Arrays.asList(
+    R_AND_R(BEASTMODE, 3, "R&R", GOLDEN_CARROT, 3, 40, 4000, Arrays.asList(
             "§7Every: §c3 kills",
             " ",
             "§7Gain §9Resistance I §7and",
             "§cRegen II §7for 3s."
     )),
-    ARQUEBUSIER(3, "Arquebusier", ARROW, 0, 50, 5000, Arrays.asList(
+    ARQUEBUSIER(null, 3, "Arquebusier", ARROW, 0, 50, 5000, Arrays.asList(
             "§7Every: §c3 kills",
             " ",
             "§7Gain:",
@@ -33,7 +34,7 @@ public enum Ministreaks {
             "§7■ §f16 arrows §7(max 128)",
             "§7■ §eSpeed §7for 10 seconds"
     )),
-    KHANATE(3, "Khanate", GOLDEN_HELMET, 7, 60, 6000, Arrays.asList(
+    KHANATE(HIGHLANDER, 3, "Khanate", GOLDEN_HELMET, 7, 60, 6000, Arrays.asList(
             "§7Every: §c3 kills",
             " ",
             "§7Earn §6+8g",
@@ -41,19 +42,19 @@ public enum Ministreaks {
             "§7Stack §c+4% damage §7vs bountied players",
             "§7up to §c+40%§7."
     )),
-    LEECH(3, "Leech", CHICKEN_SPAWN_EGG, 10, 70, 6000, Arrays.asList(
+    LEECH(MAGNUM_OPUS, 3, "Leech", CHICKEN_SPAWN_EGG, 10, 70, 6000, Arrays.asList(
             "§7Every: §c3 kills",
             " ",
             "§7Next hit heals for §c+0.5❤ §7+",
             "§c20% §7of its damage."
     )),
-    TOUGH_SKIN(5, "Tough Skin", LEATHER_CHESTPLATE, 3, 30, 3000, Arrays.asList(
+    TOUGH_SKIN(BEASTMODE, 5, "Tough Skin", LEATHER_CHESTPLATE, 3, 30, 3000, Arrays.asList(
             "§7Every: §c5 kills",
             " ",
             "§7Receive §9-3% §7damage.",
             "§7Stacks up to §9-24%§7."
     )),
-    FIGHT_OR_FLIGHT(5, "Fight or Flight", FIRE_CHARGE, 0, 50, 5000, Arrays.asList(
+    FIGHT_OR_FLIGHT(null, 5, "Fight or Flight", FIRE_CHARGE, 0, 50, 5000, Arrays.asList(
             "§7Every: §c5 kills",
             " ",
             "§7If below half §c❤§7:",
@@ -62,25 +63,25 @@ public enum Ministreaks {
             "§7Otherwise:",
             "§7Deal §c+20% §7damage for 7 seconds."
     )),
-    PUNGENT(5, "Pungent", FERMENTED_SPIDER_EYE, 4, 70, 9000, Arrays.asList(
+    PUNGENT(HERMIT, 5, "Pungent", FERMENTED_SPIDER_EYE, 4, 70, 9000, Arrays.asList(
             "§7Every: §c5 kills",
             " ",
             "§7Obtain a §cSmelly Bomb§7:",
             "§Applies §9Slowness I §7to players",
             "§7within 3 blocks for 5 seconds."
     )),
-    HEROS_HASTE(5, "Hero's Haste", ENCHANTED_BOOK, 0, 100, 15000, Arrays.asList(
+    HEROS_HASTE(null, 5, "Hero's Haste", ENCHANTED_BOOK, 0, 100, 15000, Arrays.asList(
             "§7Every: §c5 kills",
             " ",
             "§7Gain §eSpeed II §7for 5 seconds."
     )),
-    RUSH(5, "Rush", SUGAR, 7, 110, 25000, Arrays.asList(
+    RUSH(HIGHLANDER, 5, "Rush", SUGAR, 7, 110, 25000, Arrays.asList(
             "§7Every: §c5 kills",
             " ",
             "§7Gain §e1.5% Speed§7.",
             "§7Max §e+15% Speed§7."
     )),
-    FEAST(7, "Feast", MUTTON, 0, 30, 4000, Arrays.asList(
+    FEAST(null, 7, "Feast", MUTTON, 0, 30, 4000, Arrays.asList(
             "§7Every: §c7 kills",
             " ",
             "§7Obtain a §6AAA-Rated Steak§7:",
@@ -89,40 +90,40 @@ public enum Ministreaks {
             "§7■ §9Resistance I",
             "§7Insta-eat (0:10)"
     )),
-    COUNTER_STRIKE(7, "Counter-Strike", IRON_HORSE_ARMOR, 0, 40, 5000, Arrays.asList(
+    COUNTER_STRIKE(null, 7, "Counter-Strike", IRON_HORSE_ARMOR, 0, 40, 5000, Arrays.asList(
             "§7Every: §c7 kills",
             " ",
             "§7Deal §c+15% damge ì7and block",
             "§91❤ §7per hit for 8s."
     )),
-    GOLD_NANO_FACTORY(7, "Gold Nano-factory", GOLD_NUGGET, 7, 50, 6000, Arrays.asList(
+    GOLD_NANO_FACTORY(HIGHLANDER, 7, "Gold Nano-factory", GOLD_NUGGET, 7, 50, 6000, Arrays.asList(
             "§7Every: §c7 kills",
             " ",
             "§7Obtain a molecular assembler:",
             "§7Spawns §67 gold ingots§7.",
             "§7Grants §cRegen IV §7for 2 seconds."
     )),
-    TACTICAL_RETREAT(7, "Tactical Retreat", GRASS, 3, 50, 5000, Arrays.asList(
+    TACTICAL_RETREAT(BEASTMODE, 7, "Tactical Retreat", GRASS, 3, 50, 5000, Arrays.asList(
             "§7Every: §c7 kills",
             " ",
             "§7Gain §cRegeneration IV §7and",
             "§cWeakness IV §7for 5 seconds."
     )),
-    GLASS_PICKAXE(7, "Glass Pickaxe", DIAMOND_PICKAXE, 4, 60, 6000, Arrays.asList(
+    GLASS_PICKAXE(HERMIT, 7, "Glass Pickaxe", DIAMOND_PICKAXE, 4, 60, 6000, Arrays.asList(
             "§7Every: §c7 kills",
             " ",
             "§7Get a single-use weapon with",
             "§9+8.5 Damage §7and §c+0.5❤",
             "§7true damage."
     )),
-    ASSURED_STRIKE(7, "Assured Strike", COOKED_RABBIT, 10, 80, 10000, Arrays.asList(
+    ASSURED_STRIKE(MAGNUM_OPUS, 7, "Assured Strike", COOKED_RABBIT, 10, 80, 10000, Arrays.asList(
             "§7Every: §c7 kills",
             " ",
             "§7Your next melee hit deals §c+35%",
             "§cdamage §7and grants §eSpeed I",
             "§7for 20 seconds."
     )),
-    AURA_OF_PROTECTION(10, "Aura of Protection", SLIME_BALL, 4, 50, 8000, Arrays.asList(
+    AURA_OF_PROTECTION(HERMIT, 10, "Aura of Protection", SLIME_BALL, 4, 50, 8000, Arrays.asList(
             "§7Every: §c10 kills",
             " ",
             "§7Gain an §aAura of Protection §7spell item.",
@@ -131,7 +132,7 @@ public enum Ministreaks {
             "§9Resistance II §7(0:04)",
             "§eTrue Damage §7immunity (0:15)"
     )),
-    ICE_CUBE(10, "Ice Cube", PACKED_ICE, 4, 60, 9000, Arrays.asList(
+    ICE_CUBE(HERMIT, 10, "Ice Cube", PACKED_ICE, 4, 60, 9000, Arrays.asList(
             "§7Every: §c10 kills",
             " ",
             "§7Get an §aIce Cube §7item.",
@@ -142,7 +143,7 @@ public enum Ministreaks {
             "§7Gain §a40 XP",
             "§7Attacks slow enemies for 10 seconds."
     )),
-    SUPER_STREAKER(10, "Super Streaker", BREAD, 15, 80, 20000, Arrays.asList(
+    SUPER_STREAKER(TO_THE_MOON, 10, "Super Streaker", BREAD, 15, 80, 20000, Arrays.asList(
             "§7Every: §c10 kills",
             " ",
             "§7Gain §a+50 XP§7.",
@@ -150,7 +151,7 @@ public enum Ministreaks {
             "§7Stack a buff of §a+5% XP §7from kills.",
             "§7(Up to §a+50%§7)"
     )),
-    GOLD_STACK(10, "Gold Stack", GOLD_ORE, 15, 90, 25000, Arrays.asList(
+    GOLD_STACK(TO_THE_MOON, 10, "Gold Stack", GOLD_ORE, 15, 90, 25000, Arrays.asList(
             "§7Every: §c10 kills",
             " ",
             "§7Permanently gain §6+0.1g §7per kill.",
@@ -159,7 +160,7 @@ public enum Ministreaks {
             "§8Bonus also applies when not selected.",
             "§8Resets on prestige."
     )),
-    XP_STACK(10, "XP Stack", DIAMOND_ORE, 15, 90, 25000, Arrays.asList(
+    XP_STACK(TO_THE_MOON, 10, "XP Stack", DIAMOND_ORE, 15, 90, 25000, Arrays.asList(
             "§7Every: §c10 kills",
             " ",
             "§7Permanently gain §b+0.05 XP §7per kill.",
@@ -168,17 +169,17 @@ public enum Ministreaks {
             "§8Bonus also applies when not selected.",
             "§8Resets on prestige."
     )),
-    MONSTER(25, "Monster", APPLE, 3, 40, 10000, Arrays.asList(
+    MONSTER(BEASTMODE, 25, "Monster", APPLE, 3, 40, 10000, Arrays.asList(
             "§7Every: §c25 kills",
             " ",
             "§7Gain an extra max §c❤ §7(max 2)."
     )),
-    SPONGESTEVE(25, "Spongesteve", SPONGE, 0, 70, 12000, Arrays.asList(
+    SPONGESTEVE(null, 25, "Spongesteve", SPONGE, 0, 70, 12000, Arrays.asList(
             "§7Every: §c25 kills",
             " ",
             "§7Gain §615❤ Absorption§7."
     )),
-    APOSTLE_TO_RNGESUS(25, "Apostle to RNGesus", QUARTZ_SLAB, 10, 100, 50000, Arrays.asList(
+    APOSTLE_TO_RNGESUS(MAGNUM_OPUS, 25, "Apostle to RNGesus", QUARTZ_SLAB, 10, 100, 50000, Arrays.asList(
             "§7Every: §c25 kills",
             " ",
             "§7Roll a number between 1-100:",
@@ -197,6 +198,7 @@ public enum Ministreaks {
             "§e■ §7Multiple of 13: §c+25% damage §7(0:30)"
     ));
 
+    private final StreakBundles bundle;
     private final int trigger;
     private final String name;
     private final Material material;
@@ -205,7 +207,8 @@ public enum Ministreaks {
     private final int cost;
     private final List<String> lore;
 
-    Ministreaks(int trigger, String name, Material material, int prestige, int level, int cost, List<String> lore) {
+    Ministreaks(StreakBundles bundle, int trigger, String name, Material material, int prestige, int level, int cost, List<String> lore) {
+        this.bundle = bundle;
         this.trigger = trigger;
         this.name = name;
         this.material = material;
@@ -213,6 +216,10 @@ public enum Ministreaks {
         this.level = level;
         this.cost = cost;
         this.lore = lore;
+    }
+
+    public StreakBundles getBundle() {
+        return bundle;
     }
 
     public int getTrigger() {
