@@ -196,7 +196,8 @@ public enum Ministreaks {
             "§e■ §7Multiple of 8: §7Gain between §b500 XP§7-§b5,000 XP",
             "§e■ §7Multiple of 12: §6+4❤ absorption",
             "§e■ §7Multiple of 13: §c+25% damage §7(0:30)"
-    ));
+    )),
+    UNSET(null, 0, "unset", GOLD_BLOCK, 0, 0, 0, null);
 
     private final StreakBundles bundle;
     private final int trigger;
