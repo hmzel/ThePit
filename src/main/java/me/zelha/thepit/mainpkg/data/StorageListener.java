@@ -149,19 +149,26 @@ public class StorageListener implements Listener {
         Document perkSlotsEmbed = new Document();
         Document passivesEmbed = new Document();
         Document unlockedPerksEmbed = new Document();
+        Document unlockedMegastreaksEmbed = new Document();
+        Document unlockedMinistreaksEmbed = new Document();
 
         for (String slot : slots) perkSlotsEmbed.append(slot, pData.getPerkAtSlot((slots.indexOf(slot) + 1)).name().toLowerCase());
         for (Passives passive : Passives.values()) passivesEmbed.append(passive.name().toLowerCase(), pData.getPassiveTier(passive));
         for (Perks perk : Perks.values()) unlockedPerksEmbed.append(perk.name().toLowerCase(), pData.getPerkUnlockStatus(perk));
+        for (Megastreaks mega : Megastreaks.values()) unlockedMegastreaksEmbed.append(mega.name().toLowerCase(), pData.getMegastreakUnlockStatus(mega));
+        for (Ministreaks mini : Ministreaks.values()) unlockedMinistreaksEmbed.append(mini.name().toLowerCase(), pData.getMinistreakUnlockStatus(mini));
 
         pDoc.put("prestige", pData.getPrestige());
         pDoc.put("level", pData.getLevel());
         pDoc.put("exp", pData.getExp());
         pDoc.put("gold", pData.getGold());
         pDoc.put("bounty", pData.getBounty());
+        pDoc.put("megastreak", pData.getMegastreak().name().toLowerCase());
         pDoc.put("perk_slots", perkSlotsEmbed);
         pDoc.put("passives", passivesEmbed);
         pDoc.put("perk_unlocks", unlockedPerksEmbed);
+        pDoc.put("megastreak_unlocks", unlockedMegastreaksEmbed);
+        pDoc.put("ministreak_unlocks", unlockedMinistreaksEmbed);
         pDoc.put("combat_logged", pData.getCombatLogged());
 
         pDataCol.replaceOne(new Document("uuid", uuid), pDoc);
@@ -177,10 +184,14 @@ public class StorageListener implements Listener {
             Document perkSlotsEmbed = new Document();
             Document passivesEmbed = new Document();
             Document unlockedPerksEmbed = new Document();
+            Document unlockedMegastreaksEmbed = new Document();
+            Document unlockedMinistreaksEmbed = new Document();
 
             for (String slot : slots) perkSlotsEmbed.append(slot, "unset");
             for (Passives passive : Passives.values()) passivesEmbed.append(passive.name().toLowerCase(), 0);
             for (Perks perk : Perks.values()) unlockedPerksEmbed.append(perk.name().toLowerCase(), false);
+            for (Megastreaks mega : Megastreaks.values()) unlockedMegastreaksEmbed.append(mega.name().toLowerCase(), false);
+            for (Ministreaks mini : Ministreaks.values()) unlockedMinistreaksEmbed.append(mini.name().toLowerCase(), false);
 
             pDataCol.insertOne(filter
                     .append("prestige", 0)
@@ -188,9 +199,12 @@ public class StorageListener implements Listener {
                     .append("exp", 15)
                     .append("gold", 0.0)
                     .append("bounty", 0)
+                    .append("megastreaks", "overdrive")
                     .append("perk_slots", perkSlotsEmbed)
                     .append("passives", passivesEmbed)
                     .append("perk_unlocks", unlockedPerksEmbed)
+                    .append("megastreak_unlocks", unlockedMegastreaksEmbed)
+                    .append("ministreak_unlocks", unlockedMinistreaksEmbed)
                     .append("combat_logged", false));
 
             pDoc = pDataCol.find(filter).first();
