@@ -170,6 +170,7 @@ public class StorageListener implements Listener {
         Document unlockedMinistreaksEmbed = new Document();
 
         for (String slot : slots) perkSlotsEmbed.append(slot, pData.getPerkAtSlot((slots.indexOf(slot) + 1)).name().toLowerCase());
+        for (int i = 0; i < 3; i++) ministreakSlotsEmbed.append(slots.get(i), pData.getMinistreakAtSlot(i + 1).name().toLowerCase());
         for (Passives passive : Passives.values()) passivesEmbed.append(passive.name().toLowerCase(), pData.getPassiveTier(passive));
         for (Perks perk : Perks.values()) unlockedPerksEmbed.append(perk.name().toLowerCase(), pData.getPerkUnlockStatus(perk));
         for (Megastreaks mega : Megastreaks.values()) unlockedMegastreaksEmbed.append(mega.name().toLowerCase(), pData.getMegastreakUnlockStatus(mega));
