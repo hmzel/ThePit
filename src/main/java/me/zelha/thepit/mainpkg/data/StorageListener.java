@@ -45,13 +45,13 @@ public class StorageListener implements Listener {
         }
 
         for (Passives passive : Passives.values()) {
-            if (document.getEmbedded(Arrays.asList("passives", passive.getName()), Integer.class) == null) {
+            if (document.getEmbedded(Arrays.asList("passives", passive.name().toLowerCase()), Integer.class) == null) {
                 return false;
             }
         }
 
         for (Perks perk : Perks.values()) {
-            if (document.getEmbedded(Arrays.asList("perk_unlocks", perk.getName()), Boolean.class) == null) {
+            if (document.getEmbedded(Arrays.asList("perk_unlocks", perk.name().toLowerCase()), Boolean.class) == null) {
                 return false;
             }
         }
@@ -78,18 +78,18 @@ public class StorageListener implements Listener {
         }
 
         for (Passives passive : Passives.values()) {
-            if (document.getEmbedded(Arrays.asList("passives", passive.getName()), Integer.class) == null) {
-                passivesEmbed.append(passive.getName(), 0);
+            if (document.getEmbedded(Arrays.asList("passives", passive.name().toLowerCase()), Integer.class) == null) {
+                passivesEmbed.append(passive.name().toLowerCase(), 0);
             } else {
-                passivesEmbed.append(passive.getName(), document.getEmbedded(Arrays.asList("passives", passive.getName()), Integer.class));
+                passivesEmbed.append(passive.name().toLowerCase(), document.getEmbedded(Arrays.asList("passives", passive.name().toLowerCase()), Integer.class));
             }
         }
 
         for (Perks perk : Perks.values()) {
-            if (document.getEmbedded(Arrays.asList("perk_unlocks", perk.getName()), Boolean.class) == null) {
-                unlockedPerksEmbed.append(perk.getName(), false);
+            if (document.getEmbedded(Arrays.asList("perk_unlocks", perk.name().toLowerCase()), Boolean.class) == null) {
+                unlockedPerksEmbed.append(perk.name().toLowerCase(), false);
             } else {
-                unlockedPerksEmbed.append(perk.getName(), document.getEmbedded(Arrays.asList("perk_unlocks", perk.getName()), Boolean.class));
+                unlockedPerksEmbed.append(perk.name().toLowerCase(), document.getEmbedded(Arrays.asList("perk_unlocks", perk.name().toLowerCase()), Boolean.class));
             }
         }
 
@@ -115,9 +115,9 @@ public class StorageListener implements Listener {
         Document passivesEmbed = new Document();
         Document unlockedPerksEmbed = new Document();
 
-        for (String slot : slots) perkSlotsEmbed.append(slot, pData.getPerkAtSlot((slots.indexOf(slot) + 1)).getName());
-        for (Passives passive : Passives.values()) passivesEmbed.append(passive.getName(), pData.getPassiveTier(passive));
-        for (Perks perk : Perks.values()) unlockedPerksEmbed.append(perk.getName(), pData.getPerkUnlockStatus(perk));
+        for (String slot : slots) perkSlotsEmbed.append(slot, pData.getPerkAtSlot((slots.indexOf(slot) + 1)).name().toLowerCase());
+        for (Passives passive : Passives.values()) passivesEmbed.append(passive.name().toLowerCase(), pData.getPassiveTier(passive));
+        for (Perks perk : Perks.values()) unlockedPerksEmbed.append(perk.name().toLowerCase(), pData.getPerkUnlockStatus(perk));
 
         pDoc.put("prestige", pData.getPrestige());
         pDoc.put("level", pData.getLevel());
@@ -144,8 +144,8 @@ public class StorageListener implements Listener {
             Document unlockedPerksEmbed = new Document();
 
             for (String slot : slots) perkSlotsEmbed.append(slot, "unset");
-            for (Passives passive : Passives.values()) passivesEmbed.append(passive.getName(), 0);
-            for (Perks perk : Perks.values()) unlockedPerksEmbed.append(perk.getName(), false);
+            for (Passives passive : Passives.values()) passivesEmbed.append(passive.name().toLowerCase(), 0);
+            for (Perks perk : Perks.values()) unlockedPerksEmbed.append(perk.name().toLowerCase(), false);
 
             pDataCol.insertOne(filter
                     .append("prestige", 0)
