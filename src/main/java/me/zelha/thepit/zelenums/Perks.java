@@ -294,13 +294,6 @@ public enum Perks {
         return prestige;
     }
 
-    public static Perks findByName(String name) {
-        for (Perks perk : values()) {
-            if (perk.getName().equals(name)) return perk;
-        }
-        return null;
-    }
-
     public static Perks findByEnumName(String name) {
         for (Perks perk : values()) {
             if (perk.name().equalsIgnoreCase(name)) return perk;
