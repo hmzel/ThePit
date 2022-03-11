@@ -111,17 +111,17 @@ public class StorageListener implements Listener {
 
         for (Megastreaks mega : Megastreaks.values()) {
             if (document.getEmbedded(Arrays.asList("megastreak_unlocks", mega.name().toLowerCase()), Boolean.class) == null) {
-                unlockedPerksEmbed.append(mega.name().toLowerCase(), false);
+                unlockedMegastreaksEmbed.append(mega.name().toLowerCase(), false);
             } else {
-                unlockedPerksEmbed.append(mega.name().toLowerCase(), document.getEmbedded(Arrays.asList("megastreak_unlocks", mega.name().toLowerCase()), Boolean.class));
+                unlockedMegastreaksEmbed.append(mega.name().toLowerCase(), document.getEmbedded(Arrays.asList("megastreak_unlocks", mega.name().toLowerCase()), Boolean.class));
             }
         }
 
         for (Ministreaks mini : Ministreaks.values()) {
             if (document.getEmbedded(Arrays.asList("ministreak_unlocks", mini.name().toLowerCase()), Boolean.class) == null) {
-                unlockedPerksEmbed.append(mini.name().toLowerCase(), false);
+                unlockedMinistreaksEmbed.append(mini.name().toLowerCase(), false);
             } else {
-                unlockedPerksEmbed.append(mini.name().toLowerCase(), document.getEmbedded(Arrays.asList("ministreak_unlocks", mini.name().toLowerCase()), Boolean.class));
+                unlockedMinistreaksEmbed.append(mini.name().toLowerCase(), document.getEmbedded(Arrays.asList("ministreak_unlocks", mini.name().toLowerCase()), Boolean.class));
             }
         }
 
