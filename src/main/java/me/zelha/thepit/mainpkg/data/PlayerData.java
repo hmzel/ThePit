@@ -25,6 +25,7 @@ public class PlayerData {
     private int multikill;
     private Megastreaks megastreak;
     private final Map<Integer, Perks> perkSlots = new HashMap<>();
+    private final Map<Integer, Ministreaks> ministreakSlots = new HashMap<>();
     private final Map<Passives, Integer> passivesMap = new HashMap<>();
     private final Map<Perks, Boolean> perkUnlocks = new HashMap<>();
     private final Map<Megastreaks, Boolean> megastreakUnlocks = new HashMap<>();
@@ -48,6 +49,11 @@ public class PlayerData {
         for (String slot : slots) {
             perkSlots.put((slots.indexOf(slot) + 1), Perks.findByEnumName(document.getEmbedded(Arrays.asList("perk_slots", slot), String.class)));
         }
+
+        for (int i = 0; i < 3; i++) {
+            ministreakSlots.put(i + 1, Ministreaks.findByEnumName(document.getEmbedded(Arrays.asList("ministreak_slots", slots.get(i)), String.class)));
+        }
+
 
         for (Passives passive : Passives.values()) {
             passivesMap.put(passive, document.getEmbedded(Arrays.asList("passives", passive.name().toLowerCase()), Integer.class));
@@ -126,6 +132,10 @@ public class PlayerData {
         return perkSlots.get(slot);
     }
 
+    public Ministreaks getMinistreakAtSlot(int slot) {
+        return  ministreakSlots.get(slot);
+    }
+
     public boolean getPerkUnlockStatus(Perks perk) {
         return perkUnlocks.get(perk);
     }
@@ -196,6 +206,10 @@ public class PlayerData {
         perkSlots.put(slot, perk);
     }
 
+    public void setMinistreakAtSlot(int slot, Ministreaks mini) {
+        ministreakSlots.put(slot, mini);
+    }
+
     public void setPerkUnlockStatus(Perks perk, boolean bool) {
         perkUnlocks.put(perk, bool);
     }
@@ -217,6 +231,13 @@ public class PlayerData {
     public boolean hasPerkEquipped(Perks perk) {
         for (Perks slotPerk : perkSlots.values()) {
             if (slotPerk == perk) return true;
+        }
+        return false;
+    }
+
+    public boolean hasMinistreakEquipped(Ministreaks mini) {
+        for (Ministreaks slotMini : ministreakSlots.values()) {
+            if (slotMini == mini) return true;
         }
         return false;
     }
