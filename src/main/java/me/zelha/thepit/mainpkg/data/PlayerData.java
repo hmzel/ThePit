@@ -23,7 +23,7 @@ public class PlayerData {
     private double streak;
     private boolean hideTimer;
     private int multikill;
-    private Megastreaks mega;
+    private Megastreaks megastreak;
     private final Map<Integer, Perks> perkSlots = new HashMap<>();
     private final Map<Passives, Integer> passivesMap = new HashMap<>();
     private final Map<Perks, Boolean> perkUnlocks = new HashMap<>();
@@ -42,7 +42,7 @@ public class PlayerData {
         combatTimer = 0;
         hideTimer = true;
         multikill = 0;
-        mega = Megastreaks.findByEnumName(document.getString("megastreak"));
+        megastreak = Megastreaks.findByEnumName(document.getString("megastreak"));
         combatLogged = document.getBoolean("combat_logged");
 
         for (String slot : slots) {
@@ -114,6 +114,10 @@ public class PlayerData {
         return multikill;
     }
 
+    public Megastreaks getMegastreak() {
+        return megastreak;
+    }
+
     public int getPassiveTier(Passives passive) {
         return passivesMap.get(passive);
     }
@@ -124,6 +128,14 @@ public class PlayerData {
 
     public boolean getPerkUnlockStatus(Perks perk) {
         return perkUnlocks.get(perk);
+    }
+
+    public boolean getMegastreakUnlockStatus(Megastreaks mega) {
+        return megastreakUnlocks.get(mega);
+    }
+
+    public boolean getMinistreakUnlockStatus(Ministreaks mini) {
+        return ministreakUnlocks.get(mini);
     }
 
     public boolean getCombatLogged() {
@@ -172,6 +184,10 @@ public class PlayerData {
         this.multikill = multikill;
     }
 
+    public void setMegastreak(Megastreaks mega) {
+        this.megastreak = mega;
+    }
+
     public void setPassiveTier(Passives passive, int tier) {
         passivesMap.put(passive, tier);
     }
@@ -182,6 +198,14 @@ public class PlayerData {
 
     public void setPerkUnlockStatus(Perks perk, boolean bool) {
         perkUnlocks.put(perk, bool);
+    }
+
+    public void setMegastreakUnlockStatus(Megastreaks mega, boolean bool) {
+        megastreakUnlocks.put(mega, bool);
+    }
+
+    public void setMinistreakUnlockStatus(Ministreaks mini, boolean bool) {
+        ministreakUnlocks.put(mini, bool);
     }
 
     public void setCombatLogged(boolean bool) {
