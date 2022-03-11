@@ -45,6 +45,12 @@ public class StorageListener implements Listener {
             }
         }
 
+        for (int i = 0; i < 3; i++) {
+            if (document.getEmbedded(Arrays.asList("ministreak_slots", slots.get(i)), String.class) == null) {
+                return false;
+            }
+        }
+
         for (Passives passive : Passives.values()) {
             if (document.getEmbedded(Arrays.asList("passives", passive.name().toLowerCase()), Integer.class) == null) {
                 return false;
@@ -80,6 +86,7 @@ public class StorageListener implements Listener {
 
     private Document updateDocument(Document document) {
         Document perkSlotsEmbed = new Document();
+        Document ministreakSlotsEmbed = new Document();
         Document passivesEmbed = new Document();
         Document unlockedPerksEmbed = new Document();
         Document unlockedMegastreaksEmbed = new Document();
@@ -90,6 +97,14 @@ public class StorageListener implements Listener {
                 perkSlotsEmbed.append(slot, "unset");
             } else {
                 perkSlotsEmbed.append(slot, document.getEmbedded(Arrays.asList("perk_slots", slot), String.class));
+            }
+        }
+
+        for (int i = 0; i < 3; i++) {
+            if (document.getEmbedded(Arrays.asList("ministreak_slots", slots.get(i)), String.class) == null) {
+                ministreakSlotsEmbed.append(slots.get(i), "unset");
+            } else {
+                ministreakSlotsEmbed.append(slots.get(i), document.getEmbedded(Arrays.asList("ministreak_slots", slots.get(i)), String.class));
             }
         }
 
@@ -133,6 +148,7 @@ public class StorageListener implements Listener {
         if (document.get("megastreak") == null) document.append("megastreak", Megastreaks.OVERDRIVE.name().toLowerCase());
 
         document.append("perk_slots", perkSlotsEmbed);
+        document.append("ministreak_slots", ministreakSlotsEmbed);
         document.append("passives", passivesEmbed);
         document.append("perk_unlocks", unlockedPerksEmbed);
         document.append("megastreak_unlocks", unlockedMegastreaksEmbed);
@@ -147,6 +163,7 @@ public class StorageListener implements Listener {
         PlayerData pData = getPlayerData(uuid);
         Document pDoc = pDataCol.find(new Document("uuid", uuid)).first();
         Document perkSlotsEmbed = new Document();
+        Document ministreakSlotsEmbed = new Document();
         Document passivesEmbed = new Document();
         Document unlockedPerksEmbed = new Document();
         Document unlockedMegastreaksEmbed = new Document();
@@ -165,6 +182,7 @@ public class StorageListener implements Listener {
         pDoc.put("bounty", pData.getBounty());
         pDoc.put("megastreak", pData.getMegastreak().name().toLowerCase());
         pDoc.put("perk_slots", perkSlotsEmbed);
+        pDoc.put("ministreak_slots", ministreakSlotsEmbed);
         pDoc.put("passives", passivesEmbed);
         pDoc.put("perk_unlocks", unlockedPerksEmbed);
         pDoc.put("megastreak_unlocks", unlockedMegastreaksEmbed);
@@ -182,12 +200,14 @@ public class StorageListener implements Listener {
 
         if (pDataCol.countDocuments(filter) < 1) {
             Document perkSlotsEmbed = new Document();
+            Document ministreakSlotsEmbed = new Document();
             Document passivesEmbed = new Document();
             Document unlockedPerksEmbed = new Document();
             Document unlockedMegastreaksEmbed = new Document();
             Document unlockedMinistreaksEmbed = new Document();
 
             for (String slot : slots) perkSlotsEmbed.append(slot, "unset");
+            for (int i = 0; i < 3; i++) ministreakSlotsEmbed.append(slots.get(i), "unset");
             for (Passives passive : Passives.values()) passivesEmbed.append(passive.name().toLowerCase(), 0);
             for (Perks perk : Perks.values()) unlockedPerksEmbed.append(perk.name().toLowerCase(), false);
             for (Megastreaks mega : Megastreaks.values()) unlockedMegastreaksEmbed.append(mega.name().toLowerCase(), false);
@@ -201,6 +221,7 @@ public class StorageListener implements Listener {
                     .append("bounty", 0)
                     .append("megastreaks", "overdrive")
                     .append("perk_slots", perkSlotsEmbed)
+                    .append("ministreak_slots", ministreakSlotsEmbed)
                     .append("passives", passivesEmbed)
                     .append("perk_unlocks", unlockedPerksEmbed)
                     .append("megastreak_unlocks", unlockedMegastreaksEmbed)
