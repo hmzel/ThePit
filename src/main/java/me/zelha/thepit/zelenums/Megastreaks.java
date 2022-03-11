@@ -199,4 +199,11 @@ public enum Megastreaks {
     public List<String> getLore() {
         return lore;
     }
+
+    public static Megastreaks findByEnumName(String name) {
+        for (Megastreaks mega : values()) {
+            if (mega.name().equalsIgnoreCase(name)) return mega;
+        }
+        return null;
+    }
 }

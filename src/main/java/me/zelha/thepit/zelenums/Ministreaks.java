@@ -249,4 +249,11 @@ public enum Ministreaks {
     public List<String> getLore() {
         return lore;
     }
+
+    public static Ministreaks findByEnumName(String name) {
+        for (Ministreaks mini : values()) {
+            if (mini.name().equalsIgnoreCase(name)) return mini;
+        }
+        return null;
+    }
 }
