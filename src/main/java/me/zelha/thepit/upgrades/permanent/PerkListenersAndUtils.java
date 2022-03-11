@@ -1,4 +1,4 @@
-package me.zelha.thepit.upgrades.permanent.perks;
+package me.zelha.thepit.upgrades.permanent;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.RunMethods;
@@ -383,7 +383,7 @@ public class PerkListenersAndUtils implements Listener {
 
         if (pData(damaged).hasPerkEquipped(BONK) && !bonkMap.get(damagedUUID).contains(damagerUUID)) {
             for (Entity entity : damaged.getNearbyEntities(32, 32, 32)) {
-                if (!zl.playerCheck(entity) || ((Player) entity).getUniqueId().equals(damagedUUID)) continue;
+                if (!zl.playerCheck(entity) || entity.getUniqueId().equals(damagedUUID)) continue;
 
                 ((Player) entity).spawnParticle(Particle.EXPLOSION_LARGE, damaged.getLocation(), 1, 0, 0, 0, 0);
             }

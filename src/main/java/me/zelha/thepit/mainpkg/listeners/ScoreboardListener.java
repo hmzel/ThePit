@@ -4,7 +4,7 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.RunMethods;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
-import me.zelha.thepit.upgrades.permanent.perks.PerkListenersAndUtils;
+import me.zelha.thepit.upgrades.permanent.PerkListenersAndUtils;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardScore;
 import net.minecraft.server.ScoreboardServer;
 import net.minecraft.server.network.PlayerConnection;

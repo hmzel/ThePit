@@ -4,7 +4,7 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.listeners.AssistListener;
 import me.zelha.thepit.mainpkg.listeners.KillListener;
-import me.zelha.thepit.upgrades.permanent.perks.PerkListenersAndUtils;
+import me.zelha.thepit.upgrades.permanent.PerkListenersAndUtils;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import net.md_5.bungee.api.chat.BaseComponent;

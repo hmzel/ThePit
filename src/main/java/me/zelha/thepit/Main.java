@@ -13,9 +13,11 @@ import me.zelha.thepit.mainpkg.data.StorageListener;
 import me.zelha.thepit.mainpkg.listeners.*;
 import me.zelha.thepit.mainpkg.runnables.ParticipationRunnable;
 import me.zelha.thepit.upgrades.nonpermanent.GoldenPickaxeListener;
-import me.zelha.thepit.upgrades.nonpermanent.villager.ItemsVillagerListener;
-import me.zelha.thepit.upgrades.permanent.perks.PerkListenersAndUtils;
-import me.zelha.thepit.upgrades.permanent.villager.UpgradesVillagerListener;
+import me.zelha.thepit.upgrades.nonpermanent.ItemsVillagerListener;
+import me.zelha.thepit.upgrades.permanent.MegastreakListener;
+import me.zelha.thepit.upgrades.permanent.MinistreakListener;
+import me.zelha.thepit.upgrades.permanent.PerkListenersAndUtils;
+import me.zelha.thepit.upgrades.permanent.UpgradesVillagerListener;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -74,6 +76,8 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ChatListener(), this);
         getServer().getPluginManager().registerEvents(assistListener, this);
         getServer().getPluginManager().registerEvents(recap, this);
+        getServer().getPluginManager().registerEvents(new MegastreakListener(), this);
+        getServer().getPluginManager().registerEvents(new MinistreakListener(), this);
 
         getCommand("setprestige").setExecutor(new SetPrestigeCommand());
         getCommand("setlevel").setExecutor(new SetLevelCommand());

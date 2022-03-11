@@ -1,4 +1,4 @@
-package me.zelha.thepit.upgrades.nonpermanent.villager;
+package me.zelha.thepit.upgrades.nonpermanent;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
