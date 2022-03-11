@@ -2,6 +2,8 @@ package me.zelha.thepit.mainpkg.data;
 
 import com.mongodb.client.MongoCollection;
 import me.zelha.thepit.Main;
+import me.zelha.thepit.zelenums.Megastreaks;
+import me.zelha.thepit.zelenums.Ministreaks;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import org.bson.Document;
@@ -13,7 +15,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
-import java.util.List;
 
 public class StorageListener implements Listener {
 
@@ -56,11 +57,24 @@ public class StorageListener implements Listener {
             }
         }
 
+        for (Megastreaks mega : Megastreaks.values()) {
+            if (document.getEmbedded(Arrays.asList("megastreak_unlocks", mega.name().toLowerCase()), Boolean.class) == null) {
+                return false;
+            }
+        }
+
+        for (Ministreaks mini : Ministreaks.values()) {
+            if (document.getEmbedded(Arrays.asList("ministreak_unlocks", mini.name().toLowerCase()), Boolean.class) == null) {
+                return false;
+            }
+        }
+
         return document.get("prestige") != null
                 && document.get("level") != null
                 && document.get("exp") != null
                 && document.get("gold") != null
                 && document.get("bounty") != null
+                && document.get("megastreak") != null
                 && document.get("combat_logged") != null;
     }
 
@@ -68,6 +82,8 @@ public class StorageListener implements Listener {
         Document perkSlotsEmbed = new Document();
         Document passivesEmbed = new Document();
         Document unlockedPerksEmbed = new Document();
+        Document unlockedMegastreaksEmbed = new Document();
+        Document unlockedMinistreaksEmbed = new Document();
 
         for (String slot : slots) {
             if (document.getEmbedded(Arrays.asList("perk_slots", slot), String.class) == null) {
@@ -93,15 +109,34 @@ public class StorageListener implements Listener {
             }
         }
 
+        for (Megastreaks mega : Megastreaks.values()) {
+            if (document.getEmbedded(Arrays.asList("megastreak_unlocks", mega.name().toLowerCase()), Boolean.class) == null) {
+                unlockedPerksEmbed.append(mega.name().toLowerCase(), false);
+            } else {
+                unlockedPerksEmbed.append(mega.name().toLowerCase(), document.getEmbedded(Arrays.asList("megastreak_unlocks", mega.name().toLowerCase()), Boolean.class));
+            }
+        }
+
+        for (Ministreaks mini : Ministreaks.values()) {
+            if (document.getEmbedded(Arrays.asList("ministreak_unlocks", mini.name().toLowerCase()), Boolean.class) == null) {
+                unlockedPerksEmbed.append(mini.name().toLowerCase(), false);
+            } else {
+                unlockedPerksEmbed.append(mini.name().toLowerCase(), document.getEmbedded(Arrays.asList("ministreak_unlocks", mini.name().toLowerCase()), Boolean.class));
+            }
+        }
+
         if (document.get("prestige") == null) document.append("prestige", 0);
         if (document.get("level") == null) document.append("level", 1);
         if (document.get("exp") == null) document.append("exp", 15);
         if (document.get("gold") == null) document.append("gold", 0.0);
         if (document.get("bounty") == null) document.append("bounty", 0);
+        if (document.get("megastreak") == null) document.append("megastreak", Megastreaks.OVERDRIVE.name().toLowerCase());
 
         document.append("perk_slots", perkSlotsEmbed);
         document.append("passives", passivesEmbed);
         document.append("perk_unlocks", unlockedPerksEmbed);
+        document.append("megastreak_unlocks", unlockedMegastreaksEmbed);
+        document.append("ministreak_unlocks", unlockedMinistreaksEmbed);
 
         if (document.get("combat_logged") == null) document.append("combat_logged", false);
 
