@@ -1,5 +1,7 @@
 package me.zelha.thepit.mainpkg.data;
 
+import me.zelha.thepit.zelenums.Megastreaks;
+import me.zelha.thepit.zelenums.Ministreaks;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import org.bson.Document;
@@ -21,17 +23,14 @@ public class PlayerData {
     private double streak;
     private boolean hideTimer;
     private int multikill;
+    private Megastreaks mega;
     private final Map<Integer, Perks> perkSlots = new HashMap<>();
     private final Map<Passives, Integer> passivesMap = new HashMap<>();
     private final Map<Perks, Boolean> perkUnlocks = new HashMap<>();
+    private final Map<Megastreaks, Boolean> megastreakUnlocks = new HashMap<>();
+    private final Map<Ministreaks, Boolean> ministreakUnlocks = new HashMap<>();
+    private final List<String> slots = Arrays.asList("one", "two", "three", "four");
     private boolean combatLogged;
-
-    List<String> slots = Arrays.asList(
-            "one",
-            "two",
-            "three",
-            "four"
-    );
 
     public PlayerData(Document document) {
         prestige = document.getInteger("prestige");
@@ -43,18 +42,27 @@ public class PlayerData {
         combatTimer = 0;
         hideTimer = true;
         multikill = 0;
+        mega = Megastreaks.findByEnumName(document.getString("megastreak"));
         combatLogged = document.getBoolean("combat_logged");
 
         for (String slot : slots) {
-            perkSlots.put((slots.indexOf(slot) + 1), Perks.findByName(document.getEmbedded(Arrays.asList("perk_slots", slot), String.class)));
+            perkSlots.put((slots.indexOf(slot) + 1), Perks.findByEnumName(document.getEmbedded(Arrays.asList("perk_slots", slot), String.class)));
         }
 
         for (Passives passive : Passives.values()) {
-            passivesMap.put(passive, document.getEmbedded(Arrays.asList("passives", passive.getName()), Integer.class));
+            passivesMap.put(passive, document.getEmbedded(Arrays.asList("passives", passive.name().toLowerCase()), Integer.class));
         }
 
         for (Perks perk : Perks.values()) {
-            perkUnlocks.put(perk, document.getEmbedded(Arrays.asList("perk_unlocks", perk.getName()), Boolean.class));
+            perkUnlocks.put(perk, document.getEmbedded(Arrays.asList("perk_unlocks", perk.name().toLowerCase()), Boolean.class));
+        }
+
+        for (Megastreaks mega : Megastreaks.values()) {
+            megastreakUnlocks.put(mega, document.getEmbedded(Arrays.asList("megastreak_unlocks", mega.name().toLowerCase()), Boolean.class));
+        }
+
+        for (Ministreaks mini : Ministreaks.values()) {
+            ministreakUnlocks.put(mini, document.getEmbedded(Arrays.asList("ministreak_unlocks", mini.name().toLowerCase()), Boolean.class));
         }
 
         if (bounty != 0) {
