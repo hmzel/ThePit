@@ -37,6 +37,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
     private final Map<UUID, Double> costHandler = new HashMap<>();
     private final Map<UUID, Passives> passivesHandler = new HashMap<>();
+    private final Map<UUID, Megastreaks> megastreaksHandler = new HashMap<>();
     private final Map<UUID, Perks> perksHandler = new HashMap<>();
     private final Map<UUID, Integer> slotHandler = new HashMap<>();
 
@@ -543,6 +544,50 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         p.openInventory(streakGUI);
     }
 
+    public void openMegastreakGUI(Player p) {
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+        Inventory streakGUI = Bukkit.createInventory(p, 27, "Choose a killstreak§2");
+
+        for (int i = 10; i < 17; i++) {
+            String color;
+            Megastreaks mega = Megastreaks.values()[i - 10];
+            List<String> lore = new ArrayList<>(mega.getLore());
+
+            if (pData.getPrestige() < mega.getPrestige()) continue;
+
+            if (pData.getMegastreak() == mega || pData.getMegastreakUnlockStatus(mega)) {
+                color = "§a";
+            } else if (pData.getGold() >= mega.getCost()) {
+                color = "§e";
+            } else {
+                color = "§c";
+            }
+
+            lore.add(" ");
+
+            if (pData.getMegastreak() == mega) {
+                lore.add("§aAlready selected!");
+            } else if (pData.getMegastreakUnlockStatus(mega)) {
+                lore.add("§eClick to select!");
+            } else if (pData.getGold() >= mega.getCost()) {
+                lore.add("§7Cost: §6" + zl.getFancyGoldString(mega.getCost()) + "g");
+                lore.add("§eClick to purchase!");
+            } else {
+                lore.add("§7Cost: §6" + zl.getFancyGoldString(mega.getCost()) + "g");
+                lore.add("§cNot enough gold!");
+            }
+
+            if (pData.getMegastreak() == mega || mega == Megastreaks.UBERSTREAK) {
+                streakGUI.setItem(i, zl.itemBuilder(mega.getMaterial(), 1, color + mega.getName(), lore, new Enchantment[]{Enchantment.ARROW_INFINITE}, new Integer[]{1}, false, false));
+            } else {
+                streakGUI.setItem(i, zl.itemBuilder(mega.getMaterial(), 1, color + mega.getName(), lore));
+            }
+        }
+
+        streakGUI.setItem(22, zl.itemBuilder(ARROW, 1, "§aGo Back", Collections.singletonList("§7To Killstreaks")));
+        p.openInventory(streakGUI);
+    }
+
     @EventHandler
     public void onDirectRightClick(InventoryOpenEvent e) {
         if (e.getView().getTopInventory().getType() == InventoryType.MERCHANT) {
@@ -647,6 +692,76 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     }
 
     @EventHandler
+    public void mainKillstreakGUIInteract(InventoryClickEvent e) {
+        Player p = (Player) e.getWhoClicked();
+        ItemStack clicked = e.getCurrentItem();
+
+        if (!e.getView().getTitle().equals("Killstreaks")) return;
+        if (e.getClickedInventory() == e.getView().getBottomInventory()) return;
+
+        e.setCancelled(true);
+
+        if (clicked == null) return;
+
+        if (e.getSlot() == 15 || e.getSlot() == 16) {
+            openMegastreakGUI(p);
+        }
+    }
+
+    @EventHandler
+    public void megastreakGUIInteract(InventoryClickEvent e) {
+        Player p = (Player) e.getWhoClicked();
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+        ItemStack clicked = e.getCurrentItem();
+
+        if (!e.getView().getTitle().equals("Choose a killstreak§2")) return;
+        if (e.getClickedInventory() == e.getView().getBottomInventory()) return;
+
+        e.setCancelled(true);
+
+        if (clicked == null) return;
+
+        if (clicked.getType() == ARROW) {
+            openMainStreakGUI(p);
+            return;
+        }
+
+        StringBuilder finder = new StringBuilder(clicked.getItemMeta().getDisplayName()).replace(0, 2, "");
+
+        while (finder.lastIndexOf(" ") != -1) finder.setCharAt(finder.lastIndexOf(" "), '_');
+
+        Megastreaks mega = Megastreaks.findByEnumName(finder.toString());
+
+        if (pData.getMegastreak() == mega) {
+            p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
+            p.sendMessage("§cThis killstreak is already selected!");
+            return;
+        } else if (pData.getMegastreakUnlockStatus(mega)) {
+            pData.setMegastreak(mega);
+            perkUtils.perkReset(p);
+            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
+            openMainStreakGUI(p);
+        } else if (pData.getGold() < mega.getCost()) {
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            p.sendMessage("§cYou don't have enough gold to afford this!");
+            return;
+        }
+
+        Inventory inv = Bukkit.createInventory(p, 27, "Are you sure?");
+
+        inv.setItem(11, zl.itemBuilder(GREEN_TERRACOTTA, 1, "§aConfirm", Arrays.asList(
+                "§7Purchasing: §6" + mega.getName(),
+                "§7Cost: §6" + zl.getFancyGoldString((double) mega.getCost()) + "g"
+        )));
+        inv.setItem(15, zl.itemBuilder(RED_TERRACOTTA, 1, "§cCancel", Arrays.asList(
+                "§7Return to previous menu."
+        )));
+        costHandler.put(p.getUniqueId(), (double) mega.getCost());
+        megastreaksHandler.put(p.getUniqueId(), mega);
+        p.openInventory(inv);
+    }
+
+    @EventHandler
     public void confirmGUIInteract(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
         UUID uuid = p.getUniqueId();
@@ -672,6 +787,12 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 perkUtils.perkReset(p);
                 p.sendMessage("§a§lPURCHASE! §6" + perksHandler.get(uuid).getName());
                 openMainGUI(p);
+            } else if (megastreaksHandler.get(uuid) != null) {
+                pData.setMegastreakUnlockStatus(megastreaksHandler.get(uuid), true);
+                pData.setMegastreak(megastreaksHandler.get(uuid));
+                perkUtils.perkReset(p);
+                p.sendMessage("§a§lPURCHASE! §6" + megastreaksHandler.get(uuid).getName());
+                openMainStreakGUI(p);
             }
 
             p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
@@ -682,6 +803,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         costHandler.remove(uuid);
         perksHandler.remove(uuid);
         passivesHandler.remove(uuid);
+        megastreaksHandler.remove(uuid);
     }
 
     @EventHandler
@@ -692,6 +814,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         passivesHandler.remove(uuid);
         perksHandler.remove(uuid);
         slotHandler.remove(uuid);
+        megastreaksHandler.remove(uuid);
     }
 }
 
