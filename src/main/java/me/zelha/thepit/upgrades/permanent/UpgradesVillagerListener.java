@@ -290,7 +290,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         for (int i = 12; i <= 14; i++) mainGUI.setItem(i, perkSlotItemBuilder(p, i - 11));
 
         if (pData.getPrestige() != 0 || pData.getLevel() >= 60) {
-            mainGUI.setItem(15, zl.itemBuilder(pData.getMegastreak().getMaterial(), 1, "§aKillstreaks", Arrays.asList(
+            ItemStack item = zl.itemBuilder(pData.getMegastreak().getMaterial(), 1, "§aKillstreaks", Arrays.asList(
                     "§7Choose killstreak perks which",
                     "§7trigger every time you get X",
                     "§7kills.",
@@ -298,7 +298,17 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                     "§7Megastreak: §a" + pData.getMegastreak().getName(),
                     " ",
                     "§eClick to edit killstreaks!"
-            )));
+            ));
+
+            if (pData.getMegastreak() == Megastreaks.UBERSTREAK) {
+                ItemMeta meta = item.getItemMeta();
+
+                meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                item.setItemMeta(meta);
+            }
+
+            mainGUI.setItem(15, item);
         }
 
         for (Passives passive : Passives.values()) {
