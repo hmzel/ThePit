@@ -3,10 +3,7 @@ package me.zelha.thepit.upgrades.permanent;
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
-import me.zelha.thepit.zelenums.NPCs;
-import me.zelha.thepit.zelenums.Passives;
-import me.zelha.thepit.zelenums.Perks;
-import me.zelha.thepit.zelenums.Worlds;
+import me.zelha.thepit.zelenums.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Sound;
@@ -286,10 +283,23 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     }
 
     private void openMainGUI(Player p) {
+        PlayerData pData = Main.getInstance().getPlayerData(p);
         Inventory mainGUI = Bukkit.createInventory(p, 45, "Permanent upgrades");
         int passiveIndex = 28;
 
         for (int i = 12; i <= 14; i++) mainGUI.setItem(i, perkSlotItemBuilder(p, i - 11));
+
+        if (pData.getPrestige() != 0 || pData.getLevel() >= 60) {
+            mainGUI.setItem(15, zl.itemBuilder(pData.getMegastreak().getMaterial(), 1, "§aKillstreaks", Arrays.asList(
+                    "§7Choose killstreak perks which",
+                    "§7trigger every time you get X",
+                    "§7kills.",
+                    " ",
+                    "§7Megastreak: §a" + pData.getMegastreak().getName(),
+                    " ",
+                    "§eClick to edit killstreaks!"
+            )));
+        }
 
         for (Passives passive : Passives.values()) {
             mainGUI.setItem(passiveIndex, passivesItemBuilder(p, passive));
@@ -462,15 +472,63 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         p.openInventory(perkGUI);
     }
 
-    private List<String> streakLoreBuilder(Player p, Material material) {//unused atm
-        List<String> lore = new ArrayList<>();
+    private void openMainStreakGUI(Player p) {
         PlayerData pData = Main.getInstance().getPlayerData(p);
-
-        return lore;
-    }
-
-    private void openMainStreakGUI(Player p) {//unused atm
         Inventory streakGUI = Bukkit.createInventory(p, 27, "Killstreaks");
+        int index = 11;
+        int level = 0;
+        int amount = 1;
+
+        for (int i = 1; i <= 2; i++) {
+            if (i == 2) level = 75;
+
+            Ministreaks mini = pData.getMinistreakAtSlot(i);
+
+            if (pData.getPrestige() == 0 && i == 2) {
+                streakGUI.setItem(index, zl.itemBuilder(BEDROCK, amount, "§cPerk Slot #" + i, Arrays.asList(
+                        "§cRequires Prestige I",
+                        "§7Reach level [§b§l120§7] to prestige!"
+                )));
+                index += 2;
+                amount++;
+                continue;
+            }
+
+            if (pData.getLevel() < level && mini == Ministreaks.UNSET) {
+                streakGUI.setItem(index, zl.itemBuilder(BEDROCK, amount, "§cPerk Slot #" + i, Collections.singletonList(
+                        "§7Required level: " + zl.getColorBracketAndLevel(pData.getPrestige(), level)
+                )));
+                index += 2;
+                amount++;
+                continue;
+            }
+
+            List<String> lore = new ArrayList<>();
+
+            if (mini != Ministreaks.UNSET) {
+                lore.add("§7Selected: §a" + mini.getName());
+                lore.add(" ");
+            }
+
+            lore.addAll(mini.getLore());
+            lore.add(" ");
+            lore.add("§eClick to switch streak!");
+            streakGUI.setItem(index, zl.itemBuilder(mini.getMaterial(), amount, "§aPerk Slot #" + i, lore));
+
+            index += 2;
+            amount++;
+        }
+
+        List<String> megaLore = new ArrayList<>();
+
+        megaLore.add("§7Selected: §a" + pData.getMegastreak().getName());
+        megaLore.add(" ");
+        megaLore.addAll(pData.getMegastreak().getLore());
+        megaLore.add(" ");
+        megaLore.add("§eClick to switch megastreak!");
+
+        streakGUI.setItem(index, zl.itemBuilder(pData.getMegastreak().getMaterial(), amount, "§eMegastreak", megaLore));
+        streakGUI.setItem(22, zl.itemBuilder(ARROW, 1, "§aGo Back", Collections.singletonList("§7To Permanent upgrades")));
 
         p.openInventory(streakGUI);
     }
@@ -532,6 +590,8 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             openPerkGUI(p, e.getSlot() - 11);
             return;
         }
+
+        if (e.getSlot() == 15) openMainStreakGUI(p);
 
         if (e.getSlot() > 27) {
             if (e.getCurrentItem().getType() == BEDROCK) {
