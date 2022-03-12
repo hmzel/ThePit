@@ -53,3 +53,6 @@ commands:
   oof:
     description: kills the player
     usage: /<command>
+  setmegastreak:
+    description: sets your or the specified player's megastreak
+    usage: /<command> (name/empty) (megastreak)

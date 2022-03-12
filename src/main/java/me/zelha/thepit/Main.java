@@ -94,6 +94,7 @@ public final class Main extends JavaPlugin {
         getCommand("setperk").setExecutor(new SetPerkCommand());
         getCommand("killrecap").setExecutor(recap);
         getCommand("oof").setExecutor(new OofCommand());
+        getCommand("setmegastreak").setExecutor(new SetMegastreakCommand());
 
         storage.runDataSaver();
         new ParticipationRunnable().runTaskTimerAsynchronously(this, 0, 1);
