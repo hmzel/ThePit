@@ -56,3 +56,6 @@ commands:
   setmegastreak:
     description: sets your or the specified player's megastreak
     usage: /<command> (name/empty) (megastreak)
+  setministreak:
+    description: sets your or the specified player's ministreak at the given slot
+    usage: /<command> (name/empty) (integer slot) (ministreak)
