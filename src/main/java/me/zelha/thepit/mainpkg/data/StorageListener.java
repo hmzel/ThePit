@@ -211,7 +211,15 @@ public class StorageListener implements Listener {
             for (int i = 0; i < 3; i++) ministreakSlotsEmbed.append(slots.get(i), "unset");
             for (Passives passive : Passives.values()) passivesEmbed.append(passive.name().toLowerCase(), 0);
             for (Perks perk : Perks.values()) unlockedPerksEmbed.append(perk.name().toLowerCase(), false);
-            for (Megastreaks mega : Megastreaks.values()) unlockedMegastreaksEmbed.append(mega.name().toLowerCase(), false);
+
+            for (Megastreaks mega : Megastreaks.values()) {
+                if (mega == Megastreaks.OVERDRIVE) {
+                    unlockedMegastreaksEmbed.append(mega.name().toLowerCase(), true);
+                } else {
+                    unlockedMegastreaksEmbed.append(mega.name().toLowerCase(), false);
+                }
+            }
+
             for (Ministreaks mini : Ministreaks.values()) unlockedMinistreaksEmbed.append(mini.name().toLowerCase(), false);
 
             pDataCol.insertOne(filter
