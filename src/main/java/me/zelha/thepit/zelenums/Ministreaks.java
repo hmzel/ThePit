@@ -197,7 +197,10 @@ public enum Ministreaks {
             "§e■ §7Multiple of 12: §6+4❤ absorption",
             "§e■ §7Multiple of 13: §c+25% damage §7(0:30)"
     )),
-    UNSET(null, 0, "unset", GOLD_BLOCK, 0, 0, 0, null);
+    UNSET(null, 0, "unset", GOLD_BLOCK, 0, 0, 0, Arrays.asList(
+            "§7Select a killstreak for this",
+            "§7slot."
+    ));
 
     private final StreakBundles bundle;
     private final int trigger;
