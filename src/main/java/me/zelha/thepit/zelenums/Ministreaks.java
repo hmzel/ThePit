@@ -261,16 +261,6 @@ public enum Ministreaks {
         }
         return null;
     }
-
-    public static List<Ministreaks> triggerList(int trigger) {
-        List<Ministreaks> list = new ArrayList<>();
-
-        for (Ministreaks mini : values()) {
-            if (mini.trigger == trigger) list.add(mini);
-        }
-
-        return list;
-    }
 }
 
 
