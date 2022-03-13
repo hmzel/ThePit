@@ -2,12 +2,11 @@ package me.zelha.thepit.zelenums;
 
 import org.bukkit.Material;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.bukkit.Material.*;
 import static me.zelha.thepit.zelenums.StreakBundles.*;
+import static org.bukkit.Material.*;
 
 public enum Ministreaks {
     SECOND_GAPPLE(null, 3, "Second Gapple", GOLDEN_APPLE, 0, 0, 1500, Arrays.asList(
@@ -38,7 +37,7 @@ public enum Ministreaks {
     KHANATE(HIGHLANDER, 3, "Khanate", GOLDEN_HELMET, 7, 60, 6000, Arrays.asList(
             "§7Every: §c3 kills",
             " ",
-            "§7Earn §6+8g",
+            "§7Earn §6+8g§7.",
             " ",
             "§7Stack §c+4% damage §7vs bountied players",
             "§7up to §c+40%§7."
@@ -46,7 +45,7 @@ public enum Ministreaks {
     LEECH(MAGNUM_OPUS, 3, "Leech", CHICKEN_SPAWN_EGG, 10, 70, 6000, Arrays.asList(
             "§7Every: §c3 kills",
             " ",
-            "§7Next hit heals for §c+0.5❤ §7+",
+            "§7Next hit heals for §c0.5❤ §7+",
             "§c20% §7of its damage."
     )),
     TOUGH_SKIN(BEASTMODE, 5, "Tough Skin", LEATHER_CHESTPLATE, 3, 30, 3000, Arrays.asList(
@@ -68,7 +67,7 @@ public enum Ministreaks {
             "§7Every: §c5 kills",
             " ",
             "§7Obtain a §cSmelly Bomb§7:",
-            "§Applies §9Slowness I §7to players",
+            "§7Applies §9Slowness I §7to players",
             "§7within 3 blocks for 5 seconds."
     )),
     HEROS_HASTE(null, 5, "Hero's Haste", ENCHANTED_BOOK, 0, 100, 15000, Arrays.asList(
@@ -94,7 +93,7 @@ public enum Ministreaks {
     COUNTER_STRIKE(null, 7, "Counter-Strike", IRON_HORSE_ARMOR, 0, 40, 5000, Arrays.asList(
             "§7Every: §c7 kills",
             " ",
-            "§7Deal §c+15% damge ì7and block",
+            "§7Deal §c+15% damage §7and block",
             "§91❤ §7per hit for 8s."
     )),
     GOLD_NANO_FACTORY(HIGHLANDER, 7, "Gold Nano-factory", GOLD_NUGGET, 7, 50, 6000, Arrays.asList(
@@ -136,21 +135,21 @@ public enum Ministreaks {
     ICE_CUBE(HERMIT, 10, "Ice Cube", PACKED_ICE, 4, 60, 9000, Arrays.asList(
             "§7Every: §c10 kills",
             " ",
-            "§7Get an §aIce Cube §7item.",
+            "§7Get an §bIce Cube §7item.",
             " ",
             "§bIce Cube",
             "§7Single-Use on melee strike.",
             "§7Deals §c1❤ §7true damage to victim.",
-            "§7Gain §a40 XP",
+            "§7Gain §b40 XP§7.",
             "§7Attacks slow enemies for 10 seconds."
     )),
     SUPER_STREAKER(TO_THE_MOON, 10, "Super Streaker", BREAD, 15, 80, 20000, Arrays.asList(
             "§7Every: §c10 kills",
             " ",
-            "§7Gain §a+50 XP§7.",
+            "§7Gain §b+50 XP§7.",
             " ",
-            "§7Stack a buff of §a+5% XP §7from kills.",
-            "§7(Up to §a+50%§7)"
+            "§7Stack a buff of §b+5% XP §7from kills.",
+            "§7(Up to §b+50%§7)"
     )),
     GOLD_STACK(TO_THE_MOON, 10, "Gold Stack", GOLD_ORE, 15, 90, 25000, Arrays.asList(
             "§7Every: §c10 kills",
@@ -194,11 +193,11 @@ public enum Ministreaks {
             "§e■ §7Multiple of 3: §eSpeed I §7(0:15)",
             "§e■ §7Multiple of 4: §cRegeneration II §7(0:10)",
             "§e■ §7Multiple of 7: §7Gain between §6500g§7-§65,000g",
-            "§e■ §7Multiple of 8: §7Gain between §b500 XP§7-§b5,000 XP",
+            "§e■ §7Multiple of 8: §7Gain between §b500§7-§b5,000 XP",
             "§e■ §7Multiple of 12: §6+4❤ absorption",
             "§e■ §7Multiple of 13: §c+25% damage §7(0:30)"
     )),
-    UNSET(null, 0, "unset", GOLD_BLOCK, 0, 0, 0, Arrays.asList(
+    UNSET(null, 0, "unset", GOLD_BLOCK, 13131313, 0, 0, Arrays.asList(
             "§7Select a killstreak for this",
             "§7slot."
     ));
