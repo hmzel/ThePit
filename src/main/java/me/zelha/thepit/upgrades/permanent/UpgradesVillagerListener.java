@@ -35,9 +35,10 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
 
-    private final Map<UUID, Double> costHandler = new HashMap<>();
+    private final Map<UUID, Double> costHandler = new HashMap<>();//i need to somehow figure out how to not use maps for this later
     private final Map<UUID, Passives> passivesHandler = new HashMap<>();
     private final Map<UUID, Megastreaks> megastreaksHandler = new HashMap<>();
+    private final Map<UUID, Ministreaks> ministreaksHandler = new HashMap<>();
     private final Map<UUID, Perks> perksHandler = new HashMap<>();
     private final Map<UUID, Integer> slotHandler = new HashMap<>();
 
@@ -546,7 +547,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
     public void openMegastreakGUI(Player p) {
         PlayerData pData = Main.getInstance().getPlayerData(p);
-        Inventory streakGUI = Bukkit.createInventory(p, 27, "Choose a killstreak§2");
+        Inventory gui = Bukkit.createInventory(p, 27, "Choose a killstreak§2");
 
         for (int i = 10; i < 17; i++) {
             String color;
@@ -582,14 +583,100 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             }
 
             if (pData.getMegastreak() == mega || mega == Megastreaks.UBERSTREAK) {
-                streakGUI.setItem(i, zl.itemBuilder(mega.getMaterial(), 1, color + mega.getName(), lore, new Enchantment[]{Enchantment.ARROW_INFINITE}, new Integer[]{1}, false, false));
+                gui.setItem(i, zl.itemBuilder(mega.getMaterial(), 1, color + mega.getName(), lore, new Enchantment[]{Enchantment.ARROW_INFINITE}, new Integer[]{1}, false, false));
             } else {
-                streakGUI.setItem(i, zl.itemBuilder(mega.getMaterial(), 1, color + mega.getName(), lore));
+                gui.setItem(i, zl.itemBuilder(mega.getMaterial(), 1, color + mega.getName(), lore));
             }
         }
 
-        streakGUI.setItem(22, zl.itemBuilder(ARROW, 1, "§aGo Back", Collections.singletonList("§7To Killstreaks")));
-        p.openInventory(streakGUI);
+        gui.setItem(22, zl.itemBuilder(ARROW, 1, "§aGo Back", Collections.singletonList("§7To Killstreaks")));
+        p.openInventory(gui);
+    }
+
+    public void openMinistreakGUI(Player p, int slot) {
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+        Inventory gui = Bukkit.createInventory(p, 54, "Choose a killstreak§1");
+        int trigger = 0;
+        int index = (pData.getPrestige() >= 4) ? 1 : 10;
+        int frame = index;
+
+        for (Ministreaks mini : Ministreaks.values()) {
+            if (pData.getPrestige() < mini.getPrestige()) continue;
+
+            if (trigger != mini.getTrigger()) {
+                if (trigger != 0) frame += 9;
+
+                gui.setItem(frame, zl.itemBuilder(ITEM_FRAME, 1, "§c" + mini.getTrigger() + " Kills", null));
+
+                trigger = mini.getTrigger();
+                index = frame + 1;
+            }
+
+            if (pData.getPrestige() == 0 && pData.getLevel() < mini.getLevel()) {
+                gui.setItem(index, zl.itemBuilder(BEDROCK, 1, "§cUnknown killstreak", Collections.singletonList(
+                        "§7Required level: " + zl.getColorBracketAndLevel(0, mini.getLevel())
+                )));
+                index++;
+                continue;
+            }
+
+            List<String> lore = new ArrayList<>(mini.getLore());
+            String color;
+
+            if (pData.hasMinistreakEquipped(mini) || pData.getMinistreakUnlockStatus(mini)) {
+                color = "§a";
+            } else if (pData.getGold() >= mini.getCost()) {
+                color = "§e";
+            } else {
+                color = "§c";
+            }
+
+            lore.add(" ");
+
+            if (pData.hasMinistreakEquipped(mini)) {
+                lore.add("§aAlready selected!");
+            } else if (pData.getMinistreakUnlockStatus(mini)) {
+                lore.add("§eClick to select!");
+            } else if (pData.getLevel() < mini.getLevel()) {
+                lore.add("§7Cost: §6" + zl.getFancyGoldString(mini.getCost()) + "g");
+                lore.add("§7Required level: " + zl.getColorBracketAndLevel(pData.getPrestige(), mini.getLevel()));
+                lore.add("§cToo low level!");
+            } else if (pData.getGold() >= mini.getCost()) {
+                lore.add("§7Cost: §6" + zl.getFancyGoldString(mini.getCost()) + "g");
+                lore.add("§eClick to purchase!");
+            } else {
+                lore.add("§7Cost: §6" + zl.getFancyGoldString(mini.getCost()) + "g");
+                lore.add("§cNot enough gold!");
+            }
+
+            ItemStack item = zl.itemBuilder(mini.getMaterial(), 1, color + mini.getName(), lore);
+
+            if (pData.hasMinistreakEquipped(mini)) {
+                gui.setItem(frame, zl.itemBuilder(ITEM_FRAME, 1, "§c" + mini.getTrigger() + " Kills", Collections.singletonList(
+                        "§7Selected: §e" + mini.getName()
+                ), new Enchantment[]{Enchantment.ARROW_INFINITE}, new Integer[]{1}, false, false));
+
+                item = zl.itemBuilder(mini.getMaterial(), 1, color + mini.getName(), lore, new Enchantment[]{Enchantment.ARROW_INFINITE}, new Integer[]{1}, false, false);
+            }
+
+            if (mini == Ministreaks.ARQUEBUSIER) item.setAmount(12);
+
+            gui.setItem(index, item);
+            index++;
+        }
+
+        gui.setItem(49, zl.itemBuilder(ARROW, 1, "§aGo Back", Collections.singletonList("§7To Killstreaks")));
+
+        if (pData.getMinistreakAtSlot(slot) != Ministreaks.UNSET) {
+            gui.setItem(50, zl.itemBuilder(GOLD_BLOCK, 1, "§cNo killstreak", Arrays.asList(
+                    "§7Wanna free up this slot for some",
+                    "§7reason?",
+                    " ",
+                    "§eClick to remove killstreak!"
+            )));
+        }
+
+        p.openInventory(gui);
     }
 
     @EventHandler
@@ -706,9 +793,19 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         e.setCancelled(true);
 
         if (clicked == null) return;
+        if (clicked.getType() == BEDROCK) return;
+
+        if (e.getSlot() < 15) {
+            openMinistreakGUI(p, clicked.getAmount());
+            slotHandler.put(p.getUniqueId(), clicked.getAmount());
+        }
 
         if (e.getSlot() == 15 || e.getSlot() == 16) {
             openMegastreakGUI(p);
+        }
+
+        if (e.getSlot() == 22) {
+            openMainGUI(p);
         }
     }
 
@@ -771,6 +868,95 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     }
 
     @EventHandler
+    public void ministreakGUIInteract(InventoryClickEvent e) {
+        Player p = (Player) e.getWhoClicked();
+        UUID uuid = p.getUniqueId();
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+        ItemStack clicked = e.getCurrentItem();
+
+        if (!e.getView().getTitle().equals("Choose a killstreak§1")) return;
+        if (e.getClickedInventory() == e.getView().getBottomInventory()) return;
+
+        e.setCancelled(true);
+
+        if (clicked == null) return;
+
+        if (clicked.getType() == ARROW) {
+            openMainStreakGUI(p);
+            return;
+        }
+
+        if (clicked.getType() == GOLD_BLOCK) {
+            pData.setMinistreakAtSlot(slotHandler.get(uuid), Ministreaks.UNSET);
+            perkUtils.perkReset(p);
+            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
+            openMainStreakGUI(p);
+            return;
+        }
+
+        StringBuilder finder = new StringBuilder(clicked.getItemMeta().getDisplayName()).replace(0, 2, "");
+
+        while (finder.lastIndexOf(" ") != -1) finder.setCharAt(finder.lastIndexOf(" "), '_');
+        while (finder.lastIndexOf("-") != -1) finder.setCharAt(finder.lastIndexOf("-"), '_');
+        while (finder.lastIndexOf("&") != -1) finder.replace(1, 2, "_AND_");
+
+        Ministreaks mini = Ministreaks.findByEnumName(finder.toString());
+        Ministreaks sameFrequency = null;
+        int badSlot = 0;
+
+        for (Ministreaks mini2 : pData.getEquippedMinistreaks()) {
+            badSlot++;
+
+            if (badSlot == slotHandler.get(uuid)) continue;
+            if (mini2.getTrigger() == mini.getTrigger()) {
+                sameFrequency = mini2;
+                break;
+            }
+        }
+
+        if (pData.getMinistreakAtSlot(slotHandler.get(uuid)) == mini) {
+            p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
+            p.sendMessage("§cThis killstreak is already selected!");
+            return;
+        } else if (pData.getMinistreakUnlockStatus(mini) && sameFrequency == null) {
+            pData.setMinistreakAtSlot(slotHandler.get(uuid), mini);
+            perkUtils.perkReset(p);
+            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
+            openMainStreakGUI(p);
+            return;
+        } else if (pData.getMinistreakUnlockStatus(mini)) {
+            pData.setMinistreakAtSlot(slotHandler.get(uuid), mini);
+            pData.setMinistreakAtSlot(badSlot, Ministreaks.UNSET);
+            perkUtils.perkReset(p);
+            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
+            p.sendMessage("§c§lZOOP! §7Disabled §c" + sameFrequency.getName() + "§7! Can't have two killstreaks with the same kills frequency!");
+            openMainStreakGUI(p);
+            return;
+        } else if (pData.getLevel() < mini.getLevel()) {
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            p.sendMessage("§cYou are too low level to acquire this killstreak!");
+            return;
+        } else if (pData.getGold() < mini.getCost()) {
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            p.sendMessage("§cYou don't have enough gold to afford this!");
+            return;
+        }
+
+        Inventory inv = Bukkit.createInventory(p, 27, "Are you sure?");
+
+        inv.setItem(11, zl.itemBuilder(GREEN_TERRACOTTA, 1, "§aConfirm", Arrays.asList(
+                "§7Purchasing: §6" + mini.getName(),
+                "§7Cost: §6" + zl.getFancyGoldString((double) mini.getCost()) + "g"
+        )));
+        inv.setItem(15, zl.itemBuilder(RED_TERRACOTTA, 1, "§cCancel", Arrays.asList(
+                "§7Return to previous menu."
+        )));
+        costHandler.put(uuid, (double) mini.getCost());
+        ministreaksHandler.put(uuid, mini);
+        p.openInventory(inv);
+    }
+
+    @EventHandler
     public void confirmGUIInteract(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
         UUID uuid = p.getUniqueId();
@@ -802,6 +988,12 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 perkUtils.perkReset(p);
                 p.sendMessage("§a§lPURCHASE! §6" + megastreaksHandler.get(uuid).getName());
                 openMainStreakGUI(p);
+            } else if (ministreaksHandler.get(uuid) != null) {
+                pData.setMinistreakUnlockStatus(ministreaksHandler.get(uuid), true);
+                pData.setMinistreakAtSlot(slotHandler.get(uuid), ministreaksHandler.get(uuid));
+                perkUtils.perkReset(p);
+                p.sendMessage("§a§lPURCHASE! §6" + ministreaksHandler.get(uuid).getName());
+                openMainStreakGUI(p);
             }
 
             p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
@@ -813,6 +1005,8 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         perksHandler.remove(uuid);
         passivesHandler.remove(uuid);
         megastreaksHandler.remove(uuid);
+        ministreaksHandler.remove(uuid);
+        slotHandler.remove(uuid);
     }
 
     @EventHandler
@@ -824,6 +1018,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         perksHandler.remove(uuid);
         slotHandler.remove(uuid);
         megastreaksHandler.remove(uuid);
+        ministreaksHandler.remove(uuid);
     }
 }
 
