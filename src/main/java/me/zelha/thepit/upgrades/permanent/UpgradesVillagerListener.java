@@ -569,6 +569,10 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 lore.add("§aAlready selected!");
             } else if (pData.getMegastreakUnlockStatus(mega)) {
                 lore.add("§eClick to select!");
+            } else if (pData.getLevel() < mega.getLevel()) {
+                lore.add("§7Cost: §6" + zl.getFancyGoldString(mega.getCost()) + "g");
+                lore.add("§7Required level: " + zl.getColorBracketAndLevel(pData.getPrestige(), mega.getLevel()));
+                lore.add("§cToo low level!");
             } else if (pData.getGold() >= mega.getCost()) {
                 lore.add("§7Cost: §6" + zl.getFancyGoldString(mega.getCost()) + "g");
                 lore.add("§eClick to purchase!");
@@ -741,6 +745,11 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             perkUtils.perkReset(p);
             p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
             openMainStreakGUI(p);
+            return;
+        } else if (pData.getLevel() < mega.getLevel()) {
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            p.sendMessage("§cYou are too low level to acquire this killstreak!");
+            return;
         } else if (pData.getGold() < mega.getCost()) {
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             p.sendMessage("§cYou don't have enough gold to afford this!");
