@@ -54,7 +54,6 @@ public class PlayerData {
             ministreakSlots.put(i + 1, Ministreaks.findByEnumName(document.getEmbedded(Arrays.asList("ministreak_slots", slots.get(i)), String.class)));
         }
 
-
         for (Passives passive : Passives.values()) {
             passivesMap.put(passive, document.getEmbedded(Arrays.asList("passives", passive.name().toLowerCase()), Integer.class));
         }
@@ -146,6 +145,10 @@ public class PlayerData {
 
     public boolean getMinistreakUnlockStatus(Ministreaks mini) {
         return ministreakUnlocks.get(mini);
+    }
+
+    public Ministreaks[] getEquippedMinistreaks() {
+        return ministreakSlots.values().toArray(new Ministreaks[0]);
     }
 
     public boolean getCombatLogged() {
