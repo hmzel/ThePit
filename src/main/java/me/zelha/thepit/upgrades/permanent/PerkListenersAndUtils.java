@@ -54,9 +54,6 @@ public class PerkListenersAndUtils implements Listener {
 
     private final Set<UUID> gheadCooldown = new HashSet<>();
     private final Map<UUID, Set<UUID>> bonkMap = new HashMap<>();
-    private final Map<UUID, Integer> lavaExistTimer = new HashMap<>();
-    private final Map<UUID, Block> placedLava = new HashMap<>();
-    private final Map<UUID, Material> previousLavaBlock = new HashMap<>();
     private final Map<UUID, Integer> strengthChaining = new HashMap<>();
     private final Map<UUID, Integer> strengthChainingTimer = new HashMap<>();
     private final Map<UUID, UUID> spammerShotIdentifier = new HashMap<>();
@@ -66,8 +63,6 @@ public class PerkListenersAndUtils implements Listener {
             new Enchantment[] {Enchantment.DIG_SPEED}, new Integer[] {4}, true, true);
     private final ItemStack minemanCobblestoneItem = zl.itemBuilder(COBBLESTONE, 24, null, Collections.singletonList("§7Perk item"));
     private final ItemStack safetyFirstItem = zl.itemBuilder(CHAINMAIL_HELMET, 1, null, Collections.singletonList("§7Perk item"));
-    private final ItemStack lavaBucketItem = zl.itemBuilder(Material.LAVA_BUCKET, 1, null, Collections.singletonList("§7Perk item"));
-    private final ItemStack emptyBucketItem = zl.itemBuilder(BUCKET, 1, null, Collections.singletonList("§7Perk item"));
     private final ItemStack fishingRodItem = zl.itemBuilder(Material.FISHING_ROD, 1, null, Collections.singletonList("§7Perk item"), true);
     private final ItemStack goldenHeadItem = zl.headItemBuilder("PhantomTupac", 1, "§6Golden Head", Arrays.asList(
                 "§9Speed I (0:08)",
@@ -86,6 +81,10 @@ public class PerkListenersAndUtils implements Listener {
         PlayerInventory inv = p.getInventory();
         PlayerData pData = Main.getInstance().getPlayerData(p);
         int arrowCount = 0;
+
+        for (Perks perk : Perks.values()) {
+            if (perk.getMethods() != null) perk.getMethods().onReset(p, pData);
+        }
 
         pData.setStreak(0);
 
@@ -113,17 +112,6 @@ public class PerkListenersAndUtils implements Listener {
             if (!inv.contains(fishingRodItem)) inv.addItem(fishingRodItem);
         } else {
             removeAll(inv, fishingRodItem);
-        }
-
-        if (pData.hasPerkEquipped(Perks.LAVA_BUCKET)) {
-            if (inv.contains(emptyBucketItem)) {
-                inv.setItem(inv.first(emptyBucketItem), lavaBucketItem);
-            } else if (!inv.contains(lavaBucketItem)) {
-                inv.addItem(lavaBucketItem);
-            }
-        } else {
-            removeAll(inv, emptyBucketItem);
-            removeAll(inv, lavaBucketItem);
         }
 
         if (pData.hasPerkEquipped(SAFETY_FIRST)) {
@@ -475,7 +463,7 @@ public class PerkListenersAndUtils implements Listener {
         double finalDMG = e.getFinalDamage();
         double currentHP = ((Player) e.getEntity()).getHealth();
 
-        if (e.getCause() != DamageCause.FALL && (currentHP - finalDMG <= 0)) perkReset(((Player) e.getEntity()));
+        if (e.getCause() != DamageCause.FALL && (currentHP - finalDMG <= 0)) perkReset((Player) e.getEntity());
     }
 
     @EventHandler
@@ -505,66 +493,6 @@ public class PerkListenersAndUtils implements Listener {
                 }
             }.runTaskLater(Main.getInstance(), 20);
         }
-    }
-
-    @EventHandler
-    public void onBucketEmpty(PlayerBucketEmptyEvent e) {
-        Player p = e.getPlayer();
-        Block block = e.getBlock();
-
-        if (zl.spawnCheck(block.getLocation())) return;
-        if (block.getType() == LAVA || block.getType() == WATER) return;
-
-        if (e.getBucket() == Material.LAVA_BUCKET) {
-            previousLavaBlock.put(p.getUniqueId(), e.getBlock().getType());
-            placedLava.put(p.getUniqueId(), block);
-            block.setType(LAVA);
-
-             new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if (!runTracker.hasID(p.getUniqueId())) runTracker.setID(p.getUniqueId(), getTaskId());
-
-                    if (block.getType() != LAVA) {
-                        lavaExistTimer.put(p.getUniqueId(), 0);
-                        runTracker.stop(p.getUniqueId());
-                    }
-
-                    lavaExistTimer.putIfAbsent(p.getUniqueId(), 0);
-                    lavaExistTimer.put(p.getUniqueId(), lavaExistTimer.get(p.getUniqueId()) + 1);
-
-                    if (lavaExistTimer.get(p.getUniqueId()) == 240) {
-                        lavaExistTimer.put(p.getUniqueId(), 0);
-                        block.setType(previousLavaBlock.get(p.getUniqueId()));
-                        previousLavaBlock.remove(p.getUniqueId());
-                        lavaExistTimer.remove(p.getUniqueId());
-                        placedLava.remove(p.getUniqueId());
-                        runTracker.stop(p.getUniqueId());
-                    }
-                }
-            }.runTaskTimer(Main.getInstance(), 0, 1);
-
-            p.getInventory().setItemInMainHand(emptyBucketItem);
-            e.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void onBucketFill(PlayerBucketFillEvent e) {
-        Player p = e.getPlayer();
-        Block block = e.getBlock();
-
-        if (e.getBucket() != BUCKET) return;
-
-        if (block.getType() == LAVA && runTracker.getID(p.getUniqueId()) != null && placedLava.containsValue(block)) {
-            block.setType(previousLavaBlock.get(p.getUniqueId()));
-            previousLavaBlock.remove(p.getUniqueId());
-            placedLava.remove(p.getUniqueId());
-            runTracker.stop(p.getUniqueId());
-            p.getInventory().setItemInMainHand(lavaBucketItem);
-        }
-
-        e.setCancelled(true);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
@@ -604,12 +532,7 @@ public class PerkListenersAndUtils implements Listener {
     public void onLeave(PlayerQuitEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
 
-        if (placedLava.containsKey(uuid)) placedLava.get(uuid).setType(previousLavaBlock.get(uuid));
-
         gheadCooldown.remove(uuid);
-        lavaExistTimer.remove(uuid);
-        previousLavaBlock.remove(uuid);
-        placedLava.remove(uuid);
         spammerShotIdentifier.remove(uuid);
         bonkMap.remove(uuid);
         perkReset(e.getPlayer());

@@ -28,7 +28,8 @@ public enum Perks {
     )
             , 1000
             , 10
-            , 0, null),
+            , 0,
+            new LavaBucketPerk()),
     STRENGTH_CHAINING("Strength-Chaining", REDSTONE, Arrays.asList(
             "§c+8% damage §7for 7s stacking",
             "§7on kill."
