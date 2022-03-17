@@ -57,10 +57,11 @@ public final class Main extends JavaPlugin {
         killListener = new KillListener();
         deathListener = new DeathListener();
         KillRecap recap = new KillRecap();
-
+        ScoreboardListener scoreboardListener = new ScoreboardListener()
+;
         getServer().getPluginManager().registerEvents(storage, this);
         getServer().getPluginManager().registerEvents(new LevelUpListener(), this);
-        getServer().getPluginManager().registerEvents(new ScoreboardListener(), this);
+        getServer().getPluginManager().registerEvents(scoreboardListener, this);
         getServer().getPluginManager().registerEvents(killListener, this);
         getServer().getPluginManager().registerEvents(deathListener, this);
         getServer().getPluginManager().registerEvents(perkUtils, this);
@@ -98,6 +99,7 @@ public final class Main extends JavaPlugin {
         getCommand("setministreak").setExecutor(new SetMinistreakCommand());
 
         storage.runDataSaver();
+        scoreboardListener.startAnimation();
         new ParticipationRunnable().runTaskTimerAsynchronously(this, 0, 1);
     }
 

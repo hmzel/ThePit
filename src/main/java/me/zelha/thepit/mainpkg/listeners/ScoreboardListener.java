@@ -16,7 +16,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -35,27 +34,7 @@ public class ScoreboardListener implements Listener {
     private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
     private final Map<UUID, Team> teamMap = new HashMap<>();
 
-    @EventHandler
-    public void addOnJoin(PlayerJoinEvent e) {
-        new SidebarUpdater(e.getPlayer()).runTaskTimer(Main.getInstance(),0, 20);
-        new TabAndNameUpdater(e.getPlayer()).runTaskTimer(Main.getInstance(),0, 20);
-    }
-
-    @EventHandler
-    public void removeOnLeave(PlayerQuitEvent e) {
-        UUID uuid = e.getPlayer().getUniqueId();
-
-        if (runTracker.hasID(uuid)) runTracker.stop(uuid);
-        if (runTracker2.hasID(uuid)) runTracker2.stop(uuid);
-
-        if (teamMap.containsKey(uuid)) {
-            teamMap.get(uuid).unregister();
-            teamMap.remove(uuid);
-        }
-    }
-
-    @EventHandler
-    public void onPluginLoadStartAnimation(PluginEnableEvent e) {
+    public void startAnimation() {
         new BukkitRunnable() {
             int ticks = 0;
             int anim = 0;
@@ -107,6 +86,25 @@ public class ScoreboardListener implements Listener {
                 ticks++;
             }
         }.runTaskTimer(Main.getInstance(), 0, 1);
+    }
+
+    @EventHandler
+    public void addOnJoin(PlayerJoinEvent e) {
+        new SidebarUpdater(e.getPlayer()).runTaskTimer(Main.getInstance(),0, 20);
+        new TabAndNameUpdater(e.getPlayer()).runTaskTimer(Main.getInstance(),0, 20);
+    }
+
+    @EventHandler
+    public void removeOnLeave(PlayerQuitEvent e) {
+        UUID uuid = e.getPlayer().getUniqueId();
+
+        if (runTracker.hasID(uuid)) runTracker.stop(uuid);
+        if (runTracker2.hasID(uuid)) runTracker2.stop(uuid);
+
+        if (teamMap.containsKey(uuid)) {
+            teamMap.get(uuid).unregister();
+            teamMap.remove(uuid);
+        }
     }
 
 
