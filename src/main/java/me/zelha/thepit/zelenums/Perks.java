@@ -1,5 +1,6 @@
 package me.zelha.thepit.zelenums;
 
+import me.zelha.thepit.upgrades.permanent.perks.AbstractPerk;
 import org.bukkit.Material;
 
 import java.util.Arrays;
@@ -15,39 +16,39 @@ public enum Perks {
     )
             , 500
             , 10
-            , 0),
+            , 0, null),
     FISHING_ROD("Fishing Rod", Material.FISHING_ROD, Collections.singletonList(
             "§7Spawn with a fishing rod."
     )
             , 1000
             , 10
-            , 0),
+            , 0, null),
     LAVA_BUCKET("Lava Bucket", Material.LAVA_BUCKET, Collections.singletonList(
             "§7Spawn with a lava bucket."
     )
             , 1000
             , 10
-            , 0),
+            , 0, null),
     STRENGTH_CHAINING("Strength-Chaining", REDSTONE, Arrays.asList(
             "§c+8% damage §7for 7s stacking",
             "§7on kill."
     )
             , 2000
             , 20
-            , 0),
+            , 0, null),
     SAFETY_FIRST("Safety First", CHAINMAIL_HELMET, Collections.singletonList(
             "§7Spawn with a helmet."
     )
             , 3000
             , 30
-            , 0),
+            , 0, null),
     BARBARIAN("Barbarian", IRON_AXE, Arrays.asList(
             "§7Replaces your sword with a",
             "§7stronger axe."
     )
             , 3000
             , 30
-            , 2),
+            , 2, null),
     MINEMAN("Mineman", COBBLESTONE, Arrays.asList(
             "§7Spawn with §f24 cobblestone",
             "§7and a diamond pickaxe.",
@@ -56,7 +57,7 @@ public enum Perks {
     )
             , 3000
             , 20
-            , 0),
+            , 0, null),
     BONK("Bonk!", ANVIL, Arrays.asList(
             "§7The first hit you receive from a",
             "§7player is blocked and grants",
@@ -64,14 +65,14 @@ public enum Perks {
     )
             , 2000
             , 35
-            , 0),
+            , 0, null),
     TRICKLE_DOWN("Trickle-down", GOLD_INGOT, Arrays.asList(
             "§7Gold ingots reward §6+10g",
             "§7and heal §c2❤§7."
     )
             , 1000
             , 40
-            , 0),
+            , 0, null),
     LUCKY_DIAMOND("Lucky Diamond", DIAMOND, Arrays.asList(
             "§730% chance to upgrade dropped",
             "§7armor pieces from kills to",
@@ -82,7 +83,7 @@ public enum Perks {
     )
             , 4000
             , 40
-            , 0),
+            , 0, null),
     SPAMMER("Spammer", BOW, Arrays.asList(
             "§7Get §f3 arrows §7on arrow hit.",
             " ",
@@ -93,7 +94,7 @@ public enum Perks {
     )
             , 4000
             , 40
-            , 0),
+            , 0, null),
     BOUNTY_HUNTER("Bounty Hunter", GOLDEN_LEGGINGS, Arrays.asList(
             "§6+4g §7on all kills.",
             "§7Earn bounty assist shares.",
@@ -103,14 +104,14 @@ public enum Perks {
     )
             , 2000
             , 50
-            , 0),
+            , 0, null),
     STREAKER("Streaker", WHEAT, Collections.singletonList(
             "§7Triple streak kill §bXP §7bonus."
     )
             , 8000
             , 50
-            , 0),
-    ASSISTANT_STREAKER("Assistant Streaker", SPRUCE_FENCE, Arrays.asList(
+            , 0, null),
+    ASSISTANT_STREAKER("Assistant Streaker", SPRUCE_FENCE, Arrays.asList(//it adds to your killstreak by decimals
             "§7Assists count their",
             "§aparticipation §7towards",
             "§7killstreaks.",
@@ -123,14 +124,14 @@ public enum Perks {
     )
             , 8000
             , 50
-            , 5),
+            , 5, null),
     CO_OP_CAT("Co-op Cat", OCELOT_SPAWN_EGG, Arrays.asList(
             "§7Earn §b+50% XP §7and §6+50%g",
             "§7on all assists."
     )
             , 6000
             , 50
-            , 6),
+            , 6, null),
     CONGLOMERATE("Conglomerate", HAY_BLOCK, Arrays.asList(
             "§7Don't earn §bXP §7from kills.",
             "§7The §bXP §7you would earn is",
@@ -139,7 +140,7 @@ public enum Perks {
     )
             , 20000
             , 50
-            , 8),
+            , 8, null),
     GLADIATOR("Gladiator", BONE, Arrays.asList(
             "§7Receive §9-3% §7damage per",
             "§7nearby player.",
@@ -149,7 +150,7 @@ public enum Perks {
     )
             , 4000
             , 60
-            , 0),
+            , 0, null),
     VAMPIRE("Vampire", FERMENTED_SPIDER_EYE, Arrays.asList(
             "§7Don't earn golden apples.",
             "§7Heal §c0.5❤ §7on hit.",
@@ -158,7 +159,7 @@ public enum Perks {
     )
             , 4000
             , 60
-            , 0),
+            , 0, null),
     RECON("Recon", ENDER_EYE, Arrays.asList(
             "§7Each fourth arrow shot at",
             "§7someone rewards §b+40 XP §7and",
@@ -166,13 +167,13 @@ public enum Perks {
     )
             , 6000
             , 60
-            , 7),
+            , 7, null),
     OVERHEAL("Overheal", BREAD, Collections.singletonList(
             "§7Double healing item limits."
     )
             , 6000
             , 70
-            , 1),
+            , 1, null),
     RAMBO("Rambo", STICK, Arrays.asList(
             "§7Don't earn golden apples.",
             "§7Max health: §c8❤",
@@ -180,7 +181,7 @@ public enum Perks {
     )
             , 6000
             , 70
-            , 3),
+            , 3, null),
     OLYMPUS("Olympus", POTION, Arrays.asList(
             "§7Golden apples you earn turn into",
             "§bOlympus Potions§7.",
@@ -194,14 +195,14 @@ public enum Perks {
     )
             , 6000
             , 70
-            , 4),
+            , 4, null),
     DIRTY("Dirty", PODZOL, Arrays.asList(
             "§7Gain §9Resistance II §7(4s) on",
             "§7kill."
     )
             , 8000
             , 80
-            , 2),
+            , 2, null),
     FIRST_STRIKE("First Strike", COOKED_CHICKEN, Arrays.asList(
             "§7First hit on a player deals",
             "§c+35% damage §7and grants",
@@ -209,7 +210,7 @@ public enum Perks {
     )
             , 8000
             , 80
-            , 5),
+            , 5, null),
     SOUP("Soup", MUSHROOM_STEW, Arrays.asList(
             "§7Golden apples you earn turn into",
             "§aTasty Soup§7. You also earn",
@@ -222,7 +223,7 @@ public enum Perks {
     )
             , 8000
             , 90
-            , 7),
+            , 7, null),
     MARATHON("Marathon", LEATHER_BOOTS, Arrays.asList(
             "§7Cannot wear boots.",
             "§7While you have speed:",
@@ -231,13 +232,13 @@ public enum Perks {
     )
             , 8000
             , 90
-            , 6),
+            , 6, null),
     THICK("Thick", APPLE, Collections.singletonList(
             "§7You have §c+2 Max ❤§7."
     )
             , 10000
             , 90
-            , 11),
+            , 11, null),
     KUNG_FU_KNOWLEDGE("Kung Fu Knowledge", BEEF, Arrays.asList(
             "§7No sword damage.",
             "§7Fists hit like a truck.",
@@ -246,13 +247,13 @@ public enum Perks {
     )
             , 10000
             , 100
-            , 9),
+            , 9, null),
     UNSET("unset", DIAMOND_BLOCK, Collections.singletonList(
             "§7Select a perk to fill this slot."
     )
             , 0
             , 0
-            , 13131313);
+            , 13131313, null);
 
     private final String name;
     private final Material material;
@@ -260,14 +261,16 @@ public enum Perks {
     private final int cost;
     private final int level;
     private final int prestige;
+    private final AbstractPerk abstractPerk;
 
-    Perks(String name, Material material, List<String> lore, int cost, int level, int prestige) {
+    Perks(String name, Material material, List<String> lore, int cost, int level, int prestige, AbstractPerk abstractPerk) {
         this.name = name;
         this.material = material;
         this.lore = lore;
         this.cost = cost;
         this.level = level;
         this.prestige = prestige;
+        this.abstractPerk = abstractPerk;
     }
 
     public String getName() {
@@ -292,6 +295,10 @@ public enum Perks {
 
     public int getPrestige() {
         return prestige;
+    }
+
+    public AbstractPerk getMethods() {
+        return abstractPerk;
     }
 
     public static Perks findByEnumName(String name) {
