@@ -12,9 +12,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.bukkit.Material.*;
 
@@ -22,7 +24,7 @@ public class GoldenPickaxeListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
 
-    private final Map<Player, Integer> hitCount = new HashMap<>();
+    private final Map<UUID, Integer> hitCount = new HashMap<>();
 
     private boolean isPlacedBlock(Block block) {
         return BlockListener.placedBlocks.contains(block);
@@ -44,18 +46,19 @@ public class GoldenPickaxeListener implements Listener {
         if (e.getItem().getType() != GOLDEN_PICKAXE) return;
 
         Player p = e.getPlayer();
+        UUID uuid = p.getUniqueId();
         Block clicked = e.getClickedBlock();
 
-        hitCount.putIfAbsent(p, 0);
-        hitCount.put(p, hitCount.get(p) + 1);
+        hitCount.putIfAbsent(uuid, 0);
+        hitCount.put(uuid, hitCount.get(uuid) + 1);
 
-        if (hitCount.get(p) >= 2) {
+        if (hitCount.get(uuid) >= 2) {
             World world = clicked.getWorld();
             double x = clicked.getX();
             double y = clicked.getY();
             double z = clicked.getZ();
 
-            hitCount.put(p, 0);
+            hitCount.put(uuid, 0);
             stylishlyRemoveBlock(clicked);
 
             for (int i = 1; i < 5; i++) {
@@ -66,6 +69,11 @@ public class GoldenPickaxeListener implements Listener {
                 }
             }
         }
+    }
+
+    @EventHandler
+    public void onLeave(PlayerQuitEvent e) {
+        hitCount.remove(e.getPlayer().getUniqueId());
     }
 }
 
