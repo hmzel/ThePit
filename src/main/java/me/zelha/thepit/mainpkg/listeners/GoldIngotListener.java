@@ -28,7 +28,7 @@ public class GoldIngotListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        new ingotRunnable(e.getPlayer()).runTaskLater(Main.getInstance(), 0);
+        new IngotRunnable(e.getPlayer()).runTaskLater(Main.getInstance(), 0);
     }
 
     @EventHandler
@@ -61,11 +61,12 @@ public class GoldIngotListener implements Listener {
     }
 
 
-    private class ingotRunnable extends BukkitRunnable {
+    private class IngotRunnable extends BukkitRunnable {
 
         private final Player p;
+        private final Random rng = new Random();
 
-        private ingotRunnable(Player p) {
+        private IngotRunnable(Player p) {
             this.p = p;
         }
 
@@ -73,19 +74,19 @@ public class GoldIngotListener implements Listener {
         public void run() {
             if (!zl.playerCheck(p)) cancel();
 
-            int rng;
+            int randomNum;
 
-            do rng = new Random().nextInt(61); while (rng < 10);
+            do randomNum = rng.nextInt(61); while (randomNum < 10);
 
             if (!zl.spawnCheck(p.getLocation())) {
-                double decimal = new Random().nextInt(100);
+                double decimal = rng.nextInt(100);
                 double x;
                 double z;
-                boolean xNegative = new Random().nextBoolean();
-                boolean zNegative = new Random().nextBoolean();
+                boolean xNegative = rng.nextBoolean();
+                boolean zNegative = rng.nextBoolean();
 
-                do x = new Random().nextInt(13) + decimal / 100; while (x < 3);
-                do z = new Random().nextInt(13) + decimal / 100; while (z < 3);
+                do x = rng.nextInt(13) + decimal / 100; while (x < 3);
+                do z = rng.nextInt(13) + decimal / 100; while (z < 3);
                 if (xNegative) x = -x;
                 if (zNegative) z = -z;
 
@@ -101,7 +102,7 @@ public class GoldIngotListener implements Listener {
                     p.getWorld().dropItemNaturally(itemSpawnLoc, new ItemStack(Material.GOLD_INGOT, 1));
                 }
             }
-            new ingotRunnable(p).runTaskLater(Main.getInstance(), rng * 20);
+            new IngotRunnable(p).runTaskLater(Main.getInstance(), randomNum * 20);
         }
     }
 }

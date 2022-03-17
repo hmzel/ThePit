@@ -345,6 +345,7 @@ public class KillRecap implements CommandExecutor, Listener {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) return true;
         if (args.length != 1) return true;
+        //regex checks if its a uuid (totally did not copy)
         if (!args[0].matches("[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")) return true;
         if (bookMap.get(UUID.fromString(args[0])) == null) {
             sender.sendMessage("§cThis recap has expired!");
