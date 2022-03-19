@@ -147,6 +147,10 @@ public class PlayerData {
         return ministreakUnlocks.get(mini);
     }
 
+    public Perks[] getEquippedPerks() {
+        return perkSlots.values().toArray(new Perks[0]);
+    }
+
     public Ministreaks[] getEquippedMinistreaks() {
         return ministreakSlots.values().toArray(new Ministreaks[0]);
     }

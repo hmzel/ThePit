@@ -364,6 +364,10 @@ public class PerkListenersAndUtils implements Listener {
         }
 
         if (e.getCause() != DamageCause.FALL && (damagedHP - finalDMG) <= 0) {
+            for (Perks perk : pData(damager).getEquippedPerks()) {
+                if (perk.getMethods() != null) perk.getMethods().onKill(damager, damaged);
+            }
+
             determineKillRewards(damager, damaged);
 
             if (pData(damager).hasPerkEquipped(STRENGTH_CHAINING)) {
