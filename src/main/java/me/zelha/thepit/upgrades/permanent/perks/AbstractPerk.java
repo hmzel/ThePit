@@ -24,5 +24,7 @@ public abstract class AbstractPerk {
         }
     }
 
+    public abstract void onKill(Player killer, Player dead);
+
     public abstract void onReset(Player player, PlayerData playerData);
 }

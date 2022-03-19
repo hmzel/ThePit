@@ -41,6 +41,10 @@ public class LavaBucketPerk extends AbstractPerk implements Listener {
     }
 
     @Override
+    public void onKill(Player killer, Player dead) {
+    }
+
+    @Override
     public void onReset(Player player, PlayerData playerData) {
         PlayerInventory inv = player.getInventory();
 
@@ -118,7 +122,7 @@ public class LavaBucketPerk extends AbstractPerk implements Listener {
     }
 
     @EventHandler
-    public void onLavaDamage(EntityDamageEvent e) {
+    public void onLavaDamage(EntityDamageEvent e) {//unused rn
         if (zl.spawnCheck(e.getEntity().getLocation())) return;
         if (!zl.playerCheck(e.getEntity())) return;
         if (e.getCause() != EntityDamageEvent.DamageCause.LAVA) return;
