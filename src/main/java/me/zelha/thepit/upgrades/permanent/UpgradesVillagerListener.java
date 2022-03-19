@@ -388,24 +388,24 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         PlayerData pData = Main.getInstance().getPlayerData(p);
         double cost = perk.getCost();
 
-        if (pData.getLevel() < perk.getLevel()) {
+        if (pData.hasPerkEquipped(perk)) {
+            p.sendMessage("§cThis perk is already selected!");
+            p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
+            return;
+        }  else if (pData.getPerkUnlockStatus(perk)) {
+            pData.setPerkAtSlot(slotHandler.get(p.getUniqueId()), perk);
+            perkUtils.perkReset(p);
+            p.sendMessage("§a§lPURCHASE! §6" + perk.getName());
+            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
+            openMainGUI(p);
+            return;
+        } else if (pData.getLevel() < perk.getLevel()) {
             p.sendMessage("§cYou are too low level to acquire this!");
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return;
         } else if (pData.getGold() - cost < 0) {
             p.sendMessage("§cYou don't have enough gold to afford this!");
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-            return;
-        } else if (pData.hasPerkEquipped(perk)) {
-            p.sendMessage("§cThis perk is already selected!");
-            p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
-            return;
-        } else if (pData.getPerkUnlockStatus(perk)) {
-            pData.setPerkAtSlot(slotHandler.get(p.getUniqueId()), perk);
-            perkUtils.perkReset(p);
-            p.sendMessage("§a§lPURCHASE! §6" + perk.getName());
-            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
-            openMainGUI(p);
             return;
         }
 
