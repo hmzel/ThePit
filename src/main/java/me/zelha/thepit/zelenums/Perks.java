@@ -1,6 +1,8 @@
 package me.zelha.thepit.zelenums;
 
+import me.zelha.thepit.upgrades.permanent.perks.LavaBucketPerk;
 import me.zelha.thepit.upgrades.permanent.perks.AbstractPerk;
+import me.zelha.thepit.upgrades.permanent.perks.LuckyDiamondPerk;
 import org.bukkit.Material;
 
 import java.util.Arrays;
@@ -84,7 +86,8 @@ public enum Perks {
     )
             , 4000
             , 40
-            , 0, null),
+            , 0,
+            new LuckyDiamondPerk()),
     SPAMMER("Spammer", BOW, Arrays.asList(
             "§7Get §f3 arrows §7on arrow hit.",
             " ",
