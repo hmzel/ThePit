@@ -30,6 +30,14 @@ public class AttackListener implements Listener {
     private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
     private final RunMethods runTracker = Main.getInstance().generateRunMethods();
 
+    public void startCombatTimer(Player damaged, Player damager) {
+        if (runTracker.hasID(damaged.getUniqueId())) runTracker.stop(damaged.getUniqueId());
+        if (runTracker.hasID(damager.getUniqueId())) runTracker.stop(damager.getUniqueId());
+
+        new CombatTimerRunnable(damaged.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
+        new CombatTimerRunnable(damager.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
+    }
+
     private double calculateMeleeDamage(Player damaged, Player damager, double originalDamage, @Nullable Arrow arrow) {
         double damageBoost = 1;
         double defenseBoost = 0;
