@@ -408,9 +408,6 @@ public class KillRecap implements CommandExecutor, Listener {
             case FIRE:
                 damageType = "§6Fire";
                 break;
-            case LAVA:
-                damageType = "§6Lava";
-                break;
             case DROWNING:
                 damageType = "§9Drowned";
                 break;

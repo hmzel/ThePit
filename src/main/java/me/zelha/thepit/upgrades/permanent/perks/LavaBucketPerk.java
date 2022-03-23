@@ -5,6 +5,7 @@ import me.zelha.thepit.RunMethods;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.Perks;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -16,6 +17,7 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Collections;
@@ -74,6 +76,7 @@ public class LavaBucketPerk extends AbstractPerk implements Listener {
             previousLavaBlock.put(p.getUniqueId(), e.getBlock().getType());
             placedLava.put(p.getUniqueId(), block);
             block.setType(LAVA);
+            block.setMetadata("placer", new FixedMetadataValue(Main.getInstance(), p.getUniqueId().toString()));
 
             new BukkitRunnable() {
                 @Override
@@ -91,6 +94,7 @@ public class LavaBucketPerk extends AbstractPerk implements Listener {
                     if (lavaExistTimer.get(p.getUniqueId()) == 240) {
                         lavaExistTimer.put(p.getUniqueId(), 0);
                         block.setType(previousLavaBlock.get(p.getUniqueId()));
+                        block.removeMetadata("placer", Main.getInstance());
                         previousLavaBlock.remove(p.getUniqueId());
                         lavaExistTimer.remove(p.getUniqueId());
                         placedLava.remove(p.getUniqueId());
@@ -112,6 +116,7 @@ public class LavaBucketPerk extends AbstractPerk implements Listener {
 
         if (block.getType() == LAVA && runTracker.getID(p.getUniqueId()) != null && placedLava.containsValue(block)) {
             block.setType(previousLavaBlock.get(p.getUniqueId()));
+            block.removeMetadata("placer", Main.getInstance());
             previousLavaBlock.remove(p.getUniqueId());
             placedLava.remove(p.getUniqueId());
             runTracker.stop(p.getUniqueId());
@@ -122,19 +127,75 @@ public class LavaBucketPerk extends AbstractPerk implements Listener {
     }
 
     @EventHandler
-    public void onLavaDamage(EntityDamageEvent e) {//unused rn
+    public void onLavaDamage(EntityDamageEvent e) {
         if (zl.spawnCheck(e.getEntity().getLocation())) return;
         if (!zl.playerCheck(e.getEntity())) return;
         if (e.getCause() != EntityDamageEvent.DamageCause.LAVA) return;
 
+        e.setDamage(0);
+
         Player damaged = (Player) e.getEntity();
+        Player damager;
+        Block block = null;
+        int x = 0;
+        int z = 0;
+
+        while (true) {
+            for (int y = 0; y < 3; y++) {
+                if (damaged.getLocation().add(x, y, z).getBlock().getType() == LAVA) {
+                    block = damaged.getLocation().add(x, y, z).getBlock();
+                    break;
+                }
+            }
+
+            if (block != null) break;
+
+            if (x == 0) {
+                x--;
+                continue;
+            }
+
+            if (x == -1) {
+                x += 2;
+                continue;
+            }
+
+            if (x == 1) {
+                x = 0;
+
+                if (z == 0) {
+                    z--;
+                    continue;
+                }
+
+                if (z == -1) {
+                    z += 2;
+                    continue;
+                }
+
+                if (z == 1) break;
+            }
+        }
+
+        if (block == null) return;
+
+        if (block.hasMetadata("placer")) {
+            damager = Bukkit.getPlayer(UUID.fromString(block.getMetadata("placer").get(0).asString()));
+        } else {
+            damager = null;
+        }
+
+        zl.trueDamage(damaged, damager, 1, "§6Lava");
     }
 
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
 
-        if (placedLava.containsKey(uuid)) placedLava.get(uuid).setType(previousLavaBlock.get(uuid));
+        if (placedLava.containsKey(uuid)) {
+            placedLava.get(uuid).setType(previousLavaBlock.get(uuid));
+            placedLava.get(uuid).removeMetadata("placer", Main.getInstance());
+        }
 
         lavaExistTimer.remove(uuid);
         previousLavaBlock.remove(uuid);
