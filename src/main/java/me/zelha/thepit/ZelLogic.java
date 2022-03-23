@@ -1,15 +1,22 @@
 package me.zelha.thepit;
 
+import me.zelha.thepit.mainpkg.data.DamageLog;
+import me.zelha.thepit.mainpkg.data.KillRecap;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.NPCs;
 import me.zelha.thepit.zelenums.Worlds;
 import net.minecraft.network.protocol.game.PacketPlayOutCollect;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -31,9 +38,6 @@ import static me.zelha.thepit.zelenums.Worlds.GENESIS;
 import static org.bukkit.Material.*;
 
 public class ZelLogic {//zel
-
-    //should i split this class into logic and utils? idrk
-    //if any of my programming friends sees this code can u tell me if i did javadocs stuff right thanks
 
     //boolean checks
     /**
@@ -384,6 +388,37 @@ public class ZelLogic {//zel
 
 
     //pit logic
+    /**
+     * pretty self explanatory, deals true damage to the given damagee and handles it accordingly <p>
+     * (death methods, damage logs, etc)
+     *
+     * @param damagee person to be damaged
+     * @param damager person who inflicted the damage
+     * @param damage damage to deal
+     * @param cause cause to show in kill recap
+     */
+    public void trueDamage(Player damagee, @Nullable Player damager, double damage, String cause) {
+        boolean willDie = damagee.getHealth() - damage <= 0;
+
+        if (willDie) damage = damagee.getHealth();
+
+        if (damager != null) {
+            KillRecap.addDamageLog(damagee, new DamageLog(damagee, damager, false, damage, cause));
+            KillRecap.addDamageLog(damager, new DamageLog(damagee, damager, true, damage, cause));
+            Main.getInstance().getAssistUtils().addAssist(damagee, damager, damage);
+        } else if (cause.equals("§6Lava")) {
+            KillRecap.addDamageLog(damagee, new DamageLog(damage, cause, true));
+        } else {
+            KillRecap.addDamageLog(damagee, new DamageLog(damage, cause, false));
+        }
+
+        if (willDie) {
+            damagee.damage(131313);
+        } else {
+            damagee.setHealth(damagee.getHealth() - damage);
+        }
+    }
+
     /**
      * used in npc-related listeners so that players cannot stand within the npc and prevent other players from accessing the npc's GUI
      * <p>
