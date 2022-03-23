@@ -40,6 +40,7 @@ public final class Main extends JavaPlugin {
     private DeathListener deathListener;
     private KillListener killListener;
     private AssistListener assistListener;
+    private AttackListener attackListener;
 
     @Override
     public void onEnable() {
@@ -53,6 +54,7 @@ public final class Main extends JavaPlugin {
         zelLogic = new ZelLogic();
         storage = new StorageListener();
         perkUtils = new PerkListenersAndUtils();
+        attackListener = new AttackListener();
         assistListener = new AssistListener();
         killListener = new KillListener();
         deathListener = new DeathListener();
@@ -66,7 +68,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(deathListener, this);
         getServer().getPluginManager().registerEvents(perkUtils, this);
         getServer().getPluginManager().registerEvents(new AntiVanillaListener(), this);
-        getServer().getPluginManager().registerEvents(new AttackListener(), this);
+        getServer().getPluginManager().registerEvents(attackListener, this);
         getServer().getPluginManager().registerEvents(new SpawnListener(), this);
         getServer().getPluginManager().registerEvents(new ItemsVillagerListener(), this);
         getServer().getPluginManager().registerEvents(new GoldenPickaxeListener(), this);
@@ -136,6 +138,9 @@ public final class Main extends JavaPlugin {
     }
     public RunMethods generateRunMethods() {
         return new RunMethods();
+    }
+    public AttackListener getAttackUtils() {
+        return attackListener;
     }
 
     public PlayerData getPlayerData(String uuid) {
