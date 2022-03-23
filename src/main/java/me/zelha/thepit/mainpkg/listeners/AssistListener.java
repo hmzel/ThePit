@@ -36,6 +36,10 @@ public class AssistListener implements Listener {
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final Map<UUID, List<Pair<UUID, Double>>> assistMap = new HashMap<>();
 
+    public void addAssist(Player damaged, Player damager, double damage) {
+        assistMap.get(damaged.getUniqueId()).add(Pair.of(damager.getUniqueId(), damage));
+    }
+
     public Map<UUID, Double> getAssistMap(Player player) {
         Map<UUID, Double> map = new HashMap<>();
 
@@ -111,7 +115,7 @@ public class AssistListener implements Listener {
         return gold;
     }
 
-    private void deathMethod(Player player) {
+    public void deathMethod(Player player) {
         Player killer;
 
         if (getLastDamager(player) != null) killer = getLastDamager(player); else return;
