@@ -65,6 +65,27 @@ public class DamageLog {
         this.environmental = false;
     }
 
+    public DamageLog(Player damaged, Player damager, boolean isAttacker, double damage, String damageType) {
+        this.hasPlayer = true;
+        this.item = null;
+        this.damage = damage;
+        this.time = MinecraftServer.currentTick;
+        this.subName = damaged.getName();
+
+        if (isAttacker) {
+            this.mainName = damaged.getName();
+            this.prestigeToShow = zl.getColorBracketAndLevel(damager.getUniqueId().toString());
+        } else {
+            this.mainName = damager.getName();
+            this.prestigeToShow = zl.getColorBracketAndLevel(damaged.getUniqueId().toString());
+        }
+
+        this.damagedHealth = damaged.getHealth() - damage;
+        this.isAttacker = isAttacker;
+        this.pitDamageType = damageType;
+        this.environmental = false;
+    }
+
     public DamageLog(double damage, String damageType, boolean environmental) {
         this.hasPlayer = false;
         this.item = null;
