@@ -406,6 +406,7 @@ public class ZelLogic {//zel
             KillRecap.addDamageLog(damagee, new DamageLog(damagee, damager, false, damage, cause));
             KillRecap.addDamageLog(damager, new DamageLog(damagee, damager, true, damage, cause));
             Main.getInstance().getAssistUtils().addAssist(damagee, damager, damage);
+            Main.getInstance().getAttackUtils().startCombatTimer(damagee, damager);
         } else if (cause.equals("§6Lava")) {
             KillRecap.addDamageLog(damagee, new DamageLog(damage, cause, true));
         } else {
