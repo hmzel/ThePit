@@ -1,9 +1,6 @@
 package me.zelha.thepit.zelenums;
 
-import me.zelha.thepit.upgrades.permanent.perks.GoldenHeadsPerk;
-import me.zelha.thepit.upgrades.permanent.perks.LavaBucketPerk;
-import me.zelha.thepit.upgrades.permanent.perks.AbstractPerk;
-import me.zelha.thepit.upgrades.permanent.perks.LuckyDiamondPerk;
+import me.zelha.thepit.upgrades.permanent.perks.*;
 import org.bukkit.Material;
 
 import java.util.Arrays;
@@ -26,7 +23,8 @@ public enum Perks {
     )
             , 1000
             , 10
-            , 0, null),
+            , 0
+            , new FishingRodPerk()),
     LAVA_BUCKET("Lava Bucket", Material.LAVA_BUCKET, Collections.singletonList(
             "§7Spawn with a lava bucket."
     )

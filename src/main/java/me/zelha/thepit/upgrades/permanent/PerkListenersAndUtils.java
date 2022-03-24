@@ -56,7 +56,6 @@ public class PerkListenersAndUtils implements Listener {
             new Enchantment[] {Enchantment.DIG_SPEED}, new Integer[] {4}, true, true);
     private final ItemStack minemanCobblestoneItem = zl.itemBuilder(COBBLESTONE, 24, null, Collections.singletonList("§7Perk item"));
     private final ItemStack safetyFirstItem = zl.itemBuilder(CHAINMAIL_HELMET, 1, null, Collections.singletonList("§7Perk item"));
-    private final ItemStack fishingRodItem = zl.itemBuilder(Material.FISHING_ROD, 1, null, Collections.singletonList("§7Perk item"), true);
     private final ItemStack gapple = new ItemStack(GOLDEN_APPLE, 1);
 
     /**
@@ -88,12 +87,6 @@ public class PerkListenersAndUtils implements Listener {
         }
 
         if (!inv.contains(zl.itemBuilder(BOW, 1))) inv.addItem(zl.itemBuilder(BOW, 1));
-
-        if (pData.hasPerkEquipped(Perks.FISHING_ROD)) {
-            if (!inv.contains(fishingRodItem)) inv.addItem(fishingRodItem);
-        } else {
-            removeAll(inv, fishingRodItem);
-        }
 
         if (pData.hasPerkEquipped(SAFETY_FIRST)) {
             if (!zl.itemCheck(inv.getHelmet()) || inv.getHelmet().getType() == LEATHER_HELMET) {

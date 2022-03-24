@@ -30,7 +30,7 @@ public abstract class AbstractPerk {
         }
     }
 
-    public boolean containsLessThan(int amount, ItemStack item, Inventory inv) {
+    protected boolean containsLessThan(int amount, ItemStack item, Inventory inv) {
         int count = 0;
 
         if (item.getType() == PLAYER_HEAD) {

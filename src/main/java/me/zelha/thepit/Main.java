@@ -77,8 +77,6 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ChatListener(), this);
         getServer().getPluginManager().registerEvents(assistListener, this);
         getServer().getPluginManager().registerEvents(recap, this);
-        getServer().getPluginManager().registerEvents(new MegastreakListener(), this);
-        getServer().getPluginManager().registerEvents(new MinistreakListener(), this);
 
         getCommand("setprestige").setExecutor(new SetPrestigeCommand());
         getCommand("setlevel").setExecutor(new SetLevelCommand());
