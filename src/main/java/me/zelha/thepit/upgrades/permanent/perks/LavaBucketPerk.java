@@ -2,7 +2,6 @@ package me.zelha.thepit.upgrades.permanent.perks;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.RunMethods;
-import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.Bukkit;
@@ -29,7 +28,6 @@ import static org.bukkit.Material.*;
 
 public class LavaBucketPerk extends AbstractPerk implements Listener {
 
-    private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final RunMethods runTracker = Main.getInstance().generateRunMethods();
     private final Map<UUID, Integer> lavaExistTimer = new HashMap<>();
     private final Map<UUID, Block> placedLava = new HashMap<>();
@@ -50,15 +48,16 @@ public class LavaBucketPerk extends AbstractPerk implements Listener {
     public void onReset(Player player, PlayerData playerData) {
         PlayerInventory inv = player.getInventory();
 
-        if (playerData.hasPerkEquipped(Perks.LAVA_BUCKET)) {
-            if (inv.contains(emptyBucketItem)) {
-                inv.setItem(inv.first(emptyBucketItem), lavaBucketItem);
-            } else if (!inv.contains(lavaBucketItem)) {
-                inv.addItem(lavaBucketItem);
-            }
-        } else {
+        if (!playerData.hasPerkEquipped(Perks.LAVA_BUCKET)) {
             removeAll(inv, emptyBucketItem);
             removeAll(inv, lavaBucketItem);
+            return;
+        }
+
+        if (inv.contains(emptyBucketItem)) {
+            inv.setItem(inv.first(emptyBucketItem), lavaBucketItem);
+        } else if (!inv.contains(lavaBucketItem)) {
+            inv.addItem(lavaBucketItem);
         }
     }
 

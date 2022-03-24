@@ -7,7 +7,6 @@ import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
@@ -19,11 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
@@ -51,7 +46,6 @@ public class PerkListenersAndUtils implements Listener {
     private final RunMethods runTracker = Main.getInstance().generateRunMethods();
     private final RunMethods runTracker2 = Main.getInstance().generateRunMethods();
 
-    private final Set<UUID> gheadCooldown = new HashSet<>();
     private final Map<UUID, Set<UUID>> bonkMap = new HashMap<>();
     private final Map<UUID, Integer> strengthChaining = new HashMap<>();
     private final Map<UUID, Integer> strengthChainingTimer = new HashMap<>();
@@ -63,12 +57,6 @@ public class PerkListenersAndUtils implements Listener {
     private final ItemStack minemanCobblestoneItem = zl.itemBuilder(COBBLESTONE, 24, null, Collections.singletonList("§7Perk item"));
     private final ItemStack safetyFirstItem = zl.itemBuilder(CHAINMAIL_HELMET, 1, null, Collections.singletonList("§7Perk item"));
     private final ItemStack fishingRodItem = zl.itemBuilder(Material.FISHING_ROD, 1, null, Collections.singletonList("§7Perk item"), true);
-    private final ItemStack goldenHeadItem = zl.headItemBuilder("PhantomTupac", 1, "§6Golden Head", Arrays.asList(
-                "§9Speed I (0:08)",
-                "§9Regeneration II (0:05)",
-                "§63❤ absorption!",
-                "§71 second between eats"
-        ));
     private final ItemStack gapple = new ItemStack(GOLDEN_APPLE, 1);
 
     /**
@@ -94,12 +82,6 @@ public class PerkListenersAndUtils implements Listener {
         if (bonkMap.get(p.getUniqueId()) != null) bonkMap.get(p.getUniqueId()).clear();
 
         removeAll(inv, gapple);
-
-        for (ItemStack items : inv.all(PLAYER_HEAD).values()) {
-            if (zl.itemCheck(items) && items.getItemMeta().getDisplayName().equals("§6Golden Head")) {
-                inv.remove(items);
-            }
-        }
 
         if (!inv.contains(IRON_SWORD) && !inv.contains(DIAMOND_SWORD) && !pData.hasPerkEquipped(BARBARIAN)) {
             inv.addItem(zl.itemBuilder(IRON_SWORD, 1));
@@ -264,20 +246,16 @@ public class PerkListenersAndUtils implements Listener {
             doHealingItem = false;
         }
 
-        if (doHealingItem && pData(killer).hasPerkEquipped(GOLDEN_HEADS)) {
-            if (containsLessThan(2, goldenHeadItem, inv)) {
-                if (inv.first(PLAYER_HEAD) != -1) {
-                    inv.getItem(inv.first(PLAYER_HEAD)).setAmount(inv.getItem(inv.first(PLAYER_HEAD)).getAmount() + 1);
-                } else {
-                    inv.addItem(goldenHeadItem);
-                }
+        int count = 0;
+
+        for (ItemStack invItem : inv.all(GOLDEN_APPLE).values()) {
+            if (zl.itemCheck(invItem) && invItem.isSimilar(new ItemStack(GOLDEN_APPLE))) {
+                count += invItem.getAmount();
             }
-            doHealingItem = false;
         }
 
-        if (doHealingItem && containsLessThan(2, gapple, inv)) {
-            inv.addItem(gapple);
-        }
+        if (count < 2) inv.addItem(gapple);
+
 
         if (pData(killer).hasPerkEquipped(MINEMAN) && containsLessThan(64, minemanCobblestoneItem, inv)) {
             ItemStack item = new ItemStack(minemanCobblestoneItem);
@@ -414,35 +392,6 @@ public class PerkListenersAndUtils implements Listener {
         if (e.getCause() != DamageCause.FALL && (currentHP - finalDMG <= 0)) perkReset((Player) e.getEntity());
     }
 
-    @EventHandler
-    public void onInteract(PlayerInteractEvent e) {
-        Player p = e.getPlayer();
-        ItemStack item = e.getItem();
-
-        if (zl.itemCheck(item) && item.getItemMeta().getDisplayName().equals("§6Golden Head") && !gheadCooldown.contains(p.getUniqueId())) {
-            e.setCancelled(true);
-
-            if (item.getAmount() > 1) {
-                item.setAmount(item.getAmount() - 1);
-            } else {
-                p.getInventory().setItemInMainHand(new ItemStack(AIR));
-            }
-
-            p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 160, 1, false, false));
-            p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 100, 2, false, false));
-            p.setAbsorptionAmount(6);
-            p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_BURP, 1, 1);
-            gheadCooldown.add(p.getUniqueId());
-
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    gheadCooldown.remove(p.getUniqueId());
-                }
-            }.runTaskLater(Main.getInstance(), 20);
-        }
-    }
-
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onDrop(PlayerDropItemEvent e) {
         ItemMeta meta = e.getItemDrop().getItemStack().getItemMeta();
@@ -450,24 +399,6 @@ public class PerkListenersAndUtils implements Listener {
         if (meta != null && meta.getLore() != null && meta.getLore().contains("§7Perk item")) {
             e.getPlayer().sendMessage("§c§lNOPE! §7You cannot drop this item!");
             e.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void noGheadOnHead1(InventoryClickEvent e) {
-        if (!zl.itemCheck(e.getCursor()) || e.getCursor().getType() != PLAYER_HEAD) return;
-        if (e.getSlotType() == InventoryType.SlotType.ARMOR) e.setCancelled(true);
-    }
-
-    @EventHandler
-    public void noGheadOnHead2(InventoryDragEvent e) {
-        if (!zl.itemCheck(e.getCursor()) || e.getCursor().getType() != PLAYER_HEAD) return;
-
-        for (Integer slot : e.getRawSlots()) {
-            if (e.getView().getSlotType(slot) == InventoryType.SlotType.ARMOR) {
-                e.setCancelled(true);
-                return;
-            }
         }
     }
 
@@ -480,7 +411,6 @@ public class PerkListenersAndUtils implements Listener {
     public void onLeave(PlayerQuitEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
 
-        gheadCooldown.remove(uuid);
         spammerShotIdentifier.remove(uuid);
         bonkMap.remove(uuid);
         perkReset(e.getPlayer());

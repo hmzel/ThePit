@@ -14,8 +14,6 @@ import me.zelha.thepit.mainpkg.listeners.*;
 import me.zelha.thepit.mainpkg.runnables.ParticipationRunnable;
 import me.zelha.thepit.upgrades.nonpermanent.GoldenPickaxeListener;
 import me.zelha.thepit.upgrades.nonpermanent.ItemsVillagerListener;
-import me.zelha.thepit.upgrades.permanent.MegastreakListener;
-import me.zelha.thepit.upgrades.permanent.MinistreakListener;
 import me.zelha.thepit.upgrades.permanent.PerkListenersAndUtils;
 import me.zelha.thepit.upgrades.permanent.UpgradesVillagerListener;
 import org.bson.Document;

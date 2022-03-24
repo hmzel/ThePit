@@ -1,5 +1,6 @@
 package me.zelha.thepit.zelenums;
 
+import me.zelha.thepit.upgrades.permanent.perks.GoldenHeadsPerk;
 import me.zelha.thepit.upgrades.permanent.perks.LavaBucketPerk;
 import me.zelha.thepit.upgrades.permanent.perks.AbstractPerk;
 import me.zelha.thepit.upgrades.permanent.perks.LuckyDiamondPerk;
@@ -18,7 +19,8 @@ public enum Perks {
     )
             , 500
             , 10
-            , 0, null),
+            , 0
+            , new GoldenHeadsPerk()),
     FISHING_ROD("Fishing Rod", Material.FISHING_ROD, Collections.singletonList(
             "§7Spawn with a fishing rod."
     )
@@ -30,8 +32,8 @@ public enum Perks {
     )
             , 1000
             , 10
-            , 0,
-            new LavaBucketPerk()),
+            , 0
+            , new LavaBucketPerk()),
     STRENGTH_CHAINING("Strength-Chaining", REDSTONE, Arrays.asList(
             "§c+8% damage §7for 7s stacking",
             "§7on kill."
@@ -86,8 +88,8 @@ public enum Perks {
     )
             , 4000
             , 40
-            , 0,
-            new LuckyDiamondPerk()),
+            , 0
+            , new LuckyDiamondPerk()),
     SPAMMER("Spammer", BOW, Arrays.asList(
             "§7Get §f3 arrows §7on arrow hit.",
             " ",

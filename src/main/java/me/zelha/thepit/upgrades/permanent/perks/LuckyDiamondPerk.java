@@ -1,7 +1,6 @@
 package me.zelha.thepit.upgrades.permanent.perks;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -18,8 +17,6 @@ import static org.bukkit.Material.AIR;
 import static org.bukkit.inventory.EquipmentSlot.*;
 
 public class LuckyDiamondPerk extends AbstractPerk {
-
-    private final ZelLogic zl = Main.getInstance().getZelLogic();
 
     public LuckyDiamondPerk() {
         super(LUCKY_DIAMOND);
