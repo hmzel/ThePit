@@ -20,6 +20,12 @@ public abstract class AbstractPerk {
         this.perk = perk;
     }
 
+    public void onKill(Player killer, Player dead) {
+    }
+
+    public void onReset(Player player, PlayerData playerData) {
+    }
+
     public Perks getPerk() {
         return perk;
     }
@@ -49,8 +55,4 @@ public abstract class AbstractPerk {
         }
         return count < amount;
     }
-
-    public abstract void onKill(Player killer, Player dead);
-
-    public abstract void onReset(Player player, PlayerData playerData);
 }

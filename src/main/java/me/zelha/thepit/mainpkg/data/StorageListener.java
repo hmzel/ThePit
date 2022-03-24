@@ -239,7 +239,7 @@ public class StorageListener implements Listener {
 
             pDoc = pDataCol.find(filter).first();
 
-            System.out.println("Created new player data document assigned to" + uuid);
+            System.out.println("Created new player data document assigned to " + uuid);
         } else {
              pDoc = pDataCol.find(filter).first();
         }

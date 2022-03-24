@@ -18,10 +18,6 @@ public class FishingRodPerk extends AbstractPerk {
     }
 
     @Override
-    public void onKill(Player killer, Player dead) {
-    }
-
-    @Override
     public void onReset(Player player, PlayerData playerData) {
         PlayerInventory inv = player.getInventory();
 

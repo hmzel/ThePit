@@ -35,15 +35,12 @@ public class AntiVanillaListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final DeathListener deathUtils = Main.getInstance().getDeathUtils();
-
     private final Material[] undroppable = {
             IRON_SWORD, BOW
     };
-
     private final Material[] disappearOnDrop = {
         CHAINMAIL_HELMET, CHAINMAIL_CHESTPLATE, CHAINMAIL_LEGGINGS, CHAINMAIL_BOOTS
     };
-
     private final String[] inventoryNames = {
             "Non-permanent items", "Permanent upgrades", "Choose a perk", "Are you sure?"
     };

@@ -41,10 +41,6 @@ public class LavaBucketPerk extends AbstractPerk implements Listener {
     }
 
     @Override
-    public void onKill(Player killer, Player dead) {
-    }
-
-    @Override
     public void onReset(Player player, PlayerData playerData) {
         PlayerInventory inv = player.getInventory();
 
