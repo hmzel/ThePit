@@ -119,16 +119,16 @@ public class AttackListener implements Listener {
         StringBuilder barBuilder = new StringBuilder();
         StringBuilder barBuilder2 = new StringBuilder();
 
-        int health = (int) damaged.getHealth() / 2;
-        int healthAfterDmg = (int) Math.max((health - (e.getFinalDamage() / 2D)), 0);
-        int maxHealth = (int) (damaged.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) / 2;
+        int health = (int) Math.ceil(damaged.getHealth() / 2);
+        int healthAfterDmg = (int) Math.floor(Math.max(((damaged.getHealth() / 2D) - (e.getFinalDamage() / 2D)), 0));
+        int maxHealth = (int) damaged.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 2;
 
         for (int i = 0; i < maxHealth; i++) barBuilder.append("❤");
 
         if (damaged.getAbsorptionAmount() > 0) {
-            int absorption = (int) ((damaged.getAbsorptionAmount() + e.getDamage(EntityDamageEvent.DamageModifier.ABSORPTION)) / 2);
+            int absorption = (int) Math.ceil((damaged.getAbsorptionAmount() + e.getDamage(EntityDamageEvent.DamageModifier.ABSORPTION)) / 2);
 
-            for (int i = 0; i < (int) damaged.getAbsorptionAmount() / 2; i++) barBuilder2.append("❤");
+            for (int i = 0; i < (int) Math.ceil(damaged.getAbsorptionAmount() / 2); i++) barBuilder2.append("❤");
 
             barBuilder2.replace(Math.max(absorption, 0), Math.max(absorption, 0), "§6");
             barBuilder2.replace(0, 0, "§e");
