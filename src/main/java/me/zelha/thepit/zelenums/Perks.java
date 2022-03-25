@@ -45,7 +45,8 @@ public enum Perks {
     )
             , 3000
             , 30
-            , 0, null),
+            , 0
+            , new SafetyFirstPerk()),
     BARBARIAN("Barbarian", IRON_AXE, Arrays.asList(
             "§7Replaces your sword with a",
             "§7stronger axe."

@@ -52,11 +52,10 @@ public class PerkListenersAndUtils implements Listener {
     private final ItemStack minemanPickaxeItem = zl.itemBuilder(DIAMOND_PICKAXE, 1, null, Collections.singletonList("§7Perk item"),
             new Enchantment[] {Enchantment.DIG_SPEED}, new Integer[] {4}, true, true);
     private final ItemStack minemanCobblestoneItem = zl.itemBuilder(COBBLESTONE, 24, null, Collections.singletonList("§7Perk item"));
-    private final ItemStack safetyFirstItem = zl.itemBuilder(CHAINMAIL_HELMET, 1, null, Collections.singletonList("§7Perk item"));
     private final ItemStack gapple = new ItemStack(GOLDEN_APPLE, 1);
 
     /**
-     * supposed to be called every time perk items should be reset <p>
+     * supposed to be called every time items should be reset <p>
      * ex: dying, selecting a perk, etc <p>
      * must be called *after* the perk slot is set, in conditions where that applies
      */
@@ -82,14 +81,6 @@ public class PerkListenersAndUtils implements Listener {
         }
 
         if (!inv.contains(zl.itemBuilder(BOW, 1))) inv.addItem(zl.itemBuilder(BOW, 1));
-
-        if (pData.hasPerkEquipped(SAFETY_FIRST)) {
-            if (!zl.itemCheck(inv.getHelmet()) || inv.getHelmet().getType() == LEATHER_HELMET) {
-                inv.setHelmet(safetyFirstItem);
-            }
-        } else {
-            removeAll(inv, safetyFirstItem);
-        }
 
         if (pData.hasPerkEquipped(MINEMAN)) {
             if (!inv.contains(minemanPickaxeItem)) inv.addItem(minemanPickaxeItem);

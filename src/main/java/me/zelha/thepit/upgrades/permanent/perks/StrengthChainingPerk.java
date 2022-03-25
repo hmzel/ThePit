@@ -4,7 +4,6 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.RunMethods;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
@@ -13,7 +12,7 @@ import java.util.UUID;
 
 import static me.zelha.thepit.zelenums.Perks.STRENGTH_CHAINING;
 
-public class StrengthChainingPerk extends AbstractPerk implements Listener {
+public class StrengthChainingPerk extends AbstractPerk{
 
     private final Map<UUID, Integer> strengthChaining = new HashMap<>();
     private final Map<UUID, Integer> strengthChainingTimer = new HashMap<>();
@@ -21,7 +20,6 @@ public class StrengthChainingPerk extends AbstractPerk implements Listener {
 
     public StrengthChainingPerk() {
         super(STRENGTH_CHAINING);
-        Main.getInstance().getServer().getPluginManager().registerEvents(this, Main.getInstance());
     }
 
     public Integer getStrengthChainingLevel(Player p) {
