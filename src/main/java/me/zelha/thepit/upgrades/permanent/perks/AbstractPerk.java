@@ -20,6 +20,13 @@ public abstract class AbstractPerk {
         this.perk = perk;
     }
 
+    public double getDamageModifier(Player player) {
+        return 0;
+    }
+
+    public void onHit(Player damager, Player damaged) {
+    }
+
     public void onKill(Player killer, Player dead) {
     }
 
