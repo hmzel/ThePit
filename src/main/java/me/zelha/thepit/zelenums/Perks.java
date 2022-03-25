@@ -79,7 +79,7 @@ public enum Perks {
     )
             , 1000
             , 40
-            , 0, null),
+            , 0, null), //handled in GoldIngotListener
     LUCKY_DIAMOND("Lucky Diamond", DIAMOND, Arrays.asList(
             "§730% chance to upgrade dropped",
             "§7armor pieces from kills to",
@@ -102,7 +102,8 @@ public enum Perks {
     )
             , 4000
             , 40
-            , 0, null),
+            , 0
+            , new SpammerPerk()),
     BOUNTY_HUNTER("Bounty Hunter", GOLDEN_LEGGINGS, Arrays.asList(
             "§6+4g §7on all kills.",
             "§7Earn bounty assist shares.",

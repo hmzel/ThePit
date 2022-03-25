@@ -23,12 +23,8 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 import static me.zelha.thepit.zelenums.Perks.*;
 import static org.bukkit.Material.*;
@@ -42,7 +38,6 @@ public class PerkListenersAndUtils implements Listener {
     }
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-    private final Map<UUID, UUID> spammerShotIdentifier = new HashMap<>();
     private final ItemStack bountyHunterItem = zl.itemBuilder(GOLDEN_LEGGINGS, 1, null, Collections.singletonList("§7Perk item"), true);
     private final ItemStack gapple = new ItemStack(GOLDEN_APPLE, 1);
 
@@ -132,21 +127,6 @@ public class PerkListenersAndUtils implements Listener {
         return reduction;
     }
 
-    public boolean hasBeenShotBySpammer(Player damager, Player damaged) {
-        boolean bool = spammerShotIdentifier.containsKey(damager.getUniqueId())
-                && spammerShotIdentifier.get(damager.getUniqueId()) == damaged.getUniqueId()
-                && pData(damager).hasPerkEquipped(SPAMMER);
-
-        if (bool) new BukkitRunnable() {
-            @Override
-            public void run() {
-                spammerShotIdentifier.remove(damager.getUniqueId());
-            }
-        }.runTaskLater(Main.getInstance(), 1);
-
-        return bool;
-    }
-
     private void removeAll(PlayerInventory inventory, ItemStack item) {
         for (ItemStack items : inventory.all(item.getType()).values()) {
             if (items.isSimilar(item)) inventory.remove(items);
@@ -231,11 +211,6 @@ public class PerkListenersAndUtils implements Listener {
             }
         }
 
-        if (e.getCause() == DamageCause.PROJECTILE && pData(damager).hasPerkEquipped(SPAMMER) && damageCauseArrow) {
-            damager.getInventory().addItem(new ItemStack(ARROW, 3));
-            spammerShotIdentifier.put(damager.getUniqueId(), damaged.getUniqueId());
-        }
-
         if (e.getCause() != DamageCause.FALL && (damagedHP - finalDMG) <= 0) {
             for (Perks perk : pData(damager).getEquippedPerks()) {
                 if (perk.getMethods() != null) perk.getMethods().onKill(damager, damaged);
@@ -270,9 +245,6 @@ public class PerkListenersAndUtils implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onLeave(PlayerQuitEvent e) {
-        UUID uuid = e.getPlayer().getUniqueId();
-
-        spammerShotIdentifier.remove(uuid);
         perkReset(e.getPlayer());
     }
 }

@@ -5,7 +5,9 @@ import me.zelha.thepit.RunMethods;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.PerkListenersAndUtils;
+import me.zelha.thepit.upgrades.permanent.perks.SpammerPerk;
 import me.zelha.thepit.zelenums.Passives;
+import me.zelha.thepit.zelenums.Perks;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -107,7 +109,7 @@ public class KillListener implements Listener {
         PlayerInventory deadInv = dead.getInventory();
         PlayerInventory killerInv = killer.getInventory();
 
-        if (perkUtils.hasBeenShotBySpammer(killer, dead)) gold *= 3;
+        if (((SpammerPerk) Perks.SPAMMER.getMethods()).hasBeenShotBySpammer(killer, dead)) gold *= 3;
         if (killerData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS) gold += 4;
 
         if (killerData.getStreak() <= killerData.getPassiveTier(Passives.EL_GATO)) gold += 5;

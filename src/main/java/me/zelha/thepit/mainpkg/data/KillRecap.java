@@ -5,6 +5,7 @@ import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.listeners.AssistListener;
 import me.zelha.thepit.mainpkg.listeners.KillListener;
 import me.zelha.thepit.upgrades.permanent.PerkListenersAndUtils;
+import me.zelha.thepit.upgrades.permanent.perks.SpammerPerk;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -146,7 +147,7 @@ public class KillRecap implements CommandExecutor, Listener {
 
         builder.append("§fBase §6gold (g)§f: §610\n");
 
-        if (perkUtils.hasBeenShotBySpammer(receiver, dead) && isKiller) builder.append("§fSpammer: §6+200%\n");
+        if (((SpammerPerk) Perks.SPAMMER.getMethods()).hasBeenShotBySpammer(receiver, dead) && isKiller) builder.append("§fSpammer: §6+200%\n");
         if (receiverData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS && isKiller) {
             builder.append("§fBounty Hunter: §6+4\n");
         }
