@@ -43,12 +43,9 @@ public class PerkListenersAndUtils implements Listener {
     }
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-    private final RunMethods runTracker = Main.getInstance().generateRunMethods();
     private final RunMethods runTracker2 = Main.getInstance().generateRunMethods();
 
     private final Map<UUID, Set<UUID>> bonkMap = new HashMap<>();
-    private final Map<UUID, Integer> strengthChaining = new HashMap<>();
-    private final Map<UUID, Integer> strengthChainingTimer = new HashMap<>();
     private final Map<UUID, UUID> spammerShotIdentifier = new HashMap<>();
 
     private final ItemStack bountyHunterItem = zl.itemBuilder(GOLDEN_LEGGINGS, 1, null, Collections.singletonList("§7Perk item"), true);
@@ -75,8 +72,6 @@ public class PerkListenersAndUtils implements Listener {
         pData.setStreak(0);
 
         for (ItemStack item : inv.all(ARROW).values()) arrowCount += item.getAmount();
-
-        strengthChaining.remove(p.getUniqueId());
 
         if (bonkMap.get(p.getUniqueId()) != null) bonkMap.get(p.getUniqueId()).clear();
 
@@ -137,7 +132,9 @@ public class PerkListenersAndUtils implements Listener {
     public double getPerkDamageBoost(Player damager, Player damaged) {
         double boost = 0;
 
-        if (getStrengthChaining(damager)[0] != null) boost += 0.08 * getStrengthChaining(damager)[0];
+        for (Perks perk : pData(damager).getEquippedPerks()) {
+            if (perk.getMethods() != null) boost += perk.getMethods().getDamageModifier(damager);
+        }
 
         if (pData(damager).hasPerkEquipped(Perks.BOUNTY_HUNTER) && zl.itemCheck(damager.getInventory().getLeggings())
            && damager.getInventory().getLeggings().getType() == Material.GOLDEN_LEGGINGS) {
@@ -170,13 +167,6 @@ public class PerkListenersAndUtils implements Listener {
             }
         }
         return reduction;
-    }
-
-    /**
-     *@Returns an array where [0] is the level of strength and [1] is the timer
-     */
-    public Integer[] getStrengthChaining(Player p) {
-        return new Integer[] {strengthChaining.get(p.getUniqueId()), strengthChainingTimer.get(p.getUniqueId())};
     }
 
     public boolean hasBeenShotBySpammer(Player damager, Player damaged) {
@@ -340,35 +330,6 @@ public class PerkListenersAndUtils implements Listener {
             }
 
             determineKillRewards(damager, damaged);
-
-            if (pData(damager).hasPerkEquipped(STRENGTH_CHAINING)) {
-                if (getStrengthChaining(damager)[0] == null) {
-                    strengthChaining.put(damagerUUID, 1);
-                } else if (getStrengthChaining(damager)[0] != 5) {
-                    strengthChaining.put(damagerUUID, getStrengthChaining(damager)[0] + 1);
-                }
-
-                if (runTracker2.hasID(damagerUUID)) runTracker2.stop(damagerUUID);
-
-                new BukkitRunnable() {
-                    int timer = 7;
-
-                    @Override
-                    public void run() {
-                        if (!runTracker2.hasID(damagerUUID)) runTracker2.setID(damagerUUID, getTaskId());
-
-                        strengthChainingTimer.put(damagerUUID, timer);
-
-                        if (timer <= 0) {
-                            strengthChaining.remove(damagerUUID);
-                            strengthChainingTimer.remove(damagerUUID);
-                            cancel();
-                        }
-
-                        timer--;
-                    }
-                }.runTaskTimer(Main.getInstance(), 0, 20);
-            }
         }
     }
 

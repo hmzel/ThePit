@@ -38,7 +38,8 @@ public enum Perks {
     )
             , 2000
             , 20
-            , 0, null),
+            , 0
+            , new StrengthChainingPerk()),
     SAFETY_FIRST("Safety First", CHAINMAIL_HELMET, Collections.singletonList(
             "§7Spawn with a helmet."
     )

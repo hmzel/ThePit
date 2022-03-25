@@ -5,6 +5,7 @@ import me.zelha.thepit.RunMethods;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.PerkListenersAndUtils;
+import me.zelha.thepit.upgrades.permanent.perks.StrengthChainingPerk;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardScore;
 import net.minecraft.server.ScoreboardServer;
 import net.minecraft.server.network.PlayerConnection;
@@ -25,6 +26,8 @@ import org.bukkit.scoreboard.Team;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+
+import static me.zelha.thepit.zelenums.Perks.STRENGTH_CHAINING;
 
 public class ScoreboardListener implements Listener {
 
@@ -111,6 +114,7 @@ public class ScoreboardListener implements Listener {
     private class SidebarUpdater extends BukkitRunnable {
 
         private final Player p;
+        private final StrengthChainingPerk strengthChainingClass = (StrengthChainingPerk) STRENGTH_CHAINING.getMethods();
         private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("MM/dd/yy");
         private List<String> previousScores;
 
@@ -175,8 +179,9 @@ public class ScoreboardListener implements Listener {
                 }
             }
 
-            if (perkUtils.getStrengthChaining(p)[0] != null) {
-                boardScores.add("§fStrength: §c" + zl.toRoman(perkUtils.getStrengthChaining(p)[0]) + " §7(" + perkUtils.getStrengthChaining(p)[1] + ")");
+            if (strengthChainingClass.getStrengthChainingLevel(p) != null) {
+                boardScores.add("§fStrength: §c" + zl.toRoman(strengthChainingClass.getStrengthChainingLevel(p))
+                        + " §7(" + strengthChainingClass.getStrengthChainingTimer(p) + ")");
             } else if (perkUtils.getGladiatorDamageReduction(p) != (double) 0 && !zl.spawnCheck(p.getLocation())) {
                 boardScores.add("§fGladiator: §9-" + (int) (perkUtils.getGladiatorDamageReduction(p) * 100) + "%");
             }
