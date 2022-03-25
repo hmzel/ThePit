@@ -62,7 +62,8 @@ public enum Perks {
     )
             , 3000
             , 20
-            , 0, null),
+            , 0
+            , new MinemanPerk()),
     BONK("Bonk!", ANVIL, Arrays.asList(
             "§7The first hit you receive from a",
             "§7player is blocked and grants",

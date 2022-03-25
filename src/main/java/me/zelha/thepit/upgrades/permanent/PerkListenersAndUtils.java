@@ -8,7 +8,6 @@ import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -49,9 +48,6 @@ public class PerkListenersAndUtils implements Listener {
     private final Map<UUID, UUID> spammerShotIdentifier = new HashMap<>();
 
     private final ItemStack bountyHunterItem = zl.itemBuilder(GOLDEN_LEGGINGS, 1, null, Collections.singletonList("§7Perk item"), true);
-    private final ItemStack minemanPickaxeItem = zl.itemBuilder(DIAMOND_PICKAXE, 1, null, Collections.singletonList("§7Perk item"),
-            new Enchantment[] {Enchantment.DIG_SPEED}, new Integer[] {4}, true, true);
-    private final ItemStack minemanCobblestoneItem = zl.itemBuilder(COBBLESTONE, 24, null, Collections.singletonList("§7Perk item"));
     private final ItemStack gapple = new ItemStack(GOLDEN_APPLE, 1);
 
     /**
@@ -81,24 +77,6 @@ public class PerkListenersAndUtils implements Listener {
         }
 
         if (!inv.contains(zl.itemBuilder(BOW, 1))) inv.addItem(zl.itemBuilder(BOW, 1));
-
-        if (pData.hasPerkEquipped(MINEMAN)) {
-            if (!inv.contains(minemanPickaxeItem)) inv.addItem(minemanPickaxeItem);
-
-            if (!inv.contains(minemanCobblestoneItem)) {
-                if (inv.first(COBBLESTONE) != -1) {
-                    int slot = inv.first(COBBLESTONE);
-
-                    removeAll(inv, minemanCobblestoneItem);
-                    inv.setItem(slot, minemanCobblestoneItem);
-                } else {
-                    inv.addItem(minemanCobblestoneItem);
-                }
-            }
-        } else {
-            removeAll(inv, minemanPickaxeItem);
-            removeAll(inv, minemanCobblestoneItem);
-        }
 
         if (pData.hasPerkEquipped(BOUNTY_HUNTER)) {
             if (!inv.contains(bountyHunterItem)) {
@@ -229,13 +207,6 @@ public class PerkListenersAndUtils implements Listener {
         }
 
         if (count < 2) inv.addItem(gapple);
-
-
-        if (pData(killer).hasPerkEquipped(MINEMAN) && containsLessThan(64, minemanCobblestoneItem, inv)) {
-            ItemStack item = new ItemStack(minemanCobblestoneItem);
-            item.setAmount(3);
-            inv.addItem(item);
-        }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
