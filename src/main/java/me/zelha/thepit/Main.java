@@ -95,6 +95,7 @@ public final class Main extends JavaPlugin {
         getCommand("oof").setExecutor(new OofCommand());
         getCommand("setmegastreak").setExecutor(new SetMegastreakCommand());
         getCommand("setministreak").setExecutor(new SetMinistreakCommand());
+        getCommand("perkreset").setExecutor(new PerkResetCommand());
 
         storage.runDataSaver();
         scoreboardListener.startAnimation();

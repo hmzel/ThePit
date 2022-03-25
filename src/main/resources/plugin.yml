@@ -59,3 +59,6 @@ commands:
   setministreak:
     description: sets your or the specified player's ministreak at the given slot
     usage: /<command> (name/empty) (integer slot) (ministreak)
+  perkreset:
+    description: resets perk items and stuff
+    usage: /<command>
