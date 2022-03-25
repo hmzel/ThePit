@@ -5,11 +5,14 @@ import me.zelha.thepit.mainpkg.data.KillRecap;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.NPCs;
 import me.zelha.thepit.zelenums.Worlds;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.network.protocol.game.PacketPlayOutCollect;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
@@ -415,9 +418,34 @@ public class ZelLogic {//zel
 
         if (willDie) {
             damagee.damage(131313);
+            return;
         } else {
             damagee.setHealth(damagee.getHealth() - damage);
         }
+
+        if (damager == null) return;
+
+        String bar = "§7" + damagee.getName() + " ";
+
+        StringBuilder barBuilder = new StringBuilder();
+        StringBuilder barBuilder2 = new StringBuilder();
+
+        int health = (int) Math.ceil(damagee.getHealth() / 2);
+        int healthAfterDmg = (int) Math.floor(Math.max(((damagee.getHealth() / 2D) - (damage / 2D)), 0));
+        int maxHealth = (int) damagee.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 2;
+
+        for (int i = 0; i < maxHealth; i++) barBuilder.append("❤");
+
+        if (damagee.getAbsorptionAmount() > 0) {
+            for (int i = 0; i < (int) Math.ceil(damagee.getAbsorptionAmount() / 2); i++) barBuilder2.append("❤");
+
+            barBuilder2.replace(0, 0, "§e");
+        }
+
+        barBuilder.replace(health, health, "§0");
+        barBuilder.replace(healthAfterDmg, healthAfterDmg, "§c");
+        barBuilder.replace(0, 0, "§4");
+        damager.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(bar + barBuilder + barBuilder2));
     }
 
     /**
