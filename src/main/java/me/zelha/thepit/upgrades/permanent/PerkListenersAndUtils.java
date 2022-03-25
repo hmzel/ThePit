@@ -1,12 +1,11 @@
 package me.zelha.thepit.upgrades.permanent;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.RunMethods;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.upgrades.permanent.perks.BonkPerk;
 import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -18,9 +17,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -28,7 +25,10 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import static me.zelha.thepit.zelenums.Perks.*;
 import static org.bukkit.Material.*;
@@ -42,11 +42,7 @@ public class PerkListenersAndUtils implements Listener {
     }
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-    private final RunMethods runTracker2 = Main.getInstance().generateRunMethods();
-
-    private final Map<UUID, Set<UUID>> bonkMap = new HashMap<>();
     private final Map<UUID, UUID> spammerShotIdentifier = new HashMap<>();
-
     private final ItemStack bountyHunterItem = zl.itemBuilder(GOLDEN_LEGGINGS, 1, null, Collections.singletonList("§7Perk item"), true);
     private final ItemStack gapple = new ItemStack(GOLDEN_APPLE, 1);
 
@@ -67,8 +63,6 @@ public class PerkListenersAndUtils implements Listener {
         pData.setStreak(0);
 
         for (ItemStack item : inv.all(ARROW).values()) arrowCount += item.getAmount();
-
-        if (bonkMap.get(p.getUniqueId()) != null) bonkMap.get(p.getUniqueId()).clear();
 
         removeAll(inv, gapple);
 
@@ -159,26 +153,6 @@ public class PerkListenersAndUtils implements Listener {
         }
     }
 
-    private boolean containsLessThan(int amount, ItemStack item, Inventory inv) {
-        int count = 0;
-
-        if (item.getType() == PLAYER_HEAD) {
-            for (ItemStack item2 : inv.all(PLAYER_HEAD).values()) {
-                if (zl.itemCheck(item2) && item2.getItemMeta().getDisplayName().equals(item.getItemMeta().getDisplayName())) {
-                    count += item2.getAmount();
-                }
-            }
-            return count < amount;
-        }
-
-        for (ItemStack invItem : inv.all(item.getType()).values()) {
-            if (zl.itemCheck(invItem) && invItem.isSimilar(item)) {
-                count += invItem.getAmount();
-            }
-        }
-        return count < amount;
-    }
-
     private void determineKillRewards(Player killer, Player dead) {
         PlayerInventory inv = killer.getInventory();
         boolean doHealingItem = true;
@@ -231,46 +205,22 @@ public class PerkListenersAndUtils implements Listener {
 
         if (damaged.equals(damager)) return;
 
-        UUID damagedUUID = damaged.getUniqueId();
-        UUID damagerUUID = damager.getUniqueId();
         double finalDMG = e.getFinalDamage();
         double damagedHP = damaged.getHealth();
 
-        if (pData(damaged).hasPerkEquipped(BONK) && !bonkMap.get(damagedUUID).contains(damagerUUID)) {
-            for (Entity entity : damaged.getNearbyEntities(32, 32, 32)) {
-                if (!zl.playerCheck(entity) || entity.getUniqueId().equals(damagedUUID)) continue;
-
-                ((Player) entity).spawnParticle(Particle.EXPLOSION_LARGE, damaged.getLocation(), 1, 0, 0, 0, 0);
-            }
-
-            bonkMap.get(damagedUUID).add(damagerUUID);
-            damaged.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20, 1, false, false, true));
+        if (((BonkPerk) BONK.getMethods()).canBonk(damaged, damager)) {
+            BONK.getMethods().onAttacked(damager, damaged);
             e.setDamage(0);
             e.setCancelled(true);
-            damaged.setInvulnerable(true);
-
-            new BukkitRunnable() {
-                int runs = 0;
-
-                @Override
-                public void run() {
-                    if (runs == 0) damaged.setInvulnerable(false);
-
-                    if (bonkMap.get(damagedUUID) == null || !bonkMap.get(damagedUUID).contains(damagerUUID)) {
-                        cancel();
-                        return;
-                    }
-
-                    if (runs == 30) {
-                        if (bonkMap.get(damagedUUID) != null) bonkMap.get(damagedUUID).remove(damagerUUID);
-                        cancel();
-                    }
-
-                    runs++;
-                }
-            }.runTaskTimer(Main.getInstance(), 10, 10);
-
             return;
+        }
+
+        for (Perks perk : pData(damaged).getEquippedPerks()) {
+            if (perk.getMethods() != null && perk != BONK) perk.getMethods().onAttacked(damager, damaged);
+        }
+
+        for (Perks perk : pData(damager).getEquippedPerks()) {
+            if (perk.getMethods() != null) perk.getMethods().onAttack(damager, damaged, damageCauseArrow);
         }
 
         if (pData(damager).hasPerkEquipped(VAMPIRE)) {
@@ -318,17 +268,11 @@ public class PerkListenersAndUtils implements Listener {
         }
     }
 
-    @EventHandler
-    public void onJoin(PlayerJoinEvent e) {
-        bonkMap.put(e.getPlayer().getUniqueId(), new HashSet<>());
-    }
-
     @EventHandler(priority = EventPriority.LOWEST)
     public void onLeave(PlayerQuitEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
 
         spammerShotIdentifier.remove(uuid);
-        bonkMap.remove(uuid);
         perkReset(e.getPlayer());
     }
 }

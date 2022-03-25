@@ -71,7 +71,8 @@ public enum Perks {
     )
             , 2000
             , 35
-            , 0, null),
+            , 0
+            , new BonkPerk()),
     TRICKLE_DOWN("Trickle-down", GOLD_INGOT, Arrays.asList(
             "§7Gold ingots reward §6+10g",
             "§7and heal §c2❤§7."

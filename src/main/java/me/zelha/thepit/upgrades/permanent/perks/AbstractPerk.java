@@ -24,7 +24,10 @@ public abstract class AbstractPerk {
         return 0;
     }
 
-    public void onHit(Player damager, Player damaged) {
+    public void onAttacked(Player damager, Player damaged) {
+    }
+
+    public void onAttack(Player damager, Player damaged, boolean causedByArrow) {
     }
 
     public void onKill(Player killer, Player dead) {
