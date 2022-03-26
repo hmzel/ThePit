@@ -31,8 +31,8 @@ public class StrengthChainingPerk extends AbstractPerk{
     }
 
     @Override
-    public double getDamageModifier(Player player) {
-        return (strengthChaining.get(player.getUniqueId()) != null) ? 0.08 * strengthChaining.get(player.getUniqueId()) : 0;
+    public double getDamageModifier(Player damager, Player damaged) {
+        return (strengthChaining.get(damager.getUniqueId()) != null) ? 0.08 * strengthChaining.get(damager.getUniqueId()) : 0;
     }
 
     @Override

@@ -20,7 +20,7 @@ public abstract class AbstractPerk {
         this.perk = perk;
     }
 
-    public double getDamageModifier(Player player) {
+    public double getDamageModifier(Player damager, Player damaged) {
         return 0;
     }
 

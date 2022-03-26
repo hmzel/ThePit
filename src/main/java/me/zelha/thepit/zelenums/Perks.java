@@ -113,14 +113,15 @@ public enum Perks {
     )
             , 2000
             , 50
-            , 0, null),
+            , 0
+            , new BountyHunterPerk()),
     STREAKER("Streaker", WHEAT, Collections.singletonList(
             "§7Triple streak kill §bXP §7bonus."
     )
             , 8000
             , 50
             , 0, null),
-    ASSISTANT_STREAKER("Assistant Streaker", SPRUCE_FENCE, Arrays.asList(//it adds to your killstreak by decimals
+    ASSISTANT_STREAKER("Assistant Streaker", SPRUCE_FENCE, Arrays.asList(
             "§7Assists count their",
             "§aparticipation §7towards",
             "§7killstreaks.",

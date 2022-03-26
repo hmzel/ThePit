@@ -5,7 +5,6 @@ import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.perks.BonkPerk;
 import me.zelha.thepit.zelenums.Perks;
-import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -24,8 +23,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.Collections;
-
 import static me.zelha.thepit.zelenums.Perks.*;
 import static org.bukkit.Material.*;
 
@@ -38,7 +35,6 @@ public class PerkListenersAndUtils implements Listener {
     }
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-    private final ItemStack bountyHunterItem = zl.itemBuilder(GOLDEN_LEGGINGS, 1, null, Collections.singletonList("§7Perk item"), true);
     private final ItemStack gapple = new ItemStack(GOLDEN_APPLE, 1);
 
     /**
@@ -67,17 +63,6 @@ public class PerkListenersAndUtils implements Listener {
 
         if (!inv.contains(zl.itemBuilder(BOW, 1))) inv.addItem(zl.itemBuilder(BOW, 1));
 
-        if (pData.hasPerkEquipped(BOUNTY_HUNTER)) {
-            if (!inv.contains(bountyHunterItem)) {
-                if (!zl.itemCheck(inv.getLeggings()) || inv.getLeggings().getType() == CHAINMAIL_LEGGINGS || inv.getLeggings().getType() == IRON_LEGGINGS) {
-                    inv.setLeggings(bountyHunterItem);
-                }
-            }
-        } else {
-            removeAll(inv, bountyHunterItem);
-            if (zl.itemCheck(inv.getLeggings()) && inv.getLeggings().equals(bountyHunterItem)) inv.setLeggings(zl.itemBuilder(CHAINMAIL_LEGGINGS, 1));
-        }
-
         if (arrowCount < 32 && arrowCount != 0) {
             inv.addItem(new ItemStack(ARROW, 32 - arrowCount));
         } else if (arrowCount == 0 && !zl.itemCheck(inv.getItem(8))) {
@@ -91,13 +76,9 @@ public class PerkListenersAndUtils implements Listener {
         double boost = 0;
 
         for (Perks perk : pData(damager).getEquippedPerks()) {
-            if (perk.getMethods() != null) boost += perk.getMethods().getDamageModifier(damager);
+            if (perk.getMethods() != null) boost += perk.getMethods().getDamageModifier(damager, damaged);
         }
 
-        if (pData(damager).hasPerkEquipped(Perks.BOUNTY_HUNTER) && zl.itemCheck(damager.getInventory().getLeggings())
-           && damager.getInventory().getLeggings().getType() == Material.GOLDEN_LEGGINGS) {
-            boost += Math.floor((double) pData(damaged).getBounty() / 100) / 100;
-        }
         return boost;
     }
 
