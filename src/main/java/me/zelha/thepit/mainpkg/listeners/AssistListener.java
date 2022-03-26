@@ -182,8 +182,6 @@ public class AssistListener implements Listener {
 
         if (zl.playerCheck(e.getEntity())) damaged = (Player) e.getEntity(); else return;
         if (e.getCause() == EntityDamageEvent.DamageCause.FALL) return;
-        if (e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE) return;
-        if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) return;
         if (damaged.getHealth() - e.getFinalDamage() > 0) return;
 
         deathMethod(damaged);
