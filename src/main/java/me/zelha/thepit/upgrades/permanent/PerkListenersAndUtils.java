@@ -72,7 +72,7 @@ public class PerkListenersAndUtils implements Listener {
         }
     }
 
-    public double getPerkDamageBoost(Player damager, Player damaged) {
+    public double getPerkDamageModifiers(Player damager, Player damaged) {
         double boost = 0;
 
         for (Perks perk : pData(damager).getEquippedPerks()) {
@@ -83,30 +83,10 @@ public class PerkListenersAndUtils implements Listener {
     }
 
     public double getPerkDamageReduction(Player damaged) {
-        double reduction = 0;
-
-        reduction += getGladiatorDamageReduction(damaged);
-
-        return reduction;
+        return 0;
     }
 
-    public double getGladiatorDamageReduction(Player player) {
-        double reduction = 0;
-        int nearbyPlayers = 0;
 
-        if (pData(player).hasPerkEquipped(GLADIATOR)) {
-            for (Entity entity : player.getNearbyEntities(12, 12, 12)) {
-                if (zl.playerCheck(entity)) nearbyPlayers++;
-            }
-
-            if (nearbyPlayers >= 3 && nearbyPlayers <= 10) {
-                reduction += nearbyPlayers * 0.03;
-            } else if (nearbyPlayers > 10) {
-                reduction += 0.3;
-            }
-        }
-        return reduction;
-    }
 
     private void removeAll(PlayerInventory inventory, ItemStack item) {
         for (ItemStack items : inventory.all(item.getType()).values()) {

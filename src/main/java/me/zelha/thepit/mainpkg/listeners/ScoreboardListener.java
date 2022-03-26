@@ -27,6 +27,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import static me.zelha.thepit.zelenums.Perks.GLADIATOR;
 import static me.zelha.thepit.zelenums.Perks.STRENGTH_CHAINING;
 
 public class ScoreboardListener implements Listener {
@@ -182,8 +183,8 @@ public class ScoreboardListener implements Listener {
             if (strengthChainingClass.getStrengthChainingLevel(p) != null) {
                 boardScores.add("§fStrength: §c" + zl.toRoman(strengthChainingClass.getStrengthChainingLevel(p))
                         + " §7(" + strengthChainingClass.getStrengthChainingTimer(p) + ")");
-            } else if (perkUtils.getGladiatorDamageReduction(p) != (double) 0 && !zl.spawnCheck(p.getLocation())) {
-                boardScores.add("§fGladiator: §9-" + (int) (perkUtils.getGladiatorDamageReduction(p) * 100) + "%");
+            } else if (GLADIATOR.getMethods().getDamageModifier(null, p) != (double) 0 && !zl.spawnCheck(p.getLocation())) {
+                boardScores.add("§fGladiator: §9" + (int) (GLADIATOR.getMethods().getDamageModifier(null, p) * 100) + "%");
             }
 
             boardScores.add("§4");

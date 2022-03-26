@@ -59,7 +59,7 @@ public class AttackListener implements Listener {
             damageBoost += 0.2;
         }
         if (damagerData.getPassiveTier(Passives.MELEE_DAMAGE) > 0) damageBoost += (damagerData.getPassiveTier(Passives.MELEE_DAMAGE) / 100.0);
-        damageBoost += perkUtils.getPerkDamageBoost(damager, damaged);
+        damageBoost += perkUtils.getPerkDamageModifiers(damager, damaged);
 
         return originalDamage * (damageBoost - defenseBoost);
     }

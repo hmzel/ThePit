@@ -120,7 +120,7 @@ public enum Perks {
     )
             , 8000
             , 50
-            , 0, null),
+            , 0, null), //handled in KillListener
     ASSISTANT_STREAKER("Assistant Streaker", SPRUCE_FENCE, Arrays.asList(
             "§7Assists count their",
             "§aparticipation §7towards",
@@ -160,7 +160,8 @@ public enum Perks {
     )
             , 4000
             , 60
-            , 0, null),
+            , 0
+            , new GladiatorPerk()),
     VAMPIRE("Vampire", FERMENTED_SPIDER_EYE, Arrays.asList(
             "§7Don't earn golden apples.",
             "§7Heal §c0.5❤ §7on hit.",
