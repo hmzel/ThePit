@@ -4,6 +4,7 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.Perks;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -27,7 +28,7 @@ public abstract class AbstractPerk {
     public void onAttacked(Player damager, Player damaged) {
     }
 
-    public void onAttack(Player damager, Player damaged, boolean causedByArrow) {
+    public void onAttack(Player damager, Player damaged, Entity damagerEntity) {
     }
 
     public void onKill(Player killer, Player dead) {

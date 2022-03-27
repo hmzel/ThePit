@@ -5,7 +5,6 @@ import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.perks.BonkPerk;
 import me.zelha.thepit.zelenums.Perks;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -20,8 +19,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import static me.zelha.thepit.zelenums.Perks.*;
 import static org.bukkit.Material.*;
@@ -94,50 +91,19 @@ public class PerkListenersAndUtils implements Listener {
         }
     }
 
-    private void determineKillRewards(Player killer, Player dead) {
-        PlayerInventory inv = killer.getInventory();
-        boolean doHealingItem = true;
-
-        if (pData(killer).hasPerkEquipped(VAMPIRE)) {
-            killer.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 160, 0, false, false));
-            doHealingItem = false;
-        }
-
-        if (pData(killer).hasPerkEquipped(RAMBO)) {
-
-            doHealingItem = false;
-        }
-
-        if (doHealingItem && pData(killer).hasPerkEquipped(OLYMPUS)) {
-
-            doHealingItem = false;
-        }
-
-        int count = 0;
-
-        for (ItemStack invItem : inv.all(GOLDEN_APPLE).values()) {
-            if (zl.itemCheck(invItem) && invItem.isSimilar(new ItemStack(GOLDEN_APPLE))) {
-                count += invItem.getAmount();
-            }
-        }
-
-        if (count < 2) inv.addItem(gapple);
-    }
-
     @EventHandler(priority = EventPriority.HIGH)
     public void onAttackAndKill(EntityDamageByEntityEvent e) {
         Entity damagedEntity = e.getEntity();
         Entity damagerEntity = e.getDamager();
         Player damaged;
         Player damager;
-        boolean damageCauseArrow = false;
 
+        if (e.getCause() == DamageCause.FALL) return;
         if (zl.spawnCheck(damagedEntity.getLocation()) || zl.spawnCheck(damagerEntity.getLocation())) return;
         if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
 
         if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player) {
             damager = (Player) ((Arrow) damagerEntity).getShooter();
-            damageCauseArrow = true;
         } else if (zl.playerCheck(damagerEntity)) {
             damager = (Player) damagerEntity;
         } else {
@@ -145,9 +111,6 @@ public class PerkListenersAndUtils implements Listener {
         }
 
         if (damaged.equals(damager)) return;
-
-        double finalDMG = e.getFinalDamage();
-        double damagedHP = damaged.getHealth();
 
         if (((BonkPerk) BONK.getMethods()).canBonk(damaged, damager)) {
             BONK.getMethods().onAttacked(damager, damaged);
@@ -161,23 +124,28 @@ public class PerkListenersAndUtils implements Listener {
         }
 
         for (Perks perk : pData(damager).getEquippedPerks()) {
-            if (perk.getMethods() != null) perk.getMethods().onAttack(damager, damaged, damageCauseArrow);
+            if (perk.getMethods() != null) perk.getMethods().onAttack(damager, damaged, damagerEntity);
         }
 
-        if (pData(damager).hasPerkEquipped(VAMPIRE)) {
-            if (damageCauseArrow && ((Arrow) damagerEntity).isCritical()) {
-                damager.setHealth(Math.min(damager.getHealth() + 3, damager.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
-            } else {
-                damager.setHealth(Math.min(damager.getHealth() + 1, damager.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
-            }
-        }
-
-        if (e.getCause() != DamageCause.FALL && (damagedHP - finalDMG) <= 0) {
+        if (damaged.getHealth() - e.getFinalDamage() <= 0) {
             for (Perks perk : pData(damager).getEquippedPerks()) {
                 if (perk.getMethods() != null) perk.getMethods().onKill(damager, damaged);
             }
 
-            determineKillRewards(damager, damaged);
+            if (pData(damager).hasPerkEquipped(GOLDEN_HEADS)) return;
+            if (pData(damager).hasPerkEquipped(VAMPIRE)) return;
+            if (pData(damager).hasPerkEquipped(RAMBO)) return;
+            if (pData(damager).hasPerkEquipped(OLYMPUS)) return;
+
+            int count = 0;
+
+            for (ItemStack invItem : damager.getInventory().all(GOLDEN_APPLE).values()) {
+                if (zl.itemCheck(invItem) && invItem.isSimilar(new ItemStack(GOLDEN_APPLE))) {
+                    count += invItem.getAmount();
+                }
+            }
+
+            if (count < 2) damager.getInventory().addItem(gapple);
         }
     }
 

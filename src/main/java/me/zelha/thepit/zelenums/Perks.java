@@ -170,7 +170,8 @@ public enum Perks {
     )
             , 4000
             , 60
-            , 0, null),
+            , 0
+            , new VampirePerk()),
     RECON("Recon", ENDER_EYE, Arrays.asList(
             "§7Each fourth arrow shot at",
             "§7someone rewards §b+40 XP §7and",

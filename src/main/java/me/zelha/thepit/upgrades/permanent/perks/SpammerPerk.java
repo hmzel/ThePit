@@ -2,6 +2,8 @@ package me.zelha.thepit.upgrades.permanent.perks;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.zelenums.Perks;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -41,8 +43,8 @@ public class SpammerPerk extends AbstractPerk implements Listener {
     }
 
     @Override
-    public void onAttack(Player damager, Player damaged, boolean causedByArrow) {
-        if (!causedByArrow) return;
+    public void onAttack(Player damager, Player damaged, Entity damagerEntity) {
+        if (!(damagerEntity instanceof Arrow)) return;
 
         damager.getInventory().addItem(new ItemStack(ARROW, 3));
         spammerShotIdentifier.put(damager.getUniqueId(), damaged.getUniqueId());
