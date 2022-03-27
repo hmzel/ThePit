@@ -27,12 +27,7 @@ import static org.bukkit.Material.*;
 //all resource-related stuff is handled in KillListener
 public class PerkListenersAndUtils implements Listener {
 
-    private PlayerData pData(Player player) {
-        return Main.getInstance().getPlayerData(player);
-    }
-
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-    private final ItemStack gapple = new ItemStack(GOLDEN_APPLE, 1);
 
     /**
      * supposed to be called every time items should be reset <p>
@@ -52,7 +47,7 @@ public class PerkListenersAndUtils implements Listener {
 
         for (ItemStack item : inv.all(ARROW).values()) arrowCount += item.getAmount();
 
-        removeAll(inv, gapple);
+        inv.remove(GOLDEN_APPLE);
 
         if (!inv.contains(IRON_SWORD) && !inv.contains(DIAMOND_SWORD) && !pData.hasPerkEquipped(BARBARIAN)) {
             inv.addItem(zl.itemBuilder(IRON_SWORD, 1));
@@ -69,28 +64,6 @@ public class PerkListenersAndUtils implements Listener {
         }
     }
 
-    public double getPerkDamageModifiers(Player damager, Player damaged) {
-        double boost = 0;
-
-        for (Perks perk : pData(damager).getEquippedPerks()) {
-            if (perk.getMethods() != null) boost += perk.getMethods().getDamageModifier(damager, damaged);
-        }
-
-        return boost;
-    }
-
-    public double getPerkDamageReduction(Player damaged) {
-        return 0;
-    }
-
-
-
-    private void removeAll(PlayerInventory inventory, ItemStack item) {
-        for (ItemStack items : inventory.all(item.getType()).values()) {
-            if (items.isSimilar(item)) inventory.remove(items);
-        }
-    }
-
     @EventHandler(priority = EventPriority.HIGH)
     public void onAttackAndKill(EntityDamageByEntityEvent e) {
         Entity damagedEntity = e.getEntity();
@@ -100,7 +73,8 @@ public class PerkListenersAndUtils implements Listener {
 
         if (e.getCause() == DamageCause.FALL) return;
         if (zl.spawnCheck(damagedEntity.getLocation()) || zl.spawnCheck(damagerEntity.getLocation())) return;
-        if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
+        if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity;
+        else return;
 
         if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player) {
             damager = (Player) ((Arrow) damagerEntity).getShooter();
@@ -119,47 +93,46 @@ public class PerkListenersAndUtils implements Listener {
             return;
         }
 
-        for (Perks perk : pData(damaged).getEquippedPerks()) {
+        PlayerData damagerData = Main.getInstance().getPlayerData(damager);
+
+        for (Perks perk : Main.getInstance().getPlayerData(damaged).getEquippedPerks()) {
             if (perk.getMethods() != null && perk != BONK) perk.getMethods().onAttacked(damager, damaged);
         }
 
-        for (Perks perk : pData(damager).getEquippedPerks()) {
+        for (Perks perk : damagerData.getEquippedPerks()) {
             if (perk.getMethods() != null) perk.getMethods().onAttack(damager, damaged, damagerEntity);
         }
 
-        if (damaged.getHealth() - e.getFinalDamage() <= 0) {
-            for (Perks perk : pData(damager).getEquippedPerks()) {
-                if (perk.getMethods() != null) perk.getMethods().onKill(damager, damaged);
-            }
+        if (damaged.getHealth() - e.getFinalDamage() > 0) return;
 
-            if (pData(damager).hasPerkEquipped(GOLDEN_HEADS)) return;
-            if (pData(damager).hasPerkEquipped(VAMPIRE)) return;
-            if (pData(damager).hasPerkEquipped(RAMBO)) return;
-            if (pData(damager).hasPerkEquipped(OLYMPUS)) return;
-
-            int count = 0;
-
-            for (ItemStack invItem : damager.getInventory().all(GOLDEN_APPLE).values()) {
-                if (zl.itemCheck(invItem) && invItem.isSimilar(new ItemStack(GOLDEN_APPLE))) {
-                    count += invItem.getAmount();
-                }
-            }
-
-            if (count < 2) damager.getInventory().addItem(gapple);
+        for (Perks perk : damagerData.getEquippedPerks()) {
+            if (perk.getMethods() != null) perk.getMethods().onKill(damager, damaged);
         }
+
+        if (damagerData.hasPerkEquipped(GOLDEN_HEADS)) return;
+        if (damagerData.hasPerkEquipped(VAMPIRE)) return;
+        if (damagerData.hasPerkEquipped(RAMBO)) return;
+        if (damagerData.hasPerkEquipped(OLYMPUS)) return;
+
+        int count = 0;
+
+        for (ItemStack invItem : damager.getInventory().all(GOLDEN_APPLE).values()) {
+            if (zl.itemCheck(invItem) && invItem.isSimilar(new ItemStack(GOLDEN_APPLE))) {
+                count += invItem.getAmount();
+            }
+        }
+
+        if (count < 2) damager.getInventory().addItem(new ItemStack(GOLDEN_APPLE, 1));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDeath(EntityDamageEvent e) {
-        Entity entity = e.getEntity();
+        if (!zl.playerCheck(e.getEntity())) return;
+        if (zl.spawnCheck(e.getEntity().getLocation())) return;
 
-        if (!zl.playerCheck(entity)) return;
-        if (zl.spawnCheck(entity.getLocation())) return;
-
-        double finalDMG = e.getFinalDamage();
-        double currentHP = ((Player) e.getEntity()).getHealth();
-
-        if (e.getCause() != DamageCause.FALL && (currentHP - finalDMG <= 0)) perkReset((Player) e.getEntity());
+        if (e.getCause() != DamageCause.FALL && (((Player) e.getEntity()).getHealth() - e.getFinalDamage() <= 0)) {
+            perkReset((Player) e.getEntity());
+        }
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
