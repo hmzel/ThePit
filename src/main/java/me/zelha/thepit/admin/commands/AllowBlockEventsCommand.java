@@ -10,16 +10,16 @@ public class AllowBlockEventsCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player) {
-            Player p = (Player) sender;
+        if (!(sender instanceof Player)) return true;
 
-            if (!Main.getInstance().blockPriviledges.contains(p)) {
-                Main.getInstance().blockPriviledges.add(p);
-                p.sendMessage("§5ok, since you asked so nicely");
-            } else {
-                Main.getInstance().blockPriviledges.remove(p);
-                p.sendMessage("§5you no longer have block priviledges");
-            }
+        Player p = (Player) sender;
+
+        if (!Main.getInstance().blockPriviledges.contains(p)) {
+            Main.getInstance().blockPriviledges.add(p);
+            p.sendMessage("§5ok, since you asked so nicely");
+        } else {
+            Main.getInstance().blockPriviledges.remove(p);
+            p.sendMessage("§5you no longer have block priviledges");
         }
         return true;
     }

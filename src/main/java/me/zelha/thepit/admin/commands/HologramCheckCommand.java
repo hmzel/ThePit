@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class HologramCheckCommand implements CommandExecutor {
+public class HologramCheckCommand implements CommandExecutor {//yeah im still not going to touch this
 
     public void spawnHologramIfAbsent(String name, Location location, Player player) {
         List<Entity> entityList = location.getWorld().getEntities();

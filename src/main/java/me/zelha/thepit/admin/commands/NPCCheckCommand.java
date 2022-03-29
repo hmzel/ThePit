@@ -14,7 +14,7 @@ import org.bukkit.entity.Villager;
 
 import java.util.List;
 
-public class NPCCheckCommand implements CommandExecutor {
+public class NPCCheckCommand implements CommandExecutor {//nope.
 
     private boolean npcAbsent(Location location) {
         List<Entity> entityList = location.getWorld().getEntities();
