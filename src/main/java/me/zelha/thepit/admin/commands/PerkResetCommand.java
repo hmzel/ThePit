@@ -12,7 +12,7 @@ public class PerkResetCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) return true;
 
-        Main.getInstance().getPerkUtils().perkReset((Player) sender);
+        Main.getInstance().getZelLogic().pitReset((Player) sender);
         return true;
     }
 }

@@ -394,7 +394,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             return;
         }  else if (pData.getPerkUnlockStatus(perk)) {
             pData.setPerkAtSlot(slotHandler.get(p.getUniqueId()), perk);
-            perkUtils.perkReset(p);
+            zl.pitReset(p);
             p.sendMessage("§a§lPURCHASE! §6" + perk.getName());
             p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
             openMainGUI(p);
@@ -769,7 +769,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             return;
         } else if (clicked.getType() == DIAMOND_BLOCK) {
             Main.getInstance().getPlayerData(p).setPerkAtSlot(slotHandler.get(p.getUniqueId()), UNSET);
-            perkUtils.perkReset(p);
+            zl.pitReset(p);
             slotHandler.remove(p.getUniqueId());
             p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
             openMainGUI(p);
@@ -839,7 +839,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             return;
         } else if (pData.getMegastreakUnlockStatus(mega)) {
             pData.setMegastreak(mega);
-            perkUtils.perkReset(p);
+            zl.pitReset(p);
             p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
             openMainStreakGUI(p);
             return;
@@ -888,7 +888,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
         if (clicked.getType() == GOLD_BLOCK) {
             pData.setMinistreakAtSlot(slotHandler.get(uuid), Ministreaks.UNSET);
-            perkUtils.perkReset(p);
+            zl.pitReset(p);
             p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
             openMainStreakGUI(p);
             return;
@@ -920,14 +920,14 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             return;
         } else if (pData.getMinistreakUnlockStatus(mini) && sameFrequency == null) {
             pData.setMinistreakAtSlot(slotHandler.get(uuid), mini);
-            perkUtils.perkReset(p);
+            zl.pitReset(p);
             p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
             openMainStreakGUI(p);
             return;
         } else if (pData.getMinistreakUnlockStatus(mini)) {
             pData.setMinistreakAtSlot(slotHandler.get(uuid), mini);
             pData.setMinistreakAtSlot(badSlot, Ministreaks.UNSET);
-            perkUtils.perkReset(p);
+            zl.pitReset(p);
             p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
             p.sendMessage("§c§lZOOP! §7Disabled §c" + sameFrequency.getName() + "§7! Can't have two killstreaks with the same kills frequency!");
             openMainStreakGUI(p);
@@ -979,19 +979,19 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             } else if (perksHandler.get(uuid) != null) {
                 pData.setPerkUnlockStatus(perksHandler.get(uuid), true);
                 pData.setPerkAtSlot(slotHandler.get(uuid), perksHandler.get(uuid));
-                perkUtils.perkReset(p);
+                zl.pitReset(p);
                 p.sendMessage("§a§lPURCHASE! §6" + perksHandler.get(uuid).getName());
                 openMainGUI(p);
             } else if (megastreaksHandler.get(uuid) != null) {
                 pData.setMegastreakUnlockStatus(megastreaksHandler.get(uuid), true);
                 pData.setMegastreak(megastreaksHandler.get(uuid));
-                perkUtils.perkReset(p);
+                zl.pitReset(p);
                 p.sendMessage("§a§lPURCHASE! §6" + megastreaksHandler.get(uuid).getName());
                 openMainStreakGUI(p);
             } else if (ministreaksHandler.get(uuid) != null) {
                 pData.setMinistreakUnlockStatus(ministreaksHandler.get(uuid), true);
                 pData.setMinistreakAtSlot(slotHandler.get(uuid), ministreaksHandler.get(uuid));
-                perkUtils.perkReset(p);
+                zl.pitReset(p);
                 p.sendMessage("§a§lPURCHASE! §6" + ministreaksHandler.get(uuid).getName());
                 openMainStreakGUI(p);
             }

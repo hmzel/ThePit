@@ -45,8 +45,7 @@ public class DeathListener implements Listener {
         }
 
         p.setFireTicks(0);
-        Main.getInstance().getPlayerData(p).setStreak(0);
-        Main.getInstance().getPerkUtils().perkReset(p);
+        Main.getInstance().getZelLogic().pitReset(p);
 
         new BukkitRunnable() {
             @Override

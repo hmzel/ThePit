@@ -17,52 +17,16 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import static me.zelha.thepit.zelenums.Perks.*;
-import static org.bukkit.Material.*;
+import static org.bukkit.Material.GOLDEN_APPLE;
 
 //trickle down is handled in GoldIngotListener because thats just way easier
 //all resource-related stuff is handled in KillListener
 public class PerkListenersAndUtils implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-
-    /**
-     * supposed to be called every time items should be reset <p>
-     * ex: dying, selecting a perk, etc <p>
-     * must be called *after* the perk slot is set, in conditions where that applies
-     */
-    public void perkReset(Player p) {
-        PlayerInventory inv = p.getInventory();
-        PlayerData pData = Main.getInstance().getPlayerData(p);
-        int arrowCount = 0;
-
-        for (Perks perk : Perks.values()) {
-            if (perk.getMethods() != null) perk.getMethods().onReset(p, pData);
-        }
-
-        pData.setStreak(0);
-
-        for (ItemStack item : inv.all(ARROW).values()) arrowCount += item.getAmount();
-
-        inv.remove(GOLDEN_APPLE);
-
-        if (!inv.contains(IRON_SWORD) && !inv.contains(DIAMOND_SWORD) && !pData.hasPerkEquipped(BARBARIAN)) {
-            inv.addItem(zl.itemBuilder(IRON_SWORD, 1));
-        }
-
-        if (!inv.contains(zl.itemBuilder(BOW, 1))) inv.addItem(zl.itemBuilder(BOW, 1));
-
-        if (arrowCount < 32 && arrowCount != 0) {
-            inv.addItem(new ItemStack(ARROW, 32 - arrowCount));
-        } else if (arrowCount == 0 && !zl.itemCheck(inv.getItem(8))) {
-            inv.setItem(8, new ItemStack(ARROW, 32));
-        } else if (arrowCount == 0) {
-            inv.addItem(new ItemStack(ARROW, 32));
-        }
-    }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onAttackAndKill(EntityDamageByEntityEvent e) {
@@ -131,7 +95,7 @@ public class PerkListenersAndUtils implements Listener {
         if (zl.spawnCheck(e.getEntity().getLocation())) return;
 
         if (e.getCause() != DamageCause.FALL && (((Player) e.getEntity()).getHealth() - e.getFinalDamage() <= 0)) {
-            perkReset((Player) e.getEntity());
+            zl.pitReset((Player) e.getEntity());
         }
     }
 
@@ -147,7 +111,7 @@ public class PerkListenersAndUtils implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onLeave(PlayerQuitEvent e) {
-        perkReset(e.getPlayer());
+        zl.pitReset(e.getPlayer());
     }
 }
 

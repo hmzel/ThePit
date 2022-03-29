@@ -4,6 +4,7 @@ import me.zelha.thepit.mainpkg.data.DamageLog;
 import me.zelha.thepit.mainpkg.data.KillRecap;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.NPCs;
+import me.zelha.thepit.zelenums.Perks;
 import me.zelha.thepit.zelenums.Worlds;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -36,6 +37,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.TreeMap;
 
+import static me.zelha.thepit.zelenums.Perks.BARBARIAN;
 import static me.zelha.thepit.zelenums.Worlds.CASTLE;
 import static me.zelha.thepit.zelenums.Worlds.GENESIS;
 import static org.bukkit.Material.*;
@@ -391,6 +393,41 @@ public class ZelLogic {//zel
 
 
     //pit logic
+    /**
+     * supposed to be called every time items should be reset <p>
+     * ex: dying, selecting a perk, etc <p>
+     * must be called *after* a perk slot is set, in conditions where that applies
+     */
+    public void pitReset(Player p) {
+        PlayerInventory inv = p.getInventory();
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+        int arrowCount = 0;
+
+        for (Perks perk : Perks.values()) {
+            if (perk.getMethods() != null) perk.getMethods().onReset(p, pData);
+        }
+
+        pData.setStreak(0);
+
+        for (ItemStack item : inv.all(ARROW).values()) arrowCount += item.getAmount();
+
+        inv.remove(GOLDEN_APPLE);
+
+        if (!inv.contains(IRON_SWORD) && !inv.contains(DIAMOND_SWORD) && !pData.hasPerkEquipped(BARBARIAN)) {
+            inv.addItem(itemBuilder(IRON_SWORD, 1));
+        }
+
+        if (!inv.contains(itemBuilder(BOW, 1))) inv.addItem(itemBuilder(BOW, 1));
+
+        if (arrowCount < 32 && arrowCount != 0) {
+            inv.addItem(new ItemStack(ARROW, 32 - arrowCount));
+        } else if (arrowCount == 0 && !itemCheck(inv.getItem(8))) {
+            inv.setItem(8, new ItemStack(ARROW, 32));
+        } else if (arrowCount == 0) {
+            inv.addItem(new ItemStack(ARROW, 32));
+        }
+    }
+
     /**
      * pretty self explanatory, deals true damage to the given damagee and handles it accordingly <p>
      * (death methods, damage logs, etc)
