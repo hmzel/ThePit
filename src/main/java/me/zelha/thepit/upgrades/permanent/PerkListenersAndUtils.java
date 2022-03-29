@@ -13,6 +13,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -93,6 +94,15 @@ public class PerkListenersAndUtils implements Listener {
 
         if (meta != null && meta.getLore() != null && meta.getLore().contains("§7Perk item")) {
             e.getPlayer().sendMessage("§c§lNOPE! §7You cannot drop this item!");
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    public void onPickup(EntityPickupItemEvent e) {
+        ItemMeta meta = e.getItem().getItemStack().getItemMeta();
+
+        if (meta != null && meta.getLore() != null && meta.getLore().contains("§7Perk item")) {
             e.setCancelled(true);
         }
     }
