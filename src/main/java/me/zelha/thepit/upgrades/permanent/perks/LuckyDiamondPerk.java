@@ -16,7 +16,7 @@ import static me.zelha.thepit.zelenums.Perks.LUCKY_DIAMOND;
 import static org.bukkit.Material.AIR;
 import static org.bukkit.inventory.EquipmentSlot.*;
 
-public class LuckyDiamondPerk extends AbstractPerk {
+public class LuckyDiamondPerk extends Perk {
 
     public LuckyDiamondPerk() {
         super(LUCKY_DIAMOND);

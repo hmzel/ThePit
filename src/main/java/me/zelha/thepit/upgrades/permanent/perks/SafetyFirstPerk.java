@@ -12,7 +12,7 @@ import static me.zelha.thepit.zelenums.Perks.SAFETY_FIRST;
 import static org.bukkit.Material.CHAINMAIL_HELMET;
 import static org.bukkit.Material.LEATHER_HELMET;
 
-public class SafetyFirstPerk extends AbstractPerk {
+public class SafetyFirstPerk extends Perk {
 
     private final ItemStack safetyFirstItem = zl.itemBuilder(CHAINMAIL_HELMET, 1, null, Collections.singletonList("§7Perk item"));
 

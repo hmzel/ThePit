@@ -13,7 +13,7 @@ import java.util.Collections;
 import static me.zelha.thepit.zelenums.Perks.BOUNTY_HUNTER;
 import static org.bukkit.Material.*;
 
-public class BountyHunterPerk extends AbstractPerk {
+public class BountyHunterPerk extends Perk {
 
     private final ItemStack bountyHunterItem = zl.itemBuilder(GOLDEN_LEGGINGS, 1, null, Collections.singletonList("§7Perk item"), true);
 

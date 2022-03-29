@@ -14,7 +14,7 @@ import static me.zelha.thepit.zelenums.Perks.MINEMAN;
 import static org.bukkit.Material.COBBLESTONE;
 import static org.bukkit.Material.DIAMOND_PICKAXE;
 
-public class MinemanPerk extends AbstractPerk {
+public class MinemanPerk extends Perk {
 
     private final ItemStack minemanPickaxeItem = zl.itemBuilder(DIAMOND_PICKAXE, 1, null, Collections.singletonList("§7Perk item"),
             new Enchantment[]{Enchantment.DIG_SPEED}, new Integer[]{4}, true, true);

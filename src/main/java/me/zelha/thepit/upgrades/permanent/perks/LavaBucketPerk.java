@@ -26,7 +26,7 @@ import java.util.UUID;
 
 import static org.bukkit.Material.*;
 
-public class LavaBucketPerk extends AbstractPerk implements Listener {
+public class LavaBucketPerk extends Perk implements Listener {
 
     private final RunMethods runTracker = Main.getInstance().generateRunMethods();
     private final Map<UUID, Integer> lavaExistTimer = new HashMap<>();

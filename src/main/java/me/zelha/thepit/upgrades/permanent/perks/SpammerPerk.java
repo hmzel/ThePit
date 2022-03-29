@@ -18,7 +18,7 @@ import java.util.UUID;
 import static me.zelha.thepit.zelenums.Perks.SPAMMER;
 import static org.bukkit.Material.ARROW;
 
-public class SpammerPerk extends AbstractPerk implements Listener {
+public class SpammerPerk extends Perk implements Listener {
 
     private final Map<UUID, UUID> spammerShotIdentifier = new HashMap<>();
 

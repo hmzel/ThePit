@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class VampirePerk extends AbstractPerk {
+public class VampirePerk extends Perk {
 
     public VampirePerk() {
         super(Perks.VAMPIRE);

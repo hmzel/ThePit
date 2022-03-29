@@ -12,12 +12,12 @@ import org.bukkit.inventory.PlayerInventory;
 
 import static org.bukkit.Material.PLAYER_HEAD;
 
-public abstract class AbstractPerk {
+public class Perk {
 
     protected final ZelLogic zl = Main.getInstance().getZelLogic();
     private final Perks perk;
 
-    public AbstractPerk(Perks perk) {
+    public Perk(Perks perk) {
         this.perk = perk;
     }
 

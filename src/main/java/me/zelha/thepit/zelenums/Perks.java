@@ -273,16 +273,16 @@ public enum Perks {
     private final int cost;
     private final int level;
     private final int prestige;
-    private final AbstractPerk abstractPerk;
+    private final Perk perk;
 
-    Perks(String name, Material material, List<String> lore, int cost, int level, int prestige, AbstractPerk abstractPerk) {
+    Perks(String name, Material material, List<String> lore, int cost, int level, int prestige, Perk perk) {
         this.name = name;
         this.material = material;
         this.lore = lore;
         this.cost = cost;
         this.level = level;
         this.prestige = prestige;
-        this.abstractPerk = abstractPerk;
+        this.perk = perk;
     }
 
     public String getName() {
@@ -309,8 +309,8 @@ public enum Perks {
         return prestige;
     }
 
-    public AbstractPerk getMethods() {
-        return abstractPerk;
+    public Perk getMethods() {
+        return perk;
     }
 
     public static Perks findByEnumName(String name) {

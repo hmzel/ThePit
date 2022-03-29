@@ -18,7 +18,7 @@ import java.util.*;
 
 import static me.zelha.thepit.zelenums.Perks.BONK;
 
-public class BonkPerk extends AbstractPerk implements Listener {
+public class BonkPerk extends Perk implements Listener {
 
     private final Map<UUID, Set<UUID>> bonkMap = new HashMap<>();
 

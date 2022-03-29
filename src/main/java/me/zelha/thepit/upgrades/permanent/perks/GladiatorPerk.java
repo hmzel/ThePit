@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 
 import static me.zelha.thepit.zelenums.Perks.GLADIATOR;
 
-public class GladiatorPerk extends AbstractPerk {
+public class GladiatorPerk extends Perk {
 
     public GladiatorPerk() {
         super(Perks.GLADIATOR);

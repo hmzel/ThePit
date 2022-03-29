@@ -12,7 +12,7 @@ import java.util.UUID;
 
 import static me.zelha.thepit.zelenums.Perks.STRENGTH_CHAINING;
 
-public class StrengthChainingPerk extends AbstractPerk{
+public class StrengthChainingPerk extends Perk {
 
     private final Map<UUID, Integer> strengthChaining = new HashMap<>();
     private final Map<UUID, Integer> strengthChainingTimer = new HashMap<>();

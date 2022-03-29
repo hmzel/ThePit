@@ -27,7 +27,7 @@ import static me.zelha.thepit.zelenums.Perks.*;
 import static org.bukkit.Material.AIR;
 import static org.bukkit.Material.PLAYER_HEAD;
 
-public class GoldenHeadsPerk extends AbstractPerk implements Listener {
+public class GoldenHeadsPerk extends Perk implements Listener {
 
     private final Set<UUID> gheadCooldown = new HashSet<>();
     private final ItemStack goldenHeadItem = zl.headItemBuilder("PhantomTupac", 1, "§6Golden Head", Arrays.asList(

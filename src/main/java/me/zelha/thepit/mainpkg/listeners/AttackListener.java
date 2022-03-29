@@ -6,6 +6,7 @@ import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.PerkListenersAndUtils;
 import me.zelha.thepit.zelenums.Passives;
+import me.zelha.thepit.zelenums.Perks;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
@@ -39,29 +40,29 @@ public class AttackListener implements Listener {
     }
 
     private double calculateMeleeDamage(Player damaged, Player damager, double originalDamage, @Nullable Arrow arrow) {
-        double damageBoost = 1;
-        double defenseBoost = 0;
+        double boost = 1;
         PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
         PlayerData damagerData = Main.getInstance().getPlayerData(damager);
 
-        if (damagedData.getPrestige() == 0) defenseBoost += 0.15;
-        if (damagedData.getPassiveTier(Passives.DAMAGE_REDUCTION) > 0) defenseBoost += (damagedData.getPassiveTier(Passives.DAMAGE_REDUCTION) / 100.0);
-        defenseBoost += perkUtils.getPerkDamageReduction(damaged);
+        for (Perks perk : damagerData.getEquippedPerks()) {
+            if (perk.getMethods() != null) boost += perk.getMethods().getDamageModifier(damager, damaged);
+        }
+
+        if (damagedData.getPrestige() == 0) boost -= 0.15;
+        if (damagedData.getPassiveTier(Passives.DAMAGE_REDUCTION) > 0) boost -= (damagedData.getPassiveTier(Passives.DAMAGE_REDUCTION) / 100.0);
+        if (damagerData.getPrestige() == 0) boost += 0.15;
+
+        if (zl.itemCheck(damager.getInventory().getItemInMainHand()) && damager.getInventory().getItemInMainHand().getType() == Material.DIAMOND_SWORD && damagedData.getBounty() != 0) {
+            boost += 0.2;
+        }
 
         if (arrow != null) {
-            if (damagerData.getPassiveTier(Passives.BOW_DAMAGE) > 0) damageBoost += ((damagerData.getPassiveTier(Passives.BOW_DAMAGE) * 3) / 100.0);
-
-            return originalDamage * (damageBoost - defenseBoost);
+            if (damagerData.getPassiveTier(Passives.BOW_DAMAGE) > 0) boost += ((damagerData.getPassiveTier(Passives.BOW_DAMAGE) * 3) / 100.0);
+        } else {
+            if (damagerData.getPassiveTier(Passives.MELEE_DAMAGE) > 0) boost += (damagerData.getPassiveTier(Passives.MELEE_DAMAGE) / 100.0);
         }
 
-        if (damagerData.getPrestige() == 0) damageBoost += 0.15;
-        if (zl.itemCheck(damager.getInventory().getItemInMainHand()) && damager.getInventory().getItemInMainHand().getType() == Material.DIAMOND_SWORD && damagedData.getBounty() != 0) {
-            damageBoost += 0.2;
-        }
-        if (damagerData.getPassiveTier(Passives.MELEE_DAMAGE) > 0) damageBoost += (damagerData.getPassiveTier(Passives.MELEE_DAMAGE) / 100.0);
-        damageBoost += perkUtils.getPerkDamageModifiers(damager, damaged);
-
-        return originalDamage * (damageBoost - defenseBoost);
+        return originalDamage * boost;
     }
 
     @EventHandler

@@ -9,7 +9,7 @@ import org.bukkit.inventory.PlayerInventory;
 
 import java.util.Collections;
 
-public class FishingRodPerk extends AbstractPerk {
+public class FishingRodPerk extends Perk {
 
     private final ItemStack fishingRodItem = zl.itemBuilder(Material.FISHING_ROD, 1, null, Collections.singletonList("§7Perk item"), true);
 
