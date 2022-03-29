@@ -23,6 +23,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.BoundingBox;
@@ -31,7 +32,7 @@ import java.util.Arrays;
 
 import static org.bukkit.Material.*;
 
-public class AntiVanillaListener implements Listener {
+public class GeneralListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final DeathListener deathUtils = Main.getInstance().getDeathUtils();
@@ -189,6 +190,21 @@ public class AntiVanillaListener implements Listener {
                 return;
             }
         }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerDeath(EntityDamageEvent e) {
+        if (!zl.playerCheck(e.getEntity())) return;
+        if (zl.spawnCheck(e.getEntity().getLocation())) return;
+
+        if (e.getCause() != EntityDamageEvent.DamageCause.FALL && (((Player) e.getEntity()).getHealth() - e.getFinalDamage() <= 0)) {
+            zl.pitReset((Player) e.getEntity());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onLeave(PlayerQuitEvent e) {
+        zl.pitReset(e.getPlayer());
     }
 }
 

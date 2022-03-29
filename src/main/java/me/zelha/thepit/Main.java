@@ -65,7 +65,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(killListener, this);
         getServer().getPluginManager().registerEvents(deathListener, this);
         getServer().getPluginManager().registerEvents(perkUtils, this);
-        getServer().getPluginManager().registerEvents(new AntiVanillaListener(), this);
+        getServer().getPluginManager().registerEvents(new GeneralListener(), this);
         getServer().getPluginManager().registerEvents(attackListener, this);
         getServer().getPluginManager().registerEvents(new SpawnListener(), this);
         getServer().getPluginManager().registerEvents(new ItemsVillagerListener(), this);

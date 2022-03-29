@@ -12,10 +12,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -89,16 +87,6 @@ public class PerkListenersAndUtils implements Listener {
         if (count < 2) damager.getInventory().addItem(new ItemStack(GOLDEN_APPLE, 1));
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerDeath(EntityDamageEvent e) {
-        if (!zl.playerCheck(e.getEntity())) return;
-        if (zl.spawnCheck(e.getEntity().getLocation())) return;
-
-        if (e.getCause() != DamageCause.FALL && (((Player) e.getEntity()).getHealth() - e.getFinalDamage() <= 0)) {
-            zl.pitReset((Player) e.getEntity());
-        }
-    }
-
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onDrop(PlayerDropItemEvent e) {
         ItemMeta meta = e.getItemDrop().getItemStack().getItemMeta();
@@ -107,11 +95,6 @@ public class PerkListenersAndUtils implements Listener {
             e.getPlayer().sendMessage("§c§lNOPE! §7You cannot drop this item!");
             e.setCancelled(true);
         }
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onLeave(PlayerQuitEvent e) {
-        zl.pitReset(e.getPlayer());
     }
 }
 
