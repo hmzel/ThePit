@@ -23,7 +23,6 @@ public class SetBountyCommand implements CommandExecutor {
 
         if (args.length == 1) {
             if (!(sender instanceof Player)) {
-                sender.sendMessage("you cant run this command like this from console are you *trying* to cause errors? lol");
                 return true;
             } else if (!NumberUtils.isNumber(args[0])) {
                 sender.sendMessage("§5First argument must be a player or an integer");
@@ -44,11 +43,12 @@ public class SetBountyCommand implements CommandExecutor {
             }
 
             Player p2 = Bukkit.getPlayer(args[0]);
+
             Main.getInstance().getPlayerData(p2).setBounty(NumberUtils.toInt(args[1], 0));
             sender.sendMessage("§aSuccessfully set §7" + p2.getName() + "§a's §6§lBounty §ato §6§l" + NumberUtils.toInt(args[1], 0) + "g");
 
             if (args.length >= 3 && BooleanUtils.toBoolean(args[2])) {
-                Bukkit.broadcastMessage("§6§lBOUNTY! §7of §6§l " + Integer.parseInt(args[1]) + "g §7placed on " + zl.getColorBracketAndLevel(p2.getUniqueId().toString())
+                Bukkit.broadcastMessage("§6§lBOUNTY! §7of §6§l" + Integer.parseInt(args[1]) + "g §7placed on " + zl.getColorBracketAndLevel(p2.getUniqueId().toString())
                         + " §7" + p2.getName() + " by " + sender.getName());
             }
         }

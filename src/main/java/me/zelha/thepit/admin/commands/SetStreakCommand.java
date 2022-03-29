@@ -22,7 +22,6 @@ public class SetStreakCommand implements CommandExecutor {
 
         if (args.length == 1) {
             if (!(sender instanceof Player)) {
-                sender.sendMessage("you cant run this command like this from console are you *trying* to cause errors? lol");
                 return true;
             } else if (!NumberUtils.isNumber(args[0])) {
                 sender.sendMessage("§5First argument must be a player, integer, or decimal");
@@ -43,6 +42,7 @@ public class SetStreakCommand implements CommandExecutor {
             }
 
             Player p2 = Bukkit.getPlayer(args[0]);
+
             Main.getInstance().getPlayerData(p2).setStreak(NumberUtils.toDouble(args[1], 0));
             sender.sendMessage("§aSuccessfully set §7" + p2.getName() + "§a's Streak to " + NumberUtils.toDouble(args[1], 0));
         }

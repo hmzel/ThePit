@@ -22,13 +22,12 @@ public class SetPrestigeCommand implements CommandExecutor {
 
         if (args.length == 1) {
             if (!(sender instanceof Player)) {
-                sender.sendMessage("you cant run this command like this from console are you *trying* to cause errors? lol");
                 return true;
             } else if (!NumberUtils.isNumber(args[0])) {
                 sender.sendMessage("§5First argument must be a player or an integer");
                 return true;
             } else if (NumberUtils.toInt(args[0], 0) < 0) {
-                sender.sendMessage("§5are you §otrying §r§5to cause errors?? \ndont set your prestige to a negative");
+                sender.sendMessage("§5kindly dont do that, negative numbers scare me");
                 return true;
             } else if (NumberUtils.toInt(args[0], 0) > 131313) {
                 sender.sendMessage("§5Prestige cannot be above 131313! \ngoing above that is a bit much, dontcha think?");
@@ -47,11 +46,12 @@ public class SetPrestigeCommand implements CommandExecutor {
                 sender.sendMessage("§5Second argument must be an integer");
                 return true;
             } else if (NumberUtils.toInt(args[1], 0) < 0) {
-                sender.sendMessage("§5are you §otrying §r§5to cause errors?? \ndont set your prestige to a negative");
+                sender.sendMessage("§5kindly dont do that, negative numbers scare me");
                 return true;
             }
 
             Player p2 = Bukkit.getPlayer(args[0]);
+
             Main.getInstance().getPlayerData(p2).setPrestige(NumberUtils.toInt(args[1], 0));
             sender.sendMessage("§aSuccessfully set §7" + p2.getName() + "§a's §ePrestige §ato §e" + zl.toRoman(NumberUtils.toInt(args[1], 0)));
         }

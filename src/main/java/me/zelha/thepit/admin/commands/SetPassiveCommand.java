@@ -23,7 +23,6 @@ public class SetPassiveCommand implements CommandExecutor {
 
         if (args.length == 2) {
             if (!(sender instanceof Player)) {
-                sender.sendMessage("you cant run this command like this from console are you *trying* to cause errors? lol");
                 return true;
             } else if (Passives.findByEnumName(args[0]) == null || !NumberUtils.isNumber(args[1])) {
                 sender.sendMessage("§5Invalid command usage. \ntry /setpassive xp_boost 1");
@@ -44,6 +43,7 @@ public class SetPassiveCommand implements CommandExecutor {
             }
 
             Player p2 = Bukkit.getPlayer(args[0]);
+
             Main.getInstance().getPlayerData(p2).setPassiveTier(Passives.findByEnumName(args[1]), NumberUtils.toInt(args[2], 0));
             sender.sendMessage("§aSuccessfully set §7" + p2.getName() + "§a's passive " + Passives.findByEnumName(args[1]).getColorfulName() + " §ato " + NumberUtils.toInt(args[2], 0));
         }

@@ -21,10 +21,7 @@ public class SetStatusCommand implements CommandExecutor {
         }
 
         if (args.length == 1) {
-            if (!(sender instanceof Player)) {
-                sender.sendMessage("you cant run this command like this from console are you *trying* to cause errors? lol");
-                return true;
-            }
+            if (!(sender instanceof Player)) return true;
 
             Main.getInstance().getPlayerData((Player) sender).setStatus(args[0]);
             sender.sendMessage("§aSuccessfully set your Status to §r" + ChatColor.translateAlternateColorCodes('&', args[0]));
@@ -37,10 +34,10 @@ public class SetStatusCommand implements CommandExecutor {
             }
 
             Player p2 = Bukkit.getPlayer(args[0]);
+
             Main.getInstance().getPlayerData(p2).setStatus(args[1]);
             sender.sendMessage("§aSuccessfully set §7" + p2.getName() + "§a's Status to §r" + ChatColor.translateAlternateColorCodes('&', args[1]));
         }
-
         return true;
     }
 }
