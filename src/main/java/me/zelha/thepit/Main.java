@@ -33,7 +33,6 @@ public final class Main extends JavaPlugin {
     private MongoCollection<Document> playerDataCollection;
     private MongoClient mongoClient;
     private ZelLogic zelLogic;
-    private PerkListenersAndUtils perkUtils;
     private StorageListener storage;
     private DeathListener deathListener;
     private KillListener killListener;
@@ -51,20 +50,19 @@ public final class Main extends JavaPlugin {
         instance = this;
         zelLogic = new ZelLogic();
         storage = new StorageListener();
-        perkUtils = new PerkListenersAndUtils();
         attackListener = new AttackListener();
         assistListener = new AssistListener();
         killListener = new KillListener();
         deathListener = new DeathListener();
         KillRecap recap = new KillRecap();
-        ScoreboardListener scoreboardListener = new ScoreboardListener()
-;
+        ScoreboardListener scoreboardListener = new ScoreboardListener();
+
         getServer().getPluginManager().registerEvents(storage, this);
         getServer().getPluginManager().registerEvents(new LevelUpListener(), this);
         getServer().getPluginManager().registerEvents(scoreboardListener, this);
         getServer().getPluginManager().registerEvents(killListener, this);
         getServer().getPluginManager().registerEvents(deathListener, this);
-        getServer().getPluginManager().registerEvents(perkUtils, this);
+        getServer().getPluginManager().registerEvents(new PerkListenersAndUtils(), this);
         getServer().getPluginManager().registerEvents(new GeneralListener(), this);
         getServer().getPluginManager().registerEvents(attackListener, this);
         getServer().getPluginManager().registerEvents(new SpawnListener(), this);
@@ -120,9 +118,6 @@ public final class Main extends JavaPlugin {
 
     public ZelLogic getZelLogic() {
         return zelLogic;
-    }
-    public PerkListenersAndUtils getPerkUtils() {
-        return perkUtils;
     }
     public DeathListener getDeathUtils() {
         return deathListener;

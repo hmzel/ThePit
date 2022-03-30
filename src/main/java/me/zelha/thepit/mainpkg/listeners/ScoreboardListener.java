@@ -4,7 +4,6 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.RunMethods;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
-import me.zelha.thepit.upgrades.permanent.PerkListenersAndUtils;
 import me.zelha.thepit.upgrades.permanent.perks.StrengthChainingPerk;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardScore;
 import net.minecraft.server.ScoreboardServer;
@@ -35,7 +34,6 @@ public class ScoreboardListener implements Listener {
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final RunMethods runTracker = Main.getInstance().generateRunMethods();
     private final RunMethods runTracker2 = Main.getInstance().generateRunMethods();
-    private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
     private final Map<UUID, Team> teamMap = new HashMap<>();
 
     public void startAnimation() {

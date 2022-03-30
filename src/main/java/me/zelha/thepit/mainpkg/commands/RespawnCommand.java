@@ -43,6 +43,7 @@ public class RespawnCommand implements CommandExecutor {
                 cooldown.remove(p.getUniqueId());
             }
         }.runTaskLater(Main.getInstance(), 200);
+
         return true;
     }
 }

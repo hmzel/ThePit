@@ -4,7 +4,6 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.RunMethods;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
-import me.zelha.thepit.upgrades.permanent.PerkListenersAndUtils;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import net.md_5.bungee.api.ChatMessageType;
@@ -28,7 +27,6 @@ import java.util.UUID;
 public class AttackListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-    private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
     private final RunMethods runTracker = Main.getInstance().generateRunMethods();
 
     public void startCombatTimer(Player damaged, Player damager) {

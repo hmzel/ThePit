@@ -4,7 +4,6 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.RunMethods;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
-import me.zelha.thepit.upgrades.permanent.PerkListenersAndUtils;
 import me.zelha.thepit.upgrades.permanent.perks.SpammerPerk;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
@@ -42,7 +41,6 @@ import static org.bukkit.Material.GOLDEN_LEGGINGS;
 public class KillListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-    private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
     private final AssistListener assistUtils = Main.getInstance().getAssistUtils();
     private final RunMethods runTracker = Main.getInstance().generateRunMethods();
     private final RunMethods runTracker2 = Main.getInstance().generateRunMethods();

@@ -33,7 +33,6 @@ import static org.bukkit.Material.*;
 public class UpgradesVillagerListener implements Listener {//i hate this class
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-    private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
 
     private final Map<UUID, Double> costHandler = new HashMap<>();//i need to somehow figure out how to not use maps for this later
     private final Map<UUID, Passives> passivesHandler = new HashMap<>();

@@ -54,7 +54,6 @@ public class KillRecap implements CommandExecutor, Listener {
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final KillListener killUtils = Main.getInstance().getKillUtils();
     private final AssistListener assistUtils = Main.getInstance().getAssistUtils();
-    private final PerkListenersAndUtils perkUtils = Main.getInstance().getPerkUtils();
     private final Map<UUID, ItemStack> bookMap = new HashMap<>();
     private static final Map<UUID, List<DamageLog>> damageTrackerMap = new HashMap<>();
 
