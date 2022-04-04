@@ -188,10 +188,10 @@ public class DeathListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerDeath(EntityDamageEvent e) {
-        Player p;
-
-        if (zl.playerCheck(e.getEntity())) p = (Player) e.getEntity(); else return;
+        if (!zl.playerCheck(e.getEntity())) return;
         if (e.getCause() == DamageCause.FALL) return;
+
+        Player p = (Player) e.getEntity();
 
         if (zl.spawnCheck(p.getLocation())) {
             e.setCancelled(true);

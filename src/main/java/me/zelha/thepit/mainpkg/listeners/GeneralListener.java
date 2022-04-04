@@ -49,36 +49,28 @@ public class GeneralListener implements Listener {
     @EventHandler
     public void onItemPickup(EntityPickupItemEvent e) {
         if (!zl.playerCheck(e.getEntity())) return;
-
-        if (e.getItem().getItemStack().getItemMeta() != null && e.getItem().getItemStack().getItemMeta().getLore() != null && e.getItem().getItemStack().getItemMeta().getLore().contains("§7Perk item")) {
-            e.setCancelled(true);
-            return;
-        }
-
         if (e.getItem().getItemStack().getType() != ARROW) return;
 
-        Player p = (Player) e.getEntity();
-        PlayerInventory inv = p.getInventory();
+        PlayerInventory inv = ((Player) e.getEntity()).getInventory();
         ItemStack item = e.getItem().getItemStack();
 
-        zl.fakePickup(p, e.getItem(), 16);
+        zl.fakePickup((Player) e.getEntity(), e.getItem(), 16);
         e.getItem().setPickupDelay(999999);
         e.setCancelled(true);
 
-        //i hate how this looks but i literally cant think of a better way to do it
         for (ItemStack invItem : inv.getStorageContents()) {
-            if (zl.itemCheck(invItem)) {
-                if (invItem.isSimilar(item) && invItem.getAmount() != invItem.getMaxStackSize()) {
-                    if (invItem.getAmount() + item.getAmount() > item.getMaxStackSize()) {
-                        item.setAmount(item.getAmount() - (invItem.getMaxStackSize() - invItem.getAmount()));
-                        invItem.setAmount(invItem.getMaxStackSize());
-                        inv.setItem(zl.firstEmptySlot(inv), item);
-                    } else {
-                        invItem.setAmount(invItem.getAmount() + item.getAmount());
-                    }
-                    return;
-                }
+            if (!zl.itemCheck(invItem)) continue;
+            if (!invItem.isSimilar(item) || invItem.getAmount() == invItem.getMaxStackSize()) continue;
+
+            if (invItem.getAmount() + item.getAmount() > item.getMaxStackSize()) {
+                item.setAmount(item.getAmount() - (invItem.getMaxStackSize() - invItem.getAmount()));
+                invItem.setAmount(invItem.getMaxStackSize());
+                inv.setItem(zl.firstEmptySlot(inv), item);
+            } else {
+                invItem.setAmount(invItem.getAmount() + item.getAmount());
             }
+
+            return;
         }
 
         inv.setItem(zl.firstEmptySlot(inv), item);
@@ -86,24 +78,19 @@ public class GeneralListener implements Listener {
 
     @EventHandler
     public void onArrowEntityPickup(PlayerPickupArrowEvent e) {
-        if (!zl.playerCheck(e.getPlayer())) return;
-        //why did mini do this. why am i doing this. why
-
-        Player p = e.getPlayer();
-        PlayerInventory inv = p.getInventory();
+        PlayerInventory inv = e.getPlayer().getInventory();
         ItemStack item = e.getItem().getItemStack();
 
-        zl.fakePickup(p, e.getArrow(), 62);
+        zl.fakePickup(e.getPlayer(), e.getArrow(), 62);
         e.getArrow().setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
         e.setCancelled(true);
 
         for (ItemStack invItem : inv.getStorageContents()) {
-            if (zl.itemCheck(invItem)) {
-                if (invItem.isSimilar(item) && invItem.getAmount() != invItem.getMaxStackSize()) {
-                    invItem.setAmount(invItem.getAmount() + item.getAmount());
-                    return;
-                }
-            }
+            if (!zl.itemCheck(invItem)) continue;
+            if (!invItem.isSimilar(item) || invItem.getAmount() == invItem.getMaxStackSize()) continue;
+
+            invItem.setAmount(invItem.getAmount() + item.getAmount());
+            return;
         }
 
         inv.setItem(zl.firstEmptySlot(inv), item);

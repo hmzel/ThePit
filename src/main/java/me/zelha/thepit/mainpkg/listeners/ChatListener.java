@@ -13,7 +13,7 @@ public class ChatListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
 
-    public String formatBrackets(int prestige, String string) {
+    private String formatBrackets(int prestige, String string) {
         if (prestige < 1) {
             return "§7[" + string + "§7]";
         } else if (prestige < 5) {
@@ -42,7 +42,7 @@ public class ChatListener implements Listener {
         return "§5§l[§5§k|" + string + "§5§k|§5§l]";
     }
 
-    public String getPrestigeColor(int prestige) {
+    private String getPrestigeColor(int prestige) {
         if (prestige < 1) {
             return "§7";
         } else if (prestige < 5) {
