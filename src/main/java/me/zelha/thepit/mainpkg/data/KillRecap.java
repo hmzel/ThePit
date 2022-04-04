@@ -4,7 +4,6 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.listeners.AssistListener;
 import me.zelha.thepit.mainpkg.listeners.KillListener;
-import me.zelha.thepit.upgrades.permanent.PerkListenersAndUtils;
 import me.zelha.thepit.upgrades.permanent.perks.SpammerPerk;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
@@ -59,7 +58,7 @@ public class KillRecap implements CommandExecutor, Listener {
 
     //i dislike using static but i think its fine here since its only one method
     /**
-     * adds a new DamageLog to the given player's recap log <p>
+     * adds a new DamageLog to the given player's kill recap<p>
      * note: must be called before damage is dealt,
      * in case the player is killed by the dealt damage and the death method is called before the log is added
      * @param player player to add the log to
@@ -99,7 +98,7 @@ public class KillRecap implements CommandExecutor, Listener {
         }
 
         if (receiverData.getStreak() >= 4 && receiverData.hasPerkEquipped(STREAKER) && isKiller) {
-            builder.append("§fKiller on streak (Streaker Perk): §b+" + (streakModifier * 3) + "\n");
+            builder.append("§fKiller on streak (Streaker Perk): §b+" + (int) (streakModifier * 3) + "\n");
         } else if (receiverData.getStreak() >= 4 && isKiller) {
             builder.append("§fKiller on streak: §b+" + (int) streakModifier + "\n");
         }
@@ -376,19 +375,8 @@ public class KillRecap implements CommandExecutor, Listener {
             return;
         }
 
-        DamageLog currentLog1 = new DamageLog(e, false);
-        DamageLog currentLog2 = new DamageLog(e, true);
-
-        damageTrackerMap.get(damaged.getUniqueId()).add(currentLog1);
-        damageTrackerMap.get(damager.getUniqueId()).add(currentLog2);
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (damageTrackerMap.get(damaged.getUniqueId()) != null) damageTrackerMap.get(damaged.getUniqueId()).remove(currentLog1);
-                if (damageTrackerMap.get(damaged.getUniqueId()) != null) damageTrackerMap.get(damager.getUniqueId()).remove(currentLog2);
-            }
-        }.runTaskLater(Main.getInstance(), 200);
+        addDamageLog(damaged, new DamageLog(e, false));
+        addDamageLog(damager, new DamageLog(e, true));
     }
 
     @EventHandler(priority = EventPriority.HIGH)

@@ -6,6 +6,7 @@ import me.zelha.thepit.zelenums.Passives;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -24,6 +25,19 @@ public class BlockListener implements Listener {
     public final static List<Block> placedBlocks = new ArrayList<>();
     private final Material[] placeable = {OBSIDIAN, COBBLESTONE, OAK_WOOD};
 
+    private void blockPoof(Block block, Material previousBlock, long time) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                block.setType(previousBlock);
+                placedBlocks.remove(block);
+                cancel();
+            }
+        }.runTaskLater(Main.getInstance(), time);
+
+        placedBlocks.add(block);
+    }
+
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
         if (!placedBlocks.contains(e.getBlock()) && !Main.getInstance().blockPriviledges.contains(e.getPlayer())) e.setCancelled(true);
@@ -34,44 +48,23 @@ public class BlockListener implements Listener {
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent e) {
         Material blockType = e.getBlock().getType();
-        Location blockLocation = e.getBlock().getLocation();
-        PlayerData pData = Main.getInstance().getPlayerData(e.getPlayer());
+        Location loc = e.getBlock().getLocation();
+        Player p = e.getPlayer();
+        PlayerData pData = Main.getInstance().getPlayerData(p);
 
-        if (!Arrays.asList(placeable).contains(blockType) && !Main.getInstance().blockPriviledges.contains(e.getPlayer())) {
+        if (!Arrays.asList(placeable).contains(blockType) && !Main.getInstance().blockPriviledges.contains(p)) {
             e.setCancelled(true);
         }
 
-        if (blockLocation.distance(new Location(blockLocation.getWorld(), 0, blockLocation.getY(), 0)) < 9
-           && !Main.getInstance().blockPriviledges.contains(e.getPlayer())) {
+        if (loc.distance(new Location(loc.getWorld(), 0, loc.getY(), 0)) < 9 && !Main.getInstance().blockPriviledges.contains(p)) {
             e.setCancelled(true);
             return;
         }
 
         if (blockType == OBSIDIAN) {
-            new BlockGoPoof(e.getBlock(), e.getBlockReplacedState().getType()).runTaskLater(Main.getInstance(), (Math.round(2400 * (1 + (pData.getPassiveTier(Passives.BUILD_BATTLER) * 0.6)))));
-            placedBlocks.add(e.getBlock());
+            blockPoof(e.getBlock(), e.getBlockReplacedState().getType(), Math.round(2400 * (1 + (pData.getPassiveTier(Passives.BUILD_BATTLER) * 0.6))));
         } else if (blockType == COBBLESTONE) {
-            new BlockGoPoof(e.getBlock(), e.getBlockReplacedState().getType()).runTaskLater(Main.getInstance(), (Math.round(300 * (1 + (pData.getPassiveTier(Passives.BUILD_BATTLER) * 0.6)))));
-            placedBlocks.add(e.getBlock());
-        }
-    }
-
-
-    private class BlockGoPoof extends BukkitRunnable {
-
-        private final Block block;
-        private final Material previousBlock;
-
-        private BlockGoPoof(Block block, Material previousBlock) {
-            this.block = block;
-            this.previousBlock = previousBlock;
-        }
-
-        @Override
-        public void run() {
-            block.setType(previousBlock);
-            placedBlocks.remove(block);
-            cancel();
+            blockPoof(e.getBlock(), e.getBlockReplacedState().getType(), Math.round(300 * (1 + (pData.getPassiveTier(Passives.BUILD_BATTLER) * 0.6))));
         }
     }
 }

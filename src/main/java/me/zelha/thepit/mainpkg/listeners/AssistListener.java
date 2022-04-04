@@ -116,9 +116,9 @@ public class AssistListener implements Listener {
     }
 
     public void deathMethod(Player player) {
-        Player killer;
+        if (getLastDamager(player) == null) return;
 
-        if (getLastDamager(player) != null) killer = getLastDamager(player); else return;
+        Player killer = getLastDamager(player);
 
         for (UUID uuid : getAssistMap(player).keySet()) {
             Player p = Bukkit.getPlayer(uuid);

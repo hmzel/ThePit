@@ -63,11 +63,11 @@ public class ArmorPickupListener implements Listener {
         if (!zl.playerCheck(e.getEntity())) return;
         if (determineWeight(e.getItem().getItemStack().getType()) == 13) return;
 
-        e.setCancelled(true);
         Player p = (Player) e.getEntity();
         Item item = e.getItem();
-        Material type = item.getItemStack().getType();
-        String name = type.name();
+        String name = item.getItemStack().getType().name();
+
+        e.setCancelled(true);
 
         if (name.contains("HELMET")) {
             itemPlacementHandler(p, EquipmentSlot.HEAD, item);
