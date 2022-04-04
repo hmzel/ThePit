@@ -44,7 +44,7 @@ public class GoldIngotListener implements Listener {
         double ingotGold;
 
         if (pData.getPassiveTier(Passives.GOLD_BOOST) != 0) {
-            ingotGold = (2.5 * (1 + ((double) pData.getPassiveTier(Passives.GOLD_BOOST)) / 10)) * e.getItem().getItemStack().getAmount();
+            ingotGold = (2.5 * (1 + ((double) pData.getPassiveTier(Passives.GOLD_BOOST) / 10))) * e.getItem().getItemStack().getAmount();
         } else {
             ingotGold = 2.5 * e.getItem().getItemStack().getAmount();
         }
@@ -72,37 +72,41 @@ public class GoldIngotListener implements Listener {
 
         @Override
         public void run() {
-            if (!zl.playerCheck(p)) cancel();
+            if (!zl.playerCheck(p)) {
+                cancel();
+                return;
+            }
 
             int randomNum;
 
             do randomNum = rng.nextInt(61); while (randomNum < 10);
 
-            if (!zl.spawnCheck(p.getLocation())) {
-                double decimal = rng.nextInt(100);
-                double x;
-                double z;
-                boolean xNegative = rng.nextBoolean();
-                boolean zNegative = rng.nextBoolean();
+            new IngotRunnable(p).runTaskLater(Main.getInstance(), randomNum * 20);
 
-                do x = rng.nextInt(13) + decimal / 100; while (x < 3);
-                do z = rng.nextInt(13) + decimal / 100; while (z < 3);
-                if (xNegative) x = -x;
-                if (zNegative) z = -z;
+            if (zl.spawnCheck(p.getLocation())) return;
 
-                Location itemSpawnLoc = p.getLocation().add(x, 0, z);
+            double decimal = rng.nextInt(100);
+            double x;
+            double z;
+            boolean xNegative = rng.nextBoolean();
+            boolean zNegative = rng.nextBoolean();
 
-                for (Entity entity : itemSpawnLoc.getWorld().getNearbyEntities(itemSpawnLoc, 10, 10, 10)) {
-                    if (entity instanceof Item && ((Item) entity).getItemStack().getType() == Material.GOLD_INGOT) {
-                        return;
-                    }
-                }
+            do x = rng.nextInt(13) + decimal / 100; while (x < 3);
+            do z = rng.nextInt(13) + decimal / 100; while (z < 3);
+            if (xNegative) x = -x;
+            if (zNegative) z = -z;
 
-                if (!zl.spawnCheck(itemSpawnLoc) && !BoundingBox.of(new Location(p.getWorld(), 0.5, 82.0, 0.5), 15, 255, 15).contains(itemSpawnLoc.getX(), itemSpawnLoc.getY(), itemSpawnLoc.getZ())) {
-                    p.getWorld().dropItemNaturally(itemSpawnLoc, new ItemStack(Material.GOLD_INGOT, 1));
+            Location itemSpawnLoc = p.getLocation().add(x, 0, z);
+
+            for (Entity entity : itemSpawnLoc.getWorld().getNearbyEntities(itemSpawnLoc, 10, 10, 10)) {
+                if (entity instanceof Item && ((Item) entity).getItemStack().getType() == Material.GOLD_INGOT) {
+                    return;
                 }
             }
-            new IngotRunnable(p).runTaskLater(Main.getInstance(), randomNum * 20);
+
+            if (!zl.spawnCheck(itemSpawnLoc) && !BoundingBox.of(new Location(p.getWorld(), 0.5, 82.0, 0.5), 15, 255, 15).contains(itemSpawnLoc.getX(), itemSpawnLoc.getY(), itemSpawnLoc.getZ())) {
+                p.getWorld().dropItemNaturally(itemSpawnLoc, new ItemStack(Material.GOLD_INGOT, 1));
+            }
         }
     }
 }
