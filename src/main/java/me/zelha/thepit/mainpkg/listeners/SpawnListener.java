@@ -22,8 +22,6 @@ public class SpawnListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         new BukkitRunnable() {
-            boolean spamPrevention = true;
-
             @Override
             public void run() {
                 if (!zl.playerCheck(e.getPlayer())) {
@@ -31,11 +29,9 @@ public class SpawnListener implements Listener {
                     return;
                 }
 
-                Player p = e.getPlayer();
-                PlayerData pData = Main.getInstance().getPlayerData(p);
-                spamPrevention = zl.spawnCheck(e.getPlayer().getLocation());
+                PlayerData pData = Main.getInstance().getPlayerData(e.getPlayer());
 
-                if (spamPrevention && pData.getStreak() != 0) {
+                if (zl.spawnCheck(e.getPlayer().getLocation()) && pData.getStreak() != 0) {
                     pData.setStreak(0);
                     e.getPlayer().sendMessage("§c§lRESET! §7streak reset for standing in the spawn area!");
                 }
