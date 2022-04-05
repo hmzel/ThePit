@@ -25,11 +25,7 @@ public class GladiatorPerk extends Perk {
             }
         }
 
-        if (nearbyPlayers >= 3 && nearbyPlayers <= 10) {
-            return -(nearbyPlayers * 0.03);
-        } else if (nearbyPlayers > 10) {
-            return -0.3;
-        }
+        if (nearbyPlayers >= 3) return Math.max(-(nearbyPlayers * 0.03), -0.3);
 
         return 0;
     }

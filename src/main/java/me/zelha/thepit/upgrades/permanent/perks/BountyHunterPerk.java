@@ -26,6 +26,7 @@ public class BountyHunterPerk extends Perk {
         if (zl.itemCheck(damager.getInventory().getLeggings()) && damager.getInventory().getLeggings().getType() == Material.GOLDEN_LEGGINGS) {
             return Math.floor((double) Main.getInstance().getPlayerData(damaged).getBounty() / 100) / 100;
         }
+
         return 0;
     }
 
@@ -42,7 +43,6 @@ public class BountyHunterPerk extends Perk {
 
             return;
         }
-
 
         if (!inv.contains(bountyHunterItem)) {
             if (!zl.itemCheck(inv.getLeggings()) || inv.getLeggings().getType() == CHAINMAIL_LEGGINGS || inv.getLeggings().getType() == IRON_LEGGINGS) {
