@@ -7,7 +7,6 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -30,12 +29,6 @@ public class GoldenPickaxeListener implements Listener {
         return BlockListener.placedBlocks.contains(block);
     }
 
-    private void stylishlyRemoveBlock(Block block) {
-        block.setType(AIR);
-        block.getWorld().spawnParticle(Particle.CLOUD, block.getLocation(), 5, 0.5, 0.5, 0.5, 0);
-        BlockListener.placedBlocks.remove(block);
-    }
-
     @EventHandler
     public void onClick(PlayerInteractEvent e) {
         if (e.getAction() != Action.LEFT_CLICK_BLOCK) return;
@@ -45,8 +38,7 @@ public class GoldenPickaxeListener implements Listener {
         if (!zl.itemCheck(e.getItem())) return;
         if (e.getItem().getType() != GOLDEN_PICKAXE) return;
 
-        Player p = e.getPlayer();
-        UUID uuid = p.getUniqueId();
+        UUID uuid = e.getPlayer().getUniqueId();
         Block clicked = e.getClickedBlock();
 
         hitCount.putIfAbsent(uuid, 0);
@@ -59,13 +51,14 @@ public class GoldenPickaxeListener implements Listener {
             double z = clicked.getZ();
 
             hitCount.put(uuid, 0);
-            stylishlyRemoveBlock(clicked);
 
-            for (int i = 1; i < 5; i++) {
-                Block extra = world.getBlockAt(new Location(world, x, y + i, z));
+            for (int i = 0; i < 5; i++) {
+                Block block = world.getBlockAt(new Location(world, x, y + i, z));
 
-                if (zl.blockCheck(extra) && isPlacedBlock(extra) && extra.getType() == OBSIDIAN) {
-                    stylishlyRemoveBlock(extra);
+                if (zl.blockCheck(block) && isPlacedBlock(block) && block.getType() == OBSIDIAN) {
+                    block.setType(AIR);
+                    block.getWorld().spawnParticle(Particle.CLOUD, block.getLocation(), 5, 0.5, 0.5, 0.5, 0);
+                    BlockListener.placedBlocks.remove(block);
                 }
             }
         }
