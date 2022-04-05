@@ -17,20 +17,20 @@ public class ParticipationRunnable extends BukkitRunnable {
     public void run() {
         LocalDateTime now = LocalDateTime.now();
 
-        if (now.getMinute() % 10 == 0 && noRedos) {
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                PlayerData pData = Main.getInstance().getPlayerData(p);
+        if (now.getMinute() % 10 != 0 && !noRedos) noRedos = true;
+        if (now.getMinute() % 10 != 0 || !noRedos) return;
 
-                p.sendMessage("§a§lFREE XP! §7for participation §b+" + (int) ((10 * expMultiplier(pData)) * (1 + (pData.getPassiveTier(Passives.XP_BOOST) * 0.1))) + "XP");
-                pData.setExp((int) (pData.getExp() - (10 * expMultiplier(pData)) * (1 + (pData.getPassiveTier(Passives.XP_BOOST) * 0.1))));
-            }
-            noRedos = false;
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            PlayerData pData = Main.getInstance().getPlayerData(p);
+
+            p.sendMessage("§a§lFREE XP! §7for participation §b+" + (int) ((10 * expMultiplier(pData)) * (1 + (pData.getPassiveTier(Passives.XP_BOOST) * 0.1))) + "XP");
+            pData.setExp((int) (pData.getExp() - (10 * expMultiplier(pData)) * (1 + (pData.getPassiveTier(Passives.XP_BOOST) * 0.1))));
         }
 
-        if (now.getMinute() % 10 != 0 && !noRedos) noRedos = true;
+        noRedos = false;
     }
 
-    private double expMultiplier(PlayerData pData) {//it feels weird putting this below the @Override but its a rly big method
+    private double expMultiplier(PlayerData pData) {
         switch (pData.getPrestige()) {
             case 0:
                 return 1;
