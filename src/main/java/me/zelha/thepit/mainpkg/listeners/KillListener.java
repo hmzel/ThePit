@@ -46,25 +46,6 @@ public class KillListener implements Listener {
     private final RunMethods runTracker2 = Main.getInstance().generateRunMethods();
     private final RunMethods runTracker3 = Main.getInstance().generateRunMethods();
 
-    private String calculateKillMessage(Player killer) {
-        PlayerData pData = Main.getInstance().getPlayerData(killer);
-
-        switch (pData.getMultiKill()) {
-            case 1:
-                return "§a§lKILL!";
-            case 2:
-                return "§a§lDOUBLE KILL!";
-            case 3:
-                return "§a§lTRIPLE KILL!";
-            case 4:
-                return "§a§lQUADRA KILL!";
-            case 5:
-                return "§a§lPENTA KILL!";
-            default:
-                return "§a§lMULTI KILL! §7(" + pData.getMultiKill() + ")";
-        }
-    }
-
     public int calculateEXP(Player dead, Player killer) {
         double exp = 5;
         double streakModifier = 0;
@@ -104,7 +85,6 @@ public class KillListener implements Listener {
         double gold = 10;
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData killerData = Main.getInstance().getPlayerData(killer);
-        PlayerInventory deadInv = dead.getInventory();
         PlayerInventory killerInv = killer.getInventory();
 
         if (((SpammerPerk) Perks.SPAMMER.getMethods()).hasBeenShotBySpammer(killer, dead)) gold *= 3;
@@ -124,7 +104,6 @@ public class KillListener implements Listener {
     }
 
     public void pitKill(Player damaged, Player damager) {
-        String uuid = damaged.getUniqueId().toString();
         PlayerData damagerData = Main.getInstance().getPlayerData(damager);
         PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
         double calculatedGold = calculateGold(damaged, damager);
@@ -147,8 +126,31 @@ public class KillListener implements Listener {
             damagedData.setBounty(0);
         }
 
-        damager.spigot().sendMessage(new ComponentBuilder(calculateKillMessage(damager) + " §7on " + zl.getColorBracketAndLevel(uuid) + " §7" + damaged.getName()
-                + " §b+" + calculateEXP(damaged, damager) + "§bXP §6+" + zl.getFancyGoldString(calculatedGold) + "§6g")
+        String killMessage;
+
+        switch (damagerData.getMultiKill()) {
+            case 1:
+                killMessage = "§a§lKILL!";
+                break;
+            case 2:
+                killMessage = "§a§lDOUBLE KILL!";
+                break;
+            case 3:
+                killMessage = "§a§lTRIPLE KILL!";
+                break;
+            case 4:
+                killMessage = "§a§lQUADRA KILL!";
+                break;
+            case 5:
+                killMessage = "§a§lPENTA KILL!";
+                break;
+            default:
+                killMessage = "§a§lMULTI KILL! §7(" + damagerData.getMultiKill() + ")";
+                break;
+        }
+
+        damager.spigot().sendMessage(new ComponentBuilder(killMessage + " §7on " + zl.getColorBracketAndLevel(damaged.getUniqueId().toString())
+                + " §7" + damaged.getName() + " §b+" + calculateEXP(damaged, damager) + "§bXP §6+" + zl.getFancyGoldString(calculatedGold) + "§6g")
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§eClick to view kill recap!")))
                 .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/killrecap " + damaged.getUniqueId()))
                 .create());
@@ -193,9 +195,7 @@ public class KillListener implements Listener {
 
         Bukkit.broadcastMessage(e.getFinalDamage() + "");//testing line
 
-        if (damaged.getHealth() - e.getFinalDamage() <= 0) {
-            pitKill(damaged, damager);
-        }
+        if (damaged.getHealth() - e.getFinalDamage() <= 0) pitKill(damaged, damager);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -308,6 +308,7 @@ public class KillListener implements Listener {
                 secondsBetweenKills = 0;
                 ticksBetweenKills = 0;
             }
+
             ticksBetweenKills++;
 
             if (ticksBetweenKills == 20) {
@@ -317,6 +318,9 @@ public class KillListener implements Listener {
 
             if (pData.getBounty() != 0 && !zl.spawnCheck(player.getLocation()) && !hasAnimation) {
                 new BukkitRunnable() {
+
+                    private final Random rng = new Random();
+
                     @Override
                     public void run() {
                         if (!zl.playerCheck(player)) {
@@ -330,12 +334,12 @@ public class KillListener implements Listener {
                         double z;
 
                         do {
-                            x = new Random().nextInt(85) / 100D;
-                            z = new Random().nextInt(85) / 100D;
+                            x = rng.nextInt(85) / 100D;
+                            z = rng.nextInt(85) / 100D;
                         } while (player.getLocation().distance(player.getLocation().add(x, -0.5, z)) < 0.6);
 
-                        if (new Random().nextBoolean()) x = -x;
-                        if (new Random().nextBoolean()) z = -z;
+                        if (rng.nextBoolean()) x = -x;
+                        if (rng.nextBoolean()) z = -z;
 
                         double finalX = x;
                         double finalZ = z;
@@ -382,6 +386,7 @@ public class KillListener implements Listener {
                 hasAnimation = true;
             } else if (pData.getBounty() == 0 || zl.spawnCheck(player.getLocation())) {
                 if (runTracker3.hasID(player.getUniqueId())) runTracker3.stop(player.getUniqueId());
+
                 hasAnimation = false;
             }
         }

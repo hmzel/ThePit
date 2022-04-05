@@ -88,13 +88,11 @@ public class GoldIngotListener implements Listener {
             double decimal = rng.nextInt(100);
             double x;
             double z;
-            boolean xNegative = rng.nextBoolean();
-            boolean zNegative = rng.nextBoolean();
 
             do x = rng.nextInt(13) + decimal / 100; while (x < 3);
             do z = rng.nextInt(13) + decimal / 100; while (z < 3);
-            if (xNegative) x = -x;
-            if (zNegative) z = -z;
+            if (rng.nextBoolean()) x = -x;
+            if (rng.nextBoolean()) z = -z;
 
             Location itemSpawnLoc = p.getLocation().add(x, 0, z);
 
