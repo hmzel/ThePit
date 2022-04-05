@@ -60,19 +60,18 @@ public class ScoreboardListener implements Listener {
                 if (ticks == 160) ticks = 0;
                 if (Bukkit.getServer().getScoreboardManager() == null) return;
 
-                String display = "§e§l  THE HYPIXEL PIT  ";
-                StringBuilder builder = new StringBuilder(display);
+                StringBuilder builder = new StringBuilder("§e§l  THE HYPIXEL PIT  ");
 
-                if (ticks >= 100) display = builder.replace(1, 2, "f").toString();
+                if (ticks >= 100) builder.replace(1, 2, "f");
 
                 if ((ticks >= 145 && ticks <= 150) || (ticks >= 155 && ticks <= 160)) {
-                    display = builder.replace(1, 2, "e").toString();
+                    builder.replace(1, 2, "e");
                 }
 
                 if (ticks >= 100 && ticks <= 124) {
                     if (builder.charAt(5 + anim) == ' ') anim++;
 
-                    if (5 + anim < builder.length() && 6 + anim < builder.length()) {
+                    if (6 + anim < builder.length()) {
                         builder.replace(5 + anim, 5 + anim, "§6§l").replace(10 + anim, 10 + anim, "§e§l");
                     } else if (5 + anim < builder.length()) {
                         builder.replace(5 + anim, 5 + anim, "§6§l");
@@ -80,11 +79,9 @@ public class ScoreboardListener implements Listener {
 
                     if (ticks % 2 == 0) anim++;
                     if (anim == 16) anim = 0;
-
-                    display = builder.toString();
                 }
 
-                setDisplay(display);
+                setDisplay(builder.toString());
                 ticks++;
             }
         }.runTaskTimer(Main.getInstance(), 0, 1);
@@ -114,7 +111,6 @@ public class ScoreboardListener implements Listener {
 
         private final Player p;
         private final StrengthChainingPerk strengthChainingClass = (StrengthChainingPerk) STRENGTH_CHAINING.getMethods();
-        private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("MM/dd/yy");
         private List<String> previousScores;
 
         public SidebarUpdater(Player player) {
@@ -124,7 +120,6 @@ public class ScoreboardListener implements Listener {
 
         private List<String> getBoardScores(Player player) {
             List<String> boardScores = new ArrayList<>();
-            LocalDateTime now = LocalDateTime.now();
             PlayerData pData = Main.getInstance().getPlayerData(player);
             String status;
 
@@ -143,7 +138,7 @@ public class ScoreboardListener implements Listener {
                     break;
             }
 
-            boardScores.add("§7" + dateTimeFormat.format(now) + " §8mega13Z");
+            boardScores.add("§7" + DateTimeFormatter.ofPattern("MM/dd/yy").format(LocalDateTime.now()) + " §8mega13Z");
             boardScores.add("§1");
 
             if (pData.getPrestige() >= 1) boardScores.add("§fPrestige: §e" + zl.toRoman(pData.getPrestige()));
@@ -205,7 +200,7 @@ public class ScoreboardListener implements Listener {
             //i know this sends a lot of unnecessary packets but i genuinely couldnt find a better way to do it that didnt
             //completely break with the slightest touch
 
-            if (!runTracker.hasID(p.getUniqueId())) runTracker.setID(p.getUniqueId(), super.getTaskId());
+            if (!runTracker.hasID(p.getUniqueId())) runTracker.setID(p.getUniqueId(), getTaskId());
 
             List<String> scoreList = getBoardScores(p);
             int scoreIndex = scoreList.size();
@@ -259,7 +254,7 @@ public class ScoreboardListener implements Listener {
                     }
                 }.runTaskTimer(Main.getInstance(), 0, 1);
 
-                p.setPlayerListFooter("§ebunnies deserve pets too");
+                p.setPlayerListFooter("§e\uD83D\uDF10 \n*hands you the alchemical symbol for Mercury (II) Chloride*");
 
                 hasHeaderAndFooter = true;
             }
@@ -278,10 +273,9 @@ public class ScoreboardListener implements Listener {
                 level -= 100;
             }
 
-            for (int i = 0; i < String.valueOf(level).length(); i++) {
-                sort.append(sortHelp[Integer.parseInt(String.valueOf(String.valueOf(level).charAt(i)))]);
+            for (int i = 0; i < (level + "").length(); i++) {
+                sort.append(sortHelp[Integer.parseInt((level + "").charAt(i) + "")]);
             }
-
 
             if (!teamMap.containsKey(uuid)) {
                 if (main.getTeam(sort + p.getName()) != null) {
@@ -291,7 +285,7 @@ public class ScoreboardListener implements Listener {
                 }
 
                 teamMap.put(uuid, team);
-            } else if (teamMap.containsKey(uuid) && !teamMap.get(uuid).getName().equals(sort + p.getName())) {
+            } else if (!teamMap.get(uuid).getName().equals(sort + p.getName())) {
                 teamMap.get(uuid).unregister();
 
                 team = main.registerNewTeam(sort + p.getName());
