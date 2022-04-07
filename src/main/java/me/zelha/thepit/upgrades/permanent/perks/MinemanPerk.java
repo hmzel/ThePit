@@ -1,6 +1,5 @@
 package me.zelha.thepit.upgrades.permanent.perks;
 
-import me.zelha.thepit.Main;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.enchantments.Enchantment;
@@ -27,8 +26,6 @@ public class MinemanPerk extends Perk {
     @Override
     public void onKill(Player killer, Player dead) {
         PlayerInventory inv = killer.getInventory();
-
-        if (!Main.getInstance().getPlayerData(killer).hasPerkEquipped(MINEMAN)) return;
 
         if (containsLessThan(62, minemanCobblestoneItem, inv)) {
             ItemStack item = new ItemStack(minemanCobblestoneItem);

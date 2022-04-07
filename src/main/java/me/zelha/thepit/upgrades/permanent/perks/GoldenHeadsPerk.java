@@ -18,10 +18,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static me.zelha.thepit.zelenums.Perks.*;
 import static org.bukkit.Material.AIR;
@@ -47,7 +44,6 @@ public class GoldenHeadsPerk extends Perk implements Listener {
         PlayerData killerData = Main.getInstance().getPlayerData(killer);
         PlayerInventory inv = killer.getInventory();
 
-        if (!killerData.hasPerkEquipped(GOLDEN_HEADS)) return;
         if (killerData.hasPerkEquipped(VAMPIRE)) return;
         if (killerData.hasPerkEquipped(RAMBO)) return;
         if (killerData.hasPerkEquipped(OLYMPUS)) return;

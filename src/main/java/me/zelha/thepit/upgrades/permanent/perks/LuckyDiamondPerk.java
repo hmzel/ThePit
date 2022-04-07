@@ -45,7 +45,7 @@ public class LuckyDiamondPerk extends Perk {
                 String stringedType = new StringBuilder(diamondType.name().toLowerCase(Locale.ROOT))
                         .replace(7, 8, " ")
                         .replace(0, 1, "D")
-                        .replace(8, 9, String.valueOf(diamondType.name().charAt(8)))
+                        .replace(8, 9, diamondType.name().charAt(8) + "")
                         .toString();
 
                 if (!zl.itemCheck(inv.getItem(slot)) || inv.getItem(slot).getType().name().contains("IRON") || inv.getItem(slot).getType().name().contains("CHAINMAIL")) {

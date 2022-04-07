@@ -37,10 +37,7 @@ public class StrengthChainingPerk extends Perk {
 
     @Override
     public void onKill(Player killer, Player dead) {
-        PlayerData killerData = Main.getInstance().getPlayerData(killer);
         UUID killerUUID = killer.getUniqueId();
-
-        if (!killerData.hasPerkEquipped(STRENGTH_CHAINING)) return;
 
         if (strengthChaining.get(killerUUID) == null) {
             strengthChaining.put(killerUUID, 1);

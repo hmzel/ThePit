@@ -81,6 +81,7 @@ public class LavaBucketPerk extends Perk implements Listener {
                     if (block.getType() != LAVA) {
                         lavaExistTimer.put(p.getUniqueId(), 0);
                         runTracker.stop(p.getUniqueId());
+                        return;
                     }
 
                     lavaExistTimer.putIfAbsent(p.getUniqueId(), 0);
@@ -109,6 +110,8 @@ public class LavaBucketPerk extends Perk implements Listener {
 
         if (e.getBucket() != BUCKET) return;
 
+        e.setCancelled(true);
+
         if (block.getType() == LAVA && runTracker.getID(p.getUniqueId()) != null && placedLava.containsValue(block)) {
             block.setType(previousLavaBlock.get(p.getUniqueId()));
             block.removeMetadata("placer", Main.getInstance());
@@ -117,8 +120,6 @@ public class LavaBucketPerk extends Perk implements Listener {
             runTracker.stop(p.getUniqueId());
             p.getInventory().setItemInMainHand(lavaBucketItem);
         }
-
-        e.setCancelled(true);
     }
 
     @EventHandler
@@ -135,15 +136,14 @@ public class LavaBucketPerk extends Perk implements Listener {
         int x = 0;
         int z = 0;
 
+        mainLoop:
         while (true) {
             for (int y = 0; y < 3; y++) {
                 if (damaged.getLocation().add(x, y, z).getBlock().getType() == LAVA) {
                     block = damaged.getLocation().add(x, y, z).getBlock();
-                    break;
+                    break mainLoop;
                 }
             }
-
-            if (block != null) break;
 
             if (x == 0) {
                 x--;

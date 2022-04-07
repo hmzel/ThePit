@@ -16,13 +16,11 @@ public class VampirePerk extends Perk {
 
     @Override
     public void onAttack(Player damager, Player damaged, Entity damagerEntity) {
-
         if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).isCritical()){
             damager.setHealth(Math.min(damager.getHealth() + 3, damager.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
         } else{
             damager.setHealth(Math.min(damager.getHealth() + 1, damager.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
         }
-
     }
 
     @Override
