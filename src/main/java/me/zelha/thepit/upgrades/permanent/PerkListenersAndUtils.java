@@ -36,8 +36,7 @@ public class PerkListenersAndUtils implements Listener {
 
         if (e.getCause() == DamageCause.FALL) return;
         if (zl.spawnCheck(damagedEntity.getLocation()) || zl.spawnCheck(damagerEntity.getLocation())) return;
-        if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity;
-        else return;
+        if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
 
         if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player) {
             damager = (Player) ((Arrow) damagerEntity).getShooter();

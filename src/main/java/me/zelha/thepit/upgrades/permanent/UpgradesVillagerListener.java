@@ -26,170 +26,18 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
-import static me.zelha.thepit.zelenums.Passives.*;
 import static me.zelha.thepit.zelenums.Perks.*;
 import static org.bukkit.Material.*;
 
 public class UpgradesVillagerListener implements Listener {//i hate this class
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-
     private final Map<UUID, Double> costHandler = new HashMap<>();//i need to somehow figure out how to not use maps for this later
     private final Map<UUID, Passives> passivesHandler = new HashMap<>();
     private final Map<UUID, Megastreaks> megastreaksHandler = new HashMap<>();
     private final Map<UUID, Ministreaks> ministreaksHandler = new HashMap<>();
     private final Map<UUID, Perks> perksHandler = new HashMap<>();
     private final Map<UUID, Integer> slotHandler = new HashMap<>();
-
-    private ItemStack passivesItemBuilder(Player p, Passives passive) {
-        String name;
-        int cost = passive.getCost(p);
-        int level = passive.getLevelRequirement(p);
-        List<String> lore = new ArrayList<>();
-        PlayerData pData = Main.getInstance().getPlayerData(p);
-
-        if (pData.getLevel() < passive.getBaseLevelReq() && pData.getPrestige() == 0) {
-            return zl.itemBuilder(BEDROCK, 1, "§cUnknown Upgrade", Collections.singletonList(
-                    "§7Required level: " + zl.getColorBracketAndLevel(0, passive.getBaseLevelReq())
-            ));
-        }
-
-        if ((pData.getLevel() >= level || pData.getPassiveTier(passive) == 5) || (pData.getPassiveTier(passive) > 0 && pData.getGold() - cost >= 0)) {
-            name = "§a" + passive.getName();
-        } else if (pData.getPassiveTier(passive) == 0 && pData.getGold() - cost >= 0 && pData.getLevel() >= level) {
-            name = "§e" + passive.getName();
-        } else {
-            name = "§c" + passive.getName();
-        }
-
-        switch (passive) {
-            case XP_BOOST:
-                if (pData.getPassiveTier(XP_BOOST) > 0) {
-                    lore.add("§7Current: §b+" + 10 * pData.getPassiveTier(XP_BOOST) + "% XP");
-                    lore.add("§7Tier: §a" + zl.toRoman(pData.getPassiveTier(XP_BOOST)));
-                    lore.add("");
-                }
-                break;
-            case GOLD_BOOST:
-                if (pData.getPassiveTier(GOLD_BOOST) > 0) {
-                    lore.add("§7Current: §6+" + 10 * pData.getPassiveTier(GOLD_BOOST) + "% gold (g)");
-                    lore.add("§7Tier: §a" + zl.toRoman(pData.getPassiveTier(GOLD_BOOST)));
-                    lore.add("");
-                }
-                break;
-            case MELEE_DAMAGE:
-                if (pData.getPassiveTier(MELEE_DAMAGE) > 0) {
-                    lore.add("§7Current: §c+" + pData.getPassiveTier(MELEE_DAMAGE) + "%");
-                    lore.add("§7Tier: §a" + zl.toRoman(pData.getPassiveTier(MELEE_DAMAGE)));
-                    lore.add("");
-                }
-                break;
-            case BOW_DAMAGE:
-                if (pData.getPassiveTier(BOW_DAMAGE) > 0) {
-                    lore.add("§7Current: §c+" + 3 * pData.getPassiveTier(BOW_DAMAGE) + "%");
-                    lore.add("§7Tier: §a" + zl.toRoman(pData.getPassiveTier(BOW_DAMAGE)));
-                    lore.add("");
-                }
-                break;
-            case DAMAGE_REDUCTION:
-                if (pData.getPassiveTier(DAMAGE_REDUCTION) > 0) {
-                    lore.add("§7Current: §9-" + pData.getPassiveTier(DAMAGE_REDUCTION) + "%");
-                    lore.add("§7Tier: §a" + zl.toRoman(pData.getPassiveTier(DAMAGE_REDUCTION)));
-                    lore.add("");
-                }
-                break;
-            case BUILD_BATTLER:
-            if (pData.getPassiveTier(BUILD_BATTLER) > 0) {
-                lore.add("§7Current: §a+" + 60 * pData.getPassiveTier(BUILD_BATTLER) + "%");
-                lore.add("§7Tier: §a" + zl.toRoman(pData.getPassiveTier(BUILD_BATTLER)));
-                lore.add("");
-            }
-                break;
-            case EL_GATO:
-                if (pData.getPassiveTier(EL_GATO) > 0) {
-                    if (pData.getPassiveTier(EL_GATO) == 1) {
-                        lore.add("§7Current: §dFirst kill");
-                    } else {
-                        lore.add("§7Current: §dFirst " + pData.getPassiveTier(EL_GATO) + " kills");
-                    }
-                    lore.add("§7Tier: §a" + zl.toRoman(pData.getPassiveTier(EL_GATO)));
-                    lore.add("");
-                }
-                break;
-        }
-
-        if (passive == EL_GATO) {
-            if (pData.getPassiveTier(passive) < 5) {
-                lore.add("§7Next tier:");
-            } else {
-                lore.add("§7Description:");
-            }
-        } else {
-            lore.add("§7Each tier:");
-        }
-
-        switch (passive) {
-            case XP_BOOST:
-                lore.add("§7Earn §b+10% XP §7from all");
-                lore.add("§7sources.");
-                break;
-            case GOLD_BOOST:
-                lore.add("§7Earn §6+10% gold (g) §7from");
-                lore.add("§7kills and coin pickups.");
-                break;
-            case MELEE_DAMAGE:
-                lore.add("§7Deal §c+1% §7melee damage.");
-                break;
-            case BOW_DAMAGE:
-                lore.add("§7Deal §c+3% §7bow damage.");
-                break;
-            case DAMAGE_REDUCTION:
-                lore.add("§7Receive §9-1% §7damage.");
-                break;
-            case BUILD_BATTLER:
-                lore.add("§7Your blocks stay §a+60%");
-                lore.add("§7longer.");
-                break;
-            case EL_GATO:
-                if (pData.getPassiveTier(EL_GATO) == 0) {
-                    lore.add("§dFirst kill §7each life rewards");
-                    lore.add("§6+5g §b+5 XP§7.");
-                } else if (pData.getPassiveTier(EL_GATO) < 5) {
-                    lore.add("§dFirst " + (1 + pData.getPassiveTier(EL_GATO)) + " kills §7each life");
-                    lore.add("§7reward §6+5g §b+5 XP§7.");
-                } else {
-                    lore.add("§dFirst " + pData.getPassiveTier(EL_GATO) + " kills §7each life");
-                    lore.add("§7reward §6+5g §b+5 XP§7.");
-                }
-                break;
-        }
-
-        lore.add("\n");
-
-
-        if (pData.getPassiveTier(passive) < 5) {
-            if (pData.getLevel() >= level) {
-                if (pData.getPassiveTier(passive) > 0) {
-                    lore.add("§7Upgrade cost: §6" + zl.getFancyGoldString(cost) + "g");
-                } else {
-                    lore.add("§7Cost: §6" + zl.getFancyGoldString(cost) + "g");
-                }
-
-                if ((pData.getGold() - cost) >= 0) {
-                    lore.add("§eClick to purchase!");
-                } else {
-                    lore.add("§cNot enough gold!");
-                }
-            } else {
-                lore.add("§7Required level: " + zl.getColorBracketAndLevel(0, level));
-                lore.add("§cLevel too low to upgrade!");
-            }
-        } else {
-            lore.add("§aMax tier unlocked!");
-        }
-
-        return zl.itemBuilder(passive.getMaterial(), 1, name, lore);
-    }
 
     private void passivePurchaseHandler(Player p, Passives passive) {
         PlayerData pData = Main.getInstance().getPlayerData(p);
@@ -313,7 +161,26 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         }
 
         for (Passives passive : Passives.values()) {
-            mainGUI.setItem(passiveIndex, passivesItemBuilder(p, passive));
+            String name;
+            int cost = passive.getCost(p);
+            int level = passive.getLevelRequirement(p);
+
+            if (pData.getLevel() < passive.getBaseLevelReq() && pData.getPrestige() == 0) {
+                mainGUI.setItem(passiveIndex, zl.itemBuilder(BEDROCK, 1, "§cUnknown Upgrade", Collections.singletonList(
+                        "§7Required level: " + zl.getColorBracketAndLevel(0, passive.getBaseLevelReq())
+                )));
+                return;
+            }
+
+            if ((pData.getLevel() >= level || pData.getPassiveTier(passive) == 5) || (pData.getPassiveTier(passive) > 0 && pData.getGold() - cost >= 0)) {
+                name = "§a" + passive.getName();
+            } else if (pData.getPassiveTier(passive) == 0 && pData.getGold() - cost >= 0 && pData.getLevel() >= level) {
+                name = "§e" + passive.getName();
+            } else {
+                name = "§c" + passive.getName();
+            }
+
+            mainGUI.setItem(passiveIndex, zl.itemBuilder(passive.getMaterial(), 1, name, passive.getLore(p)));
             passiveIndex++;
         }
 

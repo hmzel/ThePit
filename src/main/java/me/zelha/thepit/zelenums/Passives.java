@@ -1,9 +1,13 @@
 package me.zelha.thepit.zelenums;
 
 import me.zelha.thepit.Main;
+import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public enum Passives {//0 tierMultipler is just a placeholder dont hurt me please
     XP_BOOST("XP Boost", "§bXP Boost", Material.LIGHT_BLUE_DYE, 500, 10, 0),
@@ -20,6 +24,7 @@ public enum Passives {//0 tierMultipler is just a placeholder dont hurt me pleas
     private final int baseCost;
     private final int baseLevelReq;
     private final int levelTierMultiplier;
+    private final ZelLogic zl = Main.getInstance().getZelLogic();
 
     Passives(String name, String colorfulName, Material material, int baseCost, int baseLevelReq, int levelTierMultiplier) {
         this.name = name;
@@ -49,12 +54,12 @@ public enum Passives {//0 tierMultipler is just a placeholder dont hurt me pleas
     public int getLevelRequirement(Player p) {
         PlayerData pData = Main.getInstance().getPlayerData(p);
 
-        return baseLevelReq + (levelTierMultiplier * pData.getPassiveTier(Passives.findByEnumName(super.name())));
+        return baseLevelReq + (levelTierMultiplier * pData.getPassiveTier(Passives.findByEnumName(name())));
     }
 
     public int getCost(Player p) {
         PlayerData pData = Main.getInstance().getPlayerData(p);
-        Passives passive = Passives.findByEnumName(super.name());
+        Passives passive = Passives.findByEnumName(name());
         int cost = 0;
 
         switch (passive) {//will update when i figure out all the costs
@@ -71,6 +76,105 @@ public enum Passives {//0 tierMultipler is just a placeholder dont hurt me pleas
                 break;
         }
         return cost;
+    }
+
+    public List<String> getLore(Player p) {
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+        List<String> lore = new ArrayList<>();
+        int tier = pData.getPassiveTier(this);
+
+        if (tier > 0) {
+            switch (this) {
+                case XP_BOOST:
+                    lore.add("§7Current: §b+" + 10 * tier + "% XP");
+                    break;
+                case GOLD_BOOST:
+                    lore.add("§7Current: §6+" + 10 * tier + "% gold (g)");
+                    break;
+                case MELEE_DAMAGE:
+                    lore.add("§7Current: §c+" + tier + "%");
+                    break;
+                case BOW_DAMAGE:
+                    lore.add("§7Current: §c+" + 3 * tier + "%");
+                    break;
+                case DAMAGE_REDUCTION:
+                    lore.add("§7Current: §9-" + tier + "%");
+                    break;
+                case BUILD_BATTLER:
+                    lore.add("§7Current: §a+" + 60 * tier + "%");
+                    break;
+                case EL_GATO:
+                    lore.add("§7Current: §dFirst " + ((tier == 1) ? "kill" : tier + " kills"));
+                    break;
+            }
+
+            lore.add("§7Tier: §a" + zl.toRoman(tier));
+            lore.add("");
+        }
+
+        if (this == EL_GATO) {
+            lore.add((tier < 5) ? "§7Next tier:" : "§7Description:");
+        } else {
+            lore.add("§7Each tier:");
+        }
+
+        switch (this) {
+            case XP_BOOST:
+                lore.add("§7Earn §b+10% XP §7from all");
+                lore.add("§7sources.");
+                break;
+            case GOLD_BOOST:
+                lore.add("§7Earn §6+10% gold (g) §7from");
+                lore.add("§7kills and coin pickups.");
+                break;
+            case MELEE_DAMAGE:
+                lore.add("§7Deal §c+1% §7melee damage.");
+                break;
+            case BOW_DAMAGE:
+                lore.add("§7Deal §c+3% §7bow damage.");
+                break;
+            case DAMAGE_REDUCTION:
+                lore.add("§7Receive §9-1% §7damage.");
+                break;
+            case BUILD_BATTLER:
+                lore.add("§7Your blocks stay §a+60%");
+                lore.add("§7longer.");
+                break;
+            case EL_GATO:
+                if (tier == 0) {
+                    lore.add("§dFirst kill §7each life rewards");
+                } else {
+                    lore.add("§dFirst " + (((tier < 5) ? 1 : 0) + tier) + " kills §7each life");
+                }
+
+                lore.add(((tier == 0) ? "" : "§7reward ") + "§6+5g §b+5 XP§7.");
+                break;
+        }
+
+        lore.add("");
+
+        if (tier < 5) {
+            if (pData.getLevel() >= getLevelRequirement(p)) {
+                if (tier > 0) {
+                    lore.add("§7Upgrade cost: §6" + zl.getFancyGoldString(getCost(p)) + "g");
+                } else {
+                    lore.add("§7Cost: §6" + zl.getFancyGoldString(getCost(p)) + "g");
+                }
+
+                if ((pData.getGold() - getCost(p)) >= 0) {
+                    lore.add("§eClick to purchase!");
+                } else {
+                    lore.add("§cNot enough gold!");
+                }
+            } else {
+                lore.add("§7Required level: " + zl.getColorBracketAndLevel(0, getLevelRequirement(p)));
+                lore.add("§cLevel too low to upgrade!");
+            }
+        } else {
+            lore.add("§aMax tier unlocked!");
+        }
+
+        return lore;
     }
 
     public static Passives findByEnumName(String name) {
