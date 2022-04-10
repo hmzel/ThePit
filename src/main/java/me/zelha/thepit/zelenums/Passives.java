@@ -183,12 +183,5 @@ public enum Passives {//0 tierMultipler is just a placeholder dont hurt me pleas
         }
         return null;
     }
-
-    public static Passives findByMaterial(Material material) {
-        for (Passives passive : values()) {
-            if (passive.getMaterial() == material) return passive;
-        }
-        return null;
-    }
 }
 

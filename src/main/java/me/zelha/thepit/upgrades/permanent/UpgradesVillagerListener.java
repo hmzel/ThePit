@@ -39,45 +39,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     private final Map<UUID, Perks> perksHandler = new HashMap<>();
     private final Map<UUID, Integer> slotHandler = new HashMap<>();
 
-    private void passivePurchaseHandler(Player p, Passives passive) {
-        PlayerData pData = Main.getInstance().getPlayerData(p);
-        double cost = passive.getCost(p);
-
-        if (pData.getPassiveTier(passive) >= 5) {
-            p.sendMessage("§aYou already unlocked the last upgrade!");
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-            return;
-        } else if (pData.getLevel() < passive.getLevelRequirement(p)) {
-            p.sendMessage("§cYou are too low level to acquire this!");
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-            return;
-        } else if (pData.getGold() - cost < 0) {
-            p.sendMessage("§cYou don't have enough gold to afford this!");
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-            return;
-        } else if (cost < 1000) {
-            pData.setGold(pData.getGold() - cost);
-            pData.setPassiveTier(passive, pData.getPassiveTier(passive) + 1);
-            p.sendMessage("§a§lPURCHASE! §6" + passive.getName() + zl.toRoman(pData.getPassiveTier(passive)));
-            p.playSound(p.getLocation(),  Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
-            openMainGUI(p);
-            return;
-        }
-
-        Inventory inv = Bukkit.createInventory(p, 27, "Are you sure?");
-
-        inv.setItem(11, zl.itemBuilder(GREEN_TERRACOTTA, 1, "§aConfirm", Arrays.asList(
-                "§7Purchasing: " + passive.getColorfulName() + " " + zl.toRoman((pData.getPassiveTier(passive) + 1)),
-                "§7Cost: §6" + zl.getFancyGoldString(cost) + "g"
-        )));
-        inv.setItem(15, zl.itemBuilder(RED_TERRACOTTA, 1, "§cCancel", Arrays.asList(
-                "§7Return to previous menu."
-        )));
-        costHandler.put(p.getUniqueId(), cost);
-        passivesHandler.put(p.getUniqueId(), passive);
-        p.openInventory(inv);
-    }
-
     private ItemStack perkSlotItemBuilder(Player p, int slot) {
         String name;
         int level = 0;
@@ -169,7 +130,8 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 mainGUI.setItem(passiveIndex, zl.itemBuilder(BEDROCK, 1, "§cUnknown Upgrade", Collections.singletonList(
                         "§7Required level: " + zl.getColorBracketAndLevel(0, passive.getBaseLevelReq())
                 )));
-                return;
+                passiveIndex++;
+                continue;
             }
 
             if ((pData.getLevel() >= level || pData.getPassiveTier(passive) == 5) || (pData.getPassiveTier(passive) > 0 && pData.getGold() - cost >= 0)) {
@@ -598,22 +560,49 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
         if (!zl.itemCheck(e.getCurrentItem())) return;
 
-        if (e.getSlot() >= 12 && e.getSlot() <= 14) {
-            openPerkGUI(p, e.getSlot() - 11);
-            return;
-        }
+        if (e.getSlot() >= 12 && e.getSlot() <= 14) openPerkGUI(p, e.getSlot() - 11);
 
         if (e.getSlot() == 15) openMainStreakGUI(p);
 
-        if (e.getSlot() > 27) {
-            if (e.getCurrentItem().getType() == BEDROCK) {
-                p.sendMessage("§cYou are too low level to acquire this!");
-                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-                return;
-            }
+        if (e.getSlot() <= 27) return;
 
-            passivePurchaseHandler(p, Passives.findByMaterial(e.getCurrentItem().getType()));
+        Passives passive = Passives.values()[e.getSlot() - 28];
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+        double cost = passive.getCost(p);
+
+        if (pData.getPassiveTier(passive) >= 5) {
+            p.sendMessage("§aYou already unlocked the last upgrade!");
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            return;
+        } else if (e.getCurrentItem().getType() == BEDROCK || pData.getLevel() < passive.getLevelRequirement(p)) {
+            p.sendMessage("§cYou are too low level to acquire this!");
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            return;
+        } else if (pData.getGold() - cost < 0) {
+            p.sendMessage("§cYou don't have enough gold to afford this!");
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            return;
+        } else if (cost < 1000) {
+            pData.setGold(pData.getGold() - cost);
+            pData.setPassiveTier(passive, pData.getPassiveTier(passive) + 1);
+            p.sendMessage("§a§lPURCHASE! §6" + passive.getName() + " " + zl.toRoman(pData.getPassiveTier(passive)));
+            p.playSound(p.getLocation(),  Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+            openMainGUI(p);
+            return;
         }
+
+        Inventory inv = Bukkit.createInventory(p, 27, "Are you sure?");
+
+        inv.setItem(11, zl.itemBuilder(GREEN_TERRACOTTA, 1, "§aConfirm", Arrays.asList(
+                "§7Purchasing: " + passive.getColorfulName() + " " + zl.toRoman((pData.getPassiveTier(passive) + 1)),
+                "§7Cost: §6" + zl.getFancyGoldString(cost) + "g"
+        )));
+        inv.setItem(15, zl.itemBuilder(RED_TERRACOTTA, 1, "§cCancel", Arrays.asList(
+                "§7Return to previous menu."
+        )));
+        costHandler.put(p.getUniqueId(), cost);
+        passivesHandler.put(p.getUniqueId(), passive);
+        p.openInventory(inv);
     }
 
     @EventHandler
@@ -840,7 +829,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
             if (passivesHandler.get(uuid) != null) {
                 pData.setPassiveTier(passivesHandler.get(uuid), pData.getPassiveTier(passivesHandler.get(uuid)) + 1);
-                p.sendMessage("§a§lPURCHASE! §6" + passivesHandler.get(uuid).getName() + zl.toRoman(pData.getPassiveTier(passivesHandler.get(uuid))));
+                p.sendMessage("§a§lPURCHASE! §6" + passivesHandler.get(uuid).getName() + " " + zl.toRoman(pData.getPassiveTier(passivesHandler.get(uuid))));
                 openMainGUI(p);
             } else if (perksHandler.get(uuid) != null) {
                 pData.setPerkUnlockStatus(perksHandler.get(uuid), true);
