@@ -144,69 +144,6 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         p.openInventory(mainGUI);
     }
 
-    private ItemStack perkItemBuilder(Player p, Perks perk) {
-        String name;
-        int cost = perk.getCost();
-        int level = perk.getLevel();
-        PlayerData pData = Main.getInstance().getPlayerData(p);
-        ItemStack item;
-
-        if (pData.getLevel() < level && pData.getPrestige() == 0) {
-            return zl.itemBuilder(BEDROCK, 1, "§cUnknown perk", Collections.singletonList(
-                    "§7Required level: " + zl.getColorBracketAndLevel(0, level)
-            ));
-        }
-
-        if (pData.getPerkUnlockStatus(perk)) {
-            name = "§a" + perk.getName();
-        } else if (pData.getGold() - cost >= 0 && pData.getLevel() >= level) {
-            name = "§e" + perk.getName();
-        } else {
-            name = "§c" + perk.getName();
-        }
-
-        List<String> lore = new ArrayList<>(perk.getLore());
-        lore.add("\n");
-
-        if (pData.hasPerkEquipped(perk)) {
-            lore.add("§aAlready selected!");
-        } else if (pData.getPerkUnlockStatus(perk)) {
-            lore.add("§eClick to select!");
-        } else {
-            lore.add("§7Cost: §6" + zl.getFancyGoldString(cost) + "g");
-
-            if (pData.getLevel() >= level) {
-                if (pData.getGold() - cost >= 0) {
-                    lore.add("§eClick to purchase!");
-                } else {
-                    lore.add("§cNot enough gold!");
-                }
-            } else {
-                lore.add("§7Required level: " + zl.getColorBracketAndLevel(pData.getPrestige(), level));
-                lore.add("§cToo low level!");
-            }
-        }
-
-        //special item handling
-        if (perk == GOLDEN_HEADS) {
-            item = zl.headItemBuilder("PhantomTupac", 1, name, lore);
-        } else if (perk == OLYMPUS) {
-            item = zl.potionItemBuilder(Color.LIME, null, 1, name, lore);
-        } else {
-            item = zl.itemBuilder(perk.getMaterial(), 1, name, lore);
-        }
-
-        if (pData.hasPerkEquipped(perk)) {
-            ItemMeta meta = item.getItemMeta();
-
-            meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
-            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            item.setItemMeta(meta);
-        }
-
-        return item;
-    }
-
     private void perkSelectHandler(Player p, Perks perk) {
         PlayerData pData = Main.getInstance().getPlayerData(p);
         double cost = perk.getCost();
@@ -248,24 +185,24 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
     private void openPerkGUI(Player p, int slot) {
         PlayerData pData = Main.getInstance().getPlayerData(p);
-        int level = 0;
+        int slotLevel = 0;
 
         switch (slot) {
             case 1:
-                level = 10;
+                slotLevel = 10;
                 break;
             case 2:
-                level = 35;
+                slotLevel = 35;
                 break;
             case 3:
-                level = 70;
+                slotLevel = 70;
                 break;
             case 4:
-                level = 100;
+                slotLevel = 100;
                 break;
         }
 
-        if (pData.getLevel() < level) {
+        if (pData.getLevel() < slotLevel) {
             p.sendMessage("§cSlot not unlocked yet!");
             p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
             return;
@@ -277,11 +214,72 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
         //not bothering with prestige perks rn
         for (Perks perk : Perks.values()) {
-            if (perk.getPrestige() == 0) {
-                perkGUI.setItem(perkIndex, perkItemBuilder(p, perk));
+            if (perk.getPrestige() != 0) continue;
+
+            String name;
+            int cost = perk.getCost();
+            int level = perk.getLevel();
+            ItemStack item;
+
+            if (pData.getLevel() < level && pData.getPrestige() == 0) {
+                perkGUI.setItem(perkIndex,  zl.itemBuilder(BEDROCK, 1, "§cUnknown perk", Collections.singletonList(
+                        "§7Required level: " + zl.getColorBracketAndLevel(0, level)
+                )));
                 perkIndex++;
                 overflowPrevention++;
+                continue;
             }
+
+            if (pData.getPerkUnlockStatus(perk)) {
+                name = "§a" + perk.getName();
+            } else if (pData.getGold() - cost >= 0 && pData.getLevel() >= level) {
+                name = "§e" + perk.getName();
+            } else {
+                name = "§c" + perk.getName();
+            }
+
+            List<String> lore = new ArrayList<>(perk.getLore());
+            lore.add("");
+
+            if (pData.hasPerkEquipped(perk)) {
+                lore.add("§aAlready selected!");
+            } else if (pData.getPerkUnlockStatus(perk)) {
+                lore.add("§eClick to select!");
+            } else {
+                lore.add("§7Cost: §6" + zl.getFancyGoldString(cost) + "g");
+
+                if (pData.getLevel() >= level) {
+                    if (pData.getGold() - cost >= 0) {
+                        lore.add("§eClick to purchase!");
+                    } else {
+                        lore.add("§cNot enough gold!");
+                    }
+                } else {
+                    lore.add("§7Required level: " + zl.getColorBracketAndLevel(pData.getPrestige(), level));
+                    lore.add("§cToo low level!");
+                }
+            }
+
+            //special item handling
+            if (perk == GOLDEN_HEADS) {
+                item = zl.headItemBuilder("PhantomTupac", 1, name, lore);
+            } else if (perk == OLYMPUS) {
+                item = zl.potionItemBuilder(Color.LIME, null, 1, name, lore);
+            } else {
+                item = zl.itemBuilder(perk.getMaterial(), 1, name, lore);
+            }
+
+            if (pData.hasPerkEquipped(perk)) {
+                ItemMeta meta = item.getItemMeta();
+
+                meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                item.setItemMeta(meta);
+            }
+
+            perkGUI.setItem(perkIndex, item);
+            perkIndex++;
+            overflowPrevention++;
 
             if (overflowPrevention == 7) {
                 perkIndex += 2;
@@ -368,7 +366,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         p.openInventory(streakGUI);
     }
 
-    public void openMegastreakGUI(Player p) {
+    private void openMegastreakGUI(Player p) {
         PlayerData pData = Main.getInstance().getPlayerData(p);
         Inventory gui = Bukkit.createInventory(p, 27, "Choose a killstreak§2");
 
@@ -416,7 +414,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         p.openInventory(gui);
     }
 
-    public void openMinistreakGUI(Player p, int slot) {
+    private void openMinistreakGUI(Player p, int slot) {
         PlayerData pData = Main.getInstance().getPlayerData(p);
         Inventory gui = Bukkit.createInventory(p, 54, "Choose a killstreak§1");
         int trigger = 0;
