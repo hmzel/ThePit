@@ -75,11 +75,11 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
             if (perk != UNSET) {
                 lore.add("§7Selected: §a" + perk.getName());
-                lore.add("\n");
+                lore.add("");
             }
 
             lore.addAll(perk.getLore());
-            lore.add("\n");
+            lore.add("");
             lore.add("§eClick to choose perk!");
 
             //special item handling
@@ -129,7 +129,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 continue;
             }
 
-            if ((pData.getLevel() >= level || pData.getPassiveTier(passive) == 5) || (pData.getPassiveTier(passive) > 0 && pData.getGold() - cost >= 0)) {
+            if ((pData.getLevel() >= level && pData.getPassiveTier(passive) == 5) || (pData.getPassiveTier(passive) > 0 && pData.getGold() - cost >= 0)) {
                 name = "§a" + passive.getName();
             } else if (pData.getPassiveTier(passive) == 0 && pData.getGold() - cost >= 0 && pData.getLevel() >= level) {
                 name = "§e" + passive.getName();
@@ -352,16 +352,17 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 lore.add("§aAlready selected!");
             } else if (pData.getMegastreakUnlockStatus(mega)) {
                 lore.add("§eClick to select!");
-            } else if (pData.getLevel() < mega.getLevel()) {
-                lore.add("§7Cost: §6" + zl.getFancyGoldString(mega.getCost()) + "g");
-                lore.add("§7Required level: " + zl.getColorBracketAndLevel(pData.getPrestige(), mega.getLevel()));
-                lore.add("§cToo low level!");
-            } else if (pData.getGold() >= mega.getCost()) {
-                lore.add("§7Cost: §6" + zl.getFancyGoldString(mega.getCost()) + "g");
-                lore.add("§eClick to purchase!");
             } else {
                 lore.add("§7Cost: §6" + zl.getFancyGoldString(mega.getCost()) + "g");
-                lore.add("§cNot enough gold!");
+
+                if (pData.getLevel() < mega.getLevel()) {
+                    lore.add("§7Required level: " + zl.getColorBracketAndLevel(pData.getPrestige(), mega.getLevel()));
+                    lore.add("§cToo low level!");
+                } else if (pData.getGold() >= mega.getCost()) {
+                    lore.add("§eClick to purchase!");
+                } else {
+                    lore.add("§cNot enough gold!");
+                }
             }
 
             if (pData.getMegastreak() == mega || mega == Megastreaks.UBERSTREAK) {
@@ -419,16 +420,17 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                 lore.add("§aAlready selected!");
             } else if (pData.getMinistreakUnlockStatus(mini)) {
                 lore.add("§eClick to select!");
-            } else if (pData.getLevel() < mini.getLevel()) {
-                lore.add("§7Cost: §6" + zl.getFancyGoldString(mini.getCost()) + "g");
-                lore.add("§7Required level: " + zl.getColorBracketAndLevel(pData.getPrestige(), mini.getLevel()));
-                lore.add("§cToo low level!");
-            } else if (pData.getGold() >= mini.getCost()) {
-                lore.add("§7Cost: §6" + zl.getFancyGoldString(mini.getCost()) + "g");
-                lore.add("§eClick to purchase!");
             } else {
                 lore.add("§7Cost: §6" + zl.getFancyGoldString(mini.getCost()) + "g");
-                lore.add("§cNot enough gold!");
+
+                if (pData.getLevel() < mini.getLevel()) {
+                    lore.add("§7Required level: " + zl.getColorBracketAndLevel(pData.getPrestige(), mini.getLevel()));
+                    lore.add("§cToo low level!");
+                } else if (pData.getGold() >= mini.getCost()) {
+                    lore.add("§eClick to purchase!");
+                } else {
+                    lore.add("§cNot enough gold!");
+                }
             }
 
             ItemStack item = zl.itemBuilder(mini.getMaterial(), 1, color + mini.getName(), lore);
@@ -721,13 +723,15 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         if (clicked.getType() == ARROW) {
             openMainStreakGUI(p);
             return;
-        }
-
-        if (clicked.getType() == GOLD_BLOCK) {
+        } else if (clicked.getType() == GOLD_BLOCK) {
             pData.setMinistreakAtSlot(slotHandler.get(uuid), Ministreaks.UNSET);
             zl.pitReset(p);
             p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
             openMainStreakGUI(p);
+            return;
+        } else if (clicked.getType() == BEDROCK) {
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            p.sendMessage("§cYou are too low level to acquire this killstreak!");
             return;
         }
 
