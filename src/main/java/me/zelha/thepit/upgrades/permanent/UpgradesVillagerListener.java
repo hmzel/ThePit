@@ -39,65 +39,60 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     private final Map<UUID, Perks> perksHandler = new HashMap<>();
     private final Map<UUID, Integer> slotHandler = new HashMap<>();
 
-    private ItemStack perkSlotItemBuilder(Player p, int slot) {
-        String name;
-        int level = 0;
-        List<String> lore = new ArrayList<>();
-        PlayerData pData = Main.getInstance().getPlayerData(p);
-        Perks perk = pData.getPerkAtSlot(slot);
-
-        switch (slot) {
-            case 1:
-                level = 10;
-                break;
-            case 2:
-                level = 35;
-                break;
-            case 3:
-                level = 70;
-                break;
-            case 4:
-                level = 100;
-                break;
-        }
-
-        if (pData.getLevel() < level && perk == UNSET) {
-            return zl.itemBuilder(BEDROCK, 1, "§cPerk Slot #" + slot, Collections.singletonList(
-                    "§7Required level: " + zl.getColorBracketAndLevel(0, level)
-            ));
-        }
-
-        if (pData.getPerkAtSlot(slot) != UNSET) {
-            name = "§ePerk Slot #" + slot;
-        } else {
-            name = "§aPerk Slot #" + slot;
-        }
-
-        if (perk != UNSET) {
-            lore.add("§7Selected: §a" + perk.getName());
-            lore.add("\n");
-        }
-
-        lore.addAll(perk.getLore());
-        lore.add("\n");
-        lore.add("§eClick to choose perk!");
-
-        //special item handling
-        if (pData.getPerkAtSlot(slot) == GOLDEN_HEADS) {
-            return zl.headItemBuilder("PhantomTupac", slot, name, lore);
-        } else if (pData.getPerkAtSlot(slot) == OLYMPUS) {
-            return zl.potionItemBuilder(Color.LIME, null, slot, name, lore);
-        }
-
-        return zl.itemBuilder(perk.getMaterial(), slot, name, lore);
-    }
-
     private void openMainGUI(Player p) {
         PlayerData pData = Main.getInstance().getPlayerData(p);
         Inventory mainGUI = Bukkit.createInventory(p, 45, "Permanent upgrades");
         int passiveIndex = 28;
 
-        for (int i = 12; i <= 14; i++) mainGUI.setItem(i, perkSlotItemBuilder(p, i - 11));
+        for (int slot = 1; slot <= 3; slot++) {
+            ItemStack item;
+            int level = 0;
+            List<String> lore = new ArrayList<>();
+            Perks perk = pData.getPerkAtSlot(slot);
+            String name = (perk != UNSET) ? "§e" : "§a" + "Perk Slot #" + slot;
+
+            switch (slot) {
+                case 1:
+                    level = 10;
+                    break;
+                case 2:
+                    level = 35;
+                    break;
+                case 3:
+                    level = 70;
+                    break;
+                case 4:
+                    level = 100;
+                    break;
+            }
+
+            if (pData.getLevel() < level && perk == UNSET) {
+                mainGUI.setItem(slot + 11, zl.itemBuilder(BEDROCK, 1, "§cPerk Slot #" + slot, Collections.singletonList(
+                        "§7Required level: " + zl.getColorBracketAndLevel(0, level)
+                )));
+                continue;
+            }
+
+            if (perk != UNSET) {
+                lore.add("§7Selected: §a" + perk.getName());
+                lore.add("\n");
+            }
+
+            lore.addAll(perk.getLore());
+            lore.add("\n");
+            lore.add("§eClick to choose perk!");
+
+            //special item handling
+            if (perk == GOLDEN_HEADS) {
+                item = zl.headItemBuilder("PhantomTupac", slot, name, lore);
+            } else if (perk == OLYMPUS) {
+                item = zl.potionItemBuilder(Color.LIME, null, slot, name, lore);
+            } else {
+                item = zl.itemBuilder(perk.getMaterial(), slot, name, lore);
+            }
+
+            mainGUI.setItem(slot + 11, item);
+        }
 
         if (pData.getPrestige() != 0 || pData.getLevel() >= 60) {
             ItemStack item = zl.itemBuilder(pData.getMegastreak().getMaterial(), 1, "§aKillstreaks", Arrays.asList(
