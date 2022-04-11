@@ -2,6 +2,7 @@ package me.zelha.thepit.zelenums;
 
 import org.bukkit.Material;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -9,7 +10,7 @@ import static org.bukkit.Material.*;
 
 public enum Megastreaks {
     OVERDRIVE(null, "§c§lOVRDRV", "§c§lOVERDRIVE", "Overdrive", BLAZE_POWDER,
-            50, 0, 0, 0, Arrays.asList(
+            50, 0, 0, 0,
             "§7Triggers on: §c50 kills",
             " ",
             "§7On trigger:",
@@ -23,9 +24,9 @@ public enum Megastreaks {
             " ",
             "§7On death:",
             "§e■ §7Gain §b4,000 XP§7."
-    )),
+    ),
     BEASTMODE(StreakBundles.BEASTMODE, "§a§lBEAST", "§a§lBEASTMODE", "Beastmode", DIAMOND_HELMET,
-            50, 3, 30, 10000, Arrays.asList(
+            50, 3, 30, 10000,
             "§7Triggers on: §c50 kills",
             " ",
             "§7On trigger:",
@@ -39,9 +40,9 @@ public enum Megastreaks {
             " ",
             "§7On death:",
             "§e■ §7Keep the §bDiamond Helmet§7."
-    )),
+    ),
     HERMIT(StreakBundles.HERMIT, "§9§lHERMIT", "§9§lHERMIT", "Hermit", RED_BED,
-            50, 4, 50, 20000, Arrays.asList(
+            50, 4, 50, 20000,
             "§7Triggers on: §c50 kills",
             " ",
             "§7From 0 kills:",
@@ -59,9 +60,9 @@ public enum Megastreaks {
             "§7BUT",
             "§c■ §7Receive §c+0.3% §7damage per",
             "§7kill over 50."
-    )),
+    ),
     HIGHLANDER(StreakBundles.HIGHLANDER, "§6§lHIGH", "§6§lHIGHLANDER", "Highlander", GOLDEN_BOOTS,
-            50, 7, 60, 30000, Arrays.asList(
+            50, 7, 60, 30000,
             "§7Triggers on: §c50 kills",
             " ",
             "§7On trigger:",
@@ -77,9 +78,9 @@ public enum Megastreaks {
             " ",
             "§7On death:",
             "§e■ §7Earn your own bounty aswell."
-    )),
+    ),
     MAGNUM_OPUS(StreakBundles.MAGNUM_OPUS, "", "§e§lMAGNUM OPUS", "Magnum Opus", NETHER_STAR,
-            50, 10, 70, 40000, Arrays.asList(
+            50, 10, 70, 40000,
             "§7Triggers on: §c50 kills",
             " ",
             "§7On trigger:",
@@ -93,9 +94,9 @@ public enum Megastreaks {
             "§e■ §7Consume §54 Chunks of Vile",
             "§7to fix §c4 lives §7on the item",
             "§7in the §dMystic Well§7."
-    )),
+    ),
     TO_THE_MOON(StreakBundles.TO_THE_MOON, "§b§lMOON", "§a§lTO THE MOON", "To the Moon", END_STONE,
-            100, 15, 80, 50000, Arrays.asList(
+            100, 15, 80, 50000,
             "§7Triggers on: §c100 kills",
             " ",
             "§7On trigger:",
@@ -115,9 +116,9 @@ public enum Megastreaks {
             "§b■ §7Earn the stored §bXP§7. but",
             "§7multiply it by §b0.005x §7per kill",
             "§7above 100, up to §b1x§7."
-    )),
+    ),
     UBERSTREAK(StreakBundles.UBERSTREAK, "§d§lUBER", "§d§lUBERSTREAK", "Uberstreak", GOLDEN_SWORD,
-            100, 20, 90, 50000, Arrays.asList(
+            100, 20, 90, 50000,
             "§7Triggers on: §c100 kills",
             " ",
             "§7On trigger:",
@@ -134,7 +135,7 @@ public enum Megastreaks {
             " ",
             "§7On death:",
             "§7Earn a random §dUberdrop §7if you have at least 400 streak."
-    ));
+    );
 
     private final StreakBundles bundle;
     private final String displayName;
@@ -145,9 +146,9 @@ public enum Megastreaks {
     private final int prestige;
     private final int level;
     private final int cost;
-    private final List<String> lore;
+    private final String[] lore;
 
-    Megastreaks(StreakBundles bundle, String displayName, String chatName, String name, Material material, int trigger, int prestige, int level, int cost, List<String> lore) {
+    Megastreaks(StreakBundles bundle, String displayName, String chatName, String name, Material material, int trigger, int prestige, int level, int cost, String... lore) {
         this.bundle = bundle;
         this.displayName = displayName;
         this.chatName = chatName;
@@ -197,7 +198,7 @@ public enum Megastreaks {
     }
 
     public List<String> getLore() {
-        return lore;
+        return new ArrayList<>(Arrays.asList(lore));
     }
 
     public static Megastreaks findByEnumName(String name) {
