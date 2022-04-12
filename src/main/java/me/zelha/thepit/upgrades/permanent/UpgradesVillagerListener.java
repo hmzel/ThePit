@@ -7,6 +7,7 @@ import me.zelha.thepit.zelenums.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -366,7 +367,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             }
 
             if (pData.getMegastreak() == mega || mega == Megastreaks.UBERSTREAK) {
-                gui.setItem(i, zl.itemBuilder(mega.getMaterial(), 1, color + mega.getName(), lore, new Enchantment[]{Enchantment.ARROW_INFINITE}, new Integer[]{1}, false, false));
+                gui.setItem(i, zl.itemBuilder(mega.getMaterial(), 1, color + mega.getName(), lore, false, false, new Pair[]{Pair.of(Enchantment.ARROW_INFINITE, 1)}));
             } else {
                 gui.setItem(i, zl.itemBuilder(mega.getMaterial(), 1, color + mega.getName(), lore));
             }
@@ -438,9 +439,9 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             if (pData.hasMinistreakEquipped(mini)) {
                 gui.setItem(frame, zl.itemBuilder(ITEM_FRAME, 1, "§c" + mini.getTrigger() + " Kills", Collections.singletonList(
                         "§7Selected: §e" + mini.getName()
-                ), new Enchantment[]{Enchantment.ARROW_INFINITE}, new Integer[]{1}, false, false));
+                ), false, false, Pair.of(Enchantment.ARROW_INFINITE, 1)));
 
-                item = zl.itemBuilder(mini.getMaterial(), 1, color + mini.getName(), lore, new Enchantment[]{Enchantment.ARROW_INFINITE}, new Integer[]{1}, false, false);
+                item = zl.itemBuilder(mini.getMaterial(), 1, color + mini.getName(), lore, false, false, Pair.of(Enchantment.ARROW_INFINITE, 1));
             }
 
             if (mini == Ministreaks.ARQUEBUSIER) item.setAmount(12);

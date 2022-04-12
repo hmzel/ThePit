@@ -2,6 +2,7 @@ package me.zelha.thepit.upgrades.permanent.perks;
 
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.Perks;
+import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -15,8 +16,7 @@ import static org.bukkit.Material.DIAMOND_PICKAXE;
 
 public class MinemanPerk extends Perk {
 
-    private final ItemStack minemanPickaxeItem = zl.itemBuilder(DIAMOND_PICKAXE, 1, null, Collections.singletonList("§7Perk item"),
-            new Enchantment[]{Enchantment.DIG_SPEED}, new Integer[]{4}, true, true);
+    private final ItemStack minemanPickaxeItem = zl.itemBuilder(DIAMOND_PICKAXE, 1, null, Collections.singletonList("§7Perk item"), true, true, Pair.of(Enchantment.DIG_SPEED, 4));
     private final ItemStack minemanCobblestoneItem = zl.itemBuilder(COBBLESTONE, 24, null, Collections.singletonList("§7Perk item"));
 
     public MinemanPerk() {

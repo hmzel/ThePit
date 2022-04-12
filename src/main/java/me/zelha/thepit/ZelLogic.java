@@ -16,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
+import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
@@ -154,10 +155,10 @@ public class ZelLogic {//zel
      * Creates a potion with the given parameters
      *
      * @param color color of the potion
-     * @param effects effects this potion should have, nothing if null
      * @param count item stack amount
      * @param displayName  custom item name, item is given with normal name if param is null
      * @param lore item lore, nothing if param is null
+     * @param effects effects this potion should have, nothing if null
      * @return a constructed potion item with the provided parameters
      */
     public ItemStack potionItemBuilder(Color color, int count, @Nullable String displayName, @Nullable List<String> lore, @Nullable PotionEffect... effects) {
@@ -258,20 +259,17 @@ public class ZelLogic {//zel
      * @param count item stack amount
      * @param displayName custom item name, item is given with normal name if param is null
      * @param lore item lore, nothing if param is null
-     * @param enchants array of enchants, does nothing if param is null
-     * @param enchantTiers array of enchant tiers, does nothing if param is null
      * @param showEnchants adds item flag hide_enchants if false, else does nothing
      * @param showJuicyStuff removes item flags if true, else does nothing
+     * @param enchants array of a pair, where the enchant is the key and the level is the value, does nothing if param is null
      * @return a constructed item with the given parameters
      */
-    public ItemStack itemBuilder(Material material, int count, @Nullable String displayName, @Nullable List<String> lore, @Nullable Enchantment[] enchants, @Nullable Integer[] enchantTiers, Boolean showEnchants, Boolean showJuicyStuff) {
+    public ItemStack itemBuilder(Material material, int count, @Nullable String displayName, @Nullable List<String> lore, Boolean showEnchants, Boolean showJuicyStuff, Pair<Enchantment, Integer>... enchants) {
         ItemStack item = itemBuilder(material, count, displayName, lore, showJuicyStuff);
         ItemMeta itemMeta = item.getItemMeta();
 
-        if (enchants != null && enchantTiers != null) {
-            for (int i = 0; i <= enchants.length - 1; i++) {
-                itemMeta.addEnchant(enchants[i], enchantTiers[i], true);
-            }
+        for (Pair<Enchantment, Integer> enchantPair : enchants) {
+            itemMeta.addEnchant(enchantPair.getKey(), enchantPair.getValue(), true);
         }
 
         if (!showEnchants) itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
