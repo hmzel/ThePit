@@ -1,7 +1,7 @@
 package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.RunMethods;
+import me.zelha.thepit.RunTracker;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import org.bukkit.entity.Player;
@@ -16,7 +16,7 @@ import java.util.UUID;
 public class LevelUpListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-    private final RunMethods runTracker = Main.getInstance().generateRunMethods();
+    private final RunTracker runTracker = Main.getInstance().generateRunTracker();
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {

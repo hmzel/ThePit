@@ -1,7 +1,7 @@
 package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.RunMethods;
+import me.zelha.thepit.RunTracker;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.perks.StrengthChainingPerk;
@@ -32,8 +32,8 @@ import static me.zelha.thepit.zelenums.Perks.STRENGTH_CHAINING;
 public class ScoreboardListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-    private final RunMethods runTracker = Main.getInstance().generateRunMethods();
-    private final RunMethods runTracker2 = Main.getInstance().generateRunMethods();
+    private final RunTracker runTracker = Main.getInstance().generateRunTracker();
+    private final RunTracker runTracker2 = Main.getInstance().generateRunTracker();
     private final Map<UUID, Team> teamMap = new HashMap<>();
 
     public void startAnimation() {

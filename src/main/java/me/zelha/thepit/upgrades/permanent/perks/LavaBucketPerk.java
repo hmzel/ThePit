@@ -1,7 +1,7 @@
 package me.zelha.thepit.upgrades.permanent.perks;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.RunMethods;
+import me.zelha.thepit.RunTracker;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.Bukkit;
@@ -28,7 +28,7 @@ import static org.bukkit.Material.*;
 
 public class LavaBucketPerk extends Perk implements Listener {
 
-    private final RunMethods runTracker = Main.getInstance().generateRunMethods();
+    private final RunTracker runTracker = Main.getInstance().generateRunTracker();
     private final Map<UUID, Integer> lavaExistTimer = new HashMap<>();
     private final Map<UUID, Block> placedLava = new HashMap<>();
     private final Map<UUID, Material> previousLavaBlock = new HashMap<>();

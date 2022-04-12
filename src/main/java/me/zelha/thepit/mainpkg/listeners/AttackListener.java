@@ -1,7 +1,7 @@
 package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.RunMethods;
+import me.zelha.thepit.RunTracker;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.Passives;
@@ -27,7 +27,7 @@ import java.util.UUID;
 public class AttackListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-    private final RunMethods runTracker = Main.getInstance().generateRunMethods();
+    private final RunTracker runTracker = Main.getInstance().generateRunTracker();
 
     public void startCombatTimer(Player damaged, Player damager) {
         if (runTracker.hasID(damaged.getUniqueId())) runTracker.stop(damaged.getUniqueId());

@@ -28,7 +28,6 @@ import java.util.UUID;
 public final class Main extends JavaPlugin {
 
     public List<Player> blockPriviledges = new ArrayList<>();
-
     private static Main instance;
     private MongoCollection<Document> playerDataCollection;
     private MongoClient mongoClient;
@@ -128,8 +127,8 @@ public final class Main extends JavaPlugin {
     public AssistListener getAssistUtils() {
         return assistListener;
     }
-    public RunMethods generateRunMethods() {
-        return new RunMethods();
+    public RunTracker generateRunTracker() {
+        return new RunTracker();
     }
     public AttackListener getAttackUtils() {
         return attackListener;

@@ -1,7 +1,7 @@
 package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.RunMethods;
+import me.zelha.thepit.RunTracker;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.perks.SpammerPerk;
@@ -42,9 +42,9 @@ public class KillListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final AssistListener assistUtils = Main.getInstance().getAssistUtils();
-    private final RunMethods runTracker = Main.getInstance().generateRunMethods();
-    private final RunMethods runTracker2 = Main.getInstance().generateRunMethods();
-    private final RunMethods runTracker3 = Main.getInstance().generateRunMethods();
+    private final RunTracker runTracker = Main.getInstance().generateRunTracker();
+    private final RunTracker runTracker2 = Main.getInstance().generateRunTracker();
+    private final RunTracker runTracker3 = Main.getInstance().generateRunTracker();
 
     public int calculateEXP(Player dead, Player killer) {
         double exp = 5;
