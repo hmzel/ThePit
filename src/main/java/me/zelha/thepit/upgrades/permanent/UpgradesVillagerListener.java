@@ -86,7 +86,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             if (perk == GOLDEN_HEADS) {
                 item = zl.headItemBuilder("PhantomTupac", slot, name, lore);
             } else if (perk == OLYMPUS) {
-                item = zl.potionItemBuilder(Color.LIME, null, slot, name, lore);
+                item = zl.potionItemBuilder(Color.LIME, slot, name, lore);
             } else {
                 item = zl.itemBuilder(perk.getMaterial(), slot, name, lore);
             }
@@ -225,7 +225,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             if (perk == GOLDEN_HEADS) {
                 item = zl.headItemBuilder("PhantomTupac", 1, name, lore);
             } else if (perk == OLYMPUS) {
-                item = zl.potionItemBuilder(Color.LIME, null, 1, name, lore);
+                item = zl.potionItemBuilder(Color.LIME, 1, name, lore);
             } else {
                 item = zl.itemBuilder(perk.getMaterial(), 1, name, lore);
             }

@@ -112,6 +112,7 @@ public class ZelLogic {//zel
         } else {
             spawnY = 110.0;
         }
+
         return BoundingBox.of(new Location(location.getWorld(), 0.0, spawnY, 0.0), 25.0, 15.0, 25.0).contains(x, y, z);
     }
     //boolean checks
@@ -159,7 +160,7 @@ public class ZelLogic {//zel
      * @param lore item lore, nothing if param is null
      * @return a constructed potion item with the provided parameters
      */
-    public ItemStack potionItemBuilder(Color color, @Nullable PotionEffect[] effects, int count, @Nullable String displayName, @Nullable List<String> lore) {
+    public ItemStack potionItemBuilder(Color color, int count, @Nullable String displayName, @Nullable List<String> lore, @Nullable PotionEffect... effects) {
         ItemStack item = new ItemStack(POTION, count);
         PotionMeta meta = (PotionMeta) item.getItemMeta();
 
