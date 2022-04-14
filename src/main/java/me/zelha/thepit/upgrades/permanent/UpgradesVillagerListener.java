@@ -324,7 +324,11 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         megaLore.add(" ");
         megaLore.add("§eClick to switch megastreak!");
 
-        streakGUI.setItem(index, zl.itemBuilder(pData.getMegastreak().getMaterial(), amount, "§eMegastreak", megaLore));
+        if (pData.getMegastreak() == Megastreaks.UBERSTREAK) {
+            streakGUI.setItem(index, zl.itemBuilder(pData.getMegastreak().getMaterial(), amount, "§eMegastreak", megaLore, false, false, Pair.of(Enchantment.ARROW_INFINITE, 1)));
+        } else {
+            streakGUI.setItem(index, zl.itemBuilder(pData.getMegastreak().getMaterial(), amount, "§eMegastreak", megaLore));
+        }
         streakGUI.setItem(22, zl.itemBuilder(ARROW, 1, "§aGo Back", Collections.singletonList("§7To Permanent upgrades")));
 
         p.openInventory(streakGUI);
