@@ -647,7 +647,7 @@ public class ZelLogic {//zel
     }
 
     /**
-     * Gives the color bracket and level such that prestige 0 level 1 would be §7[§71§7] (basically §7[1])
+     * Gives the color bracket and level such that prestige 0 level 10 would be §7[§910§7]
      *
      * @param uuid player uuid to check the color bracket and level of
      * @return the combined form of the prestige bracket and level, colorized
@@ -684,7 +684,7 @@ public class ZelLogic {//zel
     }
 
     /**
-     * Gives the color bracket and level such that prestige 0 level 1 would be §7[§71§7] (basically §7[1])
+     * Gives the color bracket and level such that prestige 0 level 10 would be §7[§910§7]
      *
      * @param prestige prestige used to determine the color of brackets
      * @param level level to be put in the string and used to determine the color of said level

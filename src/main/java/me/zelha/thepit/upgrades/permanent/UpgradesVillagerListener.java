@@ -1,5 +1,6 @@
 package me.zelha.thepit.upgrades.permanent;
 
+import me.zelha.thepit.ConfirmGUIHandler;
 import me.zelha.thepit.Main;
 import me.zelha.thepit.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
@@ -33,6 +34,7 @@ import static org.bukkit.Material.*;
 public class UpgradesVillagerListener implements Listener {//i hate this class
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
+    private final ConfirmGUIHandler confirmGUIHandler = Main.getInstance().getConfirmGUIHandler();
     private final Map<UUID, Double> costHandler = new HashMap<>();//i need to somehow figure out how to not use maps for this later
     private final Map<UUID, Passives> passivesHandler = new HashMap<>();
     private final Map<UUID, Megastreaks> megastreaksHandler = new HashMap<>();
@@ -539,27 +541,16 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             p.sendMessage("§cYou don't have enough gold to afford this!");
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return;
-        } else if (cost < 1000) {
-            pData.setGold(pData.getGold() - cost);
-            pData.setPassiveTier(passive, pData.getPassiveTier(passive) + 1);
-            p.sendMessage("§a§lPURCHASE! §6" + passive.getName() + " " + zl.toRoman(pData.getPassiveTier(passive)));
-            p.playSound(p.getLocation(),  Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
-            openMainGUI(p);
-            return;
         }
 
-        Inventory inv = Bukkit.createInventory(p, 27, "Are you sure?");
-
-        inv.setItem(11, zl.itemBuilder(GREEN_TERRACOTTA, 1, "§aConfirm", Arrays.asList(
-                "§7Purchasing: " + passive.getColorfulName() + " " + zl.toRoman((pData.getPassiveTier(passive) + 1)),
-                "§7Cost: §6" + zl.getFancyGoldString(cost) + "g"
-        )));
-        inv.setItem(15, zl.itemBuilder(RED_TERRACOTTA, 1, "§cCancel", Arrays.asList(
-                "§7Return to previous menu."
-        )));
-        costHandler.put(p.getUniqueId(), cost);
-        passivesHandler.put(p.getUniqueId(), passive);
-        p.openInventory(inv);
+        confirmGUIHandler.confirmPurchase(p, passive.getColorfulName() + " " + zl.toRoman((pData.getPassiveTier(passive) + 1)), cost, true,
+                player -> {
+                    pData.setGold(pData.getGold() - cost);
+                    pData.setPassiveTier(passive, pData.getPassiveTier(passive) + 1);
+                    p.sendMessage("§a§lPURCHASE! §6" + passive.getName() + " " + zl.toRoman(pData.getPassiveTier(passive)));
+                    p.playSound(p.getLocation(),  Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+                    openMainGUI(p);
+                });
     }
 
     @EventHandler
@@ -814,11 +805,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         if (e.getCurrentItem().getType() == GREEN_TERRACOTTA) {
             pData.setGold(pData.getGold() - costHandler.get(uuid));
 
-            if (passivesHandler.get(uuid) != null) {
-                pData.setPassiveTier(passivesHandler.get(uuid), pData.getPassiveTier(passivesHandler.get(uuid)) + 1);
-                p.sendMessage("§a§lPURCHASE! §6" + passivesHandler.get(uuid).getName() + " " + zl.toRoman(pData.getPassiveTier(passivesHandler.get(uuid))));
-                openMainGUI(p);
-            } else if (perksHandler.get(uuid) != null) {
+            if (perksHandler.get(uuid) != null) {
                 pData.setPerkUnlockStatus(perksHandler.get(uuid), true);
                 pData.setPerkAtSlot(slotHandler.get(uuid), perksHandler.get(uuid));
                 zl.pitReset(p);
