@@ -467,6 +467,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             )));
         }
 
+        slotHandler.put(p.getUniqueId(), slot);
         p.openInventory(gui);
     }
 
@@ -612,6 +613,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
                     p.sendMessage("§a§lPURCHASE! §6" + perk.getName());
                     p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
                     openMainGUI(p);
+                    slotHandler.remove(p.getUniqueId());
                 });
     }
 
@@ -712,7 +714,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
 
         if (clicked == null) return;
 
-        if (clicked.getType() == ARROW) {
+        if (clicked.getType() == ARROW && clicked.getAmount() == 1) {
             openMainStreakGUI(p);
             return;
         } else if (clicked.getType() == GOLD_BLOCK) {
@@ -775,18 +777,17 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             return;
         }
 
-        Inventory inv = Bukkit.createInventory(p, 27, "Are you sure?");
-
-        inv.setItem(11, zl.itemBuilder(GREEN_TERRACOTTA, 1, "§aConfirm", Arrays.asList(
-                "§7Purchasing: §6" + mini.getName(),
-                "§7Cost: §6" + zl.getFancyGoldString((double) mini.getCost()) + "g"
-        )));
-        inv.setItem(15, zl.itemBuilder(RED_TERRACOTTA, 1, "§cCancel", Arrays.asList(
-                "§7Return to previous menu."
-        )));
-        costHandler.put(uuid, (double) mini.getCost());
-        ministreaksHandler.put(uuid, mini);
-        p.openInventory(inv);
+        confirmGUIHandler.confirmPurchase(p, "§6" + mini.getName(), mini.getCost(), false,
+                player -> {
+                    pData.setGold(pData.getGold() - mini.getCost());
+                    pData.setMinistreakUnlockStatus(mini, true);
+                    pData.setMinistreakAtSlot(slotHandler.get(uuid), mini);
+                    zl.pitReset(p);
+                    p.sendMessage("§a§lPURCHASE! §6" + mini.getName());
+                    openMainStreakGUI(p);
+                    p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+                    slotHandler.remove(p.getUniqueId());
+                });
     }
 
     @EventHandler
@@ -803,19 +804,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         if (e.getCurrentItem() == null) return;
 
         if (e.getCurrentItem().getType() == GREEN_TERRACOTTA) {
-            pData.setGold(pData.getGold() - costHandler.get(uuid));
 
-
-
-            if (ministreaksHandler.get(uuid) != null) {
-                pData.setMinistreakUnlockStatus(ministreaksHandler.get(uuid), true);
-                pData.setMinistreakAtSlot(slotHandler.get(uuid), ministreaksHandler.get(uuid));
-                zl.pitReset(p);
-                p.sendMessage("§a§lPURCHASE! §6" + ministreaksHandler.get(uuid).getName());
-                openMainStreakGUI(p);
-            }
-
-            p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
         } else if (e.getCurrentItem().getType() == RED_TERRACOTTA) {
             openMainGUI(p);
         }
@@ -825,7 +814,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         passivesHandler.remove(uuid);
         megastreaksHandler.remove(uuid);
         ministreaksHandler.remove(uuid);
-        slotHandler.remove(uuid);
+
     }
 
     @EventHandler
