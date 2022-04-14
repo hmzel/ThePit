@@ -289,7 +289,7 @@ public class ZelLogic {//zel
      * @return roman numeral equivalent of given number
      */
     public String toRoman(int number) {
-        final TreeMap<Integer, String> romanizer = new TreeMap<Integer, String>();
+        final TreeMap<Integer, String> romanizer = new TreeMap<>();
         romanizer.putIfAbsent(1000, "M");
         romanizer.putIfAbsent(900, "CM");
         romanizer.putIfAbsent(500, "D");

@@ -52,7 +52,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             int level = 0;
             List<String> lore = new ArrayList<>();
             Perks perk = pData.getPerkAtSlot(slot);
-            String name = (perk != UNSET) ? "§e" : "§a" + "Perk Slot #" + slot;
+            String name = ((perk != UNSET) ? "§e" : "§a") + "Perk Slot #" + slot;
 
             switch (slot) {
                 case 1:
@@ -599,18 +599,16 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             return;
         }
 
-        Inventory inv = Bukkit.createInventory(p, 27, "Are you sure?");
-
-        inv.setItem(11, zl.itemBuilder(GREEN_TERRACOTTA, 1, "§aConfirm", Arrays.asList(
-                "§7Purchasing: §6" + perk.getName(),
-                "§7Cost: §6" + zl.getFancyGoldString(cost) + "g"
-        )));
-        inv.setItem(15, zl.itemBuilder(RED_TERRACOTTA, 1, "§cCancel", Collections.singletonList(
-                "§7Return to previous menu."
-        )));
-        costHandler.put(p.getUniqueId(), cost);
-        perksHandler.put(p.getUniqueId(), perk);
-        p.openInventory(inv);
+        confirmGUIHandler.confirmPurchase(p, "§6" + perk.getName(), cost, false,
+                player -> {
+                    pData.setGold(pData.getGold() - cost);
+                    pData.setPerkUnlockStatus(perk, true);
+                    pData.setPerkAtSlot(slotHandler.get(p.getUniqueId()), perk);
+                    zl.pitReset(p);
+                    p.sendMessage("§a§lPURCHASE! §6" + perk.getName());
+                    p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+                    openMainGUI(p);
+                });
     }
 
     @EventHandler
@@ -805,13 +803,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         if (e.getCurrentItem().getType() == GREEN_TERRACOTTA) {
             pData.setGold(pData.getGold() - costHandler.get(uuid));
 
-            if (perksHandler.get(uuid) != null) {
-                pData.setPerkUnlockStatus(perksHandler.get(uuid), true);
-                pData.setPerkAtSlot(slotHandler.get(uuid), perksHandler.get(uuid));
-                zl.pitReset(p);
-                p.sendMessage("§a§lPURCHASE! §6" + perksHandler.get(uuid).getName());
-                openMainGUI(p);
-            } else if (megastreaksHandler.get(uuid) != null) {
+             if (megastreaksHandler.get(uuid) != null) {
                 pData.setMegastreakUnlockStatus(megastreaksHandler.get(uuid), true);
                 pData.setMegastreak(megastreaksHandler.get(uuid));
                 zl.pitReset(p);
