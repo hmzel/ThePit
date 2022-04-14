@@ -93,15 +93,41 @@ public class UpgradesVillagerListener implements Listener {
         }
 
         if (pData.getPrestige() != 0 || pData.getLevel() >= 60) {
-            ItemStack item = zl.itemBuilder(pData.getMegastreak().getMaterial(), 1, "§aKillstreaks", Arrays.asList(
+            List<String> lore = new ArrayList<>(Arrays.asList(
                     "§7Choose killstreak perks which",
                     "§7trigger every time you get X",
                     "§7kills.",
-                    " ",
+                    " "
+            ));
+            List<Ministreaks> sortedMinis = new ArrayList<>();
+
+            for (Ministreaks mini : pData.getEquippedMinistreaks()) {
+                if (mini == Ministreaks.UNSET) continue;
+
+                if (sortedMinis.isEmpty()) {
+                    sortedMinis.add(mini);
+                    continue;
+                }
+
+                for (int i = sortedMinis.size() - 1; i >= 0; i--) {
+                    if (sortedMinis.get(i).getTrigger() < mini.getTrigger()) {
+                        sortedMinis.add(i + 1, mini);
+                        break;
+                    }
+
+                    if (i == 0) sortedMinis.add(0, mini);
+                }
+            }
+
+            for (Ministreaks mini : sortedMinis) lore.add("§7Every §c" + mini.getTrigger() + " §7kills: §a" + mini.getName());
+
+            lore.addAll(Arrays.asList(
                     "§7Megastreak: §a" + pData.getMegastreak().getName(),
                     " ",
                     "§eClick to edit killstreaks!"
             ));
+
+            ItemStack item = zl.itemBuilder(pData.getMegastreak().getMaterial(), 1, "§aKillstreaks", lore);
 
             if (pData.getMegastreak() == Megastreaks.UBERSTREAK) {
                 ItemMeta meta = item.getItemMeta();

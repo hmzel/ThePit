@@ -32,7 +32,7 @@ public class SetMinistreakCommand implements CommandExecutor {
             }
 
             Main.getInstance().getPlayerData((Player) sender).setMinistreakAtSlot(Integer.parseInt(args[0]), Ministreaks.findByEnumName(args[1]));
-            sender.sendMessage("§aSuccessfully set your " + numberz[Integer.parseInt(args[0])] + "ministreak slot to §e" + Ministreaks.findByEnumName(args[1]).getName());
+            sender.sendMessage("§aSuccessfully set your " + numberz[Integer.parseInt(args[0]) - 1] + "ministreak slot to §e" + Ministreaks.findByEnumName(args[1]).getName());
         }
 
         if (args.length == 3) {
@@ -47,7 +47,7 @@ public class SetMinistreakCommand implements CommandExecutor {
             Player p2 = Bukkit.getPlayer(args[0]);
 
             Main.getInstance().getPlayerData(p2).setPerkAtSlot(Integer.parseInt(args[1]), Perks.findByEnumName(args[2]));
-            sender.sendMessage("§aSuccessfully set §7" + p2.getName() + "§a's " + numberz[Integer.parseInt(args[1])] + " ministreak slot to §e" + Ministreaks.findByEnumName(args[2]).getName());
+            sender.sendMessage("§aSuccessfully set §7" + p2.getName() + "§a's " + numberz[Integer.parseInt(args[1]) - 1] + " ministreak slot to §e" + Ministreaks.findByEnumName(args[2]).getName());
         }
 
         return true;
