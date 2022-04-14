@@ -37,6 +37,7 @@ public final class Main extends JavaPlugin {
     private KillListener killListener;
     private AssistListener assistListener;
     private AttackListener attackListener;
+    private ConfirmGUIHandler confirmGUIHandler;
 
     @Override
     public void onEnable() {
@@ -55,6 +56,7 @@ public final class Main extends JavaPlugin {
         deathListener = new DeathListener();
         KillRecap recap = new KillRecap();
         ScoreboardListener scoreboardListener = new ScoreboardListener();
+        confirmGUIHandler = new ConfirmGUIHandler();
 
         getServer().getPluginManager().registerEvents(storage, this);
         getServer().getPluginManager().registerEvents(new LevelUpListener(), this);
@@ -74,6 +76,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ChatListener(), this);
         getServer().getPluginManager().registerEvents(assistListener, this);
         getServer().getPluginManager().registerEvents(recap, this);
+        getServer().getPluginManager().registerEvents(confirmGUIHandler, this);
 
         getCommand("setprestige").setExecutor(new SetPrestigeCommand());
         getCommand("setlevel").setExecutor(new SetLevelCommand());
@@ -132,6 +135,9 @@ public final class Main extends JavaPlugin {
     }
     public AttackListener getAttackUtils() {
         return attackListener;
+    }
+    public ConfirmGUIHandler getConfirmGUIHandler() {
+        return confirmGUIHandler;
     }
 
     public PlayerData getPlayerData(String uuid) {
