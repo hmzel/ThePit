@@ -31,15 +31,10 @@ import java.util.*;
 import static me.zelha.thepit.zelenums.Perks.*;
 import static org.bukkit.Material.*;
 
-public class UpgradesVillagerListener implements Listener {//i hate this class
+public class UpgradesVillagerListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final ConfirmGUIHandler confirmGUIHandler = Main.getInstance().getConfirmGUIHandler();
-    private final Map<UUID, Double> costHandler = new HashMap<>();//i need to somehow figure out how to not use maps for this later
-    private final Map<UUID, Passives> passivesHandler = new HashMap<>();
-    private final Map<UUID, Megastreaks> megastreaksHandler = new HashMap<>();
-    private final Map<UUID, Ministreaks> ministreaksHandler = new HashMap<>();
-    private final Map<UUID, Perks> perksHandler = new HashMap<>();
     private final Map<UUID, Integer> slotHandler = new HashMap<>();
 
     private void openMainGUI(Player p) {
@@ -791,42 +786,8 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
     }
 
     @EventHandler
-    public void confirmGUIInteract(InventoryClickEvent e) {
-        Player p = (Player) e.getWhoClicked();
-        UUID uuid = p.getUniqueId();
-        PlayerData pData = Main.getInstance().getPlayerData(p);
-
-        if (!e.getView().getTitle().equals("Are you sure?")) return;
-        if (e.getClickedInventory() == e.getView().getBottomInventory()) return;
-
-        e.setCancelled(true);
-
-        if (e.getCurrentItem() == null) return;
-
-        if (e.getCurrentItem().getType() == GREEN_TERRACOTTA) {
-
-        } else if (e.getCurrentItem().getType() == RED_TERRACOTTA) {
-            openMainGUI(p);
-        }
-
-        costHandler.remove(uuid);
-        perksHandler.remove(uuid);
-        passivesHandler.remove(uuid);
-        megastreaksHandler.remove(uuid);
-        ministreaksHandler.remove(uuid);
-
-    }
-
-    @EventHandler
     public void onLeave(PlayerQuitEvent e) {
-        UUID uuid = e.getPlayer().getUniqueId();
-
-        costHandler.remove(uuid);
-        passivesHandler.remove(uuid);
-        perksHandler.remove(uuid);
-        slotHandler.remove(uuid);
-        megastreaksHandler.remove(uuid);
-        ministreaksHandler.remove(uuid);
+        slotHandler.remove(e.getPlayer().getUniqueId());
     }
 }
 
