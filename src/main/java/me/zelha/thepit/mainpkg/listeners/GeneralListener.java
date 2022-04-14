@@ -43,7 +43,7 @@ public class GeneralListener implements Listener {
         CHAINMAIL_HELMET, CHAINMAIL_CHESTPLATE, CHAINMAIL_LEGGINGS, CHAINMAIL_BOOTS
     };
     private final String[] inventoryNames = {
-            "Non-permanent items", "Permanent upgrades", "Choose a perk", "Are you sure?"
+            "Non-permanent items", "Permanent upgrades", "Choose a perk", "Are you sure?", "Killstreaks", "Choose a killstreak§2", "Choose a killstreak§1"
     };
 
     @EventHandler
