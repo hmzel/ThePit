@@ -31,7 +31,6 @@ public class BlockListener implements Listener {
             public void run() {
                 block.setType(previousBlock);
                 placedBlocks.remove(block);
-                cancel();
             }
         }.runTaskLater(Main.getInstance(), time);
 
@@ -56,7 +55,7 @@ public class BlockListener implements Listener {
             e.setCancelled(true);
         }
 
-        if (loc.distance(new Location(loc.getWorld(), 0, loc.getY(), 0)) < 9 && !Main.getInstance().blockPriviledges.contains(p)) {
+        if (loc.distance(new Location(loc.getWorld(), 0.5, loc.getY(), 0.5)) < 9 && !Main.getInstance().blockPriviledges.contains(p)) {
             e.setCancelled(true);
             return;
         }

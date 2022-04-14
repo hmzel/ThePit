@@ -133,7 +133,7 @@ public class GeneralListener implements Listener {
 
     @EventHandler
     public void onBlockChange(BlockPhysicsEvent e) {
-        if (e.getSourceBlock().getType() == GRASS_BLOCK) e.setCancelled(true);
+        if (e.getChangedType() == GRASS_BLOCK || e.getChangedType() == DIRT) e.setCancelled(true);
     }
 
     @EventHandler

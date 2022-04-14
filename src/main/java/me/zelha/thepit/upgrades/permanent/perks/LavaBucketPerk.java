@@ -5,6 +5,7 @@ import me.zelha.thepit.utils.RunTracker;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -65,6 +66,7 @@ public class LavaBucketPerk extends Perk implements Listener {
         e.setCancelled(true);
 
         if (zl.spawnCheck(block.getLocation())) return;
+        if (block.getLocation().distance(new Location(block.getWorld(), 0.5, block.getY(), 0.5)) < 9) return;
         if (block.getType() == LAVA || block.getType() == WATER) return;
 
         if (e.getBucket() == Material.LAVA_BUCKET) {
