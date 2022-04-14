@@ -373,7 +373,7 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             }
 
             if (pData.getMegastreak() == mega || mega == Megastreaks.UBERSTREAK) {
-                gui.setItem(i, zl.itemBuilder(mega.getMaterial(), 1, color + mega.getName(), lore, false, false, new Pair[]{Pair.of(Enchantment.ARROW_INFINITE, 1)}));
+                gui.setItem(i, zl.itemBuilder(mega.getMaterial(), 1, color + mega.getName(), lore, false, false, Pair.of(Enchantment.ARROW_INFINITE, 1)));
             } else {
                 gui.setItem(i, zl.itemBuilder(mega.getMaterial(), 1, color + mega.getName(), lore));
             }
@@ -686,18 +686,16 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
             return;
         }
 
-        Inventory inv = Bukkit.createInventory(p, 27, "Are you sure?");
-
-        inv.setItem(11, zl.itemBuilder(GREEN_TERRACOTTA, 1, "§aConfirm", Arrays.asList(
-                "§7Purchasing: §6" + mega.getName(),
-                "§7Cost: §6" + zl.getFancyGoldString((double) mega.getCost()) + "g"
-        )));
-        inv.setItem(15, zl.itemBuilder(RED_TERRACOTTA, 1, "§cCancel", Arrays.asList(
-                "§7Return to previous menu."
-        )));
-        costHandler.put(p.getUniqueId(), (double) mega.getCost());
-        megastreaksHandler.put(p.getUniqueId(), mega);
-        p.openInventory(inv);
+        confirmGUIHandler.confirmPurchase(p, "§6" + mega.getName(), mega.getCost(), false,
+                player -> {
+                    pData.setGold(pData.getGold() - mega.getCost());
+                    pData.setMegastreakUnlockStatus(mega, true);
+                    pData.setMegastreak(mega);
+                    zl.pitReset(p);
+                    p.sendMessage("§a§lPURCHASE! §6" + mega.getName());
+                    p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+                    openMainStreakGUI(p);
+                });
     }
 
     @EventHandler
@@ -807,13 +805,9 @@ public class UpgradesVillagerListener implements Listener {//i hate this class
         if (e.getCurrentItem().getType() == GREEN_TERRACOTTA) {
             pData.setGold(pData.getGold() - costHandler.get(uuid));
 
-             if (megastreaksHandler.get(uuid) != null) {
-                pData.setMegastreakUnlockStatus(megastreaksHandler.get(uuid), true);
-                pData.setMegastreak(megastreaksHandler.get(uuid));
-                zl.pitReset(p);
-                p.sendMessage("§a§lPURCHASE! §6" + megastreaksHandler.get(uuid).getName());
-                openMainStreakGUI(p);
-            } else if (ministreaksHandler.get(uuid) != null) {
+
+
+            if (ministreaksHandler.get(uuid) != null) {
                 pData.setMinistreakUnlockStatus(ministreaksHandler.get(uuid), true);
                 pData.setMinistreakAtSlot(slotHandler.get(uuid), ministreaksHandler.get(uuid));
                 zl.pitReset(p);
