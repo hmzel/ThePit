@@ -1,7 +1,7 @@
 package me.zelha.thepit.mainpkg.data;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.ZelLogic;
+import me.zelha.thepit.utils.ZelLogic;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;

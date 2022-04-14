@@ -1,8 +1,8 @@
 package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.RunTracker;
-import me.zelha.thepit.ZelLogic;
+import me.zelha.thepit.utils.RunTracker;
+import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.perks.SpammerPerk;
 import me.zelha.thepit.zelenums.Passives;

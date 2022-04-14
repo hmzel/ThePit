@@ -1,4 +1,4 @@
-package me.zelha.thepit;
+package me.zelha.thepit.utils;
 
 import org.bukkit.Bukkit;
 

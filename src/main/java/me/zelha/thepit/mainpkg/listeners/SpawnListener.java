@@ -1,7 +1,7 @@
 package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.ZelLogic;
+import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import org.bukkit.Sound;
 import org.bukkit.entity.Arrow;

@@ -1,7 +1,7 @@
 package me.zelha.thepit.admin.commands;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.ZelLogic;
+import me.zelha.thepit.utils.ZelLogic;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

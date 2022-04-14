@@ -1,8 +1,8 @@
 package me.zelha.thepit.upgrades.permanent;
 
-import me.zelha.thepit.ConfirmGUIHandler;
+import me.zelha.thepit.utils.ConfirmGUIHandler;
 import me.zelha.thepit.Main;
-import me.zelha.thepit.ZelLogic;
+import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.*;
 import org.bukkit.Bukkit;

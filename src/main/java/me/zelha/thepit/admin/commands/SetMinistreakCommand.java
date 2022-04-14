@@ -1,7 +1,7 @@
 package me.zelha.thepit.admin.commands;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.ZelLogic;
+import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.Ministreaks;
 import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.Bukkit;

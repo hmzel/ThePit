@@ -1,5 +1,6 @@
-package me.zelha.thepit;
+package me.zelha.thepit.utils;
 
+import me.zelha.thepit.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

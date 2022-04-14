@@ -1,7 +1,7 @@
 package me.zelha.thepit.upgrades.nonpermanent;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.ZelLogic;
+import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.mainpkg.listeners.BlockListener;
 import org.bukkit.Location;
 import org.bukkit.Particle;

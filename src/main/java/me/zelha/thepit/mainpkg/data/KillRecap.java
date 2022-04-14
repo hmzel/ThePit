@@ -1,7 +1,7 @@
 package me.zelha.thepit.mainpkg.data;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.ZelLogic;
+import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.mainpkg.listeners.AssistListener;
 import me.zelha.thepit.mainpkg.listeners.KillListener;
 import me.zelha.thepit.upgrades.permanent.perks.SpammerPerk;

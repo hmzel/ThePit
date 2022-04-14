@@ -1,7 +1,7 @@
 package me.zelha.thepit.upgrades.permanent;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.ZelLogic;
+import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.perks.BonkPerk;
 import me.zelha.thepit.zelenums.Perks;

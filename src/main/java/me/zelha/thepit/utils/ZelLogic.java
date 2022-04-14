@@ -1,5 +1,6 @@
-package me.zelha.thepit;
+package me.zelha.thepit.utils;
 
+import me.zelha.thepit.Main;
 import me.zelha.thepit.mainpkg.data.DamageLog;
 import me.zelha.thepit.mainpkg.data.KillRecap;
 import me.zelha.thepit.mainpkg.data.PlayerData;

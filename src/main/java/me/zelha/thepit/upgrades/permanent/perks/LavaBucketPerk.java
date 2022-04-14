@@ -1,7 +1,7 @@
 package me.zelha.thepit.upgrades.permanent.perks;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.RunTracker;
+import me.zelha.thepit.utils.RunTracker;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.Bukkit;
