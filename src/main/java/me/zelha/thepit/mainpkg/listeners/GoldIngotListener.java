@@ -1,8 +1,8 @@
 package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.Location;
@@ -41,18 +41,17 @@ public class GoldIngotListener implements Listener {
 
         Player p = (Player) e.getEntity();
         PlayerData pData = Main.getInstance().getPlayerData(p);
-        double ingotGold;
-
-        if (pData.getPassiveTier(Passives.GOLD_BOOST) != 0) {
-            ingotGold = (2.5 * (1 + ((double) pData.getPassiveTier(Passives.GOLD_BOOST) / 10))) * e.getItem().getItemStack().getAmount();
-        } else {
-            ingotGold = 2.5 * e.getItem().getItemStack().getAmount();
-        }
+        double ingotGold = 2.5;
 
         if (pData.hasPerkEquipped(Perks.TRICKLE_DOWN)) {
             ingotGold += 10;
             p.setHealth(Math.min(p.getHealth() + 2, p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
         }
+
+        if (pData.getPassiveTier(Passives.GOLD_BOOST) != 0) ingotGold *= (1 + (pData.getPassiveTier(Passives.GOLD_BOOST) / 10D));
+
+        ingotGold *= e.getItem().getItemStack().getAmount();
+        ingotGold = Math.round(ingotGold);
 
         pData.setGold(pData.getGold() + ingotGold);
         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1F, 1.8F);
