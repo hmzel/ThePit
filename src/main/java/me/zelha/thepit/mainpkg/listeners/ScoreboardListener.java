@@ -254,7 +254,7 @@ public class ScoreboardListener implements Listener {
                     }
                 }.runTaskTimer(Main.getInstance(), 0, 1);
 
-                p.setPlayerListFooter("§e\uD83D\uDF10 \n*hands you the alchemical symbol for Mercury (II) Chloride*");
+                p.setPlayerListFooter("§eolms are my spirit animal");
 
                 hasHeaderAndFooter = true;
             }
@@ -274,21 +274,23 @@ public class ScoreboardListener implements Listener {
             }
 
             for (int i = 0; i < (level + "").length(); i++) {
+                if ((level + "").charAt(i) == '-') continue;
+
                 sort.append(sortHelp[Integer.parseInt((level + "").charAt(i) + "")]);
             }
 
             if (!teamMap.containsKey(uuid)) {
-                if (main.getTeam(sort + p.getName()) != null) {
-                    team = main.getTeam(sort + p.getName());
+                if (main.getTeam(sort.toString()) != null) {
+                    team = main.getTeam(sort.toString());
                 } else {
-                    team = main.registerNewTeam(sort + p.getName());
+                    team = main.registerNewTeam(sort.toString());
                 }
 
                 teamMap.put(uuid, team);
-            } else if (!teamMap.get(uuid).getName().equals(sort + p.getName())) {
+            } else if (!teamMap.get(uuid).getName().equals(sort.toString())) {
                 teamMap.get(uuid).unregister();
 
-                team = main.registerNewTeam(sort + p.getName());
+                team = main.registerNewTeam(sort.toString());
 
                 teamMap.put(uuid, team);
             } else {
