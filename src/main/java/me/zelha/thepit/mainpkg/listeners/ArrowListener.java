@@ -4,11 +4,8 @@ import me.zelha.thepit.Main;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
-import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -39,18 +36,6 @@ public class ArrowListener implements Listener {
                 arrowItemMap.remove(e.getEntity().getUniqueId());
             }
         }.runTaskLater(Main.getInstance(), 1200);
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onArrowHit(ProjectileHitEvent e) {
-        if (!(e.getEntity() instanceof Arrow)) return;
-
-        arrowItemMap.remove(e.getEntity().getUniqueId());
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onPickup(PlayerPickupArrowEvent e) {
-        arrowItemMap.remove(e.getArrow().getUniqueId());
     }
 }
 

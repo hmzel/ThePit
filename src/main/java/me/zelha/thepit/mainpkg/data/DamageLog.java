@@ -1,6 +1,7 @@
 package me.zelha.thepit.mainpkg.data;
 
 import me.zelha.thepit.Main;
+import me.zelha.thepit.mainpkg.listeners.ArrowListener;
 import me.zelha.thepit.utils.ZelLogic;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.entity.Arrow;
@@ -38,7 +39,12 @@ public class DamageLog {
 
         this.hasPlayer = true;
 
-        this.item = damager.getInventory().getItemInMainHand();
+        if (damagerEntity instanceof Arrow) {
+            this.item = ArrowListener.getArrowItem((Arrow) damagerEntity);
+        } else {
+            this.item = damager.getInventory().getItemInMainHand();
+        }
+
         this.damage = event.getFinalDamage();
         this.time = MinecraftServer.currentTick;
         this.subName = damaged.getName();
