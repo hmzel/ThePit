@@ -80,6 +80,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(assistListener, this);
         getServer().getPluginManager().registerEvents(recap, this);
         getServer().getPluginManager().registerEvents(confirmGUIHandler, this);
+        getServer().getPluginManager().registerEvents(new ArrowListener(), this);
 
         getCommand("setprestige").setExecutor(new SetPrestigeCommand());
         getCommand("setlevel").setExecutor(new SetLevelCommand());
