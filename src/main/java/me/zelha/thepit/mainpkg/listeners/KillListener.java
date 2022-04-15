@@ -1,10 +1,10 @@
 package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.utils.RunTracker;
-import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.perks.SpammerPerk;
+import me.zelha.thepit.utils.RunTracker;
+import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -17,7 +17,10 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
-import org.bukkit.entity.*;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -318,7 +321,6 @@ public class KillListener implements Listener {
 
             if (pData.getBounty() != 0 && !zl.spawnCheck(player.getLocation()) && !hasAnimation) {
                 new BukkitRunnable() {
-
                     private final Random rng = new Random();
 
                     @Override
@@ -358,19 +360,20 @@ public class KillListener implements Listener {
                                 }
 
                                 if (particle == null) {
-                                    particle = (ArmorStand) player.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
+                                    particle = player.getWorld().spawn(location, ArmorStand.class,
+                                            armorstand -> {
+                                                armorstand.setVisible(false);
+                                                armorstand.setGravity(false);
+                                                armorstand.setPersistent(true);
+                                                armorstand.setMarker(true);
+                                                armorstand.setInvulnerable(true);
+                                                armorstand.setAI(false);
+                                                armorstand.setCustomName("§6§l" + pData.getBounty() + "g");
+                                                armorstand.setCustomNameVisible(true);
+                                                armorstand.addScoreboardTag("bounty");
+                                            });
 
                                     ((CraftPlayer) player).getHandle().b.sendPacket(new PacketPlayOutEntityDestroy(particle.getEntityId()));
-
-                                    particle.setVisible(false);
-                                    particle.setGravity(false);
-                                    particle.setPersistent(true);
-                                    particle.setMarker(true);
-                                    particle.setInvulnerable(true);
-                                    particle.setAI(false);
-                                    particle.setCustomName("§6§l" + pData.getBounty() + "g");
-                                    particle.setCustomNameVisible(true);
-                                    particle.addScoreboardTag("bounty");
 
                                     for (EquipmentSlot slots : EquipmentSlot.values()) particle.addEquipmentLock(slots, ArmorStand.LockType.ADDING_OR_CHANGING);
                                 }
