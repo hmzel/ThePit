@@ -10,29 +10,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum Passives {//0 tierMultipler is just a placeholder dont hurt me please
-    XP_BOOST("XP Boost", "§bXP Boost", Material.LIGHT_BLUE_DYE, 500, 10, 0),
-    GOLD_BOOST("Gold Boost", "§6Gold Boost", Material.ORANGE_DYE, 1000, 20, 15),
-    MELEE_DAMAGE("Melee Damage", "§cMelee Damage", Material.RED_DYE, 450, 30, 0),
-    BOW_DAMAGE("Bow Damage", "§eBow Damage", Material.YELLOW_DYE, 450, 30, 0),
-    DAMAGE_REDUCTION("Damage Reduction", "§9Damage Reduction", Material.CYAN_DYE, 450, 30, 0),
-    BUILD_BATTLER("Build Battler", "§aBuild Battler", Material.BONE_MEAL, 750, 40, 0),
-    EL_GATO("El Gato", "§dEl Gato", Material.CAKE, 1000, 50, 0);
+    XP_BOOST("XP Boost", "§bXP Boost", Material.LIGHT_BLUE_DYE),
+    GOLD_BOOST("Gold Boost", "§6Gold Boost", Material.ORANGE_DYE),
+    MELEE_DAMAGE("Melee Damage", "§cMelee Damage", Material.RED_DYE),
+    BOW_DAMAGE("Bow Damage", "§eBow Damage", Material.YELLOW_DYE),
+    DAMAGE_REDUCTION("Damage Reduction", "§9Damage Reduction", Material.CYAN_DYE),
+    BUILD_BATTLER("Build Battler", "§aBuild Battler", Material.BONE_MEAL),
+    EL_GATO("El Gato", "§dEl Gato", Material.CAKE);
 
     private final String name;
     private final String colorfulName;
     private final Material material;
-    private final int baseCost;
-    private final int baseLevelReq;
-    private final int levelTierMultiplier;
     private final ZelLogic zl = Main.getInstance().getZelLogic();
 
-    Passives(String name, String colorfulName, Material material, int baseCost, int baseLevelReq, int levelTierMultiplier) {
+    Passives(String name, String colorfulName, Material material) {
         this.name = name;
         this.colorfulName = colorfulName;
         this.material = material;
-        this.baseCost = baseCost;
-        this.baseLevelReq = baseLevelReq;
-        this.levelTierMultiplier = levelTierMultiplier;
     }
 
     public String getName() {
@@ -48,34 +42,60 @@ public enum Passives {//0 tierMultipler is just a placeholder dont hurt me pleas
     }
 
     public int getBaseLevelReq() {
-        return baseLevelReq;
-    }
-
-    public int getLevelRequirement(Player p) {
-        PlayerData pData = Main.getInstance().getPlayerData(p);
-
-        return baseLevelReq + (levelTierMultiplier * pData.getPassiveTier(Passives.findByEnumName(name())));
-    }
-
-    public int getCost(Player p) {
-        PlayerData pData = Main.getInstance().getPlayerData(p);
-        Passives passive = Passives.findByEnumName(name());
-        int cost = 0;
-
-        switch (passive) {//will update when i figure out all the costs
-            case XP_BOOST://t2 is 2500, t5 is 25000, wtf is this calculation
+        switch (this) {
+            case XP_BOOST:
+                return 10;
             case GOLD_BOOST:
+                return 20;
+            case MELEE_DAMAGE:
+            case BOW_DAMAGE:
+            case DAMAGE_REDUCTION:
+                return 30;
+            case BUILD_BATTLER:
+                return 40;
+            case EL_GATO:
+                return 50;
+        }
+        return 0;
+    }
+
+    public int getLevelReq(Player p) {
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+
+        switch (this) {
+            case XP_BOOST://t5 is 100
+                break;
+            case GOLD_BOOST:
+                return 20 + (15 * pData.getPassiveTier(this));
             case MELEE_DAMAGE:
             case BOW_DAMAGE:
             case DAMAGE_REDUCTION:
             case BUILD_BATTLER:
-                cost = baseCost;
-                break;
             case EL_GATO:
-                cost = baseCost + (pData.getPassiveTier(passive) * 1000);
-                break;
         }
-        return cost;
+
+        return getBaseLevelReq();
+    }
+
+    public int getCost(Player p) {
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+
+        switch (this) {//will update when i figure out all the costs
+            case XP_BOOST://t2 is 2500, t5 is 25000, wtf is this calculation
+                return 500;
+            case GOLD_BOOST:
+                return 1000;
+            case MELEE_DAMAGE:
+            case BOW_DAMAGE:
+            case DAMAGE_REDUCTION:
+                return 450;
+            case BUILD_BATTLER://t2 is 2750
+                return 750;
+            case EL_GATO:
+                return 1000 + (pData.getPassiveTier(this) * 1000);
+        }
+
+        return 0;
     }
 
     public List<String> getLore(Player p) {
@@ -154,7 +174,7 @@ public enum Passives {//0 tierMultipler is just a placeholder dont hurt me pleas
         lore.add("");
 
         if (tier < 5) {
-            if (pData.getLevel() >= getLevelRequirement(p)) {
+            if (pData.getLevel() >= getLevelReq(p)) {
                 if (tier > 0) {
                     lore.add("§7Upgrade cost: §6" + zl.getFancyGoldString(getCost(p)) + "g");
                 } else {
@@ -167,7 +187,7 @@ public enum Passives {//0 tierMultipler is just a placeholder dont hurt me pleas
                     lore.add("§cNot enough gold!");
                 }
             } else {
-                lore.add("§7Required level: " + zl.getColorBracketAndLevel(0, getLevelRequirement(p)));
+                lore.add("§7Required level: " + zl.getColorBracketAndLevel(0, getLevelReq(p)));
                 lore.add("§cLevel too low to upgrade!");
             }
         } else {
