@@ -3,6 +3,7 @@ package me.zelha.thepit.upgrades.permanent.perks;
 import me.zelha.thepit.Main;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,6 +41,7 @@ public class BonkPerk extends Perk implements Listener {
         for (Entity entity : damaged.getNearbyEntities(32, 32, 32)) {
             if (!zl.playerCheck(entity) || entity.getUniqueId().equals(damagedUUID)) continue;
 
+            ((Player) entity).playSound(damaged.getLocation(), Sound.BLOCK_ANVIL_FALL, 1, 1);
             ((Player) entity).spawnParticle(Particle.EXPLOSION_LARGE, damaged.getLocation(), 1, 0, 0, 0, 0);
         }
 
