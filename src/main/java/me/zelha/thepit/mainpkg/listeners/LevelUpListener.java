@@ -47,10 +47,19 @@ public class LevelUpListener implements Listener {
 
             if (pData.getExp() <= 0 && pData.getLevel() < 120) {
                 String previousLevel = zl.getColorBracketAndLevel(uuid.toString());
-                int level = pData.getLevel();
+                int newLevel = pData.getLevel() + 1;
+                int exp = pData.getExp();
 
-                pData.setLevel(level + 1);
-                pData.setExp(zl.maxXPReq(uuid.toString()));
+                while (exp <= 0) {
+                    if (newLevel != 121) {
+                        pData.setLevel(newLevel);
+                    } else break;
+
+                    exp += zl.maxXPReq(uuid.toString());
+                    newLevel++;
+                }
+
+                pData.setExp(exp);
                 player.sendTitle("§b§lLEVEL UP!",
                         previousLevel + " ➟ " + zl.getColorBracketAndLevel(uuid.toString()),
                         10, 40, 10);
