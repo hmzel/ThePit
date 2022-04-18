@@ -1,9 +1,9 @@
 package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.mainpkg.data.DamageLog;
 import me.zelha.thepit.mainpkg.data.KillRecap;
+import me.zelha.thepit.utils.ZelLogic;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -19,6 +19,7 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -149,6 +150,11 @@ public class GeneralListener implements Listener {
             e.setCancelled(true);
             e.getEntity().setFireTicks(0);
         }
+    }
+
+    @EventHandler
+    public void onMerchantInventory(InventoryOpenEvent e) {
+        if (e.getView().getTopInventory().getType() == InventoryType.MERCHANT) e.setCancelled(true);
     }
 
     @EventHandler

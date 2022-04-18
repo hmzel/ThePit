@@ -7,43 +7,27 @@ import me.zelha.thepit.zelenums.NPCs;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+
+import java.util.List;
 
 public class NPCInteractEventCaller implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
 
     @EventHandler
-    public void onDirectRightClick(InventoryOpenEvent e) {
-        if (e.getView().getTopInventory().getType() != InventoryType.MERCHANT) return;
-        if (!zl.spawnCheck(e.getPlayer().getLocation())) return;
-
-        Villager villager = (Villager) e.getInventory().getHolder();
-        NPCs npc = null;
-
-        if (villager.getScoreboardTags().contains("items")) npc = NPCs.ITEMS;
-        if (villager.getScoreboardTags().contains("upgrades")) npc = NPCs.UPGRADES;
-
-        e.setCancelled(true);
-
-        if (npc == null) return;
-
-        Bukkit.getPluginManager().callEvent(new NPCInteractEvent((Player) e.getPlayer(), npc));
-    }
-
-    @EventHandler
     public void onRightClick(PlayerInteractEntityEvent e) {
         if (!zl.spawnCheck(e.getPlayer().getLocation())) return;
 
         NPCs npc = null;
+        List<Entity> entities = e.getRightClicked().getNearbyEntities(1.5, 1.5, 1.5);
 
-        for (Entity entity2 : e.getRightClicked().getNearbyEntities(1.5, 1.5, 1.5)) {
+        entities.add(e.getRightClicked());
+
+        for (Entity entity2 : entities) {
             if (entity2.getScoreboardTags().contains("items")) npc = NPCs.ITEMS;
             if (entity2.getScoreboardTags().contains("upgrades")) npc = NPCs.UPGRADES;
             if (npc != null) break;
@@ -63,8 +47,11 @@ public class NPCInteractEventCaller implements Listener {
 
         Player damager = (Player) e.getDamager();
         NPCs npc = null;
+        List<Entity> entities = damaged.getNearbyEntities(1.5, 1.5, 1.5);
 
-        for (Entity entity2 : damaged.getNearbyEntities(1.5, 1.5, 1.5)) {
+        entities.add(damaged);
+
+        for (Entity entity2 : entities) {
             if (entity2.getScoreboardTags().contains("items")) npc = NPCs.ITEMS;
             if (entity2.getScoreboardTags().contains("upgrades")) npc = NPCs.UPGRADES;
             if (npc != null) break;
