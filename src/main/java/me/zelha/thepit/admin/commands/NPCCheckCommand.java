@@ -68,6 +68,7 @@ public class NPCCheckCommand implements CommandExecutor {//nope.
             itemsVillager.setPersistent(true);
             itemsVillager.setSilent(true);
             itemsVillager.addScoreboardTag("z-entity");
+            itemsVillager.addScoreboardTag("items");
         } else if (type == NPCs.UPGRADES) {
             Villager upgradesVillager = (Villager) location.getWorld().spawnEntity(location, EntityType.VILLAGER);
             upgradesVillager.setAI(false);
@@ -75,6 +76,7 @@ public class NPCCheckCommand implements CommandExecutor {//nope.
             upgradesVillager.setPersistent(true);
             upgradesVillager.setSilent(true);
             upgradesVillager.addScoreboardTag("z-entity");
+            upgradesVillager.addScoreboardTag("upgrades");
         }
     }
 
