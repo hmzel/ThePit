@@ -1,25 +1,20 @@
 package me.zelha.thepit.upgrades.permanent;
 
-import me.zelha.thepit.utils.ConfirmGUIHandler;
 import me.zelha.thepit.Main;
-import me.zelha.thepit.utils.ZelLogic;
+import me.zelha.thepit.events.NPCInteractEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.utils.ConfirmGUIHandler;
+import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
@@ -143,7 +138,7 @@ public class UpgradesVillagerListener implements Listener {
         for (Passives passive : Passives.values()) {
             String name;
             int cost = passive.getCost(p);
-            int level = passive.getLevelRequirement(p);
+            int level = passive.getLevelReq(p);
 
             if (pData.getLevel() < passive.getBaseLevelReq() && pData.getPrestige() == 0) {
                 mainGUI.setItem(passiveIndex, zl.itemBuilder(BEDROCK, 1, "§cUnknown Upgrade", Collections.singletonList(
@@ -493,45 +488,8 @@ public class UpgradesVillagerListener implements Listener {
     }
 
     @EventHandler
-    public void onDirectRightClick(InventoryOpenEvent e) {
-        if (e.getView().getTopInventory().getType() == InventoryType.MERCHANT) {
-            Player p = (Player) e.getPlayer();
-            Villager villager = (Villager) e.getInventory().getHolder();
-            String worldName = e.getPlayer().getWorld().getName();
-            double x = villager.getLocation().getX();
-            double y = villager.getLocation().getY();
-            double z = villager.getLocation().getZ();
-
-            e.setCancelled(true);
-
-            if (zl.noObstructions(Worlds.findByName(worldName), NPCs.UPGRADES).contains(x, y, z)) openMainGUI(p);
-        }
-    }
-
-    @EventHandler
-    public void onRightClick(PlayerInteractEntityEvent e) {
-        String worldName = e.getPlayer().getWorld().getName();
-        double x = e.getRightClicked().getLocation().getX();
-        double y = e.getRightClicked().getLocation().getY();
-        double z = e.getRightClicked().getLocation().getZ();
-
-        if (zl.noObstructions(Worlds.findByName(worldName), NPCs.UPGRADES).contains(x, y, z)) openMainGUI(e.getPlayer());
-    }
-
-    @EventHandler
-    public void onLeftClick(EntityDamageByEntityEvent e) {
-        Entity damaged = e.getEntity();
-        Entity damagerEntity = e.getDamager();
-
-        if (!zl.playerCheck(damagerEntity)) return;
-
-        Player damager = (Player) e.getDamager();
-        String worldName = damager.getWorld().getName();
-        double x = damaged.getLocation().getX();
-        double y = damaged.getLocation().getY();
-        double z = damaged.getLocation().getZ();
-
-        if (zl.noObstructions(Worlds.findByName(worldName), NPCs.UPGRADES).contains(x, y, z)) openMainGUI(damager);
+    public void onNPCInteract(NPCInteractEvent e) {
+        if (e.getNPC() == NPCs.UPGRADES) openMainGUI(e.getPlayer());
     }
 
     @EventHandler
@@ -559,7 +517,7 @@ public class UpgradesVillagerListener implements Listener {
             p.sendMessage("§aYou already unlocked the last upgrade!");
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return;
-        } else if (e.getCurrentItem().getType() == BEDROCK || pData.getLevel() < passive.getLevelRequirement(p)) {
+        } else if (e.getCurrentItem().getType() == BEDROCK || pData.getLevel() < passive.getLevelReq(p)) {
             p.sendMessage("§cYou are too low level to acquire this!");
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return;
