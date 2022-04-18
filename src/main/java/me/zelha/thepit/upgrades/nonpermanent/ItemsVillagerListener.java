@@ -1,23 +1,17 @@
 package me.zelha.thepit.upgrades.nonpermanent;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.utils.ZelLogic;
+import me.zelha.thepit.events.NPCInteractEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.NPCs;
 import me.zelha.thepit.zelenums.ShopItems;
-import me.zelha.thepit.zelenums.Worlds;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -61,46 +55,8 @@ public class ItemsVillagerListener implements Listener {
     }
 
     @EventHandler
-    public void onDirectRightClick(InventoryOpenEvent e) {
-        if (e.getView().getTopInventory().getType() == InventoryType.MERCHANT) {
-            Villager villager = (Villager) e.getInventory().getHolder();
-            double x = villager.getLocation().getX();
-            double y = villager.getLocation().getY();
-            double z = villager.getLocation().getZ();
-
-            e.setCancelled(true);
-
-            if (zl.noObstructions(Worlds.findByName(e.getPlayer().getWorld().getName()), NPCs.ITEMS).contains(x, y, z)) {
-                openGUI((Player) e.getPlayer());
-            }
-        }
-    }
-
-    @EventHandler
-    public void onRightClick(PlayerInteractEntityEvent e) {
-        double x = e.getRightClicked().getLocation().getX();
-        double y = e.getRightClicked().getLocation().getY();
-        double z = e.getRightClicked().getLocation().getZ();
-
-        if (zl.noObstructions(Worlds.findByName(e.getPlayer().getWorld().getName()), NPCs.ITEMS).contains(x, y, z)) {
-            openGUI(e.getPlayer());
-        }
-    }
-
-    @EventHandler
-    public void onLeftClick(EntityDamageByEntityEvent e) {
-        Entity damaged = e.getEntity();
-
-        if (!zl.playerCheck(e.getDamager())) return;
-
-        Player damager = (Player) e.getDamager();
-        double x = damaged.getLocation().getX();
-        double y = damaged.getLocation().getY();
-        double z = damaged.getLocation().getZ();
-
-        if (zl.noObstructions(Worlds.findByName(damager.getWorld().getName()), NPCs.ITEMS).contains(x, y, z)) {
-            openGUI(damager);
-        }
+    public void onNPCInteract(NPCInteractEvent e) {
+        if (e.getNPC() == NPCs.ITEMS) openGUI(e.getPlayer());
     }
 
     @EventHandler
