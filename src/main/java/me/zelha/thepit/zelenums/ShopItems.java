@@ -69,9 +69,9 @@ public enum ShopItems {
     public ItemStack getBoughtItem() {
         switch (this) {
             case OBSIDIAN:
-                return zl.itemBuilder(Material.DIAMOND_SWORD, 1);
-            case DIAMOND_SWORD:
                 return zl.itemBuilder(Material.OBSIDIAN, 8, null, null);
+            case DIAMOND_SWORD:
+                return zl.itemBuilder(Material.DIAMOND_SWORD, 1);
             case GOLDEN_PICKAXE:
                 return zl.itemBuilder(Material.GOLDEN_PICKAXE, 1, "§6Golden Pickaxe", Arrays.asList(
                         "§7Breaks a 5-high pillar of",
