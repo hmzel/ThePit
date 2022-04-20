@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
 
@@ -20,36 +21,19 @@ public class NPCInteractEventCaller implements Listener {
 
     @EventHandler
     public void onRightClick(PlayerInteractEntityEvent e) {
-        if (!zl.spawnCheck(e.getPlayer().getLocation())) return;
-
-        NPCs npc = null;
-        List<Entity> entities = e.getRightClicked().getNearbyEntities(1.5, 1.5, 1.5);
-
-        entities.add(e.getRightClicked());
-
-        for (Entity entity2 : entities) {
-            if (entity2.getScoreboardTags().contains("items")) npc = NPCs.ITEMS;
-            if (entity2.getScoreboardTags().contains("upgrades")) npc = NPCs.UPGRADES;
-            if (npc != null) break;
-        }
-
-        if (npc == null) return;
-
-        Bukkit.getPluginManager().callEvent(new NPCInteractEvent(e.getPlayer(), npc));
+        if (zl.spawnCheck(e.getPlayer().getLocation())) callEvent(e.getPlayer(), e.getRightClicked());
     }
 
     @EventHandler
     public void onLeftClick(EntityDamageByEntityEvent e) {
-        Entity damaged = e.getEntity();
-        Entity damagerEntity = e.getDamager();
+        if (zl.playerCheck(e.getDamager())) callEvent((Player) e.getDamager(), e.getEntity());
+    }
 
-        if (!zl.playerCheck(damagerEntity)) return;
-
-        Player damager = (Player) e.getDamager();
+    private void callEvent(Player clicker, Entity clicked) {
         NPCs npc = null;
-        List<Entity> entities = damaged.getNearbyEntities(1.5, 1.5, 1.5);
+        List<Entity> entities = clicked.getNearbyEntities(1.5, 1.5, 1.5);
 
-        entities.add(damaged);
+        entities.add(clicked);
 
         for (Entity entity2 : entities) {
             if (entity2.getScoreboardTags().contains("items")) npc = NPCs.ITEMS;
@@ -59,7 +43,14 @@ public class NPCInteractEventCaller implements Listener {
 
         if (npc == null) return;
 
-        Bukkit.getPluginManager().callEvent(new NPCInteractEvent(damager, npc));
+        NPCs finalNpc = npc;//why???
+
+        new BukkitRunnable() {//kinda jank but idk how else to fix the ghost inventory
+            @Override
+            public void run() {
+                Bukkit.getPluginManager().callEvent(new NPCInteractEvent(clicker, finalNpc));
+            }
+        }.runTaskLater(Main.getInstance(), 1);
     }
 }
 
