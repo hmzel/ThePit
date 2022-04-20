@@ -35,9 +35,9 @@ public class NPCInteractEventCaller implements Listener {
 
         entities.add(clicked);
 
-        for (Entity entity2 : entities) {
-            if (entity2.getScoreboardTags().contains("items")) npc = NPCs.ITEMS;
-            if (entity2.getScoreboardTags().contains("upgrades")) npc = NPCs.UPGRADES;
+        for (Entity entity : entities) {
+            if (entity.getScoreboardTags().contains("items")) npc = NPCs.ITEMS;
+            if (entity.getScoreboardTags().contains("upgrades")) npc = NPCs.UPGRADES;
             if (npc != null) break;
         }
 
