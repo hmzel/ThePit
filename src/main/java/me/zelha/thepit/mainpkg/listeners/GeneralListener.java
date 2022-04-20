@@ -13,7 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
@@ -21,7 +21,10 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPickupArrowEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.BoundingBox;
@@ -130,8 +133,8 @@ public class GeneralListener implements Listener {
     }
 
     @EventHandler
-    public void onBlockChange(BlockPhysicsEvent e) {
-        if (e.getChangedType() == GRASS_BLOCK || e.getChangedType() == DIRT) e.setCancelled(true);
+    public void onBlockChange(BlockSpreadEvent e) {
+        if (e.getBlock().getType() == GRASS_BLOCK || e.getBlock().getType() == DIRT) e.setCancelled(true);
     }
 
     @EventHandler
