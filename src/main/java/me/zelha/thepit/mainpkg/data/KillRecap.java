@@ -120,7 +120,7 @@ public class KillRecap implements CommandExecutor, Listener {
         //assistant "§fAssistant: §b+?%"
 
         if (!isKiller) builder.append("§fKill participation: §b-"
-                + (int) ((1 - (Double.parseDouble(BigDecimal.valueOf(assistUtils.getAssistMap(dead).get(receiver.getUniqueId()) / dead.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()).setScale(2, RoundingMode.HALF_EVEN).toString()))) * 100)
+                + (int) ((1 - (Double.parseDouble(BigDecimal.valueOf(assistUtils.getAssistMap(dead).get(receiver.getUniqueId()) / assistUtils.getTotalDamage(dead)).setScale(2, RoundingMode.HALF_EVEN).toString()))) * 100)
                 + "%\n");
 
         builder.append("§fRounded up!\n");
@@ -173,7 +173,7 @@ public class KillRecap implements CommandExecutor, Listener {
         //highlander "§fHighlander: §6+?%"
 
         if (!isKiller) builder.append("§fKill participation: §6-"
-                + (int) ((1 - (Double.parseDouble(BigDecimal.valueOf(assistUtils.getAssistMap(dead).get(receiver.getUniqueId()) / dead.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()).setScale(2, RoundingMode.HALF_EVEN).toString()))) * 100)
+                + (int) ((1 - (Double.parseDouble(BigDecimal.valueOf(assistUtils.getAssistMap(dead).get(receiver.getUniqueId()) / assistUtils.getTotalDamage(dead)).setScale(2, RoundingMode.HALF_EVEN).toString()))) * 100)
                 + "%\n");
 
         //celebrity "§fCelebrity: §6+100%"
@@ -181,7 +181,7 @@ public class KillRecap implements CommandExecutor, Listener {
         //conglomerate "§fConglomerate: §6+?"
         if (receiverData.hasPerkEquipped(Perks.SPAMMER) && !isKiller) builder.append("§fSpammer Assist: §6+2\n");
         if (receiverData.hasPerkEquipped(Perks.BOUNTY_HUNTER) && zl.itemCheck(receiver.getInventory().getLeggings()) && receiver.getInventory().getLeggings().getType() == Material.GOLDEN_LEGGINGS && deadData.getBounty() != 0 && !isKiller) {
-            builder.append("§fBounty Hunter Assist: §6+" + zl.getFancyGoldString(deadData.getBounty() * (assistUtils.getAssistMap(dead).get(receiver.getUniqueId()) / dead.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue())) + "\n");
+            builder.append("§fBounty Hunter Assist: §6+" + zl.getFancyGoldString(deadData.getBounty() * (assistUtils.getAssistMap(dead).get(receiver.getUniqueId()) / assistUtils.getTotalDamage(dead))) + "\n");
         }
 
         if (deadData.getBounty() != 0 && isKiller) builder.append("§fBounty: §6+" + deadData.getBounty() + "\n");
@@ -245,7 +245,7 @@ public class KillRecap implements CommandExecutor, Listener {
 
             if (addAssistTitle) raw.add(new ComponentBuilder("Assists:\n").create());
 
-            raw.add(new ComponentBuilder((int) ((Double.parseDouble(BigDecimal.valueOf(sortedAssistsMap.get(uuid) / player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()).setScale(2, RoundingMode.HALF_EVEN).toString())) * 100) + "% ").create());
+            raw.add(new ComponentBuilder((int) ((Double.parseDouble(BigDecimal.valueOf(sortedAssistsMap.get(uuid) / assistUtils.getTotalDamage(player)).setScale(2, RoundingMode.HALF_EVEN).toString())) * 100) + "% ").create());
             raw.add(playerComponent(Bukkit.getPlayer(uuid)));
             raw.add(new ComponentBuilder("§8for ").create());
             raw.add(expComponent(player, Bukkit.getPlayer(uuid)));

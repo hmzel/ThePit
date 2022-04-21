@@ -1,8 +1,8 @@
 package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -22,7 +22,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -38,6 +37,13 @@ public class AssistListener implements Listener {
 
     public void addAssist(Player damaged, Player damager, double damage) {
         assistMap.get(damaged.getUniqueId()).add(Pair.of(damager.getUniqueId(), damage));
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                assistMap.get(damaged.getUniqueId()).remove(Pair.of(damager.getUniqueId(), damage));
+            }
+        }.runTaskLater(Main.getInstance(), 300);
     }
 
     public Map<UUID, Double> getAssistMap(Player player) {
@@ -68,6 +74,18 @@ public class AssistListener implements Listener {
         return null;
     }
 
+    public double getTotalDamage(Player player) {
+        double damage = 0;
+
+        for (Pair<UUID, Double> pair : new ArrayList<>(assistMap.get(player.getUniqueId()))) {
+            if (Bukkit.getPlayer(pair.getKey()) != null && !pair.getKey().equals(player.getUniqueId())) {
+                damage += pair.getValue();
+            }
+        }
+
+        return damage;
+    }
+
     public int calculateAssistEXP(Player dead, Player assister) {
         double exp = 5;
         int maxEXP = 250;
@@ -82,7 +100,7 @@ public class AssistListener implements Listener {
         //2x event
         if (assisterData.getPassiveTier(Passives.XP_BOOST) > 0) exp *= 1 + (assisterData.getPassiveTier(Passives.XP_BOOST) / 10.0);
         //royalty
-        exp *= getAssistMap(dead).get(assister.getUniqueId()) / dead.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+        exp *= getAssistMap(dead).get(assister.getUniqueId()) / getTotalDamage(dead);
         //pit day
 
         return (int) Math.min(Math.ceil(exp), maxEXP);
@@ -103,13 +121,13 @@ public class AssistListener implements Listener {
         //2x event
         if (assisterData.getPassiveTier(Passives.GOLD_BOOST) > 0) gold *= 1 + (assisterData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
         //renown gold boost
-        gold *= getAssistMap(dead).get(assister.getUniqueId()) / dead.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+        gold *= getAssistMap(dead).get(assister.getUniqueId()) / getTotalDamage(dead);
         //celeb
         //pit day
         //conglomerate
         if (assisterData.hasPerkEquipped(Perks.SPAMMER)) gold += 2;
         if (assisterData.hasPerkEquipped(Perks.BOUNTY_HUNTER) && zl.itemCheck(assister.getInventory().getLeggings()) && assister.getInventory().getLeggings().getType() == Material.GOLDEN_LEGGINGS && deadData.getBounty() != 0) {
-            gold += deadData.getBounty() * (getAssistMap(dead).get(assister.getUniqueId()) / dead.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+            gold += deadData.getBounty() * (getAssistMap(dead).get(assister.getUniqueId()) / getTotalDamage(dead));
         }
 
         return gold;
@@ -131,7 +149,7 @@ public class AssistListener implements Listener {
 
             pData.setGold(pData.getGold() + gold);
             pData.setExp(pData.getExp() - exp);
-            p.spigot().sendMessage(new ComponentBuilder("§a§lASSIST! §7" + (int) (Double.parseDouble(BigDecimal.valueOf(getAssistMap(player).get(uuid) / player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()).setScale(2, RoundingMode.HALF_EVEN).toString()) * 100)
+            p.spigot().sendMessage(new ComponentBuilder("§a§lASSIST! §7" + (int) (Double.parseDouble(BigDecimal.valueOf(getAssistMap(player).get(uuid) / getTotalDamage(player)).setScale(2, RoundingMode.HALF_EVEN).toString()) * 100)
                     + "% on " + zl.getColorBracketAndLevel(player.getUniqueId().toString()) + " §7" + player.getName() + " §b+" + exp + "XP §6+"
                     + zl.getFancyGoldString(gold) + "g")
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§eClick to view kill recap!")))
@@ -159,7 +177,6 @@ public class AssistListener implements Listener {
         if (zl.spawnCheck(damagedEntity.getLocation()) || zl.spawnCheck(damagerEntity.getLocation())) return;
         if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
         if (e.getCause() == EntityDamageEvent.DamageCause.FALL) return;
-        if (e.getFinalDamage() <= 0) return;
 
         if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player && zl.playerCheck((Player) ((Arrow) damagerEntity).getShooter())) {
             damager = (Player) ((Arrow) damagerEntity).getShooter();
@@ -185,26 +202,6 @@ public class AssistListener implements Listener {
         if (damaged.getHealth() - e.getFinalDamage() > 0) return;
 
         deathMethod(damaged);
-    }
-
-    @EventHandler
-    public void onHeal(EntityRegainHealthEvent e) {
-        if (!zl.playerCheck(e.getEntity())) return;
-
-        Player p = (Player) e.getEntity();
-        double heal = e.getAmount();
-
-        for (Pair<UUID, Double> pair : new ArrayList<>(assistMap.get(p.getUniqueId()))) {
-            double damage = pair.getValue();
-
-            if (damage - heal > 0) {
-                assistMap.get(p.getUniqueId()).set(assistMap.get(p.getUniqueId()).indexOf(pair), Pair.of(pair.getKey(), damage - heal));
-                return;
-            } else {
-                assistMap.get(p.getUniqueId()).remove(pair);
-                heal -= damage;
-            }
-        }
     }
 
     @EventHandler
