@@ -157,7 +157,21 @@ public class KillListener implements Listener {
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§eClick to view kill recap!")))
                 .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/killrecap " + damaged.getUniqueId()))
                 .create());
-        damager.playSound(damager.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1F, 1.8F);
+
+        new BukkitRunnable() {
+
+            int i = 0;
+
+            @Override
+            public void run() {
+                damager.playSound(damager.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.3F, 1.75F + (0.05F * i));
+                i++;
+
+                if (i == Math.min(damagerData.getMultiKill(), 5)) {
+                    cancel();
+                }
+            }
+        }.runTaskTimer(Main.getInstance(), 0, 2);
     }
 
     private void multiKillTimer(Player player) {
