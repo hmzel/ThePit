@@ -108,12 +108,11 @@ public class ScoreboardListener implements Listener {
     private class SidebarUpdater extends BukkitRunnable {
 
         private final Player p;
-        private final StrengthChainingPerk strengthChainingClass = (StrengthChainingPerk) STRENGTH_CHAINING.getMethods();
-        private List<String> previousScores;
+        private final StrengthChainingPerk strengthPerk = (StrengthChainingPerk) STRENGTH_CHAINING.getMethods();
+        private List<String> previousScores = new ArrayList<>();
 
         public SidebarUpdater(Player player) {
             this.p = player;
-            this.previousScores = getBoardScores(player);
         }
 
         @Override
@@ -123,25 +122,8 @@ public class ScoreboardListener implements Listener {
 
             if (!runTracker.hasID(p.getUniqueId())) runTracker.setID(p.getUniqueId(), getTaskId());
 
-            List<String> scoreList = getBoardScores(p);
-            int scoreIndex = scoreList.size();
-            PlayerConnection pConnect = ((CraftPlayer) p).getHandle().b;
-
-            for (String prevScore : previousScores) {
-                pConnect.sendPacket(new PacketPlayOutScoreboardScore(ScoreboardServer.Action.b, "main", prevScore, 0));
-            }
-
-            for (String score : scoreList) {
-                pConnect.sendPacket(new PacketPlayOutScoreboardScore(ScoreboardServer.Action.a, "main", score, scoreIndex));
-                scoreIndex--;
-            }
-
-            previousScores = scoreList;
-        }
-
-        private List<String> getBoardScores(Player player) {
-            List<String> boardScores = new ArrayList<>();
-            PlayerData pData = Main.getInstance().getPlayerData(player);
+            List<String> scoreList = new ArrayList<>();
+            PlayerData pData = Main.getInstance().getPlayerData(p);
             String status;
 
             switch (pData.getStatus()) {
@@ -159,61 +141,72 @@ public class ScoreboardListener implements Listener {
                     break;
             }
 
-            boardScores.add("§7" + DateTimeFormatter.ofPattern("MM/dd/yy").format(LocalDateTime.now()) + " §8mega13Z");
-            boardScores.add("§1");
+            scoreList.add("§7" + DateTimeFormatter.ofPattern("MM/dd/yy").format(LocalDateTime.now()) + " §8mega13Z");
+            scoreList.add("§1");
 
-            if (pData.getPrestige() >= 1) boardScores.add("§fPrestige: §e" + zl.toRoman(pData.getPrestige()));
+            if (pData.getPrestige() >= 1) scoreList.add("§fPrestige: §e" + zl.toRoman(pData.getPrestige()));
 
-            boardScores.add("§fLevel: " + zl.getColorBracketAndLevel(p.getUniqueId().toString()));
+            scoreList.add("§fLevel: " + zl.getColorBracketAndLevel(p.getUniqueId().toString()));
 
-            if (pData.getLevel() < 120) boardScores.add("§fNeeded XP: §b" + pData.getExp()); else boardScores.add("§fXP: §bMAXED!");
+            if (pData.getLevel() < 120) scoreList.add("§fNeeded XP: §b" + pData.getExp()); else scoreList.add("§fXP: §bMAXED!");
 
-            boardScores.add("§2");
+            scoreList.add("§2");
 
             if (pData.getGold() < 10000) {
-                boardScores.add("§fGold: §6" + zl.getFancyGoldString(pData.getGold()) + "g");
+                scoreList.add("§fGold: §6" + zl.getFancyGoldString(pData.getGold()) + "g");
             } else {
-                boardScores.add("§fGold: §6" + zl.getFancyGoldString((int) pData.getGold()) + "g");
+                scoreList.add("§fGold: §6" + zl.getFancyGoldString((int) pData.getGold()) + "g");
             }
 
-            boardScores.add("§3");
+            scoreList.add("§3");
 
             if (!pData.hideTimer()) {
-                boardScores.add("§fStatus: " + status + " §7(" + pData.getCombatTimer() + ")");
+                scoreList.add("§fStatus: " + status + " §7(" + pData.getCombatTimer() + ")");
             } else {
-                boardScores.add("§fStatus: " + status);
+                scoreList.add("§fStatus: " + status);
             }
 
-            if (pData.getBounty() != 0) boardScores.add("§fBounty: §6" + zl.getFancyGoldString(pData.getBounty()) + "g");
+            if (pData.getBounty() != 0) scoreList.add("§fBounty: §6" + zl.getFancyGoldString(pData.getBounty()) + "g");
 
             if (pData.getStreak() > 0) {
                 if (pData.getStreak() % 1 == 0) {
-                    boardScores.add("§fStreak: §a" + (int) pData.getStreak());
+                    scoreList.add("§fStreak: §a" + (int) pData.getStreak());
                 } else {
-                    boardScores.add("§fStreak: §a" + pData.getStreak());
+                    scoreList.add("§fStreak: §a" + pData.getStreak());
                 }
             }
 
-            if (strengthChainingClass.getStrengthChainingLevel(p) != null) {
-                boardScores.add("§fStrength: §c" + zl.toRoman(strengthChainingClass.getStrengthChainingLevel(p))
-                        + " §7(" + strengthChainingClass.getStrengthChainingTimer(p) + ")");
-            } else if (GLADIATOR.getMethods().getDamageModifier(null, p) != (double) 0 && !zl.spawnCheck(p.getLocation())) {
-                boardScores.add("§fGladiator: §9" + (int) (GLADIATOR.getMethods().getDamageModifier(null, p) * 100) + "%");
+            if (strengthPerk.getLevel(p) != null) {
+                scoreList.add("§fStrength: §c" + zl.toRoman(strengthPerk.getLevel(p)) + " §7(" + strengthPerk.getTimer(p) + ")");
+            } else if (GLADIATOR.getMethods().getDamageModifier(null, p) != 0D && !zl.spawnCheck(p.getLocation())) {
+                scoreList.add("§fGladiator: §9" + (int) (GLADIATOR.getMethods().getDamageModifier(null, p) * 100) + "%");
             }
 
-            boardScores.add("§4");
-            boardScores.add("§epet a cat");
+            scoreList.add("§4");
+            scoreList.add("§epet a cat");
 
-            for (String string : boardScores) {
+            for (String string : scoreList) {
                 if (string.length() > 40) {
                     StringBuilder builder = new StringBuilder(string);
 
                     builder.replace(builder.indexOf(":") + 2, builder.length(), "§cERROR");
-                    boardScores.set(boardScores.indexOf(string), builder.toString());
+                    scoreList.set(scoreList.indexOf(string), builder.toString());
                 }
             }
 
-            return boardScores;
+            int scoreIndex = scoreList.size();
+            PlayerConnection pConnect = ((CraftPlayer) p).getHandle().b;
+
+            for (String prevScore : previousScores) {
+                pConnect.sendPacket(new PacketPlayOutScoreboardScore(ScoreboardServer.Action.b, "main", prevScore, 0));
+            }
+
+            for (String score : scoreList) {
+                pConnect.sendPacket(new PacketPlayOutScoreboardScore(ScoreboardServer.Action.a, "main", score, scoreIndex));
+                scoreIndex--;
+            }
+
+            previousScores = scoreList;
         }
     }
 
@@ -222,7 +215,6 @@ public class ScoreboardListener implements Listener {
 
         private final Player p;
         private final PlayerData pData;
-        private final char[] randomCharList = {'', 'ঙ', 'މ', 'ॄ', 'ͩ', 'ٖ', 'ࡒ', '̡', 'ɘ', '॑', 'ݓ', '¡', 'ڕ', 'ॖ', '㉘', 'ᅖ', '入', 'ᙔ', '̡', 'æ', 'ঈ', 'Ⅵ', '⅘', '﴿', '﴾', 'ꬾ', 'ꟿ', 'Ꞩ', 'ꜳ', 'ꜩ', 'ꝙ', 'Ꝏ', 'ꝰ', '▓', '▼', '♥', '♪', '≈', '≡', '╬', '₯', '№', '₻', '↕', '↔', '∏', '∆', '∑', '₪', '₢', '₡', 'ᵺ', 'ᴥ', 'ᴨ', '۩', '۝', '۞', '֎', 'Җ', '҂', '҈', 'ϡ'};
         private final char[] sortHelp = {'z', 'y', 'x', 'w', 'v', 'u', 't', 's', 'r', 'q'};
         private boolean hasHeaderAndFooter = false;
 
@@ -236,23 +228,8 @@ public class ScoreboardListener implements Listener {
             if (!runTracker2.hasID(p.getUniqueId())) runTracker2.setID(p.getUniqueId(), getTaskId());
 
             if (!hasHeaderAndFooter) {
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if (!zl.playerCheck(p)) {
-                            cancel();
-                            return;
-                        }
-
-                        StringBuilder builder = new StringBuilder("§" + ChatColor.values()[new Random().nextInt(ChatColor.values().length)].getChar());
-
-                        for (int i = 0; i < 10; i++) builder.append(randomCharList[new Random().nextInt(randomCharList.length)]);
-
-                        p.setPlayerListHeader("§bYou are playing on " + builder);
-                    }
-                }.runTaskTimer(Main.getInstance(), 0, 1);
-
-                p.setPlayerListFooter("§eolms are my spirit animal");
+                p.setPlayerListHeader("§bYou are playing on §5§lHYPIXZEL PIT");
+                p.setPlayerListFooter("§ebeepis");
 
                 hasHeaderAndFooter = true;
             }

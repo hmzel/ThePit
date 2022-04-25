@@ -22,11 +22,11 @@ public class StrengthChainingPerk extends Perk {
         super(STRENGTH_CHAINING);
     }
 
-    public Integer getStrengthChainingLevel(Player p) {
+    public Integer getLevel(Player p) {
         return strengthChaining.get(p.getUniqueId());
     }
 
-    public Integer getStrengthChainingTimer(Player p) {
+    public Integer getTimer(Player p) {
         return strengthChainingTimer.get(p.getUniqueId());
     }
 
