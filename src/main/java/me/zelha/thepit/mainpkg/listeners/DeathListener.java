@@ -209,6 +209,7 @@ public class DeathListener implements Listener {
 
         player.sendTitle("§cYOU DIED", "", 0, 40, 20);
         player.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1.8F);
+        zl.pitReset(player);
     }
 }
 

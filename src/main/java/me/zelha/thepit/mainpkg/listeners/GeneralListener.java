@@ -47,16 +47,6 @@ public class GeneralListener implements Listener {
             "Non-permanent items", "Permanent upgrades", "Choose a perk", "Are you sure?", "Killstreaks", "Choose a killstreak§2", "Choose a killstreak§1"
     };
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerDeath(EntityDamageEvent e) {
-        if (!zl.playerCheck(e.getEntity())) return;
-        if (zl.spawnCheck(e.getEntity().getLocation())) return;
-
-        if (e.getCause() != EntityDamageEvent.DamageCause.FALL && (((Player) e.getEntity()).getHealth() - e.getFinalDamage() <= 0)) {
-            zl.pitReset((Player) e.getEntity());
-        }
-    }
-
     @EventHandler
     public void onItemPickup(EntityPickupItemEvent e) {
         if (!zl.playerCheck(e.getEntity())) return;
