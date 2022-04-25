@@ -15,12 +15,13 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 public class StorageListener implements Listener {
 
+    private final Logger logger = Main.getInstance().getLogger();
     private final MongoCollection<Document> pDataCol = Main.getInstance().getPlayerDataCollection();
     private final Map<String, PlayerData> playerDataMap = new HashMap<>();
-    private final List<String> playerUUIDList = new ArrayList<>();
     private final List<String> slots = Arrays.asList("one", "two", "three", "four");
 
     public PlayerData getPlayerData(String uuid) {
@@ -31,76 +32,40 @@ public class StorageListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                for (String uuid : new ArrayList<>(playerUUIDList)) saveDocument(uuid);
+                for (String uuid : new ArrayList<>(playerDataMap.keySet())) saveDocument(uuid);
             }
         }.runTaskTimerAsynchronously(Main.getInstance(), 0, 1200);
 
-        System.out.println("ThePit: Successfully started data saver");
+        logger.info("Successfully started data saver");
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void assignDataDocument(PlayerJoinEvent e) {
         String uuid = e.getPlayer().getUniqueId().toString();
         Document filter = new Document("uuid", uuid);
-        Document pDoc;
+        Document playerDocument;
 
         if (pDataCol.countDocuments(filter) < 1) {
-            Document perkSlotsEmbed = new Document();
-            Document ministreakSlotsEmbed = new Document();
-            Document passivesEmbed = new Document();
-            Document unlockedPerksEmbed = new Document();
-            Document unlockedMegastreaksEmbed = new Document();
-            Document unlockedMinistreaksEmbed = new Document();
+            playerDocument = updateDocument(filter);
 
-            for (String slot : slots) perkSlotsEmbed.append(slot, "unset");
-            for (int i = 0; i < 3; i++) ministreakSlotsEmbed.append(slots.get(i), "unset");
-            for (Passives passive : Passives.values()) passivesEmbed.append(passive.name().toLowerCase(), 0);
-            for (Perks perk : Perks.values()) unlockedPerksEmbed.append(perk.name().toLowerCase(), false);
-
-            for (Megastreaks mega : Megastreaks.values()) {
-                if (mega == Megastreaks.OVERDRIVE) {
-                    unlockedMegastreaksEmbed.append(mega.name().toLowerCase(), true);
-                } else {
-                    unlockedMegastreaksEmbed.append(mega.name().toLowerCase(), false);
-                }
-            }
-
-            for (Ministreaks mini : Ministreaks.values()) unlockedMinistreaksEmbed.append(mini.name().toLowerCase(), false);
-
-            pDataCol.insertOne(filter
-                    .append("prestige", 0)
-                    .append("level", 1)
-                    .append("exp", 15)
-                    .append("gold", 0.0)
-                    .append("bounty", 0)
-                    .append("megastreaks", "overdrive")
-                    .append("perk_slots", perkSlotsEmbed)
-                    .append("ministreak_slots", ministreakSlotsEmbed)
-                    .append("passives", passivesEmbed)
-                    .append("perk_unlocks", unlockedPerksEmbed)
-                    .append("megastreak_unlocks", unlockedMegastreaksEmbed)
-                    .append("ministreak_unlocks", unlockedMinistreaksEmbed)
-                    .append("combat_logged", false));
-
-            pDoc = pDataCol.find(filter).first();
-
-            System.out.println("Created new player data document assigned to " + uuid);
+            pDataCol.insertOne(playerDocument);
+            logger.info("Created new player data document assigned to " + uuid);
         } else {
-             pDoc = pDataCol.find(filter).first();
+             playerDocument = pDataCol.find(filter).first();
         }
 
-        if (!dataCheck(pDoc)) {
-            pDoc = updateDocument(pDoc);
+        if (!dataCheck(playerDocument)) {
+            playerDocument = updateDocument(playerDocument);
 
-            System.out.println("Successfully updated player data document assigned to " + uuid);
+            logger.info("Successfully updated player data document assigned to " + uuid);
         }
 
-        if (pDoc != null) {
-            playerDataMap.put(uuid, new PlayerData(pDoc));
-            playerUUIDList.add(uuid);
+        if (playerDocument != null) {
+            playerDataMap.put(uuid, new PlayerData(playerDocument));
         } else {
-            System.out.println("BEPIS.");
-            System.out.println("Did something go wrong inserting the document?");
+            e.getPlayer().kickPlayer("§5Something went wrong getting player data.");
+            logger.warning("BEPIS.");
+            logger.warning("Player data file " + uuid + " is null, what the hell happened?");
         }
     }
 
@@ -108,7 +73,6 @@ public class StorageListener implements Listener {
     public void saveDataDocument(PlayerQuitEvent e) {
         saveDocument(e.getPlayer().getUniqueId().toString());
         playerDataMap.remove(e.getPlayer().getUniqueId().toString());
-        playerUUIDList.remove(e.getPlayer().getUniqueId().toString());
     }
 
     private void saveDocument(String uuid) {
