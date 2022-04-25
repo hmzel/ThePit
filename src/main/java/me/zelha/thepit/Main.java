@@ -54,8 +54,8 @@ public final class Main extends JavaPlugin {
         instance = this;
         zelLogic = new ZelLogic();
         storage = new StorageListener();
-        attackListener = new AttackListener();
         assistListener = new AssistListener();
+        attackListener = new AttackListener();
         killListener = new KillListener();
         deathListener = new DeathListener();
         KillRecap recap = new KillRecap();
@@ -106,7 +106,7 @@ public final class Main extends JavaPlugin {
 
         storage.runDataSaver();
         scoreboardListener.startAnimation();
-        new ParticipationRunnable().runTaskTimerAsynchronously(this, 0, 1);
+        new ParticipationRunnable().runTaskTimer(this, 0, 1);
     }
 
     @Override
