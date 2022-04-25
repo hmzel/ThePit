@@ -4,7 +4,6 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.mainpkg.data.DamageLog;
 import me.zelha.thepit.mainpkg.data.KillRecap;
 import me.zelha.thepit.mainpkg.data.PlayerData;
-import me.zelha.thepit.zelenums.NPCs;
 import me.zelha.thepit.zelenums.Perks;
 import me.zelha.thepit.zelenums.Worlds;
 import net.md_5.bungee.api.ChatMessageType;
@@ -483,65 +482,6 @@ public class ZelLogic {//zel
         barBuilder.replace(healthAfterDmg, healthAfterDmg, "§c");
         barBuilder.replace(0, 0, "§4");
         damager.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(bar + barBuilder + barBuilder2));
-    }
-
-    /**
-     * used in npc-related listeners so that players cannot stand within the npc and prevent other players from accessing the npc's GUI
-     * <p>
-     * i literally only added this to mimic regular pit lol
-     *
-     * @param world the NPC is in
-     * @param type type of NPC
-     * @return the boundingbox of the NPC such that if a player clicks on an entity within this bounding box the npc's GUI will open
-     */
-    public BoundingBox noObstructions(Worlds world, NPCs type) {//nested switch statements are so cursed. i love them.
-        switch(world) {
-            case ELEMENTALS:
-            case CORALS:
-            case SEASONS:
-                switch (type) {
-                    case ITEMS:
-                        return BoundingBox.of(new Location(Bukkit.getWorld(world.toString()), 2.5, 114, 12.5), 1, 2.5, 1);
-                    case UPGRADES:
-                        return BoundingBox.of(new Location(Bukkit.getWorld(world.toString()), -1.5, 114, 12.5), 1, 2.5, 1);
-                    case PRESTIGE://below not added yet
-                        break;
-                    case QUEST:
-                        break;
-                    case STATS:
-                        break;
-                }
-                break;
-            case CASTLE:
-                switch (type) {
-                    case ITEMS:
-                        return BoundingBox.of(new Location(Bukkit.getWorld(world.toString()), 2.5, 95, 12.5), 1, 2.5, 1);
-                    case UPGRADES:
-                        return BoundingBox.of(new Location(Bukkit.getWorld(world.toString()), -1.5, 95, 12.5), 1, 2.5, 1);
-                    case PRESTIGE://below not added yet
-                        break;
-                    case QUEST:
-                        break;
-                    case STATS:
-                        break;
-                }
-                break;
-            case GENESIS:
-                switch (type) {
-                    case ITEMS:
-                        return BoundingBox.of(new Location(Bukkit.getWorld(world.toString()), 2.5, 86, 16.5), 1, 2.5, 1);
-                    case UPGRADES:
-                        return BoundingBox.of(new Location(Bukkit.getWorld(world.toString()), -1.5, 86, 16.5), 1, 2.5, 1);
-                    case PRESTIGE://below not added yet
-                        break;
-                    case QUEST:
-                        break;
-                    case STATS:
-                        break;
-                }
-                break;
-        }
-        return new BoundingBox();
     }
 
     /**

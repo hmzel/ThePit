@@ -67,7 +67,7 @@ public class LavaBucketPerk extends Perk implements Listener {
 
         if (zl.spawnCheck(block.getLocation())) return;
         if (block.getLocation().distance(new Location(block.getWorld(), 0.5, block.getY(), 0.5)) < 9) return;
-        if (block.getType() == LAVA || block.getType() == WATER) return;
+        if (block.isLiquid()) return;
 
         if (e.getBucket() == Material.LAVA_BUCKET) {
             previousLavaBlock.put(p.getUniqueId(), e.getBlock().getType());
