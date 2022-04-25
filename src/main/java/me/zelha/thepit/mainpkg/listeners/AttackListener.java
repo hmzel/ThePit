@@ -1,9 +1,9 @@
 package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
+import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.utils.RunTracker;
 import me.zelha.thepit.utils.ZelLogic;
-import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import net.md_5.bungee.api.ChatMessageType;
@@ -21,7 +21,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class AttackListener implements Listener {
@@ -43,25 +42,42 @@ public class AttackListener implements Listener {
         Entity damagerEntity = e.getDamager();
         Player damaged;
         Player damager;
+        double boost = 1;
 
         if (zl.spawnCheck(damagedEntity.getLocation()) || zl.spawnCheck(damagerEntity.getLocation())) return;
         if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
 
         if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player) {
             damager = (Player) ((Arrow) damagerEntity).getShooter();
-            e.setDamage(calculateMeleeDamage(damaged, damager, e.getDamage(), (Arrow) damagerEntity));
         } else if (zl.playerCheck(damagerEntity)) {
             damager = (Player) damagerEntity;
-            e.setDamage(calculateMeleeDamage(damaged, damager, e.getDamage(), null));
         } else {
             return;
         }
 
-        if (runTracker.hasID(damaged.getUniqueId())) runTracker.stop(damaged.getUniqueId());
-        if (runTracker.hasID(damager.getUniqueId())) runTracker.stop(damager.getUniqueId());
+        PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
+        PlayerData damagerData = Main.getInstance().getPlayerData(damager);
 
-        new CombatTimerRunnable(damaged.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
-        new CombatTimerRunnable(damager.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
+        for (Perks perk : damagerData.getEquippedPerks()) {
+            if (perk.getMethods() != null) boost += perk.getMethods().getDamageModifier(damager, damaged);
+        }
+
+        if (damagedData.getPrestige() == 0) boost -= 0.15;
+        if (damagedData.getPassiveTier(Passives.DAMAGE_REDUCTION) > 0) boost -= (damagedData.getPassiveTier(Passives.DAMAGE_REDUCTION) / 100.0);
+        if (damagerData.getPrestige() == 0) boost += 0.15;
+
+        if (zl.itemCheck(damager.getInventory().getItemInMainHand()) && damager.getInventory().getItemInMainHand().getType() == Material.DIAMOND_SWORD && damagedData.getBounty() != 0) {
+            boost += 0.2;
+        }
+
+        if (damagerEntity instanceof Arrow) {
+            if (damagerData.getPassiveTier(Passives.BOW_DAMAGE) > 0) boost += ((damagerData.getPassiveTier(Passives.BOW_DAMAGE) * 3) / 100.0);
+        } else {
+            if (damagerData.getPassiveTier(Passives.MELEE_DAMAGE) > 0) boost += (damagerData.getPassiveTier(Passives.MELEE_DAMAGE) / 100.0);
+        }
+
+        e.setDamage(e.getDamage() * boost);
+        startCombatTimer(damaged, damager);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -122,32 +138,6 @@ public class AttackListener implements Listener {
         }
 
         if (runTracker.hasID(e.getPlayer().getUniqueId())) runTracker.stop(e.getPlayer().getUniqueId());
-    }
-
-    private double calculateMeleeDamage(Player damaged, Player damager, double originalDamage, @Nullable Arrow arrow) {
-        double boost = 1;
-        PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
-        PlayerData damagerData = Main.getInstance().getPlayerData(damager);
-
-        for (Perks perk : damagerData.getEquippedPerks()) {
-            if (perk.getMethods() != null) boost += perk.getMethods().getDamageModifier(damager, damaged);
-        }
-
-        if (damagedData.getPrestige() == 0) boost -= 0.15;
-        if (damagedData.getPassiveTier(Passives.DAMAGE_REDUCTION) > 0) boost -= (damagedData.getPassiveTier(Passives.DAMAGE_REDUCTION) / 100.0);
-        if (damagerData.getPrestige() == 0) boost += 0.15;
-
-        if (zl.itemCheck(damager.getInventory().getItemInMainHand()) && damager.getInventory().getItemInMainHand().getType() == Material.DIAMOND_SWORD && damagedData.getBounty() != 0) {
-            boost += 0.2;
-        }
-
-        if (arrow != null) {
-            if (damagerData.getPassiveTier(Passives.BOW_DAMAGE) > 0) boost += ((damagerData.getPassiveTier(Passives.BOW_DAMAGE) * 3) / 100.0);
-        } else {
-            if (damagerData.getPassiveTier(Passives.MELEE_DAMAGE) > 0) boost += (damagerData.getPassiveTier(Passives.MELEE_DAMAGE) / 100.0);
-        }
-
-        return originalDamage * boost;
     }
 
 

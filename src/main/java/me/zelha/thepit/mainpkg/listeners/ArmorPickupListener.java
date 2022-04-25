@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import static org.bukkit.Material.*;
@@ -51,17 +52,18 @@ public class ArmorPickupListener implements Listener {
 
     private void itemPlacementHandler(Player player, EquipmentSlot slot, Item item) {
         PlayerInventory inventory = player.getInventory();
+        ItemStack itemStack = item.getItemStack();
         boolean doFakePickup = false;
 
         if (!zl.itemCheck(inventory.getItem(slot))) {
-            inventory.setItem(slot, item.getItemStack());
+            inventory.setItem(slot, itemStack);
             doFakePickup = true;
-        } else if (determineWeight(inventory.getItem(slot).getType()) < determineWeight(item.getItemStack().getType())) {
+        } else if (determineWeight(inventory.getItem(slot).getType()) < determineWeight(itemStack.getType())) {
             inventory.setItem(zl.firstEmptySlot(inventory), inventory.getItem(slot));
-            inventory.setItem(slot, item.getItemStack());
+            inventory.setItem(slot, itemStack);
             doFakePickup = true;
-        } else if (!inventory.contains(item.getItemStack().getType())) {
-            inventory.setItem(zl.firstEmptySlot(inventory), item.getItemStack());
+        } else if (!inventory.contains(itemStack.getType())) {
+            inventory.setItem(zl.firstEmptySlot(inventory), itemStack);
             doFakePickup = true;
         }
 
