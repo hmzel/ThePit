@@ -5,18 +5,18 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class PitDamageEvent extends Event implements Cancellable {
+public class PitKillEvent extends Event implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
-    private final Player damagee;
-    private final Player damager;
     private boolean cancelled = false;
-    private double damage;
+    private final Player dead;
+    private final Player killer;
+    private final boolean disconnected;
 
-    public PitDamageEvent(Player damagee, Player damager, double damage) {
-        this.damagee = damagee;
-        this.damager = damager;
-        this.damage = damage;
+    public PitKillEvent(Player dead, Player killer, boolean disconnected) {
+        this.dead = dead;
+        this.killer = killer;
+        this.disconnected = disconnected;
     }
 
     public static HandlerList getHandlerList() {
@@ -38,19 +38,15 @@ public class PitDamageEvent extends Event implements Cancellable {
         this.cancelled = cancel;
     }
 
-    public Player getDamagee() {
-        return damagee;
+    public Player getDead() {
+        return dead;
     }
 
-    public Player getDamager() {
-        return damager;
+    public Player getKiller() {
+        return killer;
     }
 
-    public double getDamage() {
-        return damage;
-    }
-
-    public void setDamage(double damage) {
-        this.damage = damage;
+    public boolean causedByDisconnect() {
+        return disconnected;
     }
 }
