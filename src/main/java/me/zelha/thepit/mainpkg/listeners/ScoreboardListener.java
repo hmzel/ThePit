@@ -38,22 +38,9 @@ public class ScoreboardListener implements Listener {
 
     public void startAnimation() {
         new BukkitRunnable() {
+
             int ticks = 0;
             int anim = 0;
-
-            private void setDisplay(String name) {
-                Scoreboard mainBoard = Bukkit.getServer().getScoreboardManager().getMainScoreboard();
-                Objective mainObjective;
-
-                if (mainBoard.getObjective(DisplaySlot.SIDEBAR) != null) {
-                    mainObjective = mainBoard.getObjective(DisplaySlot.SIDEBAR);
-                } else {
-                    mainObjective = mainBoard.registerNewObjective("main", "dummy", name);
-                    mainObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
-                }
-
-                mainObjective.setDisplayName(name);
-            }
 
             @Override
             public void run() {
@@ -83,6 +70,20 @@ public class ScoreboardListener implements Listener {
 
                 setDisplay(builder.toString());
                 ticks++;
+            }
+
+            private void setDisplay(String name) {
+                Scoreboard mainBoard = Bukkit.getServer().getScoreboardManager().getMainScoreboard();
+                Objective mainObjective;
+
+                if (mainBoard.getObjective(DisplaySlot.SIDEBAR) != null) {
+                    mainObjective = mainBoard.getObjective(DisplaySlot.SIDEBAR);
+                } else {
+                    mainObjective = mainBoard.registerNewObjective("main", "dummy", name);
+                    mainObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
+                }
+
+                mainObjective.setDisplayName(name);
             }
         }.runTaskTimer(Main.getInstance(), 0, 1);
     }
@@ -116,6 +117,29 @@ public class ScoreboardListener implements Listener {
         public SidebarUpdater(Player player) {
             this.p = player;
             this.previousScores = getBoardScores(player);
+        }
+
+        @Override
+        public void run() {
+            //i know this sends a lot of unnecessary packets but i genuinely couldnt find a better way to do it that didnt
+            //completely break with the slightest touch
+
+            if (!runTracker.hasID(p.getUniqueId())) runTracker.setID(p.getUniqueId(), getTaskId());
+
+            List<String> scoreList = getBoardScores(p);
+            int scoreIndex = scoreList.size();
+            PlayerConnection pConnect = ((CraftPlayer) p).getHandle().b;
+
+            for (String prevScore : previousScores) {
+                pConnect.sendPacket(new PacketPlayOutScoreboardScore(ScoreboardServer.Action.b, "main", prevScore, 0));
+            }
+
+            for (String score : scoreList) {
+                pConnect.sendPacket(new PacketPlayOutScoreboardScore(ScoreboardServer.Action.a, "main", score, scoreIndex));
+                scoreIndex--;
+            }
+
+            previousScores = scoreList;
         }
 
         private List<String> getBoardScores(Player player) {
@@ -193,29 +217,6 @@ public class ScoreboardListener implements Listener {
             }
 
             return boardScores;
-        }
-
-        @Override
-        public void run() {
-            //i know this sends a lot of unnecessary packets but i genuinely couldnt find a better way to do it that didnt
-            //completely break with the slightest touch
-
-            if (!runTracker.hasID(p.getUniqueId())) runTracker.setID(p.getUniqueId(), getTaskId());
-
-            List<String> scoreList = getBoardScores(p);
-            int scoreIndex = scoreList.size();
-            PlayerConnection pConnect = ((CraftPlayer) p).getHandle().b;
-
-            for (String prevScore : previousScores) {
-                pConnect.sendPacket(new PacketPlayOutScoreboardScore(ScoreboardServer.Action.b, "main", prevScore, 0));
-            }
-
-            for (String score : scoreList) {
-                pConnect.sendPacket(new PacketPlayOutScoreboardScore(ScoreboardServer.Action.a, "main", score, scoreIndex));
-                scoreIndex--;
-            }
-
-            previousScores = scoreList;
         }
     }
 

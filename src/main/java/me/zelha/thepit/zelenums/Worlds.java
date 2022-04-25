@@ -13,14 +13,14 @@ public enum Worlds {
         this.name = name;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public static Worlds findByName(String string) {
         for (Worlds world : Worlds.values()) {
             if (world.getName().equals(string)) return world;
         }
         return null;
+    }
+
+    public String getName() {
+        return name;
     }
 }

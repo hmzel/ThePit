@@ -22,20 +22,8 @@ import static org.bukkit.Material.*;
 public class BlockListener implements Listener {
     //note: block placement prevention in spawn is handled in SpawnListener
 
-    public final static List<Block> placedBlocks = new ArrayList<>();
+    public static final List<Block> placedBlocks = new ArrayList<>();
     private final Material[] placeable = {OBSIDIAN, COBBLESTONE, OAK_WOOD};
-
-    private void blockPoof(Block block, Material previousBlock, long time) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                block.setType(previousBlock);
-                placedBlocks.remove(block);
-            }
-        }.runTaskLater(Main.getInstance(), time);
-
-        placedBlocks.add(block);
-    }
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
@@ -65,6 +53,18 @@ public class BlockListener implements Listener {
         } else if (blockType == COBBLESTONE) {
             blockPoof(e.getBlock(), e.getBlockReplacedState().getType(), Math.round(300 * (1 + (pData.getPassiveTier(Passives.BUILD_BATTLER) * 0.6))));
         }
+    }
+
+    private void blockPoof(Block block, Material previousBlock, long time) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                block.setType(previousBlock);
+                placedBlocks.remove(block);
+            }
+        }.runTaskLater(Main.getInstance(), time);
+
+        placedBlocks.add(block);
     }
 }
 

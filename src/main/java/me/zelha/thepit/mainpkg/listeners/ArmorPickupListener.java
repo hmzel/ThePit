@@ -16,7 +16,6 @@ import static org.bukkit.Material.*;
 public class ArmorPickupListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-
     private final Material[] armorWeight0 = {
             CHAINMAIL_HELMET, CHAINMAIL_CHESTPLATE, CHAINMAIL_LEGGINGS, CHAINMAIL_BOOTS,
             LEATHER_HELMET
@@ -28,12 +27,26 @@ public class ArmorPickupListener implements Listener {
             DIAMOND_HELMET, DIAMOND_CHESTPLATE, DIAMOND_LEGGINGS, DIAMOND_BOOTS
     };
 
-    private int determineWeight(Material type) {
-        for (Material material : armorWeight0) if (material == type) return 0;
-        for (Material material : armorWeight1) if (material == type) return 1;
-        for (Material material : armorWeight2) if (material == type) return 2;
+    @EventHandler
+    public void onPickup(EntityPickupItemEvent e) {
+        if (!zl.playerCheck(e.getEntity())) return;
+        if (determineWeight(e.getItem().getItemStack().getType()) == 13) return;
 
-        return 13;
+        Player p = (Player) e.getEntity();
+        Item item = e.getItem();
+        String name = item.getItemStack().getType().name();
+
+        e.setCancelled(true);
+
+        if (name.contains("HELMET")) {
+            itemPlacementHandler(p, EquipmentSlot.HEAD, item);
+        } else if (name.contains("CHESTPLATE")) {
+            itemPlacementHandler(p, EquipmentSlot.CHEST, item);
+        } else if (name.contains("LEGGINGS")) {
+            itemPlacementHandler(p, EquipmentSlot.LEGS, item);
+        } else if (name.contains("BOOTS")) {
+            itemPlacementHandler(p, EquipmentSlot.FEET, item);
+        }
     }
 
     private void itemPlacementHandler(Player player, EquipmentSlot slot, Item item) {
@@ -58,26 +71,12 @@ public class ArmorPickupListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void onPickup(EntityPickupItemEvent e) {
-        if (!zl.playerCheck(e.getEntity())) return;
-        if (determineWeight(e.getItem().getItemStack().getType()) == 13) return;
+    private int determineWeight(Material type) {
+        for (Material material : armorWeight0) if (material == type) return 0;
+        for (Material material : armorWeight1) if (material == type) return 1;
+        for (Material material : armorWeight2) if (material == type) return 2;
 
-        Player p = (Player) e.getEntity();
-        Item item = e.getItem();
-        String name = item.getItemStack().getType().name();
-
-        e.setCancelled(true);
-
-        if (name.contains("HELMET")) {
-            itemPlacementHandler(p, EquipmentSlot.HEAD, item);
-        } else if (name.contains("CHESTPLATE")) {
-            itemPlacementHandler(p, EquipmentSlot.CHEST, item);
-        } else if (name.contains("LEGGINGS")) {
-            itemPlacementHandler(p, EquipmentSlot.LEGS, item);
-        } else if (name.contains("BOOTS")) {
-            itemPlacementHandler(p, EquipmentSlot.FEET, item);
-        }
+        return 13;
     }
 }
 

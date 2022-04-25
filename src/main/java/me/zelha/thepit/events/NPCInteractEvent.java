@@ -16,14 +16,6 @@ public class NPCInteractEvent extends Event {
         this.npc = npc;
     }
 
-    public Player getPlayer() {
-        return player;
-    }
-
-    public NPCs getNPC() {
-        return npc;
-    }
-
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }
@@ -31,5 +23,13 @@ public class NPCInteractEvent extends Event {
     @Override
     public HandlerList getHandlers() {
         return HANDLERS;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public NPCs getNPC() {
+        return npc;
     }
 }

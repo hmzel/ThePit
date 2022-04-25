@@ -25,7 +25,6 @@ import static org.bukkit.Material.*;
 public class GoldenPickaxeListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-
     private final Map<UUID, Integer> hitCount = new HashMap<>();
 
     @EventHandler

@@ -50,13 +50,12 @@ import static org.bukkit.Material.GOLDEN_LEGGINGS;
 
 public class KillRecap implements CommandExecutor, Listener {
 
+    private static final Map<UUID, List<DamageLog>> damageTrackerMap = new HashMap<>();
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final KillListener killUtils = Main.getInstance().getKillUtils();
     private final AssistListener assistUtils = Main.getInstance().getAssistUtils();
     private final Map<UUID, ItemStack> bookMap = new HashMap<>();
-    private static final Map<UUID, List<DamageLog>> damageTrackerMap = new HashMap<>();
 
-    //i dislike using static but i think its fine here since its only one method
     /**
      * adds a new DamageLog to the given player's kill recap<p>
      * note: must be called before damage is dealt,
@@ -75,139 +74,91 @@ public class KillRecap implements CommandExecutor, Listener {
         }.runTaskLater(Main.getInstance(), 200);
     }
 
-    private BaseComponent[] expComponent(Player dead, Player receiver) {
-        boolean isKiller = receiver.getUniqueId().equals(assistUtils.getLastDamager(dead).getUniqueId());
-        StringBuilder builder = new StringBuilder();
-        double streakModifier = 0;
-        PlayerData deadData = Main.getInstance().getPlayerData(dead);
-        PlayerData receiverData = Main.getInstance().getPlayerData(receiver);
-
-        builder.append("§fBase §bXP§f: §b5\n");
-
-        //xp bump "§fRenown XP Bump: §b+?"
-        if (receiverData.getStreak() <= (receiverData.getPassiveTier(Passives.EL_GATO) - 1) && isKiller) builder.append("§fEl Gato: §b+5\n");
-
-        if (receiverData.getStreak() == 4) {
-            streakModifier = 3;
-        } else if (receiverData.getStreak() >= 5 && receiverData.getStreak() < 20) {
-            streakModifier = 5;
-        } else if (receiverData.getStreak() < 200 && receiverData.getStreak() >= 20) {
-            streakModifier = Math.floor(receiverData.getStreak() / 10.0D) * 3;
-        } else if (receiverData.getStreak() >= 200) {
-            streakModifier = 60;
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender instanceof Player)) return true;
+        if (args.length != 1) return true;
+        //regex checks if its a uuid (totally did not copy)
+        if (!args[0].matches("[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")) return true;
+        if (bookMap.get(UUID.fromString(args[0])) == null) {
+            sender.sendMessage("§cThis recap has expired!");
+            return true;
         }
 
-        if (receiverData.getStreak() >= 4 && receiverData.hasPerkEquipped(STREAKER) && isKiller) {
-            builder.append("§fKiller on streak (Streaker Perk): §b+" + (int) (streakModifier * 3) + "\n");
-        } else if (receiverData.getStreak() >= 4 && isKiller) {
-            builder.append("§fKiller on streak: §b+" + (int) streakModifier + "\n");
-        }
-
-        //second gapple "§fSecond Gapple: §b+?"
-        //explicious "§fExplicious: §b+?"
-        if (deadData.getStreak() > 5 && isKiller) builder.append("§fStreak Shutdown: §b+" + (int) Math.min(Math.round(deadData.getStreak()), 25) + "\n");
-        if (receiverData.getStreak() <= 3 && (receiverData.getLevel() <= 30 || receiverData.getPrestige() == 0) && isKiller) builder.append("§fFirst 3 kills: §b+4\n");
-        if (deadData.getLevel() > receiverData.getLevel()) builder.append("§fLevel difference: §b+" + (int) Math.round((deadData.getLevel() - receiverData.getLevel()) / 4.5) + "\n");
-
-        //koth "§fKOTH: §b+300%"
-        //2x event "§f2x Event: §b+100%"
-        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) builder.append("§fKilled a noob: §b-10%\n");
-        if (receiverData.getPassiveTier(Passives.XP_BOOST) > 0) builder.append("§fXP Boost: §b+" + receiverData.getPassiveTier(Passives.XP_BOOST) * 10 + "%\n");
-        //overdrive "§fOverdrive: §b+?%"
-        //beastmode "§fBeastmode: §b+?%"
-        //royalty "§fRoyalty: §b+10%"
-        //genesis "§fGenesis: §b+?%"
-        //assistant "§fAssistant: §b+?%"
-
-        if (!isKiller) builder.append("§fKill participation: §b-"
-                + (int) ((1 - (Double.parseDouble(BigDecimal.valueOf(assistUtils.getAssistMap(dead).get(receiver.getUniqueId()) / assistUtils.getTotalDamage(dead)).setScale(2, RoundingMode.HALF_EVEN).toString()))) * 100)
-                + "%\n");
-
-        builder.append("§fRounded up!\n");
-
-        //pit day "§fGame Multiplier: §6+100%"
-
-        builder.replace(builder.length() - 1, builder.length(), "");
-
-        if (isKiller) {
-            return new ComponentBuilder("§3+" + killUtils.calculateEXP(dead, receiver) + "XP ").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
-        } else {
-            return new ComponentBuilder("§3+" + assistUtils.calculateAssistEXP(dead, receiver) + "XP ").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
-        }
+        ((Player) sender).openBook(bookMap.get(UUID.fromString(args[0])));
+        return true;
     }
 
-    private BaseComponent[] goldComponent(Player dead, Player receiver) {
-        boolean isKiller = receiver.equals(assistUtils.getLastDamager(dead));
-        StringBuilder builder = new StringBuilder();
-        PlayerData deadData = Main.getInstance().getPlayerData(dead);
-        PlayerData receiverData = Main.getInstance().getPlayerData(receiver);
-        PlayerInventory killerInv = receiver.getInventory();
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onAttack(EntityDamageByEntityEvent e) {
+        Entity damagedEntity = e.getEntity();
+        Entity damagerEntity = e.getDamager();
+        Player damaged;
+        Player damager;
 
-        builder.append("§fBase §6gold (g)§f: §610\n");
+        if (zl.spawnCheck(damagedEntity.getLocation()) || zl.spawnCheck(damagerEntity.getLocation())) return;
+        if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
+        if (e.getCause() == EntityDamageEvent.DamageCause.FALL) return;
+        if (e.getFinalDamage() <= 0) return;
 
-        if (((SpammerPerk) Perks.SPAMMER.getMethods()).hasBeenShotBySpammer(receiver, dead) && isKiller) builder.append("§fSpammer: §6+200%\n");
-        if (receiverData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS && isKiller) {
-            builder.append("§fBounty Hunter: §6+4\n");
-        }
-
-        if (receiverData.getStreak() <= receiverData.getPassiveTier(Passives.EL_GATO) && isKiller) builder.append("§fEl Gato: §6+5\n");
-        if (deadData.getStreak() > 5 && isKiller) builder.append("§fStreak shutdown: §6+" + Math.min((int) Math.round(deadData.getStreak()), 30) + "\n");
-        if (receiverData.getStreak() <= 3 && (receiverData.getLevel() <= 30 || receiverData.getPrestige() == 0) && isKiller) builder.append("§fFirst 3 kills: §6+4\n");
-        //genesis "§fGenesis: §6+?"
-        //moctezuma "§fMoctezuma: §6+?"
-        //gold bump enchant "§fGold Bump Enchant: §6+?"
-        if (dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() > receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue() && Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5) != 0) {
-            builder.append("§fArmor difference: §6+" + Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5) + "\n");
-        }
-        //gold stack "§fGold Stack: §6+?"
-        //assistant "§fAssistant: §6+?"
-
-        //koth "§fKOTH: §6+300%"
-        //2x event "§f2x Event: §6+100%"
-        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) builder.append("§fKilled a noob: §6-10%\n");
-        if (receiverData.getPassiveTier(Passives.GOLD_BOOST) > 0) builder.append("§fGold Boost: §6+" + receiverData.getPassiveTier(Passives.GOLD_BOOST) * 10 + "%\n");
-        //renown gold boost "§fRenown Gold Boost: §6+?%"
-        //gold boost enchant "§fGold Boost Enchant: §6+?%"
-        //overdrive "§fOverdrive: §6+?%"
-        //beastmode "§fBeastmode: §6+?%"
-        //highlander "§fHighlander: §6+?%"
-
-        if (!isKiller) builder.append("§fKill participation: §6-"
-                + (int) ((1 - (Double.parseDouble(BigDecimal.valueOf(assistUtils.getAssistMap(dead).get(receiver.getUniqueId()) / assistUtils.getTotalDamage(dead)).setScale(2, RoundingMode.HALF_EVEN).toString()))) * 100)
-                + "%\n");
-
-        //celebrity "§fCelebrity: §6+100%"
-        //pit day "§fGame Multiplier: §6+100%"
-        //conglomerate "§fConglomerate: §6+?"
-        if (receiverData.hasPerkEquipped(Perks.SPAMMER) && !isKiller) builder.append("§fSpammer Assist: §6+2\n");
-        if (receiverData.hasPerkEquipped(Perks.BOUNTY_HUNTER) && zl.itemCheck(receiver.getInventory().getLeggings()) && receiver.getInventory().getLeggings().getType() == Material.GOLDEN_LEGGINGS && deadData.getBounty() != 0 && !isKiller) {
-            builder.append("§fBounty Hunter Assist: §6+" + zl.getFancyGoldString(deadData.getBounty() * (assistUtils.getAssistMap(dead).get(receiver.getUniqueId()) / assistUtils.getTotalDamage(dead))) + "\n");
-        }
-
-        if (deadData.getBounty() != 0 && isKiller) builder.append("§fBounty: §6+" + deadData.getBounty() + "\n");
-
-        builder.replace(builder.length() - 1, builder.length(), "");
-
-        if (isKiller) {
-            return new ComponentBuilder("§6" + zl.getFancyGoldString(killUtils.calculateGold(dead, receiver)) + "g\n").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
+        if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player && zl.playerCheck((Player) ((Arrow) damagerEntity).getShooter())) {
+            damager = (Player) ((Arrow) damagerEntity).getShooter();
+        } else if (zl.playerCheck(damagerEntity)) {
+            damager = (Player) damagerEntity;
         } else {
-            return new ComponentBuilder("§6" + zl.getFancyGoldString(assistUtils.calculateAssistGold(dead, receiver)) + "g\n").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
+            return;
         }
+
+        addDamageLog(damaged, new DamageLog(e, false));
+        addDamageLog(damager, new DamageLog(e, true));
     }
 
-    private BaseComponent[] playerComponent(Player player) {
-        StringBuilder builder = new StringBuilder(zl.getColorBracketAndLevel(player.getUniqueId().toString()) + "§7 " + player.getName() + "\n");
-        PlayerData pData = Main.getInstance().getPlayerData(player);
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onDamage(EntityDamageEvent e) {
+        if (zl.spawnCheck(e.getEntity().getLocation())) return;
+        if (!zl.playerCheck(e.getEntity())) return;
+        if (e.getCause() == EntityDamageEvent.DamageCause.FALL) return;
+        if (e.getFinalDamage() <= 0) return;
 
-        if (pData.getStreak() != 0) builder.append("§7Streak: §c" + (int) pData.getStreak() + "\n");
+        Player p = (Player) e.getEntity();
+        String damageType = null;
 
-        for (int i = 1; i <= 4; i++) {
-            if (pData.getPerkAtSlot(i) != Perks.UNSET) builder.append("§e" + pData.getPerkAtSlot(i).getName() + "\n");
+        switch (e.getCause()) {
+            case SUFFOCATION:
+                damageType = "§fSuffocation";
+                break;
+            case FIRE:
+                damageType = "§6Fire";
+                break;
+            case DROWNING:
+                damageType = "§9Drowned";
+                break;
+            case VOID:
+                damageType = "§fVoid";
+                break;
         }
 
-        builder.replace(builder.length() - 1, builder.length(), "");
+        if (damageType != null) addDamageLog(p, new DamageLog(e.getDamage(), damageType, true));
+    }
 
-        return new ComponentBuilder("§7" + player.getName() + "\n").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onDeath(EntityDamageEvent e) {
+        if (!zl.playerCheck(e.getEntity())) return;
+        if (((Player) e.getEntity()).getHealth() - e.getFinalDamage() > 0) return;
+
+        deathMethod((Player) e.getEntity(), false);
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e) {
+        damageTrackerMap.put(e.getPlayer().getUniqueId(), new ArrayList<>());
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onLeave(PlayerQuitEvent e) {
+        if (Main.getInstance().getPlayerData(e.getPlayer()).getCombatLogged()) deathMethod(e.getPlayer(), true);
+
+        damageTrackerMap.remove(e.getPlayer().getUniqueId());
     }
 
     private void deathMethod(Player player, boolean disconnected) {
@@ -340,91 +291,139 @@ public class KillRecap implements CommandExecutor, Listener {
         damageTrackerMap.put(player.getUniqueId(), new ArrayList<>());
     }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) return true;
-        if (args.length != 1) return true;
-        //regex checks if its a uuid (totally did not copy)
-        if (!args[0].matches("[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")) return true;
-        if (bookMap.get(UUID.fromString(args[0])) == null) {
-            sender.sendMessage("§cThis recap has expired!");
-            return true;
+    private BaseComponent[] playerComponent(Player player) {
+        StringBuilder builder = new StringBuilder(zl.getColorBracketAndLevel(player.getUniqueId().toString()) + "§7 " + player.getName() + "\n");
+        PlayerData pData = Main.getInstance().getPlayerData(player);
+
+        if (pData.getStreak() != 0) builder.append("§7Streak: §c" + (int) pData.getStreak() + "\n");
+
+        for (int i = 1; i <= 4; i++) {
+            if (pData.getPerkAtSlot(i) != Perks.UNSET) builder.append("§e" + pData.getPerkAtSlot(i).getName() + "\n");
         }
 
-        ((Player) sender).openBook(bookMap.get(UUID.fromString(args[0])));
-        return true;
+        builder.replace(builder.length() - 1, builder.length(), "");
+
+        return new ComponentBuilder("§7" + player.getName() + "\n").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onAttack(EntityDamageByEntityEvent e) {
-        Entity damagedEntity = e.getEntity();
-        Entity damagerEntity = e.getDamager();
-        Player damaged;
-        Player damager;
+    private BaseComponent[] expComponent(Player dead, Player receiver) {
+        boolean isKiller = receiver.getUniqueId().equals(assistUtils.getLastDamager(dead).getUniqueId());
+        StringBuilder builder = new StringBuilder();
+        double streakModifier = 0;
+        PlayerData deadData = Main.getInstance().getPlayerData(dead);
+        PlayerData receiverData = Main.getInstance().getPlayerData(receiver);
 
-        if (zl.spawnCheck(damagedEntity.getLocation()) || zl.spawnCheck(damagerEntity.getLocation())) return;
-        if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
-        if (e.getCause() == EntityDamageEvent.DamageCause.FALL) return;
-        if (e.getFinalDamage() <= 0) return;
+        builder.append("§fBase §bXP§f: §b5\n");
 
-        if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player && zl.playerCheck((Player) ((Arrow) damagerEntity).getShooter())) {
-            damager = (Player) ((Arrow) damagerEntity).getShooter();
-        } else if (zl.playerCheck(damagerEntity)) {
-            damager = (Player) damagerEntity;
+        //xp bump "§fRenown XP Bump: §b+?"
+        if (receiverData.getStreak() <= (receiverData.getPassiveTier(Passives.EL_GATO) - 1) && isKiller) builder.append("§fEl Gato: §b+5\n");
+
+        if (receiverData.getStreak() == 4) {
+            streakModifier = 3;
+        } else if (receiverData.getStreak() >= 5 && receiverData.getStreak() < 20) {
+            streakModifier = 5;
+        } else if (receiverData.getStreak() < 200 && receiverData.getStreak() >= 20) {
+            streakModifier = Math.floor(receiverData.getStreak() / 10.0D) * 3;
+        } else if (receiverData.getStreak() >= 200) {
+            streakModifier = 60;
+        }
+
+        if (receiverData.getStreak() >= 4 && receiverData.hasPerkEquipped(STREAKER) && isKiller) {
+            builder.append("§fKiller on streak (Streaker Perk): §b+" + (int) (streakModifier * 3) + "\n");
+        } else if (receiverData.getStreak() >= 4 && isKiller) {
+            builder.append("§fKiller on streak: §b+" + (int) streakModifier + "\n");
+        }
+
+        //second gapple "§fSecond Gapple: §b+?"
+        //explicious "§fExplicious: §b+?"
+        if (deadData.getStreak() > 5 && isKiller) builder.append("§fStreak Shutdown: §b+" + (int) Math.min(Math.round(deadData.getStreak()), 25) + "\n");
+        if (receiverData.getStreak() <= 3 && (receiverData.getLevel() <= 30 || receiverData.getPrestige() == 0) && isKiller) builder.append("§fFirst 3 kills: §b+4\n");
+        if (deadData.getLevel() > receiverData.getLevel()) builder.append("§fLevel difference: §b+" + (int) Math.round((deadData.getLevel() - receiverData.getLevel()) / 4.5) + "\n");
+
+        //koth "§fKOTH: §b+300%"
+        //2x event "§f2x Event: §b+100%"
+        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) builder.append("§fKilled a noob: §b-10%\n");
+        if (receiverData.getPassiveTier(Passives.XP_BOOST) > 0) builder.append("§fXP Boost: §b+" + receiverData.getPassiveTier(Passives.XP_BOOST) * 10 + "%\n");
+        //overdrive "§fOverdrive: §b+?%"
+        //beastmode "§fBeastmode: §b+?%"
+        //royalty "§fRoyalty: §b+10%"
+        //genesis "§fGenesis: §b+?%"
+        //assistant "§fAssistant: §b+?%"
+
+        if (!isKiller) builder.append("§fKill participation: §b-"
+                + (int) ((1 - (Double.parseDouble(BigDecimal.valueOf(assistUtils.getAssistMap(dead).get(receiver.getUniqueId()) / assistUtils.getTotalDamage(dead)).setScale(2, RoundingMode.HALF_EVEN).toString()))) * 100)
+                + "%\n");
+
+        builder.append("§fRounded up!\n");
+
+        //pit day "§fGame Multiplier: §6+100%"
+
+        builder.replace(builder.length() - 1, builder.length(), "");
+
+        if (isKiller) {
+            return new ComponentBuilder("§3+" + killUtils.calculateEXP(dead, receiver) + "XP ").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
         } else {
-            return;
+            return new ComponentBuilder("§3+" + assistUtils.calculateAssistEXP(dead, receiver) + "XP ").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
+        }
+    }
+
+    private BaseComponent[] goldComponent(Player dead, Player receiver) {
+        boolean isKiller = receiver.equals(assistUtils.getLastDamager(dead));
+        StringBuilder builder = new StringBuilder();
+        PlayerData deadData = Main.getInstance().getPlayerData(dead);
+        PlayerData receiverData = Main.getInstance().getPlayerData(receiver);
+        PlayerInventory killerInv = receiver.getInventory();
+
+        builder.append("§fBase §6gold (g)§f: §610\n");
+
+        if (((SpammerPerk) Perks.SPAMMER.getMethods()).hasBeenShotBySpammer(receiver, dead) && isKiller) builder.append("§fSpammer: §6+200%\n");
+        if (receiverData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS && isKiller) {
+            builder.append("§fBounty Hunter: §6+4\n");
         }
 
-        addDamageLog(damaged, new DamageLog(e, false));
-        addDamageLog(damager, new DamageLog(e, true));
-    }
+        if (receiverData.getStreak() <= receiverData.getPassiveTier(Passives.EL_GATO) && isKiller) builder.append("§fEl Gato: §6+5\n");
+        if (deadData.getStreak() > 5 && isKiller) builder.append("§fStreak shutdown: §6+" + Math.min((int) Math.round(deadData.getStreak()), 30) + "\n");
+        if (receiverData.getStreak() <= 3 && (receiverData.getLevel() <= 30 || receiverData.getPrestige() == 0) && isKiller) builder.append("§fFirst 3 kills: §6+4\n");
+        //genesis "§fGenesis: §6+?"
+        //moctezuma "§fMoctezuma: §6+?"
+        //gold bump enchant "§fGold Bump Enchant: §6+?"
+        if (dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() > receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue() && Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5) != 0) {
+            builder.append("§fArmor difference: §6+" + Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5) + "\n");
+        }
+        //gold stack "§fGold Stack: §6+?"
+        //assistant "§fAssistant: §6+?"
 
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onDamage(EntityDamageEvent e) {
-        if (zl.spawnCheck(e.getEntity().getLocation())) return;
-        if (!zl.playerCheck(e.getEntity())) return;
-        if (e.getCause() == EntityDamageEvent.DamageCause.FALL) return;
-        if (e.getFinalDamage() <= 0) return;
+        //koth "§fKOTH: §6+300%"
+        //2x event "§f2x Event: §6+100%"
+        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) builder.append("§fKilled a noob: §6-10%\n");
+        if (receiverData.getPassiveTier(Passives.GOLD_BOOST) > 0) builder.append("§fGold Boost: §6+" + receiverData.getPassiveTier(Passives.GOLD_BOOST) * 10 + "%\n");
+        //renown gold boost "§fRenown Gold Boost: §6+?%"
+        //gold boost enchant "§fGold Boost Enchant: §6+?%"
+        //overdrive "§fOverdrive: §6+?%"
+        //beastmode "§fBeastmode: §6+?%"
+        //highlander "§fHighlander: §6+?%"
 
-        Player p = (Player) e.getEntity();
-        String damageType = null;
+        if (!isKiller) builder.append("§fKill participation: §6-"
+                + (int) ((1 - (Double.parseDouble(BigDecimal.valueOf(assistUtils.getAssistMap(dead).get(receiver.getUniqueId()) / assistUtils.getTotalDamage(dead)).setScale(2, RoundingMode.HALF_EVEN).toString()))) * 100)
+                + "%\n");
 
-        switch (e.getCause()) {
-            case SUFFOCATION:
-                damageType = "§fSuffocation";
-                break;
-            case FIRE:
-                damageType = "§6Fire";
-                break;
-            case DROWNING:
-                damageType = "§9Drowned";
-                break;
-            case VOID:
-                damageType = "§fVoid";
-                break;
+        //celebrity "§fCelebrity: §6+100%"
+        //pit day "§fGame Multiplier: §6+100%"
+        //conglomerate "§fConglomerate: §6+?"
+        if (receiverData.hasPerkEquipped(Perks.SPAMMER) && !isKiller) builder.append("§fSpammer Assist: §6+2\n");
+        if (receiverData.hasPerkEquipped(Perks.BOUNTY_HUNTER) && zl.itemCheck(receiver.getInventory().getLeggings()) && receiver.getInventory().getLeggings().getType() == Material.GOLDEN_LEGGINGS && deadData.getBounty() != 0 && !isKiller) {
+            builder.append("§fBounty Hunter Assist: §6+" + zl.getFancyGoldString(deadData.getBounty() * (assistUtils.getAssistMap(dead).get(receiver.getUniqueId()) / assistUtils.getTotalDamage(dead))) + "\n");
         }
 
-        if (damageType != null) addDamageLog(p, new DamageLog(e.getDamage(), damageType, true));
-    }
+        if (deadData.getBounty() != 0 && isKiller) builder.append("§fBounty: §6+" + deadData.getBounty() + "\n");
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onDeath(EntityDamageEvent e) {
-        if (!zl.playerCheck(e.getEntity())) return;
-        if (((Player) e.getEntity()).getHealth() - e.getFinalDamage() > 0) return;
+        builder.replace(builder.length() - 1, builder.length(), "");
 
-        deathMethod((Player) e.getEntity(), false);
-    }
-
-    @EventHandler
-    public void onJoin(PlayerJoinEvent e) {
-        damageTrackerMap.put(e.getPlayer().getUniqueId(), new ArrayList<>());
-    }
-
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onLeave(PlayerQuitEvent e) {
-        if (Main.getInstance().getPlayerData(e.getPlayer()).getCombatLogged()) deathMethod(e.getPlayer(), true);
-
-        damageTrackerMap.remove(e.getPlayer().getUniqueId());
+        if (isKiller) {
+            return new ComponentBuilder("§6" + zl.getFancyGoldString(killUtils.calculateGold(dead, receiver)) + "g\n").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
+        } else {
+            return new ComponentBuilder("§6" + zl.getFancyGoldString(assistUtils.calculateAssistGold(dead, receiver)) + "g\n").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
+        }
     }
 }
 

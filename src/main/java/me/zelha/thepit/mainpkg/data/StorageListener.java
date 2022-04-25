@@ -38,50 +38,111 @@ public class StorageListener implements Listener {
         System.out.println("ThePit: Successfully started data saver");
     }
 
-    private boolean dataCheck(Document document) {
-        for (String slot : slots) {
-            if (document.getEmbedded(Arrays.asList("perk_slots", slot), String.class) == null) {
-                return false;
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void assignDataDocument(PlayerJoinEvent e) {
+        String uuid = e.getPlayer().getUniqueId().toString();
+        Document filter = new Document("uuid", uuid);
+        Document pDoc;
+
+        if (pDataCol.countDocuments(filter) < 1) {
+            Document perkSlotsEmbed = new Document();
+            Document ministreakSlotsEmbed = new Document();
+            Document passivesEmbed = new Document();
+            Document unlockedPerksEmbed = new Document();
+            Document unlockedMegastreaksEmbed = new Document();
+            Document unlockedMinistreaksEmbed = new Document();
+
+            for (String slot : slots) perkSlotsEmbed.append(slot, "unset");
+            for (int i = 0; i < 3; i++) ministreakSlotsEmbed.append(slots.get(i), "unset");
+            for (Passives passive : Passives.values()) passivesEmbed.append(passive.name().toLowerCase(), 0);
+            for (Perks perk : Perks.values()) unlockedPerksEmbed.append(perk.name().toLowerCase(), false);
+
+            for (Megastreaks mega : Megastreaks.values()) {
+                if (mega == Megastreaks.OVERDRIVE) {
+                    unlockedMegastreaksEmbed.append(mega.name().toLowerCase(), true);
+                } else {
+                    unlockedMegastreaksEmbed.append(mega.name().toLowerCase(), false);
+                }
             }
+
+            for (Ministreaks mini : Ministreaks.values()) unlockedMinistreaksEmbed.append(mini.name().toLowerCase(), false);
+
+            pDataCol.insertOne(filter
+                    .append("prestige", 0)
+                    .append("level", 1)
+                    .append("exp", 15)
+                    .append("gold", 0.0)
+                    .append("bounty", 0)
+                    .append("megastreaks", "overdrive")
+                    .append("perk_slots", perkSlotsEmbed)
+                    .append("ministreak_slots", ministreakSlotsEmbed)
+                    .append("passives", passivesEmbed)
+                    .append("perk_unlocks", unlockedPerksEmbed)
+                    .append("megastreak_unlocks", unlockedMegastreaksEmbed)
+                    .append("ministreak_unlocks", unlockedMinistreaksEmbed)
+                    .append("combat_logged", false));
+
+            pDoc = pDataCol.find(filter).first();
+
+            System.out.println("Created new player data document assigned to " + uuid);
+        } else {
+             pDoc = pDataCol.find(filter).first();
         }
 
-        for (int i = 0; i < 3; i++) {
-            if (document.getEmbedded(Arrays.asList("ministreak_slots", slots.get(i)), String.class) == null) {
-                return false;
-            }
+        if (!dataCheck(pDoc)) {
+            pDoc = updateDocument(pDoc);
+
+            System.out.println("Successfully updated player data document assigned to " + uuid);
         }
 
-        for (Passives passive : Passives.values()) {
-            if (document.getEmbedded(Arrays.asList("passives", passive.name().toLowerCase()), Integer.class) == null) {
-                return false;
-            }
+        if (pDoc != null) {
+            playerDataMap.put(uuid, new PlayerData(pDoc));
+            playerUUIDList.add(uuid);
+        } else {
+            System.out.println("BEPIS.");
+            System.out.println("Did something go wrong inserting the document?");
         }
+    }
 
-        for (Perks perk : Perks.values()) {
-            if (document.getEmbedded(Arrays.asList("perk_unlocks", perk.name().toLowerCase()), Boolean.class) == null) {
-                return false;
-            }
-        }
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void saveDataDocument(PlayerQuitEvent e) {
+        saveDocument(e.getPlayer().getUniqueId().toString());
+        playerDataMap.remove(e.getPlayer().getUniqueId().toString());
+        playerUUIDList.remove(e.getPlayer().getUniqueId().toString());
+    }
 
-        for (Megastreaks mega : Megastreaks.values()) {
-            if (document.getEmbedded(Arrays.asList("megastreak_unlocks", mega.name().toLowerCase()), Boolean.class) == null) {
-                return false;
-            }
-        }
+    private void saveDocument(String uuid) {
+        PlayerData pData = getPlayerData(uuid);
+        Document pDoc = pDataCol.find(new Document("uuid", uuid)).first();
+        Document perkSlotsEmbed = new Document();
+        Document ministreakSlotsEmbed = new Document();
+        Document passivesEmbed = new Document();
+        Document unlockedPerksEmbed = new Document();
+        Document unlockedMegastreaksEmbed = new Document();
+        Document unlockedMinistreaksEmbed = new Document();
 
-        for (Ministreaks mini : Ministreaks.values()) {
-            if (document.getEmbedded(Arrays.asList("ministreak_unlocks", mini.name().toLowerCase()), Boolean.class) == null) {
-                return false;
-            }
-        }
+        for (String slot : slots) perkSlotsEmbed.append(slot, pData.getPerkAtSlot((slots.indexOf(slot) + 1)).name().toLowerCase());
+        for (int i = 0; i < 3; i++) ministreakSlotsEmbed.append(slots.get(i), pData.getMinistreakAtSlot(i + 1).name().toLowerCase());
+        for (Passives passive : Passives.values()) passivesEmbed.append(passive.name().toLowerCase(), pData.getPassiveTier(passive));
+        for (Perks perk : Perks.values()) unlockedPerksEmbed.append(perk.name().toLowerCase(), pData.getPerkUnlockStatus(perk));
+        for (Megastreaks mega : Megastreaks.values()) unlockedMegastreaksEmbed.append(mega.name().toLowerCase(), pData.getMegastreakUnlockStatus(mega));
+        for (Ministreaks mini : Ministreaks.values()) unlockedMinistreaksEmbed.append(mini.name().toLowerCase(), pData.getMinistreakUnlockStatus(mini));
 
-        return document.get("prestige") != null
-                && document.get("level") != null
-                && document.get("exp") != null
-                && document.get("gold") != null
-                && document.get("bounty") != null
-                && document.get("megastreak") != null
-                && document.get("combat_logged") != null;
+        pDoc.put("prestige", pData.getPrestige());
+        pDoc.put("level", pData.getLevel());
+        pDoc.put("exp", pData.getExp());
+        pDoc.put("gold", pData.getGold());
+        pDoc.put("bounty", pData.getBounty());
+        pDoc.put("megastreak", pData.getMegastreak().name().toLowerCase());
+        pDoc.put("perk_slots", perkSlotsEmbed);
+        pDoc.put("ministreak_slots", ministreakSlotsEmbed);
+        pDoc.put("passives", passivesEmbed);
+        pDoc.put("perk_unlocks", unlockedPerksEmbed);
+        pDoc.put("megastreak_unlocks", unlockedMegastreaksEmbed);
+        pDoc.put("ministreak_unlocks", unlockedMinistreaksEmbed);
+        pDoc.put("combat_logged", pData.getCombatLogged());
+
+        pDataCol.replaceOne(new Document("uuid", uuid), pDoc);
     }
 
     private Document updateDocument(Document document) {
@@ -159,111 +220,50 @@ public class StorageListener implements Listener {
         return document;
     }
 
-    private void saveDocument(String uuid) {
-        PlayerData pData = getPlayerData(uuid);
-        Document pDoc = pDataCol.find(new Document("uuid", uuid)).first();
-        Document perkSlotsEmbed = new Document();
-        Document ministreakSlotsEmbed = new Document();
-        Document passivesEmbed = new Document();
-        Document unlockedPerksEmbed = new Document();
-        Document unlockedMegastreaksEmbed = new Document();
-        Document unlockedMinistreaksEmbed = new Document();
-
-        for (String slot : slots) perkSlotsEmbed.append(slot, pData.getPerkAtSlot((slots.indexOf(slot) + 1)).name().toLowerCase());
-        for (int i = 0; i < 3; i++) ministreakSlotsEmbed.append(slots.get(i), pData.getMinistreakAtSlot(i + 1).name().toLowerCase());
-        for (Passives passive : Passives.values()) passivesEmbed.append(passive.name().toLowerCase(), pData.getPassiveTier(passive));
-        for (Perks perk : Perks.values()) unlockedPerksEmbed.append(perk.name().toLowerCase(), pData.getPerkUnlockStatus(perk));
-        for (Megastreaks mega : Megastreaks.values()) unlockedMegastreaksEmbed.append(mega.name().toLowerCase(), pData.getMegastreakUnlockStatus(mega));
-        for (Ministreaks mini : Ministreaks.values()) unlockedMinistreaksEmbed.append(mini.name().toLowerCase(), pData.getMinistreakUnlockStatus(mini));
-
-        pDoc.put("prestige", pData.getPrestige());
-        pDoc.put("level", pData.getLevel());
-        pDoc.put("exp", pData.getExp());
-        pDoc.put("gold", pData.getGold());
-        pDoc.put("bounty", pData.getBounty());
-        pDoc.put("megastreak", pData.getMegastreak().name().toLowerCase());
-        pDoc.put("perk_slots", perkSlotsEmbed);
-        pDoc.put("ministreak_slots", ministreakSlotsEmbed);
-        pDoc.put("passives", passivesEmbed);
-        pDoc.put("perk_unlocks", unlockedPerksEmbed);
-        pDoc.put("megastreak_unlocks", unlockedMegastreaksEmbed);
-        pDoc.put("ministreak_unlocks", unlockedMinistreaksEmbed);
-        pDoc.put("combat_logged", pData.getCombatLogged());
-
-        pDataCol.replaceOne(new Document("uuid", uuid), pDoc);
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void assignDataDocument(PlayerJoinEvent e) {
-        String uuid = e.getPlayer().getUniqueId().toString();
-        Document filter = new Document("uuid", uuid);
-        Document pDoc;
-
-        if (pDataCol.countDocuments(filter) < 1) {
-            Document perkSlotsEmbed = new Document();
-            Document ministreakSlotsEmbed = new Document();
-            Document passivesEmbed = new Document();
-            Document unlockedPerksEmbed = new Document();
-            Document unlockedMegastreaksEmbed = new Document();
-            Document unlockedMinistreaksEmbed = new Document();
-
-            for (String slot : slots) perkSlotsEmbed.append(slot, "unset");
-            for (int i = 0; i < 3; i++) ministreakSlotsEmbed.append(slots.get(i), "unset");
-            for (Passives passive : Passives.values()) passivesEmbed.append(passive.name().toLowerCase(), 0);
-            for (Perks perk : Perks.values()) unlockedPerksEmbed.append(perk.name().toLowerCase(), false);
-
-            for (Megastreaks mega : Megastreaks.values()) {
-                if (mega == Megastreaks.OVERDRIVE) {
-                    unlockedMegastreaksEmbed.append(mega.name().toLowerCase(), true);
-                } else {
-                    unlockedMegastreaksEmbed.append(mega.name().toLowerCase(), false);
-                }
+    private boolean dataCheck(Document document) {
+        for (String slot : slots) {
+            if (document.getEmbedded(Arrays.asList("perk_slots", slot), String.class) == null) {
+                return false;
             }
-
-            for (Ministreaks mini : Ministreaks.values()) unlockedMinistreaksEmbed.append(mini.name().toLowerCase(), false);
-
-            pDataCol.insertOne(filter
-                    .append("prestige", 0)
-                    .append("level", 1)
-                    .append("exp", 15)
-                    .append("gold", 0.0)
-                    .append("bounty", 0)
-                    .append("megastreaks", "overdrive")
-                    .append("perk_slots", perkSlotsEmbed)
-                    .append("ministreak_slots", ministreakSlotsEmbed)
-                    .append("passives", passivesEmbed)
-                    .append("perk_unlocks", unlockedPerksEmbed)
-                    .append("megastreak_unlocks", unlockedMegastreaksEmbed)
-                    .append("ministreak_unlocks", unlockedMinistreaksEmbed)
-                    .append("combat_logged", false));
-
-            pDoc = pDataCol.find(filter).first();
-
-            System.out.println("Created new player data document assigned to " + uuid);
-        } else {
-             pDoc = pDataCol.find(filter).first();
         }
 
-        if (!dataCheck(pDoc)) {
-            pDoc = updateDocument(pDoc);
-
-            System.out.println("Successfully updated player data document assigned to " + uuid);
+        for (int i = 0; i < 3; i++) {
+            if (document.getEmbedded(Arrays.asList("ministreak_slots", slots.get(i)), String.class) == null) {
+                return false;
+            }
         }
 
-        if (pDoc != null) {
-            playerDataMap.put(uuid, new PlayerData(pDoc));
-            playerUUIDList.add(uuid);
-        } else {
-            System.out.println("BEPIS.");
-            System.out.println("Did something go wrong inserting the document?");
+        for (Passives passive : Passives.values()) {
+            if (document.getEmbedded(Arrays.asList("passives", passive.name().toLowerCase()), Integer.class) == null) {
+                return false;
+            }
         }
-    }
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void saveDataDocument(PlayerQuitEvent e) {
-        saveDocument(e.getPlayer().getUniqueId().toString());
-        playerDataMap.remove(e.getPlayer().getUniqueId().toString());
-        playerUUIDList.remove(e.getPlayer().getUniqueId().toString());
+        for (Perks perk : Perks.values()) {
+            if (document.getEmbedded(Arrays.asList("perk_unlocks", perk.name().toLowerCase()), Boolean.class) == null) {
+                return false;
+            }
+        }
+
+        for (Megastreaks mega : Megastreaks.values()) {
+            if (document.getEmbedded(Arrays.asList("megastreak_unlocks", mega.name().toLowerCase()), Boolean.class) == null) {
+                return false;
+            }
+        }
+
+        for (Ministreaks mini : Ministreaks.values()) {
+            if (document.getEmbedded(Arrays.asList("ministreak_unlocks", mini.name().toLowerCase()), Boolean.class) == null) {
+                return false;
+            }
+        }
+
+        return document.get("prestige") != null
+                && document.get("level") != null
+                && document.get("exp") != null
+                && document.get("gold") != null
+                && document.get("bounty") != null
+                && document.get("megastreak") != null
+                && document.get("combat_logged") != null;
     }
 }
 

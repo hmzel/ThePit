@@ -3,7 +3,6 @@ package me.zelha.thepit.zelenums;
 import me.zelha.thepit.upgrades.permanent.perks.*;
 import org.bukkit.Material;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -186,6 +185,20 @@ public enum Perks {
         this.lore = lore;
     }
 
+    public static Perks findByEnumName(String name) {
+        for (Perks perk : values()) {
+            if (perk.name().equalsIgnoreCase(name)) return perk;
+        }
+        return null;
+    }
+
+    public static Perks findByMaterial(Material material) {
+        for (Perks perk : values()) {
+            if (perk.getMaterial() == material) return perk;
+        }
+        return null;
+    }
+
     public String getName() {
         return name;
     }
@@ -195,7 +208,7 @@ public enum Perks {
     }
 
     public List<String> getLore() {
-        return new ArrayList<>(Arrays.asList(lore));
+        return Arrays.asList(lore);
     }
 
     public int getCost() {
@@ -212,20 +225,6 @@ public enum Perks {
 
     public Perk getMethods() {
         return perk;
-    }
-
-    public static Perks findByEnumName(String name) {
-        for (Perks perk : values()) {
-            if (perk.name().equalsIgnoreCase(name)) return perk;
-        }
-        return null;
-    }
-
-    public static Perks findByMaterial(Material material) {
-        for (Perks perk : values()) {
-            if (perk.getMaterial() == material) return perk;
-        }
-        return null;
     }
 }
 

@@ -16,7 +16,41 @@ import java.util.List;
 
 public class HologramCheckCommand implements CommandExecutor {//yeah im still not going to touch this
 
-    public void spawnHologramIfAbsent(String name, Location location, Player player) {
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (sender instanceof Player) {
+            Player p = (Player) sender;
+            String worldname = p.getWorld().getName();
+
+            spawnIfAbsent("§e§lUNLOCKED FEATURES", Worlds.findByName(worldname), p);
+            spawnIfAbsent("§7Gain levels to unlock more", Worlds.findByName(worldname), p);
+            spawnIfAbsent("§a§lUPGRADES", Worlds.findByName(worldname), p);
+            spawnIfAbsent("§7Permanent", Worlds.findByName(worldname), p);
+            spawnIfAbsent("§6§lITEMS", Worlds.findByName(worldname), p);
+            spawnIfAbsent("§7Non-permanent", Worlds.findByName(worldname), p);
+            spawnIfAbsent("§3§lSTATS", Worlds.findByName(worldname), p);
+            spawnIfAbsent("§7View your stats", Worlds.findByName(worldname), p);
+            spawnIfAbsent("§b§lTOP ACTIVE PLAYERS", Worlds.findByName(worldname), p);
+            spawnIfAbsent("§7Pit Level", Worlds.findByName(worldname), p);
+            spawnIfAbsent("§7All-time §ebest §7players!", Worlds.findByName(worldname), p);
+            spawnIfAbsent("§7§oPlayers who logged in this week", Worlds.findByName(worldname), p);
+            spawnIfAbsent("§a§lQUEST MASTER", Worlds.findByName(worldname), p);
+            spawnIfAbsent("§7Quests & Contracts", Worlds.findByName(worldname), p);
+            spawnIfAbsent("§e§lPRESTIGE", Worlds.findByName(worldname), p);
+            spawnIfAbsent("§7Resets & Renown", Worlds.findByName(worldname), p);
+            spawnIfAbsent("§2§lTHE KEEPER", Worlds.findByName(worldname), p);
+            spawnIfAbsent("§7Back to lobby", Worlds.findByName(worldname), p);
+            spawnIfAbsent("§d§lMYSTIC WELL", Worlds.findByName(worldname), p);
+            spawnIfAbsent("§7Item Enchants", Worlds.findByName(worldname), p);
+            spawnIfAbsent("§5§lENDER CHEST", Worlds.findByName(worldname), p);
+            spawnIfAbsent("§7Store items forever", Worlds.findByName(worldname), p);
+            spawnIfAbsent("§eThe Hypixel Pit", Worlds.findByName(worldname), p);
+            spawnIfAbsent("§a§lJUMP! §c§lFIGHT!", Worlds.findByName(worldname), p);
+        }
+        return true;
+    }
+
+    private void spawnHologramIfAbsent(String name, Location location, Player player) {
         List<Entity> entityList = location.getWorld().getEntities();
 
         for (Entity entity : entityList) {
@@ -123,40 +157,6 @@ public class HologramCheckCommand implements CommandExecutor {//yeah im still no
             default:
                 player.sendMessage("§cWorld not supported!");
         }
-    }
-
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player) {
-            Player p = (Player) sender;
-            String worldname = p.getWorld().getName();
-
-            spawnIfAbsent("§e§lUNLOCKED FEATURES", Worlds.findByName(worldname), p);
-            spawnIfAbsent("§7Gain levels to unlock more", Worlds.findByName(worldname), p);
-            spawnIfAbsent("§a§lUPGRADES", Worlds.findByName(worldname), p);
-            spawnIfAbsent("§7Permanent", Worlds.findByName(worldname), p);
-            spawnIfAbsent("§6§lITEMS", Worlds.findByName(worldname), p);
-            spawnIfAbsent("§7Non-permanent", Worlds.findByName(worldname), p);
-            spawnIfAbsent("§3§lSTATS", Worlds.findByName(worldname), p);
-            spawnIfAbsent("§7View your stats", Worlds.findByName(worldname), p);
-            spawnIfAbsent("§b§lTOP ACTIVE PLAYERS", Worlds.findByName(worldname), p);
-            spawnIfAbsent("§7Pit Level", Worlds.findByName(worldname), p);
-            spawnIfAbsent("§7All-time §ebest §7players!", Worlds.findByName(worldname), p);
-            spawnIfAbsent("§7§oPlayers who logged in this week", Worlds.findByName(worldname), p);
-            spawnIfAbsent("§a§lQUEST MASTER", Worlds.findByName(worldname), p);
-            spawnIfAbsent("§7Quests & Contracts", Worlds.findByName(worldname), p);
-            spawnIfAbsent("§e§lPRESTIGE", Worlds.findByName(worldname), p);
-            spawnIfAbsent("§7Resets & Renown", Worlds.findByName(worldname), p);
-            spawnIfAbsent("§2§lTHE KEEPER", Worlds.findByName(worldname), p);
-            spawnIfAbsent("§7Back to lobby", Worlds.findByName(worldname), p);
-            spawnIfAbsent("§d§lMYSTIC WELL", Worlds.findByName(worldname), p);
-            spawnIfAbsent("§7Item Enchants", Worlds.findByName(worldname), p);
-            spawnIfAbsent("§5§lENDER CHEST", Worlds.findByName(worldname), p);
-            spawnIfAbsent("§7Store items forever", Worlds.findByName(worldname), p);
-            spawnIfAbsent("§eThe Hypixel Pit", Worlds.findByName(worldname), p);
-            spawnIfAbsent("§a§lJUMP! §c§lFIGHT!", Worlds.findByName(worldname), p);
-        }
-        return true;
     }
 }
 

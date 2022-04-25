@@ -22,15 +22,6 @@ public class LuckyDiamondPerk extends Perk {
         super(LUCKY_DIAMOND);
     }
 
-    private boolean isLuckyDiamondItem(ItemStack item) {
-        return Main.getInstance().getZelLogic().itemCheck(item)
-                && item.getItemMeta() != null
-                && item.getItemMeta().getLore() != null
-                && item.getItemMeta().getLore().contains("§7Perk item")
-                && item.getType().name().contains("DIAMOND")
-                && !item.getType().name().contains("PICKAXE");
-    }
-
     @Override
     public void onKill(Player killer, Player dead) {
         PlayerInventory inv = killer.getInventory();
@@ -76,6 +67,15 @@ public class LuckyDiamondPerk extends Perk {
                 if (isLuckyDiamondItem(item)) inv.remove(item);
             }
         }
+    }
+
+    private boolean isLuckyDiamondItem(ItemStack item) {
+        return Main.getInstance().getZelLogic().itemCheck(item)
+                && item.getItemMeta() != null
+                && item.getItemMeta().getLore() != null
+                && item.getItemMeta().getLore().contains("§7Perk item")
+                && item.getType().name().contains("DIAMOND")
+                && !item.getType().name().contains("PICKAXE");
     }
 }
 

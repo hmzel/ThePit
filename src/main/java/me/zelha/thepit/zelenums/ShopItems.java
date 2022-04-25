@@ -7,7 +7,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -46,24 +45,11 @@ public enum ShopItems {
         this.shopLore = shopLore;
     }
 
-    public Material getMaterial() {
-        return material;
-    }
-
-    public String getShopName() {
-        return shopName;
-    }
-
-    public List<String> getShopLore() {
-        return new ArrayList<>(Arrays.asList(shopLore));
-    }
-
-    public int getCost() {
-        return cost;
-    }
-
-    public int getAmount() {
-        return amount;
+    public static ShopItems findByMaterial(Material material) {
+        for (ShopItems item : ShopItems.values()) {
+            if (item.getMaterial() == material) return item;
+        }
+        return null;
     }
 
     public ItemStack getBoughtItem() {
@@ -86,14 +72,27 @@ public enum ShopItems {
         }
     }
 
-    public EquipmentSlot getSlot() {
-        return slot;
+    public Material getMaterial() {
+        return material;
     }
 
-    public static ShopItems findByMaterial(Material material) {
-        for (ShopItems item : ShopItems.values()) {
-            if (item.getMaterial() == material) return item;
-        }
-        return null;
+    public String getShopName() {
+        return shopName;
+    }
+
+    public List<String> getShopLore() {
+        return Arrays.asList(shopLore);
+    }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public EquipmentSlot getSlot() {
+        return slot;
     }
 }

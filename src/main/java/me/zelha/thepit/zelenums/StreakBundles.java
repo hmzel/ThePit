@@ -22,6 +22,13 @@ public enum StreakBundles {
         this.ministreaks = ministreaks;
     }
 
+    public static StreakBundles findByEnumName(String name) {
+        for (StreakBundles bundle : values()) {
+            if (bundle.name().equalsIgnoreCase(name)) return bundle;
+        }
+        return null;
+    }
+
     public String getColor() {
         return color;
     }
@@ -36,12 +43,5 @@ public enum StreakBundles {
 
     public Ministreaks[] getMinistreaks() {
         return ministreaks;
-    }
-
-    public static StreakBundles findByEnumName(String name) {
-        for (StreakBundles bundle : values()) {
-            if (bundle.name().equalsIgnoreCase(name)) return bundle;
-        }
-        return null;
     }
 }

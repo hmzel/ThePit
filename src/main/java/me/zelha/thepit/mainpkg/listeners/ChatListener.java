@@ -13,6 +13,33 @@ public class ChatListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
 
+    @EventHandler
+    public void onChat(AsyncPlayerChatEvent e) {
+        String prefix;
+        String numerals;
+        PlayerData pData = Main.getInstance().getPlayerData(e.getPlayer());
+
+        if (pData.getPrestige() <= 1000) numerals = "§e" + zl.toRoman(pData.getPrestige()); else numerals = "§cERROR";
+
+        if (pData.getPrestige() == 0) {
+            prefix = formatBrackets(0, zl.getColorLevel(pData.getLevel()));
+        } else {
+            prefix = formatBrackets(pData.getPrestige(), numerals + getPrestigeColor(pData.getPrestige()) + "-" + zl.getColorLevel(pData.getLevel()));
+        }
+
+        e.setFormat(prefix + "§7 %s§f: %s");
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e) {
+        e.setJoinMessage(null);
+    }
+
+    @EventHandler
+    public void onLeave(PlayerQuitEvent e) {
+        e.setQuitMessage(null);
+    }
+
     private String formatBrackets(int prestige, String string) {
         if (prestige < 1) {
             return "§7[" + string + "§7]";
@@ -69,32 +96,5 @@ public class ChatListener implements Listener {
             return "§4";
         }
         return "§5§l";
-    }
-
-    @EventHandler
-    public void onChat(AsyncPlayerChatEvent e) {
-        String prefix;
-        String numerals;
-        PlayerData pData = Main.getInstance().getPlayerData(e.getPlayer());
-
-        if (pData.getPrestige() <= 1000) numerals = "§e" + zl.toRoman(pData.getPrestige()); else numerals = "§cERROR";
-
-        if (pData.getPrestige() == 0) {
-            prefix = formatBrackets(0, zl.getColorLevel(pData.getLevel()));
-        } else {
-            prefix = formatBrackets(pData.getPrestige(), numerals + getPrestigeColor(pData.getPrestige()) + "-" + zl.getColorLevel(pData.getLevel()));
-        }
-
-        e.setFormat(prefix + "§7 %s§f: %s");
-    }
-
-    @EventHandler
-    public void onJoin(PlayerJoinEvent e) {
-        e.setJoinMessage(null);
-    }
-
-    @EventHandler
-    public void onLeave(PlayerQuitEvent e) {
-        e.setQuitMessage(null);
     }
 }

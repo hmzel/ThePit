@@ -24,7 +24,7 @@ public class BountyHunterPerk extends Perk {
     @Override
     public double getDamageModifier(Player damager, Player damaged) {
         if (zl.itemCheck(damager.getInventory().getLeggings()) && damager.getInventory().getLeggings().getType() == Material.GOLDEN_LEGGINGS) {
-            return Math.floor((double) Main.getInstance().getPlayerData(damaged).getBounty() / 100) / 100;
+            return Math.floor(Main.getInstance().getPlayerData(damaged).getBounty() / 100D) / 100;
         }
 
         return 0;

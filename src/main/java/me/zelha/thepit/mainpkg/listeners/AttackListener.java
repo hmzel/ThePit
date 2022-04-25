@@ -37,32 +37,6 @@ public class AttackListener implements Listener {
         new CombatTimerRunnable(damager.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
     }
 
-    private double calculateMeleeDamage(Player damaged, Player damager, double originalDamage, @Nullable Arrow arrow) {
-        double boost = 1;
-        PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
-        PlayerData damagerData = Main.getInstance().getPlayerData(damager);
-
-        for (Perks perk : damagerData.getEquippedPerks()) {
-            if (perk.getMethods() != null) boost += perk.getMethods().getDamageModifier(damager, damaged);
-        }
-
-        if (damagedData.getPrestige() == 0) boost -= 0.15;
-        if (damagedData.getPassiveTier(Passives.DAMAGE_REDUCTION) > 0) boost -= (damagedData.getPassiveTier(Passives.DAMAGE_REDUCTION) / 100.0);
-        if (damagerData.getPrestige() == 0) boost += 0.15;
-
-        if (zl.itemCheck(damager.getInventory().getItemInMainHand()) && damager.getInventory().getItemInMainHand().getType() == Material.DIAMOND_SWORD && damagedData.getBounty() != 0) {
-            boost += 0.2;
-        }
-
-        if (arrow != null) {
-            if (damagerData.getPassiveTier(Passives.BOW_DAMAGE) > 0) boost += ((damagerData.getPassiveTier(Passives.BOW_DAMAGE) * 3) / 100.0);
-        } else {
-            if (damagerData.getPassiveTier(Passives.MELEE_DAMAGE) > 0) boost += (damagerData.getPassiveTier(Passives.MELEE_DAMAGE) / 100.0);
-        }
-
-        return originalDamage * boost;
-    }
-
     @EventHandler
     public void onAttack(EntityDamageByEntityEvent e) {
         Entity damagedEntity = e.getEntity();
@@ -148,6 +122,32 @@ public class AttackListener implements Listener {
         }
 
         if (runTracker.hasID(e.getPlayer().getUniqueId())) runTracker.stop(e.getPlayer().getUniqueId());
+    }
+
+    private double calculateMeleeDamage(Player damaged, Player damager, double originalDamage, @Nullable Arrow arrow) {
+        double boost = 1;
+        PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
+        PlayerData damagerData = Main.getInstance().getPlayerData(damager);
+
+        for (Perks perk : damagerData.getEquippedPerks()) {
+            if (perk.getMethods() != null) boost += perk.getMethods().getDamageModifier(damager, damaged);
+        }
+
+        if (damagedData.getPrestige() == 0) boost -= 0.15;
+        if (damagedData.getPassiveTier(Passives.DAMAGE_REDUCTION) > 0) boost -= (damagedData.getPassiveTier(Passives.DAMAGE_REDUCTION) / 100.0);
+        if (damagerData.getPrestige() == 0) boost += 0.15;
+
+        if (zl.itemCheck(damager.getInventory().getItemInMainHand()) && damager.getInventory().getItemInMainHand().getType() == Material.DIAMOND_SWORD && damagedData.getBounty() != 0) {
+            boost += 0.2;
+        }
+
+        if (arrow != null) {
+            if (damagerData.getPassiveTier(Passives.BOW_DAMAGE) > 0) boost += ((damagerData.getPassiveTier(Passives.BOW_DAMAGE) * 3) / 100.0);
+        } else {
+            if (damagerData.getPassiveTier(Passives.MELEE_DAMAGE) > 0) boost += (damagerData.getPassiveTier(Passives.MELEE_DAMAGE) / 100.0);
+        }
+
+        return originalDamage * boost;
     }
 
 

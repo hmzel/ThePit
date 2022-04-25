@@ -26,34 +26,6 @@ public class ItemsVillagerListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
 
-    private void openGUI(Player p) {
-        Inventory itemsGUI = Bukkit.createInventory(p, 27, "Non-permanent items");
-        PlayerData pData = Main.getInstance().getPlayerData(p);
-        int index = 11;
-        String color;
-
-        for (ShopItems item : ShopItems.values()) {
-            List<String> lore = new ArrayList<>(item.getShopLore());
-
-            lore.add("\n");
-            lore.add("§7§oLost on death.");
-            lore.add("§7Cost: §6" + item.getCost() + "g");
-
-            if (pData.getGold() - item.getCost() >= 0) {
-                color = "§e";
-                lore.add("§eClick to purchase!");
-            } else {
-                lore.add("§cNot enough gold!");
-                color = "§c";
-            }
-
-            itemsGUI.setItem(index, zl.itemBuilder(item.getMaterial(), item.getAmount(), color + item.getShopName(), lore));
-            index++;
-        }
-
-        p.openInventory(itemsGUI);
-    }
-
     @EventHandler
     public void onNPCInteract(NPCInteractEvent e) {
         if (e.getNPC() == NPCs.ITEMS) openGUI(e.getPlayer());
@@ -112,6 +84,34 @@ public class ItemsVillagerListener implements Listener {
         inv.addItem(item.getBoughtItem());
         pData.setGold(pData.getGold() - item.getCost());
         p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+    }
+
+    private void openGUI(Player p) {
+        Inventory itemsGUI = Bukkit.createInventory(p, 27, "Non-permanent items");
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+        int index = 11;
+        String color;
+
+        for (ShopItems item : ShopItems.values()) {
+            List<String> lore = new ArrayList<>(item.getShopLore());
+
+            lore.add("\n");
+            lore.add("§7§oLost on death.");
+            lore.add("§7Cost: §6" + item.getCost() + "g");
+
+            if (pData.getGold() - item.getCost() >= 0) {
+                color = "§e";
+                lore.add("§eClick to purchase!");
+            } else {
+                lore.add("§cNot enough gold!");
+                color = "§c";
+            }
+
+            itemsGUI.setItem(index, zl.itemBuilder(item.getMaterial(), item.getAmount(), color + item.getShopName(), lore));
+            index++;
+        }
+
+        p.openInventory(itemsGUI);
     }
 }
 

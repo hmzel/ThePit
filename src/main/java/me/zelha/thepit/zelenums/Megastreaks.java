@@ -2,7 +2,6 @@ package me.zelha.thepit.zelenums;
 
 import org.bukkit.Material;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -161,6 +160,13 @@ public enum Megastreaks {
         this.lore = lore;
     }
 
+    public static Megastreaks findByEnumName(String name) {
+        for (Megastreaks mega : values()) {
+            if (mega.name().equalsIgnoreCase(name)) return mega;
+        }
+        return null;
+    }
+
     public StreakBundles getBundle() {
         return bundle;
     }
@@ -198,13 +204,6 @@ public enum Megastreaks {
     }
 
     public List<String> getLore() {
-        return new ArrayList<>(Arrays.asList(lore));
-    }
-
-    public static Megastreaks findByEnumName(String name) {
-        for (Megastreaks mega : values()) {
-            if (mega.name().equalsIgnoreCase(name)) return mega;
-        }
-        return null;
+        return Arrays.asList(lore);
     }
 }

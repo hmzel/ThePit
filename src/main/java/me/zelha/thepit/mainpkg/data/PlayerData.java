@@ -13,6 +13,13 @@ import java.util.Map;
 
 public class PlayerData {
 
+    private final Map<Integer, Perks> perkSlots = new HashMap<>();
+    private final Map<Integer, Ministreaks> ministreakSlots = new HashMap<>();
+    private final Map<Passives, Integer> passivesMap = new HashMap<>();
+    private final Map<Perks, Boolean> perkUnlocks = new HashMap<>();
+    private final Map<Megastreaks, Boolean> megastreakUnlocks = new HashMap<>();
+    private final Map<Ministreaks, Boolean> ministreakUnlocks = new HashMap<>();
+    private final List<String> slots = Arrays.asList("one", "two", "three", "four");
     private int prestige;
     private int level;
     private double gold;
@@ -24,13 +31,6 @@ public class PlayerData {
     private boolean hideTimer;
     private int multikill;
     private Megastreaks megastreak;
-    private final Map<Integer, Perks> perkSlots = new HashMap<>();
-    private final Map<Integer, Ministreaks> ministreakSlots = new HashMap<>();
-    private final Map<Passives, Integer> passivesMap = new HashMap<>();
-    private final Map<Perks, Boolean> perkUnlocks = new HashMap<>();
-    private final Map<Megastreaks, Boolean> megastreakUnlocks = new HashMap<>();
-    private final Map<Ministreaks, Boolean> ministreakUnlocks = new HashMap<>();
-    private final List<String> slots = Arrays.asList("one", "two", "three", "four");
     private boolean combatLogged;
 
     public PlayerData(Document document) {
@@ -75,6 +75,20 @@ public class PlayerData {
         } else {
             status = "idling";
         }
+    }
+
+    public boolean hasPerkEquipped(Perks perk) {
+        for (Perks slotPerk : perkSlots.values()) {
+            if (slotPerk == perk) return true;
+        }
+        return false;
+    }
+
+    public boolean hasMinistreakEquipped(Ministreaks mini) {
+        for (Ministreaks slotMini : ministreakSlots.values()) {
+            if (slotMini == mini) return true;
+        }
+        return false;
     }
 
     //getters
@@ -231,22 +245,6 @@ public class PlayerData {
 
     public void setCombatLogged(boolean bool) {
         this.combatLogged = bool;
-    }
-
-    //other
-
-    public boolean hasPerkEquipped(Perks perk) {
-        for (Perks slotPerk : perkSlots.values()) {
-            if (slotPerk == perk) return true;
-        }
-        return false;
-    }
-
-    public boolean hasMinistreakEquipped(Ministreaks mini) {
-        for (Ministreaks slotMini : ministreakSlots.values()) {
-            if (slotMini == mini) return true;
-        }
-        return false;
     }
 }
 

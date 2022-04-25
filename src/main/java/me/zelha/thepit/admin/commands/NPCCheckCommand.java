@@ -16,6 +16,28 @@ import java.util.List;
 
 public class NPCCheckCommand implements CommandExecutor {//nope.
 
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (sender instanceof Player) {
+            Player p = (Player) sender;
+            String worldName = p.getWorld().getName();
+
+            if (npcAbsent(villagerLocation(Worlds.findByName(worldName), NPCs.ITEMS))) {
+                spawnVillager(villagerLocation(Worlds.findByName(worldName), NPCs.ITEMS), NPCs.ITEMS);
+                p.sendMessage("§aItems Villager successfully spawned!");
+            } else {
+                p.sendMessage("§cItems Villager is not absent.");
+            }
+            if (npcAbsent(villagerLocation(Worlds.findByName(worldName), NPCs.UPGRADES))) {
+                spawnVillager(villagerLocation(Worlds.findByName(worldName), NPCs.UPGRADES), NPCs.UPGRADES);
+                p.sendMessage("§aUpgrades Villager successfully spawned!");
+            } else {
+                p.sendMessage("§cUpgrades Villager is not absent.");
+            }
+        }
+        return true;
+    }
+
     private boolean npcAbsent(Location location) {
         List<Entity> entityList = location.getWorld().getEntities();
 
@@ -78,28 +100,6 @@ public class NPCCheckCommand implements CommandExecutor {//nope.
             upgradesVillager.addScoreboardTag("z-entity");
             upgradesVillager.addScoreboardTag("upgrades");
         }
-    }
-
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player) {
-            Player p = (Player) sender;
-            String worldName = p.getWorld().getName();
-
-            if (npcAbsent(villagerLocation(Worlds.findByName(worldName), NPCs.ITEMS))) {
-                spawnVillager(villagerLocation(Worlds.findByName(worldName), NPCs.ITEMS), NPCs.ITEMS);
-                p.sendMessage("§aItems Villager successfully spawned!");
-            } else {
-                p.sendMessage("§cItems Villager is not absent.");
-            }
-            if (npcAbsent(villagerLocation(Worlds.findByName(worldName), NPCs.UPGRADES))) {
-                spawnVillager(villagerLocation(Worlds.findByName(worldName), NPCs.UPGRADES), NPCs.UPGRADES);
-                p.sendMessage("§aUpgrades Villager successfully spawned!");
-            } else {
-                p.sendMessage("§cUpgrades Villager is not absent.");
-            }
-        }
-        return true;
     }
 }
 

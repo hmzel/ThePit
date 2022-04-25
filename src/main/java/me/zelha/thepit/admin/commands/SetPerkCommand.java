@@ -30,8 +30,8 @@ public class SetPerkCommand implements CommandExecutor {
                 return true;
             }
 
-            Main.getInstance().getPlayerData((Player) sender).setPerkAtSlot(NumberUtils.toInt(args[0], 0), Perks.findByEnumName(args[1]));
-            sender.sendMessage("§aSuccessfully set your " + numberz[NumberUtils.toInt(args[0], 0) - 1] + " perk slot to §e" + Perks.findByEnumName(args[1]).getName());
+            Main.getInstance().getPlayerData((Player) sender).setPerkAtSlot(Integer.parseInt(args[0]), Perks.findByEnumName(args[1]));
+            sender.sendMessage("§aSuccessfully set your " + numberz[Integer.parseInt(args[0]) - 1] + " perk slot to §e" + Perks.findByEnumName(args[1]).getName());
         }
 
         if (args.length == 3) {
@@ -46,7 +46,7 @@ public class SetPerkCommand implements CommandExecutor {
             Player p2 = Bukkit.getPlayer(args[0]);
 
             Main.getInstance().getPlayerData(p2).setPerkAtSlot(Integer.parseInt(args[1]), Perks.findByEnumName(args[2]));
-            sender.sendMessage("§aSuccessfully set §7" + p2.getName() + "§a's " + numberz[NumberUtils.toInt(args[1], 0) - 1] + " perk slot to §e" + Perks.findByEnumName(args[2]).getName());
+            sender.sendMessage("§aSuccessfully set §7" + p2.getName() + "§a's " + numberz[Integer.parseInt(args[1]) - 1] + " perk slot to §e" + Perks.findByEnumName(args[2]).getName());
         }
         return true;
     }

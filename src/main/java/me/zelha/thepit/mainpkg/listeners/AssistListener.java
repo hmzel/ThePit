@@ -133,39 +133,6 @@ public class AssistListener implements Listener {
         return gold;
     }
 
-    public void deathMethod(Player player) {
-        if (getLastDamager(player) == null) return;
-
-        Player killer = getLastDamager(player);
-
-        for (UUID uuid : getAssistMap(player).keySet()) {
-            Player p = Bukkit.getPlayer(uuid);
-
-            if (p == null || p.getUniqueId().equals(killer.getUniqueId())) continue;
-
-            PlayerData pData = Main.getInstance().getPlayerData(p);
-            double gold = calculateAssistGold(player, p);
-            int exp = calculateAssistEXP(player, p);
-
-            pData.setGold(pData.getGold() + gold);
-            pData.setExp(pData.getExp() - exp);
-            p.spigot().sendMessage(new ComponentBuilder("§a§lASSIST! §7" + (int) (Double.parseDouble(BigDecimal.valueOf(getAssistMap(player).get(uuid) / getTotalDamage(player)).setScale(2, RoundingMode.HALF_EVEN).toString()) * 100)
-                    + "% on " + zl.getColorBracketAndLevel(player.getUniqueId().toString()) + " §7" + player.getName() + " §b+" + exp + "XP §6+"
-                    + zl.getFancyGoldString(gold) + "g")
-                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§eClick to view kill recap!")))
-                    .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/killrecap " + player.getUniqueId()))
-                    .create());
-            p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1F, 1.8F);
-        }
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                assistMap.put(player.getUniqueId(), new ArrayList<>());
-            }
-        }.runTaskLater(Main.getInstance(), 1);
-    }
-
     @EventHandler(priority = EventPriority.HIGH)
     public void onAttack(EntityDamageByEntityEvent e) {
         Entity damagedEntity = e.getEntity();
@@ -214,5 +181,38 @@ public class AssistListener implements Listener {
         if (Main.getInstance().getPlayerData(e.getPlayer()).getCombatLogged()) deathMethod(e.getPlayer());
 
         assistMap.remove(e.getPlayer().getUniqueId());
+    }
+
+    private void deathMethod(Player player) {
+        if (getLastDamager(player) == null) return;
+
+        Player killer = getLastDamager(player);
+
+        for (UUID uuid : getAssistMap(player).keySet()) {
+            Player p = Bukkit.getPlayer(uuid);
+
+            if (p == null || p.getUniqueId().equals(killer.getUniqueId())) continue;
+
+            PlayerData pData = Main.getInstance().getPlayerData(p);
+            double gold = calculateAssistGold(player, p);
+            int exp = calculateAssistEXP(player, p);
+
+            pData.setGold(pData.getGold() + gold);
+            pData.setExp(pData.getExp() - exp);
+            p.spigot().sendMessage(new ComponentBuilder("§a§lASSIST! §7" + (int) (Double.parseDouble(BigDecimal.valueOf(getAssistMap(player).get(uuid) / getTotalDamage(player)).setScale(2, RoundingMode.HALF_EVEN).toString()) * 100)
+                    + "% on " + zl.getColorBracketAndLevel(player.getUniqueId().toString()) + " §7" + player.getName() + " §b+" + exp + "XP §6+"
+                    + zl.getFancyGoldString(gold) + "g")
+                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§eClick to view kill recap!")))
+                    .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/killrecap " + player.getUniqueId()))
+                    .create());
+            p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1F, 1.8F);
+        }
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                assistMap.put(player.getUniqueId(), new ArrayList<>());
+            }
+        }.runTaskLater(Main.getInstance(), 1);
     }
 }

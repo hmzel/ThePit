@@ -1,8 +1,8 @@
 package me.zelha.thepit.zelenums;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.utils.ZelLogic;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -29,16 +29,11 @@ public enum Passives {//0 tierMultipler is just a placeholder dont hurt me pleas
         this.material = material;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getColorfulName() {
-        return colorfulName;
-    }
-
-    public Material getMaterial() {
-        return material;
+    public static Passives findByEnumName(String name) {
+        for (Passives passive : values()) {
+            if (passive.name().equalsIgnoreCase(name)) return passive;
+        }
+        return null;
     }
 
     public int getBaseLevelReq() {
@@ -197,11 +192,16 @@ public enum Passives {//0 tierMultipler is just a placeholder dont hurt me pleas
         return lore;
     }
 
-    public static Passives findByEnumName(String name) {
-        for (Passives passive : values()) {
-            if (passive.name().equalsIgnoreCase(name)) return passive;
-        }
-        return null;
+    public String getName() {
+        return name;
+    }
+
+    public String getColorfulName() {
+        return colorfulName;
+    }
+
+    public Material getMaterial() {
+        return material;
     }
 }
 

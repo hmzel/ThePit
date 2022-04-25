@@ -124,6 +124,31 @@ public class DeathListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerDeath(EntityDamageEvent e) {
+        if (!zl.playerCheck(e.getEntity())) return;
+        if (e.getCause() == DamageCause.FALL) return;
+
+        Player p = (Player) e.getEntity();
+
+        if (zl.spawnCheck(p.getLocation())) {
+            e.setCancelled(true);
+            return;
+        }
+
+        if (p.getHealth() - e.getFinalDamage() <= 0) {
+            e.setCancelled(true);
+            deathMethod(p, false);
+        }
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e) {
+        if (Main.getInstance().getPlayerData(e.getPlayer()).getCombatLogged()) deathMethod(e.getPlayer(), true);
+
+        Main.getInstance().getPlayerData(e.getPlayer()).setCombatLogged(false);
+    }
+
     private void deathMethod(Player player, boolean combatLogged) {
         PlayerInventory inv = player.getInventory();
 
@@ -184,31 +209,6 @@ public class DeathListener implements Listener {
 
         player.sendTitle("§cYOU DIED", "", 0, 40, 20);
         player.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1.8F);
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerDeath(EntityDamageEvent e) {
-        if (!zl.playerCheck(e.getEntity())) return;
-        if (e.getCause() == DamageCause.FALL) return;
-
-        Player p = (Player) e.getEntity();
-
-        if (zl.spawnCheck(p.getLocation())) {
-            e.setCancelled(true);
-            return;
-        }
-
-        if (p.getHealth() - e.getFinalDamage() <= 0) {
-            e.setCancelled(true);
-            deathMethod(p, false);
-        }
-    }
-
-    @EventHandler
-    public void onJoin(PlayerJoinEvent e) {
-        if (Main.getInstance().getPlayerData(e.getPlayer()).getCombatLogged()) deathMethod(e.getPlayer(), true);
-
-        Main.getInstance().getPlayerData(e.getPlayer()).setCombatLogged(false);
     }
 }
 

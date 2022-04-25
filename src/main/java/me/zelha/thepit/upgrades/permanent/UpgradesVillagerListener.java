@@ -32,6 +32,293 @@ public class UpgradesVillagerListener implements Listener {
     private final ConfirmGUIHandler confirmGUIHandler = Main.getInstance().getConfirmGUIHandler();
     private final Map<UUID, Integer> slotHandler = new HashMap<>();
 
+    @EventHandler
+    public void onNPCInteract(NPCInteractEvent e) {
+        if (e.getNPC() == NPCs.UPGRADES) openMainGUI(e.getPlayer());
+    }
+
+    @EventHandler
+    public void mainGUIInteract(InventoryClickEvent e) {
+        Player p = (Player) e.getWhoClicked();
+
+        if (!e.getView().getTitle().equals("Permanent upgrades")) return;
+        if (e.getClickedInventory() == e.getView().getBottomInventory()) return;
+
+        e.setCancelled(true);
+
+        if (!zl.itemCheck(e.getCurrentItem())) return;
+
+        if (e.getSlot() >= 12 && e.getSlot() <= 14) openPerkGUI(p, e.getSlot() - 11);
+
+        if (e.getSlot() == 15) openMainStreakGUI(p);
+
+        if (e.getSlot() <= 27) return;
+
+        Passives passive = Passives.values()[e.getSlot() - 28];
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+        double cost = passive.getCost(p);
+
+        if (pData.getPassiveTier(passive) >= 5) {
+            p.sendMessage("§aYou already unlocked the last upgrade!");
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            return;
+        } else if (e.getCurrentItem().getType() == BEDROCK || pData.getLevel() < passive.getLevelReq(p)) {
+            p.sendMessage("§cYou are too low level to acquire this!");
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            return;
+        } else if (pData.getGold() - cost < 0) {
+            p.sendMessage("§cYou don't have enough gold to afford this!");
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            return;
+        }
+
+        confirmGUIHandler.confirmPurchase(p, passive.getColorfulName() + " " + zl.toRoman((pData.getPassiveTier(passive) + 1)), cost, true,
+                player -> {
+                    pData.setGold(pData.getGold() - cost);
+                    pData.setPassiveTier(passive, pData.getPassiveTier(passive) + 1);
+                    p.sendMessage("§a§lPURCHASE! §6" + passive.getName() + " " + zl.toRoman(pData.getPassiveTier(passive)));
+                    p.playSound(p.getLocation(),  Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+                    openMainGUI(p);
+                });
+    }
+
+    @EventHandler
+    public void perkGUIInteract(InventoryClickEvent e) {
+        Player p = (Player) e.getWhoClicked();
+        ItemStack clicked = e.getCurrentItem();
+
+        if (!e.getView().getTitle().equals("Choose a perk")) return;
+        if (e.getClickedInventory() == e.getView().getBottomInventory()) return;
+
+        e.setCancelled(true);
+
+        if (clicked == null) return;
+
+        Perks perk = Perks.findByMaterial(clicked.getType());
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+        double cost = (perk != null) ? perk.getCost() : 13131313;
+
+        if (clicked.getType() == DIAMOND_BLOCK) {
+            Main.getInstance().getPlayerData(p).setPerkAtSlot(slotHandler.get(p.getUniqueId()), UNSET);
+            zl.pitReset(p);
+            slotHandler.remove(p.getUniqueId());
+            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
+            openMainGUI(p);
+            return;
+        } else if (clicked.getType() == ARROW) {
+            openMainGUI(p);
+            return;
+        } else if (clicked.getType() == BEDROCK || pData.getLevel() < perk.getLevel()) {
+            p.sendMessage("§cYou are too low level to acquire this perk!");
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            return;
+        } else if (pData.hasPerkEquipped(perk)) {
+            p.sendMessage("§cThis perk is already selected!");
+            p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
+            return;
+        } else if (pData.getPerkUnlockStatus(perk)) {
+            pData.setPerkAtSlot(slotHandler.get(p.getUniqueId()), perk);
+            zl.pitReset(p);
+            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
+            openMainGUI(p);
+            return;
+        } else if (pData.getGold() - cost < 0) {
+            p.sendMessage("§cYou don't have enough gold to afford this!");
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            return;
+        }
+
+        confirmGUIHandler.confirmPurchase(p, "§6" + perk.getName(), cost, false,
+                player -> {
+                    pData.setGold(pData.getGold() - cost);
+                    pData.setPerkUnlockStatus(perk, true);
+                    pData.setPerkAtSlot(slotHandler.get(p.getUniqueId()), perk);
+                    zl.pitReset(p);
+                    p.sendMessage("§a§lPURCHASE! §6" + perk.getName());
+                    p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+                    openMainGUI(p);
+                    slotHandler.remove(p.getUniqueId());
+                });
+    }
+
+    @EventHandler
+    public void mainKillstreakGUIInteract(InventoryClickEvent e) {
+        Player p = (Player) e.getWhoClicked();
+        ItemStack clicked = e.getCurrentItem();
+
+        if (!e.getView().getTitle().equals("Killstreaks")) return;
+        if (e.getClickedInventory() == e.getView().getBottomInventory()) return;
+
+        e.setCancelled(true);
+
+        if (clicked == null) return;
+        if (clicked.getType() == BEDROCK) return;
+
+        if (e.getSlot() < 15) {
+            openMinistreakGUI(p, clicked.getAmount());
+            slotHandler.put(p.getUniqueId(), clicked.getAmount());
+        }
+
+        if (e.getSlot() == 15 || e.getSlot() == 16) {
+            openMegastreakGUI(p);
+        }
+
+        if (e.getSlot() == 22) {
+            openMainGUI(p);
+        }
+    }
+
+    @EventHandler
+    public void megastreakGUIInteract(InventoryClickEvent e) {
+        Player p = (Player) e.getWhoClicked();
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+        ItemStack clicked = e.getCurrentItem();
+
+        if (!e.getView().getTitle().equals("Choose a killstreak§2")) return;
+        if (e.getClickedInventory() == e.getView().getBottomInventory()) return;
+
+        e.setCancelled(true);
+
+        if (clicked == null) return;
+
+        if (clicked.getType() == ARROW) {
+            openMainStreakGUI(p);
+            return;
+        }
+
+        StringBuilder finder = new StringBuilder(clicked.getItemMeta().getDisplayName()).replace(0, 2, "");
+
+        while (finder.lastIndexOf(" ") != -1) finder.setCharAt(finder.lastIndexOf(" "), '_');
+
+        Megastreaks mega = Megastreaks.findByEnumName(finder.toString());
+
+        if (pData.getMegastreak() == mega) {
+            p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
+            p.sendMessage("§cThis killstreak is already selected!");
+            return;
+        } else if (pData.getMegastreakUnlockStatus(mega)) {
+            pData.setMegastreak(mega);
+            zl.pitReset(p);
+            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
+            openMainStreakGUI(p);
+            return;
+        } else if (pData.getLevel() < mega.getLevel()) {
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            p.sendMessage("§cYou are too low level to acquire this killstreak!");
+            return;
+        } else if (pData.getGold() < mega.getCost()) {
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            p.sendMessage("§cYou don't have enough gold to afford this!");
+            return;
+        }
+
+        confirmGUIHandler.confirmPurchase(p, "§6" + mega.getName(), mega.getCost(), false,
+                player -> {
+                    pData.setGold(pData.getGold() - mega.getCost());
+                    pData.setMegastreakUnlockStatus(mega, true);
+                    pData.setMegastreak(mega);
+                    zl.pitReset(p);
+                    p.sendMessage("§a§lPURCHASE! §6" + mega.getName());
+                    p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+                    openMainStreakGUI(p);
+                });
+    }
+
+    @EventHandler
+    public void ministreakGUIInteract(InventoryClickEvent e) {
+        Player p = (Player) e.getWhoClicked();
+        UUID uuid = p.getUniqueId();
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+        ItemStack clicked = e.getCurrentItem();
+
+        if (!e.getView().getTitle().equals("Choose a killstreak§1")) return;
+        if (e.getClickedInventory() == e.getView().getBottomInventory()) return;
+
+        e.setCancelled(true);
+
+        if (clicked == null) return;
+
+        if (clicked.getType() == ARROW && clicked.getAmount() == 1) {
+            openMainStreakGUI(p);
+            return;
+        } else if (clicked.getType() == GOLD_BLOCK) {
+            pData.setMinistreakAtSlot(slotHandler.get(uuid), Ministreaks.UNSET);
+            zl.pitReset(p);
+            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
+            openMainStreakGUI(p);
+            return;
+        } else if (clicked.getType() == BEDROCK) {
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            p.sendMessage("§cYou are too low level to acquire this killstreak!");
+            return;
+        }
+
+        StringBuilder finder = new StringBuilder(clicked.getItemMeta().getDisplayName()).replace(0, 2, "");
+
+        while (finder.lastIndexOf(" ") != -1) finder.setCharAt(finder.lastIndexOf(" "), '_');
+        while (finder.lastIndexOf("-") != -1) finder.setCharAt(finder.lastIndexOf("-"), '_');
+        while (finder.lastIndexOf("&") != -1) finder.replace(1, 2, "_AND_");
+
+        Ministreaks mini = Ministreaks.findByEnumName(finder.toString());
+        Ministreaks sameFrequency = null;
+        int badSlot = 0;
+
+        for (Ministreaks mini2 : pData.getEquippedMinistreaks()) {
+            badSlot++;
+
+            if (badSlot == slotHandler.get(uuid)) continue;
+            if (mini2.getTrigger() == mini.getTrigger()) {
+                sameFrequency = mini2;
+                break;
+            }
+        }
+
+        if (pData.getMinistreakAtSlot(slotHandler.get(uuid)) == mini) {
+            p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
+            p.sendMessage("§cThis killstreak is already selected!");
+            return;
+        } else if (pData.getMinistreakUnlockStatus(mini) && sameFrequency == null) {
+            pData.setMinistreakAtSlot(slotHandler.get(uuid), mini);
+            zl.pitReset(p);
+            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
+            openMainStreakGUI(p);
+            return;
+        } else if (pData.getMinistreakUnlockStatus(mini)) {
+            pData.setMinistreakAtSlot(slotHandler.get(uuid), mini);
+            pData.setMinistreakAtSlot(badSlot, Ministreaks.UNSET);
+            zl.pitReset(p);
+            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
+            p.sendMessage("§c§lZOOP! §7Disabled §c" + sameFrequency.getName() + "§7! Can't have two killstreaks with the same kills frequency!");
+            openMainStreakGUI(p);
+            return;
+        } else if (pData.getLevel() < mini.getLevel()) {
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            p.sendMessage("§cYou are too low level to acquire this killstreak!");
+            return;
+        } else if (pData.getGold() < mini.getCost()) {
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            p.sendMessage("§cYou don't have enough gold to afford this!");
+            return;
+        }
+
+        confirmGUIHandler.confirmPurchase(p, "§6" + mini.getName(), mini.getCost(), false,
+                player -> {
+                    pData.setGold(pData.getGold() - mini.getCost());
+                    pData.setMinistreakUnlockStatus(mini, true);
+                    pData.setMinistreakAtSlot(slotHandler.get(uuid), mini);
+                    zl.pitReset(p);
+                    p.sendMessage("§a§lPURCHASE! §6" + mini.getName());
+                    openMainStreakGUI(p);
+                    p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+                    slotHandler.remove(p.getUniqueId());
+                });
+    }
+
+    @EventHandler
+    public void onLeave(PlayerQuitEvent e) {
+        slotHandler.remove(e.getPlayer().getUniqueId());
+    }
+
     private void openMainGUI(Player p) {
         PlayerData pData = Main.getInstance().getPlayerData(p);
         Inventory mainGUI = Bukkit.createInventory(p, 45, "Permanent upgrades");
@@ -486,308 +773,4 @@ public class UpgradesVillagerListener implements Listener {
         slotHandler.put(p.getUniqueId(), slot);
         p.openInventory(gui);
     }
-
-    @EventHandler
-    public void onNPCInteract(NPCInteractEvent e) {
-        if (e.getNPC() == NPCs.UPGRADES) openMainGUI(e.getPlayer());
-    }
-
-    @EventHandler
-    public void mainGUIInteract(InventoryClickEvent e) {
-        Player p = (Player) e.getWhoClicked();
-
-        if (!e.getView().getTitle().equals("Permanent upgrades")) return;
-        if (e.getClickedInventory() == e.getView().getBottomInventory()) return;
-
-        e.setCancelled(true);
-
-        if (!zl.itemCheck(e.getCurrentItem())) return;
-
-        if (e.getSlot() >= 12 && e.getSlot() <= 14) openPerkGUI(p, e.getSlot() - 11);
-
-        if (e.getSlot() == 15) openMainStreakGUI(p);
-
-        if (e.getSlot() <= 27) return;
-
-        Passives passive = Passives.values()[e.getSlot() - 28];
-        PlayerData pData = Main.getInstance().getPlayerData(p);
-        double cost = passive.getCost(p);
-
-        if (pData.getPassiveTier(passive) >= 5) {
-            p.sendMessage("§aYou already unlocked the last upgrade!");
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-            return;
-        } else if (e.getCurrentItem().getType() == BEDROCK || pData.getLevel() < passive.getLevelReq(p)) {
-            p.sendMessage("§cYou are too low level to acquire this!");
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-            return;
-        } else if (pData.getGold() - cost < 0) {
-            p.sendMessage("§cYou don't have enough gold to afford this!");
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-            return;
-        }
-
-        confirmGUIHandler.confirmPurchase(p, passive.getColorfulName() + " " + zl.toRoman((pData.getPassiveTier(passive) + 1)), cost, true,
-                player -> {
-                    pData.setGold(pData.getGold() - cost);
-                    pData.setPassiveTier(passive, pData.getPassiveTier(passive) + 1);
-                    p.sendMessage("§a§lPURCHASE! §6" + passive.getName() + " " + zl.toRoman(pData.getPassiveTier(passive)));
-                    p.playSound(p.getLocation(),  Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
-                    openMainGUI(p);
-                });
-    }
-
-    @EventHandler
-    public void perkGUIInteract(InventoryClickEvent e) {
-        Player p = (Player) e.getWhoClicked();
-        ItemStack clicked = e.getCurrentItem();
-
-        if (!e.getView().getTitle().equals("Choose a perk")) return;
-        if (e.getClickedInventory() == e.getView().getBottomInventory()) return;
-
-        e.setCancelled(true);
-
-        if (clicked == null) return;
-
-        Perks perk = Perks.findByMaterial(clicked.getType());
-        PlayerData pData = Main.getInstance().getPlayerData(p);
-        double cost = (perk != null) ? perk.getCost() : 13131313;
-
-        if (clicked.getType() == DIAMOND_BLOCK) {
-            Main.getInstance().getPlayerData(p).setPerkAtSlot(slotHandler.get(p.getUniqueId()), UNSET);
-            zl.pitReset(p);
-            slotHandler.remove(p.getUniqueId());
-            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
-            openMainGUI(p);
-            return;
-        } else if (clicked.getType() == ARROW) {
-            openMainGUI(p);
-            return;
-        } else if (clicked.getType() == BEDROCK || pData.getLevel() < perk.getLevel()) {
-            p.sendMessage("§cYou are too low level to acquire this perk!");
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-            return;
-        } else if (pData.hasPerkEquipped(perk)) {
-            p.sendMessage("§cThis perk is already selected!");
-            p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
-            return;
-        } else if (pData.getPerkUnlockStatus(perk)) {
-            pData.setPerkAtSlot(slotHandler.get(p.getUniqueId()), perk);
-            zl.pitReset(p);
-            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
-            openMainGUI(p);
-            return;
-        } else if (pData.getGold() - cost < 0) {
-            p.sendMessage("§cYou don't have enough gold to afford this!");
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-            return;
-        }
-
-        confirmGUIHandler.confirmPurchase(p, "§6" + perk.getName(), cost, false,
-                player -> {
-                    pData.setGold(pData.getGold() - cost);
-                    pData.setPerkUnlockStatus(perk, true);
-                    pData.setPerkAtSlot(slotHandler.get(p.getUniqueId()), perk);
-                    zl.pitReset(p);
-                    p.sendMessage("§a§lPURCHASE! §6" + perk.getName());
-                    p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
-                    openMainGUI(p);
-                    slotHandler.remove(p.getUniqueId());
-                });
-    }
-
-    @EventHandler
-    public void mainKillstreakGUIInteract(InventoryClickEvent e) {
-        Player p = (Player) e.getWhoClicked();
-        ItemStack clicked = e.getCurrentItem();
-
-        if (!e.getView().getTitle().equals("Killstreaks")) return;
-        if (e.getClickedInventory() == e.getView().getBottomInventory()) return;
-
-        e.setCancelled(true);
-
-        if (clicked == null) return;
-        if (clicked.getType() == BEDROCK) return;
-
-        if (e.getSlot() < 15) {
-            openMinistreakGUI(p, clicked.getAmount());
-            slotHandler.put(p.getUniqueId(), clicked.getAmount());
-        }
-
-        if (e.getSlot() == 15 || e.getSlot() == 16) {
-            openMegastreakGUI(p);
-        }
-
-        if (e.getSlot() == 22) {
-            openMainGUI(p);
-        }
-    }
-
-    @EventHandler
-    public void megastreakGUIInteract(InventoryClickEvent e) {
-        Player p = (Player) e.getWhoClicked();
-        PlayerData pData = Main.getInstance().getPlayerData(p);
-        ItemStack clicked = e.getCurrentItem();
-
-        if (!e.getView().getTitle().equals("Choose a killstreak§2")) return;
-        if (e.getClickedInventory() == e.getView().getBottomInventory()) return;
-
-        e.setCancelled(true);
-
-        if (clicked == null) return;
-
-        if (clicked.getType() == ARROW) {
-            openMainStreakGUI(p);
-            return;
-        }
-
-        StringBuilder finder = new StringBuilder(clicked.getItemMeta().getDisplayName()).replace(0, 2, "");
-
-        while (finder.lastIndexOf(" ") != -1) finder.setCharAt(finder.lastIndexOf(" "), '_');
-
-        Megastreaks mega = Megastreaks.findByEnumName(finder.toString());
-
-        if (pData.getMegastreak() == mega) {
-            p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
-            p.sendMessage("§cThis killstreak is already selected!");
-            return;
-        } else if (pData.getMegastreakUnlockStatus(mega)) {
-            pData.setMegastreak(mega);
-            zl.pitReset(p);
-            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
-            openMainStreakGUI(p);
-            return;
-        } else if (pData.getLevel() < mega.getLevel()) {
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-            p.sendMessage("§cYou are too low level to acquire this killstreak!");
-            return;
-        } else if (pData.getGold() < mega.getCost()) {
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-            p.sendMessage("§cYou don't have enough gold to afford this!");
-            return;
-        }
-
-        confirmGUIHandler.confirmPurchase(p, "§6" + mega.getName(), mega.getCost(), false,
-                player -> {
-                    pData.setGold(pData.getGold() - mega.getCost());
-                    pData.setMegastreakUnlockStatus(mega, true);
-                    pData.setMegastreak(mega);
-                    zl.pitReset(p);
-                    p.sendMessage("§a§lPURCHASE! §6" + mega.getName());
-                    p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
-                    openMainStreakGUI(p);
-                });
-    }
-
-    @EventHandler
-    public void ministreakGUIInteract(InventoryClickEvent e) {
-        Player p = (Player) e.getWhoClicked();
-        UUID uuid = p.getUniqueId();
-        PlayerData pData = Main.getInstance().getPlayerData(p);
-        ItemStack clicked = e.getCurrentItem();
-
-        if (!e.getView().getTitle().equals("Choose a killstreak§1")) return;
-        if (e.getClickedInventory() == e.getView().getBottomInventory()) return;
-
-        e.setCancelled(true);
-
-        if (clicked == null) return;
-
-        if (clicked.getType() == ARROW && clicked.getAmount() == 1) {
-            openMainStreakGUI(p);
-            return;
-        } else if (clicked.getType() == GOLD_BLOCK) {
-            pData.setMinistreakAtSlot(slotHandler.get(uuid), Ministreaks.UNSET);
-            zl.pitReset(p);
-            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
-            openMainStreakGUI(p);
-            return;
-        } else if (clicked.getType() == BEDROCK) {
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-            p.sendMessage("§cYou are too low level to acquire this killstreak!");
-            return;
-        }
-
-        StringBuilder finder = new StringBuilder(clicked.getItemMeta().getDisplayName()).replace(0, 2, "");
-
-        while (finder.lastIndexOf(" ") != -1) finder.setCharAt(finder.lastIndexOf(" "), '_');
-        while (finder.lastIndexOf("-") != -1) finder.setCharAt(finder.lastIndexOf("-"), '_');
-        while (finder.lastIndexOf("&") != -1) finder.replace(1, 2, "_AND_");
-
-        Ministreaks mini = Ministreaks.findByEnumName(finder.toString());
-        Ministreaks sameFrequency = null;
-        int badSlot = 0;
-
-        for (Ministreaks mini2 : pData.getEquippedMinistreaks()) {
-            badSlot++;
-
-            if (badSlot == slotHandler.get(uuid)) continue;
-            if (mini2.getTrigger() == mini.getTrigger()) {
-                sameFrequency = mini2;
-                break;
-            }
-        }
-
-        if (pData.getMinistreakAtSlot(slotHandler.get(uuid)) == mini) {
-            p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
-            p.sendMessage("§cThis killstreak is already selected!");
-            return;
-        } else if (pData.getMinistreakUnlockStatus(mini) && sameFrequency == null) {
-            pData.setMinistreakAtSlot(slotHandler.get(uuid), mini);
-            zl.pitReset(p);
-            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
-            openMainStreakGUI(p);
-            return;
-        } else if (pData.getMinistreakUnlockStatus(mini)) {
-            pData.setMinistreakAtSlot(slotHandler.get(uuid), mini);
-            pData.setMinistreakAtSlot(badSlot, Ministreaks.UNSET);
-            zl.pitReset(p);
-            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
-            p.sendMessage("§c§lZOOP! §7Disabled §c" + sameFrequency.getName() + "§7! Can't have two killstreaks with the same kills frequency!");
-            openMainStreakGUI(p);
-            return;
-        } else if (pData.getLevel() < mini.getLevel()) {
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-            p.sendMessage("§cYou are too low level to acquire this killstreak!");
-            return;
-        } else if (pData.getGold() < mini.getCost()) {
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-            p.sendMessage("§cYou don't have enough gold to afford this!");
-            return;
-        }
-
-        confirmGUIHandler.confirmPurchase(p, "§6" + mini.getName(), mini.getCost(), false,
-                player -> {
-                    pData.setGold(pData.getGold() - mini.getCost());
-                    pData.setMinistreakUnlockStatus(mini, true);
-                    pData.setMinistreakAtSlot(slotHandler.get(uuid), mini);
-                    zl.pitReset(p);
-                    p.sendMessage("§a§lPURCHASE! §6" + mini.getName());
-                    openMainStreakGUI(p);
-                    p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
-                    slotHandler.remove(p.getUniqueId());
-                });
-    }
-
-    @EventHandler
-    public void onLeave(PlayerQuitEvent e) {
-        slotHandler.remove(e.getPlayer().getUniqueId());
-    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

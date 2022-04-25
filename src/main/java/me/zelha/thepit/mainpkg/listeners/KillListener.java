@@ -106,7 +106,63 @@ public class KillListener implements Listener {
         return Math.min(gold, 2500) + deadData.getBounty();
     }
 
-    public void pitKill(Player damaged, Player damager) {
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerDeath(EntityDamageByEntityEvent e) {
+        Entity damagedEntity = e.getEntity();
+        Entity damagerEntity = e.getDamager();
+        Player damaged;
+        Player damager;
+
+        if (zl.spawnCheck(damagedEntity.getLocation()) || zl.spawnCheck(damagerEntity.getLocation())) return;
+        if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
+        if (e.getCause() == DamageCause.FALL) return;
+
+        if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player && zl.playerCheck((Player) ((Arrow) damagerEntity).getShooter())) {
+            damager = (Player) ((Arrow) damagerEntity).getShooter();
+        } else if (zl.playerCheck(damagerEntity)) {
+            damager = (Player) damagerEntity;
+        } else {
+            return;
+        }
+
+        if (damaged.equals(damager)) return;
+
+        multiKillTimer(damager);
+
+        Bukkit.broadcastMessage(e.getFinalDamage() + "");//testing line
+
+        if (damaged.getHealth() - e.getFinalDamage() <= 0) pitKill(damaged, damager);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onOtherDeath(EntityDamageEvent e) {
+        Player p;
+
+        if (zl.playerCheck(e.getEntity())) p = (Player) e.getEntity(); else return;
+        if (e.getCause() == DamageCause.FALL) return;
+        if (e.getCause() == DamageCause.PROJECTILE) return;
+        if (e.getCause() == DamageCause.ENTITY_ATTACK) return;
+        if (p.getHealth() - e.getFinalDamage() > 0) return;
+        if (assistUtils.getLastDamager(p) == null) return;
+
+        pitKill(p, assistUtils.getLastDamager(p));
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e) {
+        new BountyRunnable(e.getPlayer()).runTaskTimer(Main.getInstance(), 0, 1);
+    }
+
+    @EventHandler
+    public void onLeave(PlayerQuitEvent e) {
+        Player p = e.getPlayer();
+
+        if (runTracker.hasID(e.getPlayer().getUniqueId())) runTracker.stop(e.getPlayer().getUniqueId());
+        if (assistUtils.getLastDamager(p) == null) return;
+        if (Main.getInstance().getPlayerData(p).getCombatLogged()) pitKill(p, assistUtils.getLastDamager(p));
+    }
+
+    private void pitKill(Player damaged, Player damager) {
         PlayerData damagerData = Main.getInstance().getPlayerData(damager);
         PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
         double calculatedGold = calculateGold(damaged, damager);
@@ -187,61 +243,6 @@ public class KillListener implements Listener {
         runTracker2.setID(player.getUniqueId(), multiKillTimer.getTaskId());
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerDeath(EntityDamageByEntityEvent e) {
-        Entity damagedEntity = e.getEntity();
-        Entity damagerEntity = e.getDamager();
-        Player damaged;
-        Player damager;
-
-        if (zl.spawnCheck(damagedEntity.getLocation()) || zl.spawnCheck(damagerEntity.getLocation())) return;
-        if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
-        if (e.getCause() == DamageCause.FALL) return;
-
-        if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player && zl.playerCheck((Player) ((Arrow) damagerEntity).getShooter())) {
-            damager = (Player) ((Arrow) damagerEntity).getShooter();
-        } else if (zl.playerCheck(damagerEntity)) {
-            damager = (Player) damagerEntity;
-        } else {
-            return;
-        }
-
-        if (damaged.equals(damager)) return;
-
-        multiKillTimer(damager);
-
-        Bukkit.broadcastMessage(e.getFinalDamage() + "");//testing line
-
-        if (damaged.getHealth() - e.getFinalDamage() <= 0) pitKill(damaged, damager);
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onOtherDeath(EntityDamageEvent e) {
-        Player p;
-
-        if (zl.playerCheck(e.getEntity())) p = (Player) e.getEntity(); else return;
-        if (e.getCause() == DamageCause.FALL) return;
-        if (e.getCause() == DamageCause.PROJECTILE) return;
-        if (e.getCause() == DamageCause.ENTITY_ATTACK) return;
-        if (p.getHealth() - e.getFinalDamage() > 0) return;
-        if (assistUtils.getLastDamager(p) == null) return;
-
-        pitKill(p, assistUtils.getLastDamager(p));
-    }
-
-    @EventHandler
-    public void onJoin(PlayerJoinEvent e) {
-        new BountyRunnable(e.getPlayer()).runTaskTimer(Main.getInstance(), 0, 1);
-    }
-
-    @EventHandler
-    public void onLeave(PlayerQuitEvent e) {
-        Player p = e.getPlayer();
-
-        if (runTracker.hasID(e.getPlayer().getUniqueId())) runTracker.stop(e.getPlayer().getUniqueId());
-        if (assistUtils.getLastDamager(p) == null) return;
-        if (Main.getInstance().getPlayerData(p).getCombatLogged()) pitKill(p, assistUtils.getLastDamager(p));
-    }
 
 
     private class BountyRunnable extends BukkitRunnable {

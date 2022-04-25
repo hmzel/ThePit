@@ -108,13 +108,11 @@ public final class Main extends JavaPlugin {
         new ParticipationRunnable().runTaskTimerAsynchronously(this, 0, 1);
     }
 
-
     @Override
     public void onDisable() {
         mongoClient.close();
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "minecraft:kill @e[type=armor_stand,tag=bounty]");
     }
-
 
     public static Main getInstance() {
         return instance;
@@ -127,21 +125,27 @@ public final class Main extends JavaPlugin {
     public ZelLogic getZelLogic() {
         return zelLogic;
     }
+
     public DeathListener getDeathUtils() {
         return deathListener;
     }
+
     public KillListener getKillUtils() {
         return killListener;
     }
+
     public AssistListener getAssistUtils() {
         return assistListener;
     }
+
     public RunTracker generateRunTracker() {
         return new RunTracker();
     }
+
     public AttackListener getAttackUtils() {
         return attackListener;
     }
+
     public ConfirmGUIHandler getConfirmGUIHandler() {
         return confirmGUIHandler;
     }
@@ -149,9 +153,11 @@ public final class Main extends JavaPlugin {
     public PlayerData getPlayerData(String uuid) {
         return storage.getPlayerData(uuid);
     }
+
     public PlayerData getPlayerData(UUID uuid) {
         return storage.getPlayerData(uuid.toString());
     }
+
     public PlayerData getPlayerData(Player player) {
         return storage.getPlayerData(player.getUniqueId().toString());
     }

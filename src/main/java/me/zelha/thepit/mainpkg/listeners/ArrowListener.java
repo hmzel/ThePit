@@ -5,6 +5,7 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -26,16 +27,25 @@ public class ArrowListener implements Listener {
         if (!(e.getEntity() instanceof Arrow)) return;
         if (!(e.getEntity().getShooter() instanceof Player)) return;
 
-        Player p = (Player) e.getEntity().getShooter();
+        arrowItemMap.put(e.getEntity().getUniqueId(), ((Player) e.getEntity().getShooter()).getInventory().getItemInMainHand());
+    }
 
-        arrowItemMap.put(e.getEntity().getUniqueId(), p.getInventory().getItemInMainHand());
+    @EventHandler
+    public void onArrowHit(ProjectileHitEvent e) {
+        if (!(e.getEntity() instanceof Arrow)) return;
+        if (!(e.getEntity().getShooter() instanceof Player)) return;
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                arrowItemMap.remove(e.getEntity().getUniqueId());
-            }
-        }.runTaskLater(Main.getInstance(), 1200);
+        if (e.getHitBlock() != null) {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    arrowItemMap.remove(e.getEntity().getUniqueId());
+                }
+            }.runTaskLater(Main.getInstance(), 1200);
+            return;
+        }
+
+        arrowItemMap.remove(e.getEntity().getUniqueId());
     }
 }
 

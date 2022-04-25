@@ -2,7 +2,6 @@ package me.zelha.thepit.zelenums;
 
 import org.bukkit.Material;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -223,6 +222,13 @@ public enum Ministreaks {
         this.lore = lore;
     }
 
+    public static Ministreaks findByEnumName(String name) {
+        for (Ministreaks mini : values()) {
+            if (mini.name().equalsIgnoreCase(name)) return mini;
+        }
+        return null;
+    }
+
     public StreakBundles getBundle() {
         return bundle;
     }
@@ -252,14 +258,7 @@ public enum Ministreaks {
     }
 
     public List<String> getLore() {
-        return new ArrayList<>(Arrays.asList(lore));
-    }
-
-    public static Ministreaks findByEnumName(String name) {
-        for (Ministreaks mini : values()) {
-            if (mini.name().equalsIgnoreCase(name)) return mini;
-        }
-        return null;
+        return Arrays.asList(lore);
     }
 }
 
