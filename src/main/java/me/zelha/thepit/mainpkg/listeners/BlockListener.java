@@ -53,6 +53,8 @@ public class BlockListener implements Listener {
         } else if (blockType == COBBLESTONE) {
             blockPoof(e.getBlock(), e.getBlockReplacedState().getType(), Math.round(300 * (1 + (pData.getPassiveTier(Passives.BUILD_BATTLER) * 0.6))));
         }
+
+        placedBlocks.add(e.getBlock());
     }
 
     private void blockPoof(Block block, Material previousBlock, long time) {
@@ -63,8 +65,6 @@ public class BlockListener implements Listener {
                 placedBlocks.remove(block);
             }
         }.runTaskLater(Main.getInstance(), time);
-
-        placedBlocks.add(block);
     }
 }
 

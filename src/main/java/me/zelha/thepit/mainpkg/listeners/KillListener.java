@@ -32,7 +32,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Random;
 import java.util.UUID;
@@ -233,16 +232,13 @@ public class KillListener implements Listener {
     private void multiKillTimer(Player player) {
         if (runTracker2.hasID(player.getUniqueId())) runTracker2.stop(player.getUniqueId());
 
-        BukkitTask multiKillTimer = new BukkitRunnable() {
+        runTracker2.setID(player.getUniqueId(), new BukkitRunnable() {
             @Override
             public void run() {
                 Main.getInstance().getPlayerData(player).setMultiKill(0);
             }
-        }.runTaskLater(Main.getInstance(), 60);
-
-        runTracker2.setID(player.getUniqueId(), multiKillTimer.getTaskId());
+        }.runTaskLater(Main.getInstance(), 60).getTaskId());
     }
-
 
 
     private class BountyRunnable extends BukkitRunnable {
@@ -260,42 +256,6 @@ public class KillListener implements Listener {
             this.ticksBetweenKills = 0;
             this.secondsBetweenKills = 0;
             this.streak = Main.getInstance().getPlayerData(uuid).getStreak();
-        }
-
-        private boolean randomBounty() {
-            int rng = (streak == 0) ? 0 : (new Random().nextInt((int) Math.round(streak)) + 1) - (int) Math.round(secondsBetweenKills * 0.1);
-
-            if (rng <= 0) return false;
-
-            switch (rng) {
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                case 5:
-                    return false;
-                default:
-                    return true;
-            }
-        }
-
-        private int calculateBounty() {
-            if (randomBounty()) {
-                if (streak < 10 && secondsBetweenKills < 5) {
-                    return 50;
-                } else if (streak < 25 && secondsBetweenKills > 10) {
-                    return 100;
-                } else if (streak < 25 && secondsBetweenKills < 5) {
-                    return 150;
-                } else if (streak < 50 && secondsBetweenKills < 5) {
-                    return 200;
-                } else if (streak < 50) {
-                    return 250;
-                } else {
-                    return 300;
-                }
-            }
-            return 0;
         }
 
         @Override
@@ -370,6 +330,7 @@ public class KillListener implements Listener {
                             public void run() {
                                 if (!zl.playerCheck(player) || timer == 10) {
                                     if (particle != null) particle.remove();
+
                                     cancel();
                                     return;
                                 }
@@ -386,15 +347,16 @@ public class KillListener implements Listener {
                                                 armorstand.setCustomName("§6§l" + pData.getBounty() + "g");
                                                 armorstand.setCustomNameVisible(true);
                                                 armorstand.addScoreboardTag("bounty");
+
+                                                for (EquipmentSlot slots : EquipmentSlot.values()) {
+                                                    armorstand.addEquipmentLock(slots, ArmorStand.LockType.ADDING_OR_CHANGING);
+                                                }
                                             });
 
                                     ((CraftPlayer) player).getHandle().b.sendPacket(new PacketPlayOutEntityDestroy(particle.getEntityId()));
-
-                                    for (EquipmentSlot slots : EquipmentSlot.values()) particle.addEquipmentLock(slots, ArmorStand.LockType.ADDING_OR_CHANGING);
                                 }
 
-                                location.add(0, 0.25, 0);
-                                particle.teleport(location);
+                                particle.teleport(location.add(0, 0.25, 0));
                                 timer++;
                             }
                         }.runTaskTimer(Main.getInstance(), 0, 1);
@@ -407,6 +369,42 @@ public class KillListener implements Listener {
 
                 hasAnimation = false;
             }
+        }
+
+        private boolean randomBounty() {
+            int rng = (streak == 0) ? 0 : (new Random().nextInt((int) Math.round(streak)) + 1) - (int) Math.round(secondsBetweenKills * 0.1);
+
+            if (rng <= 0) return false;
+
+            switch (rng) {
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    return false;
+                default:
+                    return true;
+            }
+        }
+
+        private int calculateBounty() {
+            if (randomBounty()) {
+                if (streak < 10 && secondsBetweenKills < 5) {
+                    return 50;
+                } else if (streak < 25 && secondsBetweenKills > 10) {
+                    return 100;
+                } else if (streak < 25 && secondsBetweenKills < 5) {
+                    return 150;
+                } else if (streak < 50 && secondsBetweenKills < 5) {
+                    return 200;
+                } else if (streak < 50) {
+                    return 250;
+                } else {
+                    return 300;
+                }
+            }
+            return 0;
         }
     }
 }
