@@ -1,7 +1,6 @@
-package me.zelha.thepit.eventcallers;
+package me.zelha.thepit.events;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.events.NPCInteractEvent;
 import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.NPCs;
 import org.bukkit.Bukkit;
