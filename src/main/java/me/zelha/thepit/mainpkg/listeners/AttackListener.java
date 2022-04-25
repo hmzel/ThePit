@@ -1,15 +1,16 @@
 package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
+import me.zelha.thepit.events.PitDamageEvent;
+import me.zelha.thepit.events.PitDeathEvent;
+import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.utils.RunTracker;
 import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -19,13 +20,18 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.UUID;
 
+import static org.bukkit.event.EventPriority.LOWEST;
+
 public class AttackListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
+    private final AssistListener assistUtils = Main.getInstance().getAssistUtils();
+    private final PluginManager manager = Main.getInstance().getServer().getPluginManager();
     private final RunTracker runTracker = Main.getInstance().generateRunTracker();
 
     public void startCombatTimer(Player damaged, Player damager) {
@@ -36,7 +42,7 @@ public class AttackListener implements Listener {
         new CombatTimerRunnable(damager.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onAttack(EntityDamageByEntityEvent e) {
         Entity damagedEntity = e.getEntity();
         Entity damagerEntity = e.getDamager();
@@ -78,66 +84,61 @@ public class AttackListener implements Listener {
 
         e.setDamage(e.getDamage() * boost);
         startCombatTimer(damaged, damager);
-    }
+        Bukkit.broadcastMessage(e.getFinalDamage() + "");//testing line
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onAttackActionbar(EntityDamageByEntityEvent e) {
-        Entity damagedEntity = e.getEntity();
-        Entity damagerEntity = e.getDamager();
-        Player damaged;
-        Player damager;
+        PitDamageEvent damageEvent = new PitDamageEvent(damaged, damager, e.getFinalDamage());
 
-        if (zl.spawnCheck(damagedEntity.getLocation()) || zl.spawnCheck(damagerEntity.getLocation())) return;
-        if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
+        if (!damaged.getUniqueId().equals(damager.getUniqueId())) manager.callEvent(damageEvent);
 
-        if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player) {
-            damager = (Player) ((Arrow) damagerEntity).getShooter();
-        } else if (zl.playerCheck(damagerEntity)) {
-            damager = (Player) damagerEntity;
-        } else {
+        if (damageEvent.isCancelled()) {
+            e.setCancelled(true);
             return;
         }
 
-        String bar = "§7" + damaged.getName() + " ";
+        e.setDamage(damageEvent.getDamage());
 
         if (damaged.getHealth() - e.getFinalDamage() <= 0) {
-            damager.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(bar + "§a§lKILL!"));
-            return;
+            e.setCancelled(true);
+            manager.callEvent(new PitDeathEvent(damaged, false));
+
+            if (damaged.getUniqueId().equals(damager.getUniqueId())) return;
+
+            manager.callEvent(new PitKillEvent(damaged, damager, false));
         }
-
-        StringBuilder barBuilder = new StringBuilder();
-        StringBuilder barBuilder2 = new StringBuilder();
-
-        int health = (int) Math.ceil(damaged.getHealth() / 2);
-        int healthAfterDmg = (int) Math.floor(Math.max(((damaged.getHealth() / 2D) - (e.getFinalDamage() / 2D)), 0));
-        int maxHealth = (int) damaged.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 2;
-
-        for (int i = 0; i < maxHealth; i++) barBuilder.append("❤");
-
-        if (damaged.getAbsorptionAmount() > 0) {
-            int absorption = (int) Math.ceil((damaged.getAbsorptionAmount() + e.getDamage(EntityDamageEvent.DamageModifier.ABSORPTION)) / 2);
-
-            for (int i = 0; i < (int) Math.ceil(damaged.getAbsorptionAmount() / 2); i++) barBuilder2.append("❤");
-
-            barBuilder2.replace(Math.max(absorption, 0), Math.max(absorption, 0), "§6");
-            barBuilder2.replace(0, 0, "§e");
-        }
-
-        barBuilder.replace(health, health, "§0");
-        barBuilder.replace(healthAfterDmg, healthAfterDmg, "§c");
-        barBuilder.replace(0, 0, "§4");
-        damager.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(bar + barBuilder + barBuilder2));
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onLeave(PlayerQuitEvent e) {
-        PlayerData pData = Main.getInstance().getPlayerData(e.getPlayer());
+    @EventHandler(priority = LOWEST)
+    public void onOtherDamage(EntityDamageEvent e) {
+        if (!zl.playerCheck(e.getEntity())) return;
+        if (e.getCause() == EntityDamageEvent.DamageCause.FALL) return;
 
-        if (!pData.getStatus().equals("bountied") && !pData.getStatus().equals("idling")) {
-            pData.setCombatLogged(true);
-        }
+        Player p = (Player) e.getEntity();
+
+        if (p.getHealth() - e.getFinalDamage() > 0) return;
+
+        e.setCancelled(true);
+        manager.callEvent(new PitDeathEvent(p, false));
+
+        if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) return;
+        if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) return;
+        if (e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE) return;
+        if (assistUtils.getLastDamager(p) == null) return;
+
+        manager.callEvent(new PitKillEvent(p, assistUtils.getLastDamager(p), false));
+    }
+
+    @EventHandler(priority = LOWEST)
+    public void onLeave(PlayerQuitEvent e) {
+        Player p = e.getPlayer();
+        PlayerData pData = Main.getInstance().getPlayerData(p);
 
         if (runTracker.hasID(e.getPlayer().getUniqueId())) runTracker.stop(e.getPlayer().getUniqueId());
+        if (pData.getStatus().equals("idling") || pData.getStatus().equals("bountied")) return;
+        if (assistUtils.getLastDamager(p) == null) return;
+
+        pData.setCombatLogged(true);
+        manager.callEvent(new PitDeathEvent(p, true));
+        manager.callEvent(new PitKillEvent(p, assistUtils.getLastDamager(p), true));
     }
 
 

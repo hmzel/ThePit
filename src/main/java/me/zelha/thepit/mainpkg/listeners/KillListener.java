@@ -127,8 +127,6 @@ public class KillListener implements Listener {
 
         multiKillTimer(damager);
 
-        Bukkit.broadcastMessage(e.getFinalDamage() + "");//testing line
-
         if (damaged.getHealth() - e.getFinalDamage() <= 0) pitKill(damaged, damager);
     }
 

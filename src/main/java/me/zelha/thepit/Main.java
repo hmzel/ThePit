@@ -5,7 +5,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import me.zelha.thepit.admin.commands.*;
-import me.zelha.thepit.eventcallers.NPCInteractEventCaller;
+import me.zelha.thepit.events.NPCInteractEventCaller;
 import me.zelha.thepit.mainpkg.commands.OofCommand;
 import me.zelha.thepit.mainpkg.commands.RespawnCommand;
 import me.zelha.thepit.mainpkg.data.KillRecap;
@@ -83,6 +83,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(confirmGUIHandler, this);
         getServer().getPluginManager().registerEvents(new ArrowListener(), this);
         getServer().getPluginManager().registerEvents(new NPCInteractEventCaller(), this);
+        getServer().getPluginManager().registerEvents(new ActionbarListener(), this);
 
         getCommand("setprestige").setExecutor(new SetPrestigeCommand());
         getCommand("setlevel").setExecutor(new SetLevelCommand());
