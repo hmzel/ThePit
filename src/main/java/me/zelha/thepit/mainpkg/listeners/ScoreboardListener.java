@@ -243,8 +243,9 @@ public class ScoreboardListener implements Listener {
 
             if (pData.getBounty() != 0) suffix += " §6§l" + pData.getBounty() + "g";
 
-            if (level >= 100) {
-                sort.append("a");
+            while (level >= 100) {
+                if (!sort.toString().contains("a")) sort.append("a");
+
                 level -= 100;
             }
 
@@ -253,6 +254,8 @@ public class ScoreboardListener implements Listener {
 
                 sort.append(sortHelp[Integer.parseInt((level + "").charAt(i) + "")]);
             }
+
+            sort.append(p.getName());
 
             if (!teamMap.containsKey(uuid)) {
                 if (main.getTeam(sort.toString()) != null) {
