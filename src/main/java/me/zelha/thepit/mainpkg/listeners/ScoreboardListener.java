@@ -1,10 +1,10 @@
 package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.utils.RunTracker;
-import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.perks.StrengthChainingPerk;
+import me.zelha.thepit.utils.RunTracker;
+import me.zelha.thepit.utils.ZelLogic;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardScore;
 import net.minecraft.server.ScoreboardServer;
 import net.minecraft.server.network.PlayerConnection;
@@ -39,8 +39,10 @@ public class ScoreboardListener implements Listener {
     public void startAnimation() {
         new BukkitRunnable() {
 
-            int ticks = 0;
-            int anim = 0;
+            private final Scoreboard mainBoard = Bukkit.getServer().getScoreboardManager().getMainScoreboard();
+            private Objective mainObjective = null;
+            private int ticks = 0;
+            private int anim = 0;
 
             @Override
             public void run() {
@@ -68,22 +70,17 @@ public class ScoreboardListener implements Listener {
                     if (anim == 16) anim = 0;
                 }
 
-                setDisplay(builder.toString());
-                ticks++;
-            }
-
-            private void setDisplay(String name) {
-                Scoreboard mainBoard = Bukkit.getServer().getScoreboardManager().getMainScoreboard();
-                Objective mainObjective;
-
-                if (mainBoard.getObjective(DisplaySlot.SIDEBAR) != null) {
-                    mainObjective = mainBoard.getObjective(DisplaySlot.SIDEBAR);
-                } else {
-                    mainObjective = mainBoard.registerNewObjective("main", "dummy", name);
-                    mainObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
+                if (mainObjective == null) {
+                    if (mainBoard.getObjective(DisplaySlot.SIDEBAR) != null) {
+                        mainObjective = mainBoard.getObjective(DisplaySlot.SIDEBAR);
+                    } else {
+                        mainObjective = mainBoard.registerNewObjective("main", "dummy", builder.toString());
+                        mainObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
+                    }
                 }
 
-                mainObjective.setDisplayName(name);
+                mainObjective.setDisplayName(builder.toString());
+                ticks++;
             }
         }.runTaskTimer(Main.getInstance(), 0, 1);
     }
