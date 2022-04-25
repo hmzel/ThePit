@@ -86,7 +86,7 @@ public class AttackListener implements Listener {
         startCombatTimer(damaged, damager);
         Bukkit.broadcastMessage(e.getFinalDamage() + "");//testing line
 
-        PitDamageEvent damageEvent = new PitDamageEvent(damaged, damager, e.getFinalDamage());
+        PitDamageEvent damageEvent = new PitDamageEvent(e);
 
         if (!damaged.getUniqueId().equals(damager.getUniqueId())) manager.callEvent(damageEvent);
 
