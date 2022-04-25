@@ -200,7 +200,7 @@ public class AssistListener implements Listener {
             pData.setGold(pData.getGold() + gold);
             pData.setExp(pData.getExp() - exp);
             p.spigot().sendMessage(new ComponentBuilder("§a§lASSIST! §7" + (int) (Double.parseDouble(BigDecimal.valueOf(getAssistMap(player).get(uuid) / getTotalDamage(player)).setScale(2, RoundingMode.HALF_EVEN).toString()) * 100)
-                    + "% on " + zl.getColorBracketAndLevel(player.getUniqueId().toString()) + " §7" + player.getName() + " §b+" + exp + "XP §6+"
+                    + "% on " + zl.getColorBracketAndLevel(player) + " §7" + player.getName() + " §b+" + exp + "XP §6+"
                     + zl.getFancyGoldString(gold) + "g")
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§eClick to view kill recap!")))
                     .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/killrecap " + player.getUniqueId()))

@@ -292,7 +292,7 @@ public class KillRecap implements CommandExecutor, Listener {
     }
 
     private BaseComponent[] playerComponent(Player player) {
-        StringBuilder builder = new StringBuilder(zl.getColorBracketAndLevel(player.getUniqueId().toString()) + "§7 " + player.getName() + "\n");
+        StringBuilder builder = new StringBuilder(zl.getColorBracketAndLevel(player) + "§7 " + player.getName() + "\n");
         PlayerData pData = Main.getInstance().getPlayerData(player);
 
         if (pData.getStreak() != 0) builder.append("§7Streak: §c" + (int) pData.getStreak() + "\n");

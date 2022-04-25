@@ -8,8 +8,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import java.util.UUID;
-
 public class ExpChangeListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
@@ -18,10 +16,9 @@ public class ExpChangeListener implements Listener {
     public void expChangeListener(ExpChangeEvent e) {
         Player p = e.getPlayer();
         PlayerData pData = Main.getInstance().getPlayerData(p);
-        UUID uuid = p.getUniqueId();
 
         if (pData.getExp() <= 0 && pData.getLevel() < 120) {
-            String previousLevel = zl.getColorBracketAndLevel(uuid.toString());
+            String previousLevel = zl.getColorBracketAndLevel(p);
             int newLevel = pData.getLevel() + 1;
             int exp = pData.getExp();
 
@@ -30,20 +27,20 @@ public class ExpChangeListener implements Listener {
                     pData.setLevel(newLevel);
                 } else break;
 
-                exp += zl.maxXPReq(uuid.toString());
+                exp += zl.maxXPReq(p);
                 newLevel++;
             }
 
             pData.setExp(exp);
             p.sendTitle("§b§lLEVEL UP!",
-                    previousLevel + " ➟ " + zl.getColorBracketAndLevel(uuid.toString()),
+                    previousLevel + " ➟ " + zl.getColorBracketAndLevel(p),
                     10, 40, 10);
-            p.sendMessage("§b§lPIT LEVEL UP! " + previousLevel + " ➟ " + zl.getColorBracketAndLevel(uuid.toString()));
+            p.sendMessage("§b§lPIT LEVEL UP! " + previousLevel + " ➟ " + zl.getColorBracketAndLevel(p));
         }
 
         if (pData.getLevel() >= 0) p.setLevel(pData.getLevel());
 
-        float percentage = (zl.maxXPReq(uuid.toString()) - pData.getExp()) / (float) zl.maxXPReq(uuid.toString());
+        float percentage = (zl.maxXPReq(p) - pData.getExp()) / (float) zl.maxXPReq(p);
 
         if (percentage <= 1 && percentage >= 0) {
             if (pData.getLevel() < 120) {

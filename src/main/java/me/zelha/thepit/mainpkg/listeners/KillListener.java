@@ -34,7 +34,6 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Random;
-import java.util.UUID;
 
 import static me.zelha.thepit.zelenums.Perks.BOUNTY_HUNTER;
 import static me.zelha.thepit.zelenums.Perks.STREAKER;
@@ -174,12 +173,12 @@ public class KillListener implements Listener {
 
         if ((Math.floor(damagerData.getStreak()) % 10 == 0) || (damagerData.getStreak() < 6 && damagerData.getStreak() >= 5)) {
             Bukkit.broadcastMessage("§c§lSTREAK! §7of §c" + (int) Math.floor(damagerData.getStreak()) + " §7kills by "
-                    + zl.getColorBracketAndLevel(damager.getUniqueId().toString()) + " §7" + damager.getName());
+                    + zl.getColorBracketAndLevel(damager) + " §7" + damager.getName());
         }
 
         if (damagedData.getBounty() != 0) {
-            Bukkit.broadcastMessage("§6§lBOUNTY CLAIMED! " + zl.getColorBracketAndLevel(damager.getUniqueId().toString())
-                    + "§7 " + damager.getName() + " killed " + zl.getColorBracketAndLevel(damaged.getUniqueId().toString())
+            Bukkit.broadcastMessage("§6§lBOUNTY CLAIMED! " + zl.getColorBracketAndLevel(damager)
+                    + "§7 " + damager.getName() + " killed " + zl.getColorBracketAndLevel(damaged)
                     + "§7 " + damaged.getName() + " for §6§l" + zl.getFancyGoldString(damagedData.getBounty()) + "g");
             damagedData.setBounty(0);
         }
@@ -207,7 +206,7 @@ public class KillListener implements Listener {
                 break;
         }
 
-        damager.spigot().sendMessage(new ComponentBuilder(killMessage + " §7on " + zl.getColorBracketAndLevel(damaged.getUniqueId().toString())
+        damager.spigot().sendMessage(new ComponentBuilder(killMessage + " §7on " + zl.getColorBracketAndLevel(damaged)
                 + " §7" + damaged.getName() + " §b+" + calculateEXP(damaged, damager) + "§bXP §6+" + zl.getFancyGoldString(calculatedGold) + "§6g")
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§eClick to view kill recap!")))
                 .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/killrecap " + damaged.getUniqueId()))
@@ -244,7 +243,6 @@ public class KillListener implements Listener {
     private class BountyRunnable extends BukkitRunnable {
 
         private final Player player;
-        private final UUID uuid;
         private int ticksBetweenKills;
         private int secondsBetweenKills;
         private double streak;
@@ -252,17 +250,16 @@ public class KillListener implements Listener {
 
         private BountyRunnable(Player player) {
             this.player = player;
-            this.uuid = player.getUniqueId();
             this.ticksBetweenKills = 0;
             this.secondsBetweenKills = 0;
-            this.streak = Main.getInstance().getPlayerData(uuid).getStreak();
+            this.streak = Main.getInstance().getPlayerData(player).getStreak();
         }
 
         @Override
         public void run() {
-            PlayerData pData = Main.getInstance().getPlayerData(uuid);
+            PlayerData pData = Main.getInstance().getPlayerData(player);
 
-            if (!runTracker.hasID(uuid)) runTracker.setID(uuid, getTaskId());
+            if (!runTracker.hasID(player.getUniqueId())) runTracker.setID(player.getUniqueId(), getTaskId());
 
             if (streak != pData.getStreak()) {
                 streak = pData.getStreak();
@@ -271,15 +268,15 @@ public class KillListener implements Listener {
                 if (calculatedBounty != 0) {
                     if (pData.getBounty() == 0) {
                         pData.setBounty(calculatedBounty);
-                        Bukkit.broadcastMessage("§6§lBOUNTY! §7of §6§l " + calculatedBounty + "g §7on " + zl.getColorBracketAndLevel(uuid.toString())
+                        Bukkit.broadcastMessage("§6§lBOUNTY! §7of §6§l " + calculatedBounty + "g §7on " + zl.getColorBracketAndLevel(player)
                                 + " §7" + player.getName() + " for high streak");
                     } else if (pData.getBounty() + calculatedBounty <= 5000) {
                         pData.setBounty(pData.getBounty() + calculatedBounty);
-                        Bukkit.broadcastMessage("§6§lBOUNTY! §7bump §6§l" + calculatedBounty + "g §7on " + zl.getColorBracketAndLevel(uuid.toString())
+                        Bukkit.broadcastMessage("§6§lBOUNTY! §7bump §6§l" + calculatedBounty + "g §7on " + zl.getColorBracketAndLevel(player)
                                 + " §7" + player.getName() + " for high streak");
                     } else if (pData.getBounty() < 5000) {
                         Bukkit.broadcastMessage("§6§lBOUNTY! §7bump §6§l" + (5000 - pData.getBounty()) + "g §7on "
-                                + zl.getColorBracketAndLevel(uuid.toString()) + " §7" + player.getName() + " for high streak");
+                                + zl.getColorBracketAndLevel(player) + " §7" + player.getName() + " for high streak");
                         pData.setBounty(5000);
                     }
                 }

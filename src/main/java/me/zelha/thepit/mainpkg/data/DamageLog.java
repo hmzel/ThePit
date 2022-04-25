@@ -51,10 +51,10 @@ public class DamageLog {
 
         if (isAttacker) {
             this.mainName = damaged.getName();
-            this.prestigeToShow = zl.getColorBracketAndLevel(damager.getUniqueId().toString());
+            this.prestigeToShow = zl.getColorBracketAndLevel(damager);
         } else {
             this.mainName = damager.getName();
-            this.prestigeToShow = zl.getColorBracketAndLevel(damaged.getUniqueId().toString());
+            this.prestigeToShow = zl.getColorBracketAndLevel(damaged);
         }
 
         this.damagedHealth = damaged.getHealth() - event.getFinalDamage();
@@ -80,10 +80,10 @@ public class DamageLog {
 
         if (isAttacker) {
             this.mainName = damaged.getName();
-            this.prestigeToShow = zl.getColorBracketAndLevel(damager.getUniqueId().toString());
+            this.prestigeToShow = zl.getColorBracketAndLevel(damager);
         } else {
             this.mainName = damager.getName();
-            this.prestigeToShow = zl.getColorBracketAndLevel(damaged.getUniqueId().toString());
+            this.prestigeToShow = zl.getColorBracketAndLevel(damaged);
         }
 
         this.damagedHealth = damaged.getHealth() - damage;

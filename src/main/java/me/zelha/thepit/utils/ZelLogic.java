@@ -487,89 +487,89 @@ public class ZelLogic {//zel
     /**
      * uses a bloody massive switch statement to determine the xp requirement of the current level of the player the given UUID is assigned to
      *
-     * @param uuid player uuid to check the max level XP req of
+     * @param player player to check the max level XP req of
      * @return max XP req for the given player's level based on prestige
      */
-    public int maxXPReq(String uuid) {
-        PlayerData pData = Main.getInstance().getPlayerData(uuid);
+    public int maxXPReq(Player player) {
+        PlayerData pData = Main.getInstance().getPlayerData(player);
 
         switch (pData.getPrestige()) {
             case 0:
-                return baseMaxXPReq(uuid);
+                return baseMaxXPReq(player);
             case 1:
-                return (int) Math.round(baseMaxXPReq(uuid) * 1.1);
+                return (int) Math.round(baseMaxXPReq(player) * 1.1);
             case 2:
-                return (int) Math.round(baseMaxXPReq(uuid) * 1.2);
+                return (int) Math.round(baseMaxXPReq(player) * 1.2);
             case 3:
-                return (int) Math.round(baseMaxXPReq(uuid) * 1.3);
+                return (int) Math.round(baseMaxXPReq(player) * 1.3);
             case 4:
-                return (int) Math.round(baseMaxXPReq(uuid) * 1.4);
+                return (int) Math.round(baseMaxXPReq(player) * 1.4);
             case 5:
-                return (int) Math.round(baseMaxXPReq(uuid) * 1.5);
+                return (int) Math.round(baseMaxXPReq(player) * 1.5);
             case 6:
-                return (int) Math.round(baseMaxXPReq(uuid) * 1.75);
+                return (int) Math.round(baseMaxXPReq(player) * 1.75);
             case 7:
-                return baseMaxXPReq(uuid) * 2;
+                return baseMaxXPReq(player) * 2;
             case 8:
-                return (int) Math.round(baseMaxXPReq(uuid) * 2.5);
+                return (int) Math.round(baseMaxXPReq(player) * 2.5);
             case 9:
-                return baseMaxXPReq(uuid) * 3;
+                return baseMaxXPReq(player) * 3;
             case 10:
-                return baseMaxXPReq(uuid) * 4;
+                return baseMaxXPReq(player) * 4;
             case 11:
-                return baseMaxXPReq(uuid) * 5;
+                return baseMaxXPReq(player) * 5;
             case 12:
-                return baseMaxXPReq(uuid) * 6;
+                return baseMaxXPReq(player) * 6;
             case 13:
-                return baseMaxXPReq(uuid) * 7;
+                return baseMaxXPReq(player) * 7;
             case 14:
-                return baseMaxXPReq(uuid) * 8;
+                return baseMaxXPReq(player) * 8;
             case 15:
-                return baseMaxXPReq(uuid) * 9;
+                return baseMaxXPReq(player) * 9;
             case 16:
-                return baseMaxXPReq(uuid) * 10;
+                return baseMaxXPReq(player) * 10;
             case 17:
-                return baseMaxXPReq(uuid) * 12;
+                return baseMaxXPReq(player) * 12;
             case 18:
-                return baseMaxXPReq(uuid) * 14;
+                return baseMaxXPReq(player) * 14;
             case 19:
-                return baseMaxXPReq(uuid) * 16;
+                return baseMaxXPReq(player) * 16;
             case 20:
-                return baseMaxXPReq(uuid) * 18;
+                return baseMaxXPReq(player) * 18;
             case 21:
-                return baseMaxXPReq(uuid) * 20;
+                return baseMaxXPReq(player) * 20;
             case 22:
-                return baseMaxXPReq(uuid) * 24;
+                return baseMaxXPReq(player) * 24;
             case 23:
-                return baseMaxXPReq(uuid) * 28;
+                return baseMaxXPReq(player) * 28;
             case 24:
-                return baseMaxXPReq(uuid) * 32;
+                return baseMaxXPReq(player) * 32;
             case 25:
-                return baseMaxXPReq(uuid) * 36;
+                return baseMaxXPReq(player) * 36;
             case 26:
-                return baseMaxXPReq(uuid) * 40;
+                return baseMaxXPReq(player) * 40;
             case 27:
-                return baseMaxXPReq(uuid) * 45;
+                return baseMaxXPReq(player) * 45;
             case 28:
-                return baseMaxXPReq(uuid) * 50;
+                return baseMaxXPReq(player) * 50;
             case 29:
-                return baseMaxXPReq(uuid) * 75;
+                return baseMaxXPReq(player) * 75;
             case 30:
-                return baseMaxXPReq(uuid) * 100;
+                return baseMaxXPReq(player) * 100;
             case 31:
             case 32:
             case 33:
             case 34:
             case 35:
-                return baseMaxXPReq(uuid) * 101;
+                return baseMaxXPReq(player) * 101;
             case 36:
-                return baseMaxXPReq(uuid) * 150;
+                return baseMaxXPReq(player) * 150;
             case 37:
-                return baseMaxXPReq(uuid) * 250;
+                return baseMaxXPReq(player) * 250;
             case 38:
-                return baseMaxXPReq(uuid) * 400;
+                return baseMaxXPReq(player) * 400;
             case 39:
-                return baseMaxXPReq(uuid) * 650;
+                return baseMaxXPReq(player) * 650;
             case 40:
             case 41:
             case 42:
@@ -581,7 +581,7 @@ public class ZelLogic {//zel
             case 48:
             case 49:
             case 50:
-                return baseMaxXPReq(uuid) * 1000;
+                return baseMaxXPReq(player) * 1000;
             default:
                 return 1313131313;//fun
         }
@@ -590,38 +590,38 @@ public class ZelLogic {//zel
     /**
      * Gives the color bracket and level such that prestige 0 level 10 would be §7[§910§7]
      *
-     * @param uuid player uuid to check the color bracket and level of
+     * @param player player to check the color bracket and level of
      * @return the combined form of the prestige bracket and level, colorized
      */
-    public String getColorBracketAndLevel(String uuid) {
-        PlayerData pData = Main.getInstance().getPlayerData(uuid);
+    public String getColorBracketAndLevel(Player player) {
+        PlayerData pData = Main.getInstance().getPlayerData(player);
 
         if (pData.getPrestige() < 1) {
-            return "§7[" + getColorLevel(uuid) + "§7]";
+            return "§7[" + getColorLevel(player) + "§7]";
         } else if (pData.getPrestige() < 5) {
-            return "§9[" + getColorLevel(uuid) + "§9]";
+            return "§9[" + getColorLevel(player) + "§9]";
         } else if (pData.getPrestige() < 10) {
-            return "§e[" + getColorLevel(uuid) + "§e]";
+            return "§e[" + getColorLevel(player) + "§e]";
         } else if (pData.getPrestige() < 15) {
-            return "§6[" + getColorLevel(uuid) + "§6]";
+            return "§6[" + getColorLevel(player) + "§6]";
         } else if (pData.getPrestige() < 20) {
-            return "§c[" + getColorLevel(uuid) + "§c]";
+            return "§c[" + getColorLevel(player) + "§c]";
         } else if (pData.getPrestige() < 25) {
-            return "§5[" + getColorLevel(uuid) + "§5]";
+            return "§5[" + getColorLevel(player) + "§5]";
         } else if (pData.getPrestige() < 30) {
-            return "§d[" + getColorLevel(uuid) + "§d]";
+            return "§d[" + getColorLevel(player) + "§d]";
         } else if (pData.getPrestige() < 35) {
-            return "§f[" + getColorLevel(uuid) + "§f]";
+            return "§f[" + getColorLevel(player) + "§f]";
         } else if (pData.getPrestige() < 40) {
-            return "§b[" + getColorLevel(uuid) + "§b]";
+            return "§b[" + getColorLevel(player) + "§b]";
         } else if (pData.getPrestige() < 45) {
-            return "§2[" + getColorLevel(uuid) + "§2]";
+            return "§2[" + getColorLevel(player) + "§2]";
         } else if (pData.getPrestige() < 50) {
-            return "§3[" + getColorLevel(uuid) + "§3]";
+            return "§3[" + getColorLevel(player) + "§3]";
         } else if (pData.getPrestige() == 50) {
-            return "§4[" + getColorLevel(uuid) + "§4]";
+            return "§4[" + getColorLevel(player) + "§4]";
         }
-        return "§5§l[§5§k|" + getColorLevel(uuid) + "§5§k|§5§l]";
+        return "§5§l[§5§k|" + getColorLevel(player) + "§5§k|§5§l]";
     }
 
     /**
@@ -700,8 +700,8 @@ public class ZelLogic {//zel
 
 
     //private stuff
-    private String getColorLevel(String uuid) {
-        PlayerData pData = Main.getInstance().getPlayerData(uuid);
+    private String getColorLevel(Player player) {
+        PlayerData pData = Main.getInstance().getPlayerData(player);
 
         if (pData.getLevel() < 10) {
             return "§7" + pData.getLevel();
@@ -733,8 +733,8 @@ public class ZelLogic {//zel
         return "§5§l" + pData.getLevel();
     }
 
-    private int baseMaxXPReq(String uuid) {
-        PlayerData pData = Main.getInstance().getPlayerData(uuid);
+    private int baseMaxXPReq(Player player) {
+        PlayerData pData = Main.getInstance().getPlayerData(player);
 
         if (pData.getLevel() < 10) {
             return 15;

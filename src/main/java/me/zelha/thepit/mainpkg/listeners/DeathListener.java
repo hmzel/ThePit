@@ -199,7 +199,7 @@ public class DeathListener implements Listener {
         Player damager = Main.getInstance().getAssistUtils().getLastDamager(player);
 
         if (damager != null) {
-            player.spigot().sendMessage(new ComponentBuilder("§c§lDEATH! §7by " + zl.getColorBracketAndLevel(damager.getUniqueId().toString()) + " §7" + damager.getName() + " §e§lVIEW RECAP")
+            player.spigot().sendMessage(new ComponentBuilder("§c§lDEATH! §7by " + zl.getColorBracketAndLevel(damager) + " §7" + damager.getName() + " §e§lVIEW RECAP")
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§eClick to view kill recap!")))
                     .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/killrecap " + player.getUniqueId()))
                     .create());

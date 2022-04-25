@@ -146,7 +146,7 @@ public class ScoreboardListener implements Listener {
 
             if (pData.getPrestige() >= 1) scoreList.add("§fPrestige: §e" + zl.toRoman(pData.getPrestige()));
 
-            scoreList.add("§fLevel: " + zl.getColorBracketAndLevel(p.getUniqueId().toString()));
+            scoreList.add("§fLevel: " + zl.getColorBracketAndLevel(p));
 
             if (pData.getLevel() < 120) scoreList.add("§fNeeded XP: §b" + pData.getExp()); else scoreList.add("§fXP: §bMAXED!");
 
@@ -272,7 +272,7 @@ public class ScoreboardListener implements Listener {
                 team = teamMap.get(uuid);
             }
 
-            team.setPrefix(zl.getColorBracketAndLevel(uuid.toString()) + " ");
+            team.setPrefix(zl.getColorBracketAndLevel(p) + " ");
             team.setSuffix(suffix);
             team.addEntry(p.getName());
             team.setColor(ChatColor.GRAY);
