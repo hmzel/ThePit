@@ -1,18 +1,19 @@
 package me.zelha.thepit.mainpkg.data;
 
+import me.zelha.thepit.Main;
+import me.zelha.thepit.events.ExpChangeEvent;
 import me.zelha.thepit.zelenums.Megastreaks;
 import me.zelha.thepit.zelenums.Ministreaks;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import org.bson.Document;
+import org.bukkit.Bukkit;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PlayerData {
 
+    private final UUID uuid;
     private final Map<Integer, Perks> perkSlots = new HashMap<>();
     private final Map<Integer, Ministreaks> ministreakSlots = new HashMap<>();
     private final Map<Passives, Integer> passivesMap = new HashMap<>();
@@ -34,6 +35,7 @@ public class PlayerData {
     private boolean combatLogged;
 
     public PlayerData(Document document) {
+        this.uuid = UUID.fromString(document.getString("uuid"));
         prestige = document.getInteger("prestige");
         level = document.getInteger("level");
         gold = document.getDouble("gold");
@@ -189,6 +191,7 @@ public class PlayerData {
 
     public void setExp(int exp) {
         this.exp = exp;
+        Main.getInstance().getServer().getPluginManager().callEvent(new ExpChangeEvent(Bukkit.getPlayer(uuid), exp));
     }
 
     public void setStatus(String status) {
