@@ -63,7 +63,7 @@ public final class Main extends JavaPlugin {
         confirmGUIHandler = new ConfirmGUIHandler();
 
         getServer().getPluginManager().registerEvents(storage, this);
-        getServer().getPluginManager().registerEvents(new LevelUpListener(), this);
+        getServer().getPluginManager().registerEvents(new ExpChangeListener(), this);
         getServer().getPluginManager().registerEvents(scoreboardListener, this);
         getServer().getPluginManager().registerEvents(killListener, this);
         getServer().getPluginManager().registerEvents(deathListener, this);
