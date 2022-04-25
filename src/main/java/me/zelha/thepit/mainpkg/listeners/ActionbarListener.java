@@ -1,53 +1,29 @@
 package me.zelha.thepit.mainpkg.listeners;
 
-import me.zelha.thepit.Main;
-import me.zelha.thepit.utils.ZelLogic;
+import me.zelha.thepit.events.PitDamageEvent;
+import me.zelha.thepit.events.PitKillEvent;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 public class ActionbarListener implements Listener {
 
-    private final ZelLogic zl = Main.getInstance().getZelLogic();
-
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onAttack(EntityDamageByEntityEvent e) {
-        Entity damagedEntity = e.getEntity();
-        Entity damagerEntity = e.getDamager();
-        Player damaged;
-        Player damager;
-
-        if (zl.spawnCheck(damagedEntity.getLocation()) || zl.spawnCheck(damagerEntity.getLocation())) return;
-        if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
-
-        if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player) {
-            damager = (Player) ((Arrow) damagerEntity).getShooter();
-        } else if (zl.playerCheck(damagerEntity)) {
-            damager = (Player) damagerEntity;
-        } else {
-            return;
-        }
+    public void onDamage(PitDamageEvent e) {
+        Player damaged = e.getDamaged();
+        Player damager = e.getDamager();
 
         String bar = "§7" + damaged.getName() + " ";
-
-        if (damaged.getHealth() - e.getFinalDamage() <= 0) {
-            damager.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(bar + "§a§lKILL!"));
-            return;
-        }
-
         StringBuilder barBuilder = new StringBuilder();
         StringBuilder barBuilder2 = new StringBuilder();
 
         int health = (int) Math.ceil(damaged.getHealth() / 2);
-        int healthAfterDmg = (int) Math.floor(Math.max(((damaged.getHealth() / 2D) - (e.getFinalDamage() / 2D)), 0));
+        int healthAfterDmg = (int) Math.floor(Math.max(((damaged.getHealth() / 2D) - (e.getDamage() / 2D)), 0));
         int maxHealth = (int) damaged.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 2;
 
         for (int i = 0; i < maxHealth; i++) barBuilder.append("❤");
@@ -65,5 +41,12 @@ public class ActionbarListener implements Listener {
         barBuilder.replace(healthAfterDmg, healthAfterDmg, "§c");
         barBuilder.replace(0, 0, "§4");
         damager.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(bar + barBuilder + barBuilder2));
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onKill(PitKillEvent e) {
+        e.getKiller().spigot().sendMessage(
+                ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§7" + e.getDead().getName() + " " + "§a§lKILL!")
+        );
     }
 }
