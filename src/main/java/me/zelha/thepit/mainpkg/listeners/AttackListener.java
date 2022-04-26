@@ -115,13 +115,11 @@ public class AttackListener implements Listener {
         Player p = (Player) e.getEntity();
 
         if (p.getHealth() - e.getFinalDamage() > 0) return;
-
-        e.setCancelled(true);
-
         if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) return;
         if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) return;
         if (e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE) return;
 
+        e.setCancelled(true);
         manager.callEvent(new PitDeathEvent(p, false));
 
         if (assistUtils.getLastDamager(p) == null) return;

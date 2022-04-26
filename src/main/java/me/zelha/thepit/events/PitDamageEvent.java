@@ -1,7 +1,5 @@
 package me.zelha.thepit.events;
 
-import me.zelha.thepit.Main;
-import me.zelha.thepit.utils.ZelLogic;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -18,7 +16,6 @@ import java.util.Map;
 public class PitDamageEvent extends Event implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
-    private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final Player damaged;
     private final Player damager;
     private final Map<EntityDamageEvent.DamageModifier, Double> modifiers;
