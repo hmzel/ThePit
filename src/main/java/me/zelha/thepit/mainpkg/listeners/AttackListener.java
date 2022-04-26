@@ -15,7 +15,6 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -25,6 +24,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.UUID;
 
+import static org.bukkit.event.EventPriority.HIGHEST;
 import static org.bukkit.event.EventPriority.LOWEST;
 
 public class AttackListener implements Listener {
@@ -42,7 +42,7 @@ public class AttackListener implements Listener {
         new CombatTimerRunnable(damager.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = HIGHEST, ignoreCancelled = true)
     public void onAttack(EntityDamageByEntityEvent e) {
         Entity damagedEntity = e.getEntity();
         Entity damagerEntity = e.getDamager();
@@ -107,7 +107,7 @@ public class AttackListener implements Listener {
         manager.callEvent(new PitKillEvent(damaged, damager, false));
     }
 
-    @EventHandler(priority = LOWEST)
+    @EventHandler(priority = HIGHEST, ignoreCancelled = true)
     public void onOtherDamage(EntityDamageEvent e) {
         if (!zl.playerCheck(e.getEntity())) return;
         if (e.getCause() == EntityDamageEvent.DamageCause.FALL) return;

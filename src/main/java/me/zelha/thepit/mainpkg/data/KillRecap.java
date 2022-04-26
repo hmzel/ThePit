@@ -1,10 +1,11 @@
 package me.zelha.thepit.mainpkg.data;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.utils.ZelLogic;
+import me.zelha.thepit.events.PitDamageEvent;
 import me.zelha.thepit.mainpkg.listeners.AssistListener;
 import me.zelha.thepit.mainpkg.listeners.KillListener;
 import me.zelha.thepit.upgrades.permanent.perks.SpammerPerk;
+import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -22,13 +23,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -90,27 +88,9 @@ public class KillRecap implements CommandExecutor, Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onAttack(EntityDamageByEntityEvent e) {
-        Entity damagedEntity = e.getEntity();
-        Entity damagerEntity = e.getDamager();
-        Player damaged;
-        Player damager;
-
-        if (zl.spawnCheck(damagedEntity.getLocation()) || zl.spawnCheck(damagerEntity.getLocation())) return;
-        if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
-        if (e.getCause() == EntityDamageEvent.DamageCause.FALL) return;
-        if (e.getFinalDamage() <= 0) return;
-
-        if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player && zl.playerCheck((Player) ((Arrow) damagerEntity).getShooter())) {
-            damager = (Player) ((Arrow) damagerEntity).getShooter();
-        } else if (zl.playerCheck(damagerEntity)) {
-            damager = (Player) damagerEntity;
-        } else {
-            return;
-        }
-
-        addDamageLog(damaged, new DamageLog(e, false));
-        addDamageLog(damager, new DamageLog(e, true));
+    public void onAttack(PitDamageEvent e) {
+        addDamageLog(e.getDamaged(), new DamageLog(e, false));
+        addDamageLog(e.getDamager(), new DamageLog(e, true));
     }
 
     @EventHandler(priority = EventPriority.HIGH)
