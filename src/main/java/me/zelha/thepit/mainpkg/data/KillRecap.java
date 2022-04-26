@@ -2,6 +2,7 @@ package me.zelha.thepit.mainpkg.data;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.events.PitDamageEvent;
+import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.listeners.AssistListener;
 import me.zelha.thepit.mainpkg.listeners.KillListener;
 import me.zelha.thepit.upgrades.permanent.perks.SpammerPerk;
@@ -122,72 +123,52 @@ public class KillRecap implements CommandExecutor, Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onDeath(EntityDamageEvent e) {
-        if (!zl.playerCheck(e.getEntity())) return;
-        if (((Player) e.getEntity()).getHealth() - e.getFinalDamage() > 0) return;
-
-        deathMethod((Player) e.getEntity(), false);
-    }
-
-    @EventHandler
-    public void onJoin(PlayerJoinEvent e) {
-        damageTrackerMap.put(e.getPlayer().getUniqueId(), new ArrayList<>());
-    }
-
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onLeave(PlayerQuitEvent e) {
-        if (Main.getInstance().getPlayerData(e.getPlayer()).getCombatLogged()) deathMethod(e.getPlayer(), true);
-
-        damageTrackerMap.remove(e.getPlayer().getUniqueId());
-    }
-
-    private void deathMethod(Player player, boolean disconnected) {
-        if (assistUtils.getLastDamager(player) == null) return;
-
-        Player killer = assistUtils.getLastDamager(player);
+    public void onKill(PitKillEvent e) {
+        Player dead = e.getDead();
+        Player killer = e.getKiller();
         ItemStack recapBook = new ItemStack(Material.WRITTEN_BOOK);
         BookMeta bookMeta = (BookMeta) recapBook.getItemMeta();
         List<BaseComponent[]> raw = new ArrayList<>();
 
-        bookMeta.setTitle(player.getName());
+        bookMeta.setTitle(dead.getName());
         bookMeta.setAuthor("13");
 
         raw.add(new ComponentBuilder("§c§lKILL RECAP\n").create());
         raw.add(new ComponentBuilder("§8" + DateTimeFormatter.ofPattern("MM/dd/yy h:mm a").format(LocalDateTime.now()) + "\n")
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§7Hypixel server time"))).create());
-        raw.add(playerComponent(player));
+        raw.add(playerComponent(dead));
         raw.add(new ComponentBuilder("\n").create());
         raw.add(new ComponentBuilder("Killer:\n").create());
         raw.add(playerComponent(killer));
         raw.add(new ComponentBuilder("§8for ").create());
-        raw.add(expComponent(player, killer));
-        raw.add(goldComponent(player, killer));
+        raw.add(expComponent(dead, killer));
+        raw.add(goldComponent(dead, killer));
         raw.add(new ComponentBuilder("\n").create());
 
-        Map<UUID, Double> sortedAssistsMap = assistUtils.getAssistMap(player).entrySet().stream()
+        Map<UUID, Double> sortedAssistsMap = assistUtils.getAssistMap(dead).entrySet().stream()
                 .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
         boolean addAssistTitle = true;
 
         for (UUID uuid : sortedAssistsMap.keySet()) {
-            if (Bukkit.getPlayer(uuid) == null || uuid.equals(player.getUniqueId()) || uuid.equals(killer.getUniqueId())) {
+            if (Bukkit.getPlayer(uuid) == null || uuid.equals(dead.getUniqueId()) || uuid.equals(killer.getUniqueId())) {
                 continue;
             }
 
             if (addAssistTitle) raw.add(new ComponentBuilder("Assists:\n").create());
 
-            raw.add(new ComponentBuilder((int) ((Double.parseDouble(BigDecimal.valueOf(sortedAssistsMap.get(uuid) / assistUtils.getTotalDamage(player)).setScale(2, RoundingMode.HALF_EVEN).toString())) * 100) + "% ").create());
+            raw.add(new ComponentBuilder((int) ((Double.parseDouble(BigDecimal.valueOf(sortedAssistsMap.get(uuid) / assistUtils.getTotalDamage(dead)).setScale(2, RoundingMode.HALF_EVEN).toString())) * 100) + "% ").create());
             raw.add(playerComponent(Bukkit.getPlayer(uuid)));
             raw.add(new ComponentBuilder("§8for ").create());
-            raw.add(expComponent(player, Bukkit.getPlayer(uuid)));
-            raw.add(goldComponent(player, Bukkit.getPlayer(uuid)));
+            raw.add(expComponent(dead, Bukkit.getPlayer(uuid)));
+            raw.add(goldComponent(dead, Bukkit.getPlayer(uuid)));
 
             addAssistTitle = false;
         }
 
         raw.add(new ComponentBuilder("Damage Log:\n").create());
 
-        for (DamageLog damageLog : damageTrackerMap.get(player.getUniqueId())) {
+        for (DamageLog damageLog : damageTrackerMap.get(dead.getUniqueId())) {
             int timeBeforeDeath = (MinecraftServer.currentTick - damageLog.time()) / 20;
             NBTTagCompound nbt = (damageLog.item() != null && CraftItemStack.asNMSCopy(damageLog.item()).hasTag()) ? CraftItemStack.asNMSCopy(damageLog.item()).getTag() : new NBTTagCompound();
 
@@ -229,7 +210,7 @@ public class KillRecap implements CommandExecutor, Listener {
             raw.add(new ComponentBuilder("\n").create());
         }
 
-        if (disconnected) {
+        if (e.causedByDisconnect()) {
             raw.add(new ComponentBuilder("§80s §cDISCONNECTED").create());
         } else {
             raw.add(new ComponentBuilder("§80s §cDEAD").create());
@@ -267,8 +248,18 @@ public class KillRecap implements CommandExecutor, Listener {
         for (BaseComponent[] page : pages) bookMeta.spigot().addPage(page);
 
         recapBook.setItemMeta(bookMeta);
-        bookMap.put(player.getUniqueId(), recapBook);
-        damageTrackerMap.put(player.getUniqueId(), new ArrayList<>());
+        bookMap.put(dead.getUniqueId(), recapBook);
+        damageTrackerMap.put(dead.getUniqueId(), new ArrayList<>());
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e) {
+        damageTrackerMap.put(e.getPlayer().getUniqueId(), new ArrayList<>());
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onLeave(PlayerQuitEvent e) {
+        damageTrackerMap.remove(e.getPlayer().getUniqueId());
     }
 
     private BaseComponent[] playerComponent(Player player) {
