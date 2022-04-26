@@ -1,14 +1,16 @@
 package me.zelha.thepit.upgrades.permanent.perks;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.Perks;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+
+import javax.annotation.Nullable;
 
 import static org.bukkit.Material.PLAYER_HEAD;
 
@@ -28,7 +30,7 @@ public class Perk {
     public void onAttacked(Player damager, Player damaged) {
     }
 
-    public void onAttack(Player damager, Player damaged, Entity damagerEntity) {
+    public void onAttack(Player damager, Player damaged, @Nullable Arrow arrow) {
     }
 
     public void onKill(Player killer, Player dead) {

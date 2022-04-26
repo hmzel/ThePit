@@ -3,7 +3,6 @@ package me.zelha.thepit.upgrades.permanent.perks;
 import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -15,8 +14,8 @@ public class VampirePerk extends Perk {
     }
 
     @Override
-    public void onAttack(Player damager, Player damaged, Entity damagerEntity) {
-        if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).isCritical()){
+    public void onAttack(Player damager, Player damaged, Arrow arrow) {
+        if (arrow != null && arrow.isCritical()){
             damager.setHealth(Math.min(damager.getHealth() + 3, damager.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
         } else{
             damager.setHealth(Math.min(damager.getHealth() + 1, damager.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
