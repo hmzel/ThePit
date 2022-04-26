@@ -1,18 +1,16 @@
 package me.zelha.thepit.upgrades.permanent;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.utils.ZelLogic;
+import me.zelha.thepit.events.PitDamageEvent;
+import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.perks.BonkPerk;
+import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.Perks;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
@@ -28,25 +26,9 @@ public class PerkListenersAndUtils implements Listener {
     private final ZelLogic zl = Main.getInstance().getZelLogic();
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onAttackAndKill(EntityDamageByEntityEvent e) {
-        Entity damagedEntity = e.getEntity();
-        Entity damagerEntity = e.getDamager();
-        Player damaged;
-        Player damager;
-
-        if (e.getCause() == DamageCause.FALL) return;
-        if (zl.spawnCheck(damagedEntity.getLocation()) || zl.spawnCheck(damagerEntity.getLocation())) return;
-        if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
-
-        if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player) {
-            damager = (Player) ((Arrow) damagerEntity).getShooter();
-        } else if (zl.playerCheck(damagerEntity)) {
-            damager = (Player) damagerEntity;
-        } else {
-            return;
-        }
-
-        if (damaged.equals(damager)) return;
+    public void onDamage(PitDamageEvent e) {
+        Player damaged = e.getDamaged();
+        Player damager = e.getDamager();
 
         if (((BonkPerk) BONK.getMethods()).canBonk(damaged, damager)) {
             BONK.getMethods().onAttacked(damager, damaged);
@@ -55,36 +37,38 @@ public class PerkListenersAndUtils implements Listener {
             return;
         }
 
-        PlayerData damagerData = Main.getInstance().getPlayerData(damager);
-
         for (Perks perk : Main.getInstance().getPlayerData(damaged).getEquippedPerks()) {
             if (perk.getMethods() != null && perk != BONK) perk.getMethods().onAttacked(damager, damaged);
         }
 
-        for (Perks perk : damagerData.getEquippedPerks()) {
-            if (perk.getMethods() != null) perk.getMethods().onAttack(damager, damaged, damagerEntity);
+        for (Perks perk : Main.getInstance().getPlayerData(damager).getEquippedPerks()) {
+            if (perk.getMethods() != null) perk.getMethods().onAttack(damager, damaged, e.getArrow());
+        }
+    }
+
+    @EventHandler
+    public void onKill(PitKillEvent e) {
+        Player killer = e.getKiller();
+        PlayerData killerData = Main.getInstance().getPlayerData(killer);
+
+        for (Perks perk : killerData.getEquippedPerks()) {
+            if (perk.getMethods() != null) perk.getMethods().onKill(killer, e.getDead());
         }
 
-        if (damaged.getHealth() - e.getFinalDamage() > 0) return;
-
-        for (Perks perk : damagerData.getEquippedPerks()) {
-            if (perk.getMethods() != null) perk.getMethods().onKill(damager, damaged);
-        }
-
-        if (damagerData.hasPerkEquipped(GOLDEN_HEADS)) return;
-        if (damagerData.hasPerkEquipped(VAMPIRE)) return;
-        if (damagerData.hasPerkEquipped(RAMBO)) return;
-        if (damagerData.hasPerkEquipped(OLYMPUS)) return;
+        if (killerData.hasPerkEquipped(GOLDEN_HEADS)) return;
+        if (killerData.hasPerkEquipped(VAMPIRE)) return;
+        if (killerData.hasPerkEquipped(RAMBO)) return;
+        if (killerData.hasPerkEquipped(OLYMPUS)) return;
 
         int count = 0;
 
-        for (ItemStack invItem : damager.getInventory().all(GOLDEN_APPLE).values()) {
+        for (ItemStack invItem : killer.getInventory().all(GOLDEN_APPLE).values()) {
             if (zl.itemCheck(invItem) && invItem.isSimilar(new ItemStack(GOLDEN_APPLE))) {
                 count += invItem.getAmount();
             }
         }
 
-        if (count < 2) damager.getInventory().addItem(new ItemStack(GOLDEN_APPLE, 1));
+        if (count < 2) killer.getInventory().addItem(new ItemStack(GOLDEN_APPLE, 1));
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
