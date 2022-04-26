@@ -139,7 +139,7 @@ public class GeneralListener implements Listener {
         if (e.getBlock().getType() == LAVA || e.getBlock().getType() == WATER) e.setCancelled(true);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onFire(EntityDamageEvent e) {
         if (!zl.playerCheck(e.getEntity())) return;
 
