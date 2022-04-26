@@ -21,10 +21,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerPickupArrowEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.BoundingBox;
@@ -183,6 +180,17 @@ public class GeneralListener implements Listener {
                 return;
             }
         }
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e) {
+        if (Main.getInstance().getPlayerData(e.getPlayer()).getCombatLogged()) {
+            e.getPlayer().sendMessage("§c§lALERT! §r§cInventory/bounty reset for quitting mid-fight!");
+            e.getPlayer().sendMessage("§e§lWARNING! §r§eThis action is logged for moderation.");
+            return;
+        }
+
+        Main.getInstance().getPlayerData(e.getPlayer()).setCombatLogged(false);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
