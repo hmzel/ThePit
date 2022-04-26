@@ -24,6 +24,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -174,6 +175,11 @@ public class KillListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         new BountyRunnable(e.getPlayer()).runTaskTimer(Main.getInstance(), 0, 1);
+    }
+
+    @EventHandler
+    public void onLeave(PlayerQuitEvent e) {
+        if (runTracker.hasID(e.getPlayer().getUniqueId())) runTracker.stop(e.getPlayer().getUniqueId());
     }
 
     private void multiKillTimer(Player player) {
