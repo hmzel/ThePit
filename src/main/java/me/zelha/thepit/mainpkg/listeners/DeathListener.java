@@ -122,7 +122,7 @@ public class DeathListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerDeath(PitDeathEvent e) {
         Player dead = e.getDead();
         PlayerInventory inv = dead.getInventory();

@@ -129,7 +129,7 @@ public class AssistListener implements Listener {
         return gold;
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onAttack(PitDamageEvent e) {
         Player damaged = e.getDamaged();
         Player damager = e.getDamager();
@@ -140,7 +140,7 @@ public class AssistListener implements Listener {
         assistMap.get(damaged.getUniqueId()).add(Pair.of(damager.getUniqueId(), damage));
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDeath(PitKillEvent e) {
         Player dead = e.getDead();
         Player killer = e.getKiller();

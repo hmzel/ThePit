@@ -98,7 +98,7 @@ public class KillListener implements Listener {
         return Math.min(gold, 2500) + deadData.getBounty();
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerDeath(PitKillEvent e) {
         Player dead = e.getDead();
         Player killer = e.getKiller();
