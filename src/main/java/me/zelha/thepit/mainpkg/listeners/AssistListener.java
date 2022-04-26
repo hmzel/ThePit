@@ -1,6 +1,8 @@
 package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
+import me.zelha.thepit.events.PitDamageEvent;
+import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.Passives;
@@ -14,20 +16,14 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.tuple.Pair;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 
 public class AssistListener implements Listener {
@@ -134,42 +130,51 @@ public class AssistListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onAttack(EntityDamageByEntityEvent e) {
-        Entity damagedEntity = e.getEntity();
-        Entity damagerEntity = e.getDamager();
-        Player damaged;
-        Player damager;
+    public void onAttack(PitDamageEvent e) {
+        Player damaged = e.getDamaged();
+        Player damager = e.getDamager();
         double damage;
 
-        if (zl.spawnCheck(damagedEntity.getLocation()) || zl.spawnCheck(damagerEntity.getLocation())) return;
-        if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
-        if (e.getCause() == EntityDamageEvent.DamageCause.FALL) return;
-
-        if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player && zl.playerCheck((Player) ((Arrow) damagerEntity).getShooter())) {
-            damager = (Player) ((Arrow) damagerEntity).getShooter();
-        } else if (zl.playerCheck(damagerEntity)) {
-            damager = (Player) damagerEntity;
-        } else {
-            return;
-        }
-
-        if (damaged.getUniqueId().equals(damager.getUniqueId())) return;
-
-        if (damaged.getHealth() - e.getFinalDamage() > 0) damage = e.getFinalDamage(); else damage = damaged.getHealth();
+        if (damaged.getHealth() - e.getDamage() > 0) damage = e.getDamage(); else damage = damaged.getHealth();
 
         assistMap.get(damaged.getUniqueId()).add(Pair.of(damager.getUniqueId(), damage));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onDeath(EntityDamageEvent e) {
-        Player damaged;
+    public void onDeath(PitKillEvent e) {
+        Player dead = e.getDead();
+        Player killer = e.getKiller();
 
-        if (zl.playerCheck(e.getEntity())) damaged = (Player) e.getEntity(); else return;
-        if (e.getCause() == EntityDamageEvent.DamageCause.FALL) return;
-        if (damaged.getHealth() - e.getFinalDamage() > 0) return;
+        for (UUID uuid : getAssistMap(dead).keySet()) {
+            Player p = Bukkit.getPlayer(uuid);
 
-        deathMethod(damaged);
+            if (p == null || p.getUniqueId().equals(killer.getUniqueId())) continue;
+
+            PlayerData pData = Main.getInstance().getPlayerData(p);
+            double gold = calculateAssistGold(dead, p);
+            int exp = calculateAssistEXP(dead, p);
+
+            pData.setGold(pData.getGold() + gold);
+            pData.setExp(pData.getExp() - exp);
+            p.spigot().sendMessage(
+                    new ComponentBuilder("§a§lASSIST! §7" + (int) Math.round((getAssistMap(dead).get(uuid) / getTotalDamage(dead)) * 100)
+                    + "% on " + zl.getColorBracketAndLevel(dead) + " §7" + dead.getName() + " §b+" + exp + "XP §6+"
+                    + zl.getFancyGoldString(gold) + "g")
+                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§eClick to view kill recap!")))
+                    .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/killrecap " + dead.getUniqueId()))
+                    .create()
+            );
+            p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1F, 1.8F);
+        }
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                assistMap.put(dead.getUniqueId(), new ArrayList<>());
+            }
+        }.runTaskLater(Main.getInstance(), 1);
     }
+
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
@@ -178,41 +183,6 @@ public class AssistListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onLeave(PlayerQuitEvent e) {
-        if (Main.getInstance().getPlayerData(e.getPlayer()).getCombatLogged()) deathMethod(e.getPlayer());
-
         assistMap.remove(e.getPlayer().getUniqueId());
-    }
-
-    private void deathMethod(Player player) {
-        if (getLastDamager(player) == null) return;
-
-        Player killer = getLastDamager(player);
-
-        for (UUID uuid : getAssistMap(player).keySet()) {
-            Player p = Bukkit.getPlayer(uuid);
-
-            if (p == null || p.getUniqueId().equals(killer.getUniqueId())) continue;
-
-            PlayerData pData = Main.getInstance().getPlayerData(p);
-            double gold = calculateAssistGold(player, p);
-            int exp = calculateAssistEXP(player, p);
-
-            pData.setGold(pData.getGold() + gold);
-            pData.setExp(pData.getExp() - exp);
-            p.spigot().sendMessage(new ComponentBuilder("§a§lASSIST! §7" + (int) (Double.parseDouble(BigDecimal.valueOf(getAssistMap(player).get(uuid) / getTotalDamage(player)).setScale(2, RoundingMode.HALF_EVEN).toString()) * 100)
-                    + "% on " + zl.getColorBracketAndLevel(player) + " §7" + player.getName() + " §b+" + exp + "XP §6+"
-                    + zl.getFancyGoldString(gold) + "g")
-                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§eClick to view kill recap!")))
-                    .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/killrecap " + player.getUniqueId()))
-                    .create());
-            p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1F, 1.8F);
-        }
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                assistMap.put(player.getUniqueId(), new ArrayList<>());
-            }
-        }.runTaskLater(Main.getInstance(), 1);
     }
 }
