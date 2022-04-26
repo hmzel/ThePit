@@ -1,14 +1,11 @@
 package me.zelha.thepit.mainpkg.data;
 
 import me.zelha.thepit.Main;
+import me.zelha.thepit.events.PitDamageEvent;
 import me.zelha.thepit.mainpkg.listeners.ArrowListener;
 import me.zelha.thepit.utils.ZelLogic;
 import net.minecraft.server.MinecraftServer;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class DamageLog {
@@ -26,26 +23,19 @@ public class DamageLog {
     private final String pitDamageType;
     private final boolean environmental;
 
-    public DamageLog(EntityDamageByEntityEvent event, boolean isAttacker) {
-        Entity damagerEntity = event.getDamager();
-        Player damaged = (Player) event.getEntity();
-        Player damager;
-
-        if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player && zl.playerCheck((Player) ((Arrow) damagerEntity).getShooter())) {
-            damager = (Player) ((Arrow) damagerEntity).getShooter();
-        } else {
-            damager = (Player) damagerEntity;
-        }
+    public DamageLog(PitDamageEvent event, boolean isAttacker) {
+        Player damaged = event.getDamaged();
+        Player damager = event.getDamager();
 
         this.hasPlayer = true;
 
-        if (damagerEntity instanceof Arrow) {
-            this.item = ArrowListener.getArrowItem((Arrow) damagerEntity);
+        if (event.getArrow() != null) {
+            this.item = ArrowListener.getArrowItem(event.getArrow());
         } else {
             this.item = damager.getInventory().getItemInMainHand();
         }
 
-        this.damage = event.getFinalDamage();
+        this.damage = event.getDamage();
         this.time = MinecraftServer.currentTick;
         this.subName = damaged.getName();
 
@@ -57,10 +47,10 @@ public class DamageLog {
             this.prestigeToShow = zl.getColorBracketAndLevel(damaged);
         }
 
-        this.damagedHealth = damaged.getHealth() - event.getFinalDamage();
+        this.damagedHealth = damaged.getHealth() - event.getDamage();
         this.isAttacker = isAttacker;
 
-        if (zl.itemCheck(item) && event.getCause() == EntityDamageEvent.DamageCause.PROJECTILE) {
+        if (event.getArrow() != null) {
             this.pitDamageType = "§6Arrow";
         } else if (zl.itemCheck(item)) {
             this.pitDamageType = "§cMelee";
