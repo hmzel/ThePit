@@ -145,8 +145,6 @@ public class DeathListener implements Listener {
             }
         }
 
-        teleportToSpawnMethod(dead);
-
         switch (rng.nextInt(3)) {
             case 0:
                 if (!zl.itemCheck(inv.getChestplate())) inv.setChestplate(zl.itemBuilder(IRON_CHESTPLATE, 1));
@@ -179,6 +177,13 @@ public class DeathListener implements Listener {
         dead.sendTitle("§cYOU DIED", "", 0, 40, 20);
         dead.playSound(dead.getLocation(), Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1.8F);
         zl.pitReset(dead);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                teleportToSpawnMethod(dead);
+            }
+        }.runTaskLater(Main.getInstance(), 1);
     }
 }
 
