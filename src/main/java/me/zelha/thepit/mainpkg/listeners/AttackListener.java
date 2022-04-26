@@ -97,14 +97,14 @@ public class AttackListener implements Listener {
 
         e.setDamage(damageEvent.getDamage());
 
-        if (damaged.getHealth() - e.getFinalDamage() <= 0) {
-            e.setCancelled(true);
-            manager.callEvent(new PitDeathEvent(damaged, false));
+        if (damaged.getHealth() - e.getFinalDamage() > 0) return;
 
-            if (damaged.getUniqueId().equals(damager.getUniqueId())) return;
+        e.setCancelled(true);
+        manager.callEvent(new PitDeathEvent(damaged, false));
 
-            manager.callEvent(new PitKillEvent(damaged, damager, false));
-        }
+        if (damaged.getUniqueId().equals(damager.getUniqueId())) return;
+
+        manager.callEvent(new PitKillEvent(damaged, damager, false));
     }
 
     @EventHandler(priority = LOWEST)
@@ -117,11 +117,13 @@ public class AttackListener implements Listener {
         if (p.getHealth() - e.getFinalDamage() > 0) return;
 
         e.setCancelled(true);
-        manager.callEvent(new PitDeathEvent(p, false));
 
         if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) return;
         if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) return;
         if (e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE) return;
+
+        manager.callEvent(new PitDeathEvent(p, false));
+
         if (assistUtils.getLastDamager(p) == null) return;
 
         manager.callEvent(new PitKillEvent(p, assistUtils.getLastDamager(p), false));
