@@ -1,5 +1,6 @@
 package me.zelha.thepit.zelenums;
 
+import me.zelha.thepit.upgrades.permanent.megastreaks.Megastreak;
 import org.bukkit.Material;
 
 import java.util.Arrays;
@@ -145,10 +146,10 @@ public enum Megastreaks {
     private final int prestige;
     private final int level;
     private final int cost;
-    private final Megastreaks methods;
+    private final Megastreak methods;
     private final String[] lore;
 
-    Megastreaks(StreakBundles bundle, String displayName, String chatName, String name, Material material, int trigger, int prestige, int level, int cost, Megastreaks methods, String... lore) {
+    Megastreaks(StreakBundles bundle, String displayName, String chatName, String name, Material material, int trigger, int prestige, int level, int cost, Megastreak methods, String... lore) {
         this.bundle = bundle;
         this.displayName = displayName;
         this.chatName = chatName;
@@ -205,7 +206,7 @@ public enum Megastreaks {
         return cost;
     }
 
-    public Megastreaks getMethods() {
+    public Megastreak getMethods() {
         return methods;
     }
 
