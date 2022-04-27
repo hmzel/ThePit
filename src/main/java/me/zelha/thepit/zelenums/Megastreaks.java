@@ -9,7 +9,7 @@ import static org.bukkit.Material.*;
 
 public enum Megastreaks {
     OVERDRIVE(null, "§c§lOVRDRV", "§c§lOVERDRIVE", "Overdrive", BLAZE_POWDER,
-            50, 0, 0, 0,
+            50, 0, 0, 0, null,
             "§7Triggers on: §c50 kills",
             " ",
             "§7On trigger:",
@@ -25,7 +25,7 @@ public enum Megastreaks {
             "§e■ §7Gain §b4,000 XP§7."
     ),
     BEASTMODE(StreakBundles.BEASTMODE, "§a§lBEAST", "§a§lBEASTMODE", "Beastmode", DIAMOND_HELMET,
-            50, 3, 30, 10000,
+            50, 3, 30, 10000, null,
             "§7Triggers on: §c50 kills",
             " ",
             "§7On trigger:",
@@ -41,7 +41,7 @@ public enum Megastreaks {
             "§e■ §7Keep the §bDiamond Helmet§7."
     ),
     HERMIT(StreakBundles.HERMIT, "§9§lHERMIT", "§9§lHERMIT", "Hermit", RED_BED,
-            50, 4, 50, 20000,
+            50, 4, 50, 20000, null,
             "§7Triggers on: §c50 kills",
             " ",
             "§7From 0 kills:",
@@ -61,7 +61,7 @@ public enum Megastreaks {
             "§7kill over 50."
     ),
     HIGHLANDER(StreakBundles.HIGHLANDER, "§6§lHIGH", "§6§lHIGHLANDER", "Highlander", GOLDEN_BOOTS,
-            50, 7, 60, 30000,
+            50, 7, 60, 30000, null,
             "§7Triggers on: §c50 kills",
             " ",
             "§7On trigger:",
@@ -79,7 +79,7 @@ public enum Megastreaks {
             "§e■ §7Earn your own bounty aswell."
     ),
     MAGNUM_OPUS(StreakBundles.MAGNUM_OPUS, "", "§e§lMAGNUM OPUS", "Magnum Opus", NETHER_STAR,
-            50, 10, 70, 40000,
+            50, 10, 70, 40000, null,
             "§7Triggers on: §c50 kills",
             " ",
             "§7On trigger:",
@@ -95,7 +95,7 @@ public enum Megastreaks {
             "§7in the §dMystic Well§7."
     ),
     TO_THE_MOON(StreakBundles.TO_THE_MOON, "§b§lMOON", "§a§lTO THE MOON", "To the Moon", END_STONE,
-            100, 15, 80, 50000,
+            100, 15, 80, 50000, null,
             "§7Triggers on: §c100 kills",
             " ",
             "§7On trigger:",
@@ -117,7 +117,7 @@ public enum Megastreaks {
             "§7above 100, up to §b1x§7."
     ),
     UBERSTREAK(StreakBundles.UBERSTREAK, "§d§lUBER", "§d§lUBERSTREAK", "Uberstreak", GOLDEN_SWORD,
-            100, 20, 90, 50000,
+            100, 20, 90, 50000, null,
             "§7Triggers on: §c100 kills",
             " ",
             "§7On trigger:",
@@ -145,9 +145,10 @@ public enum Megastreaks {
     private final int prestige;
     private final int level;
     private final int cost;
+    private final Megastreaks methods;
     private final String[] lore;
 
-    Megastreaks(StreakBundles bundle, String displayName, String chatName, String name, Material material, int trigger, int prestige, int level, int cost, String... lore) {
+    Megastreaks(StreakBundles bundle, String displayName, String chatName, String name, Material material, int trigger, int prestige, int level, int cost, Megastreaks methods, String... lore) {
         this.bundle = bundle;
         this.displayName = displayName;
         this.chatName = chatName;
@@ -157,6 +158,7 @@ public enum Megastreaks {
         this.prestige = prestige;
         this.level = level;
         this.cost = cost;
+        this.methods = methods;
         this.lore = lore;
     }
 
@@ -201,6 +203,10 @@ public enum Megastreaks {
 
     public int getCost() {
         return cost;
+    }
+
+    public Megastreaks getMethods() {
+        return methods;
     }
 
     public List<String> getLore() {
