@@ -8,7 +8,6 @@ import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.utils.RunTracker;
 import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.Passives;
-import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
@@ -63,10 +62,6 @@ public class AttackListener implements Listener {
 
         PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
         PlayerData damagerData = Main.getInstance().getPlayerData(damager);
-
-        for (Perks perk : damagerData.getEquippedPerks()) {
-            if (perk.getMethods() != null) boost += perk.getMethods().getDamageModifier(damager, damaged);
-        }
 
         if (damagedData.getPrestige() == 0) boost -= 0.15;
         if (damagedData.getPassiveTier(Passives.DAMAGE_REDUCTION) > 0) boost -= (damagedData.getPassiveTier(Passives.DAMAGE_REDUCTION) / 100.0);
