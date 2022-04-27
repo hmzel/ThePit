@@ -15,7 +15,7 @@ import me.zelha.thepit.mainpkg.listeners.*;
 import me.zelha.thepit.mainpkg.runnables.ParticipationRunnable;
 import me.zelha.thepit.upgrades.nonpermanent.GoldenPickaxeListener;
 import me.zelha.thepit.upgrades.nonpermanent.ItemsVillagerListener;
-import me.zelha.thepit.upgrades.permanent.PerkListenersAndUtils;
+import me.zelha.thepit.upgrades.permanent.PerkListener;
 import me.zelha.thepit.upgrades.permanent.UpgradesVillagerListener;
 import me.zelha.thepit.utils.ConfirmGUIHandler;
 import me.zelha.thepit.utils.RunTracker;
@@ -67,7 +67,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(scoreboardListener, this);
         getServer().getPluginManager().registerEvents(killListener, this);
         getServer().getPluginManager().registerEvents(deathListener, this);
-        getServer().getPluginManager().registerEvents(new PerkListenersAndUtils(), this);
+        getServer().getPluginManager().registerEvents(new PerkListener(), this);
         getServer().getPluginManager().registerEvents(new GeneralListener(), this);
         getServer().getPluginManager().registerEvents(attackListener, this);
         getServer().getPluginManager().registerEvents(new SpawnListener(), this);

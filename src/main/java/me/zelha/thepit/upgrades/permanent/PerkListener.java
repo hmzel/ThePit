@@ -21,7 +21,7 @@ import static org.bukkit.Material.GOLDEN_APPLE;
 
 //trickle down is handled in GoldIngotListener because thats just way easier
 //all resource-related stuff is handled in KillListener
-public class PerkListenersAndUtils implements Listener {
+public class PerkListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
 
