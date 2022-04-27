@@ -32,6 +32,7 @@ public class PlayerData {
     private boolean hideTimer;
     private int multikill;
     private Megastreaks megastreak;
+    private boolean megaActive;
     private boolean combatLogged;
 
     public PlayerData(Document document) {
@@ -46,6 +47,7 @@ public class PlayerData {
         hideTimer = true;
         multikill = 0;
         megastreak = Megastreaks.findByEnumName(document.getString("megastreak"));
+        megaActive = false;
         combatLogged = document.getBoolean("combat_logged");
 
         for (String slot : slots) {
@@ -171,7 +173,11 @@ public class PlayerData {
         return ministreakSlots.values().toArray(new Ministreaks[0]);
     }
 
-    public boolean getCombatLogged() {
+    public boolean isMegaActive() {
+        return megaActive;
+    }
+
+    public boolean hasCombatLogged() {
         return combatLogged;
     }
 
@@ -244,6 +250,10 @@ public class PlayerData {
 
     public void setMinistreakUnlockStatus(Ministreaks mini, boolean bool) {
         ministreakUnlocks.put(mini, bool);
+    }
+
+    public void setMegaActive(boolean bool) {
+        this.megaActive = bool;
     }
 
     public void setCombatLogged(boolean bool) {

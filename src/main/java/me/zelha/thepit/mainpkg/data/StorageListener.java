@@ -104,7 +104,7 @@ public class StorageListener implements Listener {
         pDoc.put("perk_unlocks", unlockedPerksEmbed);
         pDoc.put("megastreak_unlocks", unlockedMegastreaksEmbed);
         pDoc.put("ministreak_unlocks", unlockedMinistreaksEmbed);
-        pDoc.put("combat_logged", pData.getCombatLogged());
+        pDoc.put("combat_logged", pData.hasCombatLogged());
 
         pDataCol.replaceOne(new Document("uuid", uuid), pDoc);
     }

@@ -184,7 +184,7 @@ public class GeneralListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        if (Main.getInstance().getPlayerData(e.getPlayer()).getCombatLogged()) {
+        if (Main.getInstance().getPlayerData(e.getPlayer()).hasCombatLogged()) {
             e.getPlayer().sendMessage("§c§lALERT! §r§cInventory/bounty reset for quitting mid-fight!");
             e.getPlayer().sendMessage("§e§lWARNING! §r§eThis action is logged for moderation.");
             return;

@@ -239,9 +239,11 @@ public class ScoreboardListener implements Listener {
             int level = pData.getLevel();
             Team team;
             String suffix = "";
+            String prefix = zl.getColorBracketAndLevel(p) + " ";
             StringBuilder sort = new StringBuilder();
 
             if (pData.getBounty() != 0) suffix += " §6§l" + pData.getBounty() + "g";
+            if (pData.isMegaActive()) prefix = pData.getMegastreak().getDisplayName();
 
             while (level >= 100) {
                 if (!sort.toString().contains("a")) sort.append("a");
@@ -275,7 +277,7 @@ public class ScoreboardListener implements Listener {
                 team = teamMap.get(uuid);
             }
 
-            team.setPrefix(zl.getColorBracketAndLevel(p) + " ");
+            team.setPrefix(prefix);
             team.setSuffix(suffix);
             team.addEntry(p.getName());
             team.setColor(ChatColor.GRAY);

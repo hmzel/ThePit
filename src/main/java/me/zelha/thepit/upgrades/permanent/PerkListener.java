@@ -25,30 +25,6 @@ public class PerkListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
 
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onDamage(PitDamageEvent e) {
-        Player damaged = e.getDamaged();
-        Player damager = e.getDamager();
-
-        if (((BonkPerk) BONK.getMethods()).canBonk(damaged, damager)) {
-            BONK.getMethods().onAttacked(damager, damaged);
-            e.setDamage(0);
-            e.setCancelled(true);
-            return;
-        }
-
-        for (Perks perk : Main.getInstance().getPlayerData(damaged).getEquippedPerks()) {
-            if (perk.getMethods() != null && perk != BONK) perk.getMethods().onAttacked(damager, damaged);
-        }
-
-        for (Perks perk : Main.getInstance().getPlayerData(damager).getEquippedPerks()) {
-            if (perk.getMethods() != null) {
-                perk.getMethods().onAttack(damager, damaged, e.getArrow());
-                e.setDamage(e.getDamage() + perk.getMethods().getDamageModifier(damager, damaged));
-            }
-        }
-    }
-
     @EventHandler
     public void onKill(PitKillEvent e) {
         Player killer = e.getKiller();
@@ -72,6 +48,30 @@ public class PerkListener implements Listener {
         }
 
         if (count < 2) killer.getInventory().addItem(new ItemStack(GOLDEN_APPLE, 1));
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onDamage(PitDamageEvent e) {
+        Player damaged = e.getDamaged();
+        Player damager = e.getDamager();
+
+        if (((BonkPerk) BONK.getMethods()).canBonk(damaged, damager)) {
+            BONK.getMethods().onAttacked(damager, damaged);
+            e.setDamage(0);
+            e.setCancelled(true);
+            return;
+        }
+
+        for (Perks perk : Main.getInstance().getPlayerData(damaged).getEquippedPerks()) {
+            if (perk.getMethods() != null && perk != BONK) perk.getMethods().onAttacked(damager, damaged);
+        }
+
+        for (Perks perk : Main.getInstance().getPlayerData(damager).getEquippedPerks()) {
+            if (perk.getMethods() != null) {
+                perk.getMethods().onAttack(damager, damaged, e.getArrow());
+                e.setDamage(e.getDamage() + perk.getMethods().getDamageModifier(damager, damaged));
+            }
+        }
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
