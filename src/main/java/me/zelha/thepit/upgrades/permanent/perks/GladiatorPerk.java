@@ -1,7 +1,6 @@
 package me.zelha.thepit.upgrades.permanent.perks;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -10,7 +9,6 @@ import static me.zelha.thepit.zelenums.Perks.GLADIATOR;
 public class GladiatorPerk extends Perk {
 
     public GladiatorPerk() {
-        super(Perks.GLADIATOR);
     }
 
     @Override

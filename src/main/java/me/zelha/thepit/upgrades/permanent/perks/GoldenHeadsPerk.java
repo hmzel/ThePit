@@ -2,7 +2,6 @@ package me.zelha.thepit.upgrades.permanent.perks;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.mainpkg.data.PlayerData;
-import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,7 +17,10 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 import static me.zelha.thepit.zelenums.Perks.*;
 import static org.bukkit.Material.AIR;
@@ -35,7 +37,6 @@ public class GoldenHeadsPerk extends Perk implements Listener {
     ));
 
     public GoldenHeadsPerk() {
-        super(Perks.GOLDEN_HEADS);
         Main.getInstance().getServer().getPluginManager().registerEvents(this, Main.getInstance());
     }
 

@@ -172,16 +172,16 @@ public enum Perks {
     private final int cost;
     private final int level;
     private final int prestige;
-    private final Perk perk;
+    private final Perk methods;
     private final String[] lore;
 
-    Perks(String name, Material material, int cost, int level, int prestige, Perk perk, String... lore) {
+    Perks(String name, Material material, int cost, int level, int prestige, Perk methods, String... lore) {
         this.name = name;
         this.material = material;
         this.cost = cost;
         this.level = level;
         this.prestige = prestige;
-        this.perk = perk;
+        this.methods = methods;
         this.lore = lore;
     }
 
@@ -224,7 +224,7 @@ public enum Perks {
     }
 
     public Perk getMethods() {
-        return perk;
+        return methods;
     }
 }
 

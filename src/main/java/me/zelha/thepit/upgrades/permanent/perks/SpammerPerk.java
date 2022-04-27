@@ -1,7 +1,6 @@
 package me.zelha.thepit.upgrades.permanent.perks;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,7 +21,6 @@ public class SpammerPerk extends Perk implements Listener {
     private final Map<UUID, UUID> spammerShotIdentifier = new HashMap<>();
 
     public SpammerPerk() {
-        super(Perks.SPAMMER);
         Main.getInstance().getServer().getPluginManager().registerEvents(this, Main.getInstance());
     }
 

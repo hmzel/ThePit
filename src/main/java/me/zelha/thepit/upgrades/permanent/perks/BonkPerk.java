@@ -24,7 +24,6 @@ public class BonkPerk extends Perk implements Listener {
     private final Map<UUID, Set<UUID>> bonkMap = new HashMap<>();
 
     public BonkPerk() {
-        super(BONK);
         Main.getInstance().getServer().getPluginManager().registerEvents(this, Main.getInstance());
     }
 

@@ -37,7 +37,6 @@ public class LavaBucketPerk extends Perk implements Listener {
     private final ItemStack emptyBucketItem = zl.itemBuilder(BUCKET, 1, null, Collections.singletonList("§7Perk item"));
 
     public LavaBucketPerk() {
-        super(Perks.LAVA_BUCKET);
         Main.getInstance().getServer().getPluginManager().registerEvents(this, Main.getInstance());
     }
 

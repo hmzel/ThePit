@@ -19,7 +19,6 @@ import static org.bukkit.inventory.EquipmentSlot.*;
 public class LuckyDiamondPerk extends Perk {
 
     public LuckyDiamondPerk() {
-        super(LUCKY_DIAMOND);
     }
 
     @Override

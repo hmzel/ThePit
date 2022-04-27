@@ -1,6 +1,5 @@
 package me.zelha.thepit.upgrades.permanent.perks;
 
-import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
@@ -10,7 +9,6 @@ import org.bukkit.potion.PotionEffectType;
 public class VampirePerk extends Perk {
 
     public VampirePerk() {
-        super(Perks.VAMPIRE);
     }
 
     @Override

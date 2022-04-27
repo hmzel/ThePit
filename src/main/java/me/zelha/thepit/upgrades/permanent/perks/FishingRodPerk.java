@@ -14,7 +14,6 @@ public class FishingRodPerk extends Perk {
     private final ItemStack fishingRodItem = zl.itemBuilder(Material.FISHING_ROD, 1, null, Collections.singletonList("§7Perk item"), true);
 
     public FishingRodPerk() {
-        super(Perks.FISHING_ROD);
     }
 
     @Override

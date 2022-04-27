@@ -1,7 +1,6 @@
 package me.zelha.thepit.upgrades.permanent.perks;
 
 import me.zelha.thepit.mainpkg.data.PlayerData;
-import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -20,7 +19,6 @@ public class MinemanPerk extends Perk {
     private final ItemStack minemanCobblestoneItem = zl.itemBuilder(COBBLESTONE, 24, null, Collections.singletonList("§7Perk item"));
 
     public MinemanPerk() {
-        super(Perks.MINEMAN);
     }
 
     @Override

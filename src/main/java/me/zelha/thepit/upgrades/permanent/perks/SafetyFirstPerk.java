@@ -1,7 +1,6 @@
 package me.zelha.thepit.upgrades.permanent.perks;
 
 import me.zelha.thepit.mainpkg.data.PlayerData;
-import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -17,7 +16,6 @@ public class SafetyFirstPerk extends Perk {
     private final ItemStack safetyFirstItem = zl.itemBuilder(CHAINMAIL_HELMET, 1, null, Collections.singletonList("§7Perk item"));
 
     public SafetyFirstPerk() {
-        super(Perks.SAFETY_FIRST);
     }
 
     @Override

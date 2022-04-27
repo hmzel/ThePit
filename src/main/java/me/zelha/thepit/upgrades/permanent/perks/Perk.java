@@ -3,7 +3,6 @@ package me.zelha.thepit.upgrades.permanent.perks;
 import me.zelha.thepit.Main;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.utils.ZelLogic;
-import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -17,10 +16,8 @@ import static org.bukkit.Material.PLAYER_HEAD;
 public class Perk {
 
     protected final ZelLogic zl = Main.getInstance().getZelLogic();
-    private final Perks perk;
 
-    public Perk(Perks perk) {
-        this.perk = perk;
+    public Perk() {
     }
 
     public double getDamageModifier(Player damager, Player damaged) {
@@ -37,10 +34,6 @@ public class Perk {
     }
 
     public void onReset(Player player, PlayerData playerData) {
-    }
-
-    public Perks getPerk() {
-        return perk;
     }
 
     protected void removeAll(PlayerInventory inventory, ItemStack item) {

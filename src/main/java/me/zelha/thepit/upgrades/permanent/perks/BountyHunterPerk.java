@@ -2,7 +2,6 @@ package me.zelha.thepit.upgrades.permanent.perks;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.mainpkg.data.PlayerData;
-import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -18,7 +17,6 @@ public class BountyHunterPerk extends Perk {
     private final ItemStack bountyHunterItem = zl.itemBuilder(GOLDEN_LEGGINGS, 1, null, Collections.singletonList("§7Perk item"), true);
 
     public BountyHunterPerk() {
-        super(Perks.BOUNTY_HUNTER);
     }
 
     @Override

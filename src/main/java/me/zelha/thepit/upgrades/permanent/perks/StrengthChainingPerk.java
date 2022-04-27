@@ -1,16 +1,14 @@
 package me.zelha.thepit.upgrades.permanent.perks;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.utils.RunTracker;
 import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.utils.RunTracker;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import static me.zelha.thepit.zelenums.Perks.STRENGTH_CHAINING;
 
 public class StrengthChainingPerk extends Perk {
 
@@ -19,7 +17,6 @@ public class StrengthChainingPerk extends Perk {
     private final RunTracker runTracker = Main.getInstance().generateRunTracker();
 
     public StrengthChainingPerk() {
-        super(STRENGTH_CHAINING);
     }
 
     public Integer getLevel(Player p) {
