@@ -26,6 +26,7 @@ public class PlayerData {
     private double gold;
     private int exp;
     private String status;
+    private String dummyStatus = null;
     private int bounty;
     private int combatTimer;
     private double streak;
@@ -117,6 +118,10 @@ public class PlayerData {
         return status;
     }
 
+    public String getDummyStatus() {
+        return dummyStatus;
+    }
+
     public int getBounty() {
         return bounty;
     }
@@ -202,6 +207,10 @@ public class PlayerData {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public void setDummyStatus(String dummyStatus) {
+        this.dummyStatus = dummyStatus;
     }
 
     public void setBounty(int bounty) {

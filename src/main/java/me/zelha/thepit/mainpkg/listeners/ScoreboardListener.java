@@ -126,19 +126,23 @@ public class ScoreboardListener implements Listener {
             PlayerData pData = Main.getInstance().getPlayerData(p);
             String status;
 
-            switch (pData.getStatus()) {
-                case "idling":
-                    status = "§aIdling";
-                    break;
-                case "fighting":
-                    status = "§cFighting";
-                    break;
-                case "bountied":
-                    status = "§cBountied";
-                    break;
-                default:
-                    status = ChatColor.translateAlternateColorCodes('&', pData.getStatus());
-                    break;
+            if (pData.getDummyStatus() != null) {
+                status = ChatColor.translateAlternateColorCodes('&', pData.getDummyStatus());
+            } else {
+                switch (pData.getStatus()) {
+                    case "idling":
+                        status = "§aIdling";
+                        break;
+                    case "fighting":
+                        status = "§cFighting";
+                        break;
+                    case "bountied":
+                        status = "§cBountied";
+                        break;
+                    default:
+                        status = ChatColor.translateAlternateColorCodes('&', pData.getStatus());
+                        break;
+                }
             }
 
             scoreList.add("§7" + DateTimeFormatter.ofPattern("MM/dd/yy").format(LocalDateTime.now()) + " §8mega13Z");
@@ -160,7 +164,7 @@ public class ScoreboardListener implements Listener {
 
             scoreList.add("§3");
 
-            if (!pData.hideTimer()) {
+            if (!pData.hideTimer() && status.equals("fighting")) {
                 scoreList.add("§fStatus: " + status + " §7(" + pData.getCombatTimer() + ")");
             } else {
                 scoreList.add("§fStatus: " + status);
@@ -243,7 +247,7 @@ public class ScoreboardListener implements Listener {
             StringBuilder sort = new StringBuilder();
 
             if (pData.getBounty() != 0) suffix += " §6§l" + pData.getBounty() + "g";
-            if (pData.isMegaActive()) prefix = pData.getMegastreak().getDisplayName();
+            if (pData.isMegaActive()) prefix = pData.getMegastreak().getDisplayName() + " ";
 
             while (level >= 100) {
                 if (!sort.toString().contains("a")) sort.append("a");
