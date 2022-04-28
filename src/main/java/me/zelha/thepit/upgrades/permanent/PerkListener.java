@@ -69,7 +69,7 @@ public class PerkListener implements Listener {
         for (Perks perk : Main.getInstance().getPlayerData(damager).getEquippedPerks()) {
             if (perk.getMethods() != null) {
                 perk.getMethods().onAttack(damager, damaged, e.getArrow());
-                e.setDamage(e.getDamage() + perk.getMethods().getDamageModifier(damager, damaged));
+                e.setBoost(e.getBoost() + perk.getMethods().getDamageModifier(damager, damaged));
             }
         }
     }

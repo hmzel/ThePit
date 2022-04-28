@@ -77,11 +77,9 @@ public class AttackListener implements Listener {
             if (damagerData.getPassiveTier(Passives.MELEE_DAMAGE) > 0) boost += (damagerData.getPassiveTier(Passives.MELEE_DAMAGE) / 100.0);
         }
 
-        e.setDamage(e.getDamage() * boost);
         startCombatTimer(damaged, damager);
-        Bukkit.broadcastMessage(e.getFinalDamage() + "");//testing line
 
-        PitDamageEvent damageEvent = new PitDamageEvent(e);
+        PitDamageEvent damageEvent = new PitDamageEvent(e, boost);
 
         if (!damaged.getUniqueId().equals(damager.getUniqueId())) manager.callEvent(damageEvent);
 
@@ -90,7 +88,9 @@ public class AttackListener implements Listener {
             return;
         }
 
-        e.setDamage(damageEvent.getDamage());
+        e.setDamage(damageEvent.getDamage() * damageEvent.getBoost());
+
+        Bukkit.broadcastMessage(e.getFinalDamage() + "");//testing line
 
         if (damaged.getHealth() - e.getFinalDamage() > 0) return;
 
