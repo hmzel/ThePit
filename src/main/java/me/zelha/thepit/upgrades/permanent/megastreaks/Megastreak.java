@@ -12,7 +12,19 @@ public class Megastreak {
     }
 
     public double getDebuff(Player player) {
-        return 0;
+        return 1;
+    }
+
+    public double getBuff(Player player) {
+        return 1;
+    }
+
+    public double getEXPModifier(Player player) {
+        return 1;
+    }
+
+    public double getGoldModifier(Player player) {
+        return 1;
     }
 
     public void onDeath(Player player) {
