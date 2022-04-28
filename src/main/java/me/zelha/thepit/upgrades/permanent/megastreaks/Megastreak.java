@@ -1,9 +1,11 @@
 package me.zelha.thepit.upgrades.permanent.megastreaks;
 
 import me.zelha.thepit.Main;
+import me.zelha.thepit.events.PitDamageEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.utils.ZelLogic;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -21,10 +23,10 @@ public class Megastreak {
         );
 
         pData.setDummyStatus(builder.replace(2, builder.length(), pData.getMegastreak().getName()).toString());
-        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_WITHER_SPAWN, 100, 1);
+        player.getWorld().playSound(new Location(player.getWorld(), 0.5, -50, 0.5), Sound.ENTITY_WITHER_SPAWN, 100, 1);
     }
 
-    public double getDebuff(Player player) {
+    public double getDebuff(Player player, PitDamageEvent event) {
         return 1;
     }
 
