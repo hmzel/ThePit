@@ -18,7 +18,7 @@ public class KillstreakListener implements Listener {
         PlayerData pData = Main.getInstance().getPlayerData(p);
         Megastreak megaMethods = pData.getMegastreak().getMethods();
 
-        if ((int) pData.getStreak() < pData.getMegastreak().getTrigger()) return;
+        if ((int) pData.getStreak() + 1 < pData.getMegastreak().getTrigger()) return;
         if (pData.isMegaActive()) return;
         if (megaMethods == null) return;
 
@@ -34,7 +34,7 @@ public class KillstreakListener implements Listener {
         PlayerData damagerData = Main.getInstance().getPlayerData(damager);
 
         if (canApply(damaged)) {
-            e.setBoost(e.getBoost() + damagedData.getMegastreak().getMethods().getDebuff(damaged));
+            e.setBoost(e.getBoost() + damagedData.getMegastreak().getMethods().getDebuff(damaged, e));
         }
 
         if (canApply(damager)) {
@@ -58,7 +58,7 @@ public class KillstreakListener implements Listener {
         PlayerData pData = Main.getInstance().getPlayerData(player);
         Megastreak megaMethods = pData.getMegastreak().getMethods();
 
-        if ((int) pData.getStreak() < pData.getMegastreak().getTrigger()) return false;
+        if ((int) pData.getStreak() + 1 < pData.getMegastreak().getTrigger()) return false;
         if (!pData.isMegaActive()) return false;
         if (megaMethods == null) return false;
 
