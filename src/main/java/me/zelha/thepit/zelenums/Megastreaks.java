@@ -10,7 +10,7 @@ import static org.bukkit.Material.*;
 
 public enum Megastreaks {
     OVERDRIVE(null, "§c§lOVRDRV", "§c§lOVERDRIVE", "Overdrive", BLAZE_POWDER,
-            50, 0, 0, 0, null,
+            50, 0, 0, 0, new OverdriveMegastreak(),
             "§7Triggers on: §c50 kills",
             " ",
             "§7On trigger:",

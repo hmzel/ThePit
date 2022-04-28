@@ -18,7 +18,7 @@ public class KillstreakListener implements Listener {
         PlayerData pData = Main.getInstance().getPlayerData(p);
         Megastreak megaMethods = pData.getMegastreak().getMethods();
 
-        if (pData.getStreak() < pData.getMegastreak().getTrigger()) return;
+        if ((int) pData.getStreak() < pData.getMegastreak().getTrigger()) return;
         if (pData.isMegaActive()) return;
         if (megaMethods == null) return;
 
@@ -28,15 +28,18 @@ public class KillstreakListener implements Listener {
 
     @EventHandler
     public void onDamage(PitDamageEvent e) {
-        Player p = e.getDamager();
-        PlayerData pData = Main.getInstance().getPlayerData(p);
-        Megastreak megaMethods = pData.getMegastreak().getMethods();
+        Player damaged = e.getDamaged();
+        Player damager = e.getDamager();
+        PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
+        PlayerData damagerData = Main.getInstance().getPlayerData(damager);
 
-        if (pData.getStreak() < pData.getMegastreak().getTrigger()) return;
-        if (!pData.isMegaActive()) return;
-        if (megaMethods == null) return;
+        if (canApply(damaged)) {
+            e.setBoost(e.getBoost() + damagedData.getMegastreak().getMethods().getDebuff(damaged));
+        }
 
-        e.setDamage(e.getDamage() + megaMethods.getDebuff(p));
+        if (canApply(damager)) {
+            e.setBoost(e.getBoost() + damagerData.getMegastreak().getMethods().getBuff(damager));
+        }
     }
 
     @EventHandler
@@ -48,6 +51,18 @@ public class KillstreakListener implements Listener {
         if (pData.getMegastreak().getMethods() == null) return;
 
         pData.getMegastreak().getMethods().onDeath(p);
+        pData.setMegaActive(false);
+    }
+
+    private boolean canApply(Player player) {
+        PlayerData pData = Main.getInstance().getPlayerData(player);
+        Megastreak megaMethods = pData.getMegastreak().getMethods();
+
+        if ((int) pData.getStreak() < pData.getMegastreak().getTrigger()) return false;
+        if (!pData.isMegaActive()) return false;
+        if (megaMethods == null) return false;
+
+        return true;
     }
 }
 

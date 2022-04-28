@@ -70,9 +70,12 @@ public class KillListener implements Listener {
         if (deadData.getStreak() > 5) exp += (int) Math.min(Math.round(deadData.getStreak()), 25);
         if (killerData.getStreak() <= 3 && (killerData.getLevel() <= 30 || killerData.getPrestige() == 0)) exp += 4;
         if (deadData.getLevel() > killerData.getLevel()) exp += (int) Math.round((deadData.getLevel() - killerData.getLevel()) / 4.5);
-
         if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) exp *= 0.91;
         if (killerData.getPassiveTier(Passives.XP_BOOST) > 0) exp *= 1 + (killerData.getPassiveTier(Passives.XP_BOOST) / 10.0);
+
+        if (killerData.isMegaActive() && killerData.getMegastreak().getMethods() != null) {
+            exp *= killerData.getMegastreak().getMethods().getEXPModifier(killer);
+        }
 
         return (int) Math.min(Math.ceil(exp), maxEXP);
     }
@@ -85,7 +88,6 @@ public class KillListener implements Listener {
 
         if (((SpammerPerk) Perks.SPAMMER.getMethods()).hasBeenShotBySpammer(killer, dead)) gold *= 3;
         if (killerData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS) gold += 4;
-
         if (killerData.getStreak() <= killerData.getPassiveTier(Passives.EL_GATO)) gold += 5;
         if (deadData.getStreak() > 5) gold += Math.min((int) Math.round(deadData.getStreak()), 30);
         if (killerData.getStreak() <= 3 && (killerData.getLevel() <= 30 || killerData.getPrestige() == 0)) gold += 4;
@@ -95,6 +97,10 @@ public class KillListener implements Listener {
 
         if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) gold *= 0.91;
         if (killerData.getPassiveTier(Passives.GOLD_BOOST) > 0) gold *= 1 + (killerData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
+
+        if (killerData.isMegaActive() && killerData.getMegastreak().getMethods() != null) {
+            gold *= killerData.getMegastreak().getMethods().getGoldModifier(killer);
+        }
 
         return Math.min(gold, 2500) + deadData.getBounty();
     }

@@ -7,6 +7,7 @@ import me.zelha.thepit.mainpkg.listeners.AssistListener;
 import me.zelha.thepit.mainpkg.listeners.KillListener;
 import me.zelha.thepit.upgrades.permanent.perks.SpammerPerk;
 import me.zelha.thepit.utils.ZelLogic;
+import me.zelha.thepit.zelenums.Megastreaks;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -315,7 +316,10 @@ public class KillRecap implements CommandExecutor, Listener {
         //2x event "§f2x Event: §b+100%"
         if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) builder.append("§fKilled a noob: §b-10%\n");
         if (receiverData.getPassiveTier(Passives.XP_BOOST) > 0) builder.append("§fXP Boost: §b+" + receiverData.getPassiveTier(Passives.XP_BOOST) * 10 + "%\n");
-        //overdrive "§fOverdrive: §b+?%"
+
+        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.OVERDRIVE) {
+            builder.append("§fOverdrive: §b+100%\n");
+        }
         //beastmode "§fBeastmode: §b+?%"
         //royalty "§fRoyalty: §b+10%"
         //genesis "§fGenesis: §b+?%"
@@ -370,7 +374,9 @@ public class KillRecap implements CommandExecutor, Listener {
         if (receiverData.getPassiveTier(Passives.GOLD_BOOST) > 0) builder.append("§fGold Boost: §6+" + receiverData.getPassiveTier(Passives.GOLD_BOOST) * 10 + "%\n");
         //renown gold boost "§fRenown Gold Boost: §6+?%"
         //gold boost enchant "§fGold Boost Enchant: §6+?%"
-        //overdrive "§fOverdrive: §6+?%"
+        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.OVERDRIVE) {
+            builder.append("§fOverdrive: §6+50%\n");
+        }
         //beastmode "§fBeastmode: §6+?%"
         //highlander "§fHighlander: §6+?%"
 

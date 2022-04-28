@@ -15,6 +15,7 @@ import me.zelha.thepit.mainpkg.listeners.*;
 import me.zelha.thepit.mainpkg.runnables.ParticipationRunnable;
 import me.zelha.thepit.upgrades.nonpermanent.GoldenPickaxeListener;
 import me.zelha.thepit.upgrades.nonpermanent.ItemsVillagerListener;
+import me.zelha.thepit.upgrades.permanent.KillstreakListener;
 import me.zelha.thepit.upgrades.permanent.PerkListener;
 import me.zelha.thepit.upgrades.permanent.UpgradesVillagerListener;
 import me.zelha.thepit.utils.ConfirmGUIHandler;
@@ -84,6 +85,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ArrowListener(), this);
         getServer().getPluginManager().registerEvents(new NPCInteractEventCaller(), this);
         getServer().getPluginManager().registerEvents(new ActionbarListener(), this);
+        getServer().getPluginManager().registerEvents(new KillstreakListener(), this);
 
         getCommand("setprestige").setExecutor(new SetPrestigeCommand());
         getCommand("setlevel").setExecutor(new SetLevelCommand());

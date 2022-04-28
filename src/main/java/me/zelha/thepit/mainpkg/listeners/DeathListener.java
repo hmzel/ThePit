@@ -44,6 +44,7 @@ public class DeathListener implements Listener {
         }
 
         p.setFireTicks(0);
+        Main.getInstance().getPlayerData(p).setStreak(0);
 
         new BukkitRunnable() {
             @Override
@@ -176,6 +177,7 @@ public class DeathListener implements Listener {
 
         dead.sendTitle("§cYOU DIED", "", 0, 40, 20);
         dead.playSound(dead.getLocation(), Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1.8F);
+        Main.getInstance().getPlayerData(dead).setDummyStatus(null);
         zl.pitReset(dead);
 
         new BukkitRunnable() {
