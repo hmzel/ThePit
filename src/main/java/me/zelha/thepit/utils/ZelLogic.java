@@ -1,6 +1,7 @@
 package me.zelha.thepit.utils;
 
 import me.zelha.thepit.Main;
+import me.zelha.thepit.events.TrueDamageEvent;
 import me.zelha.thepit.mainpkg.data.DamageLog;
 import me.zelha.thepit.mainpkg.data.KillRecap;
 import me.zelha.thepit.mainpkg.data.PlayerData;
@@ -427,7 +428,13 @@ public class ZelLogic {//zel
             if (perk.getMethods() != null) perk.getMethods().onReset(p, pData);
         }
 
+        if (pData.getMegastreak().getMethods() != null) pData.getMegastreak().getMethods().onEquip(p);
+
         pData.setStreak(0);
+
+        for (PotionEffect effects : p.getActivePotionEffects()) {
+            p.removePotionEffect(effects.getType());
+        }
 
         for (ItemStack item : inv.all(ARROW).values()) arrowCount += item.getAmount();
 
@@ -458,6 +465,14 @@ public class ZelLogic {//zel
      * @param cause cause to show in kill recap
      */
     public void trueDamage(Player damagee, @Nullable Player damager, double damage, String cause) {
+        TrueDamageEvent event = new TrueDamageEvent(damagee, damager, damage);
+
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (event.isCancelled()) return;
+
+        damage = event.getDamage();
+
         boolean willDie = damagee.getHealth() - damage <= 0;
 
         if (willDie) damage = damagee.getHealth();
