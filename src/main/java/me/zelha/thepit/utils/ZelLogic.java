@@ -22,6 +22,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -387,6 +388,26 @@ public class ZelLogic {//zel
                 entity.remove();
             }
         }.runTaskLater(Main.getInstance(), 10);
+    }
+
+    /**
+     * handles inventory item placement for armor
+     *
+     * @param player player to give item to
+     * @param slot slot to put the item in
+     * @param item item to give
+     */
+    public void itemPlacementHandler(Player player, EquipmentSlot slot, ItemStack item) {
+        PlayerInventory inventory = player.getInventory();
+
+        if (!itemCheck(inventory.getItem(slot)) || determineWeight(inventory.getItem(slot).getType()) == 0) {
+            inventory.setItem(slot, item);
+        } else if (determineWeight(inventory.getItem(slot).getType()) < determineWeight(item.getType())) {
+            inventory.setItem(firstEmptySlot(inventory), inventory.getItem(slot));
+            inventory.setItem(slot, item);
+        } else if (!inventory.contains(item.getType())) {
+            inventory.setItem(firstEmptySlot(inventory), item);
+        }
     }
     //misc stuff
 
@@ -762,5 +783,23 @@ public class ZelLogic {//zel
             return 1500;
         }
         return 0;
+    }
+
+    private int determineWeight(Material type) {
+        if (type == LEATHER_HELMET) return 0;
+
+        for (Material material : new Material[] {CHAINMAIL_HELMET, CHAINMAIL_CHESTPLATE, CHAINMAIL_LEGGINGS, CHAINMAIL_BOOTS}) {
+            if (material == type) return 1;
+        }
+
+        for (Material material : new Material[] {IRON_HELMET, IRON_CHESTPLATE, IRON_LEGGINGS, IRON_BOOTS}) {
+            if (material == type) return 2;
+        }
+
+        for (Material material : new Material[] {DIAMOND_HELMET, DIAMOND_CHESTPLATE, DIAMOND_LEGGINGS, DIAMOND_BOOTS}) {
+            if (material == type) return 3;
+        }
+
+        return 13;
     }
 }
