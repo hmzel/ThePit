@@ -2,6 +2,7 @@ package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.events.PitDeathEvent;
+import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.Worlds;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -126,6 +127,7 @@ public class DeathListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerDeath(PitDeathEvent e) {
         Player dead = e.getDead();
+        PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerInventory inv = dead.getInventory();
 
         for (ItemStack item : inv.getArmorContents()) {
@@ -177,7 +179,15 @@ public class DeathListener implements Listener {
 
         dead.sendTitle("§cYOU DIED", "", 0, 40, 20);
         dead.playSound(dead.getLocation(), Sound.ENTITY_ZOMBIE_INFECT, 0.4F, 1.8F);
-        Main.getInstance().getPlayerData(dead).setDummyStatus(null);
+        deadData.setDummyStatus(null);
+        deadData.setCombatTimer(0);
+
+        if (deadData.getBounty() != 0) {
+            deadData.setStatus("bountied");
+        } else {
+            deadData.setStatus("idling");
+        }
+
         zl.pitReset(dead);
 
         new BukkitRunnable() {
