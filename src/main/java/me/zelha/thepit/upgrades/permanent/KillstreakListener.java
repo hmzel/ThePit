@@ -39,7 +39,7 @@ public class KillstreakListener implements Listener {
         }
 
         if (canApply(damager)) {
-            e.setBoost(e.getBoost() + damagerData.getMegastreak().getMethods().getBuff(damager));
+            e.setBoost(e.getBoost() + damagerData.getMegastreak().getMethods().getBuff(damager, e));
         }
     }
 

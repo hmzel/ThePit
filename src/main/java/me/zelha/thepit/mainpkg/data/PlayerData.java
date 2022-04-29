@@ -96,6 +96,12 @@ public class PlayerData {
         return false;
     }
 
+    public int getMaxBounty() {
+        if (isMegaActive() && getMegastreak() == Megastreaks.HIGHLANDER) return 10000;
+
+        return 5000;
+    }
+
     //getters
 
     public int getPrestige() {

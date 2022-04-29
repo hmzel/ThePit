@@ -384,7 +384,10 @@ public class KillRecap implements CommandExecutor, Listener {
         if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.BEASTMODE) {
             builder.append("§fBeastmode: §6+75%\n");
         }
-        //highlander "§fHighlander: §6+?%"
+
+        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.HIGHLANDER) {
+            builder.append("§fHighlander: §6+110%\n");
+        }
 
         if (!isKiller) builder.append("§fKill participation: §6-"
                 + (int) ((1 - (Double.parseDouble(BigDecimal.valueOf(assistUtils.getAssistMap(dead).get(receiver.getUniqueId()) / assistUtils.getTotalDamage(dead)).setScale(2, RoundingMode.HALF_EVEN).toString()))) * 100)

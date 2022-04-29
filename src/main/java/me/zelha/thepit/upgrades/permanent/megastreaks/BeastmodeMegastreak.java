@@ -30,7 +30,7 @@ public class BeastmodeMegastreak extends Megastreak {
     }
 
     @Override
-    public double getBuff(Player player) {
+    public double getBuff(Player player, PitDamageEvent event) {
         return 0.25;
     }
 

@@ -230,14 +230,14 @@ public class KillListener implements Listener {
                         pData.setBounty(calculatedBounty);
                         Bukkit.broadcastMessage("§6§lBOUNTY! §7of §6§l " + calculatedBounty + "g §7on " + zl.getColorBracketAndLevel(player)
                                 + " §7" + player.getName() + " for high streak");
-                    } else if (pData.getBounty() + calculatedBounty <= 5000) {
+                    } else if (pData.getBounty() + calculatedBounty <= pData.getMaxBounty()) {
                         pData.setBounty(pData.getBounty() + calculatedBounty);
                         Bukkit.broadcastMessage("§6§lBOUNTY! §7bump §6§l" + calculatedBounty + "g §7on " + zl.getColorBracketAndLevel(player)
                                 + " §7" + player.getName() + " for high streak");
-                    } else if (pData.getBounty() < 5000) {
-                        Bukkit.broadcastMessage("§6§lBOUNTY! §7bump §6§l" + (5000 - pData.getBounty()) + "g §7on "
+                    } else if (pData.getBounty() < pData.getMaxBounty()) {
+                        Bukkit.broadcastMessage("§6§lBOUNTY! §7bump §6§l" + (pData.getMaxBounty() - pData.getBounty()) + "g §7on "
                                 + zl.getColorBracketAndLevel(player) + " §7" + player.getName() + " for high streak");
-                        pData.setBounty(5000);
+                        pData.setBounty(pData.getMaxBounty());
                     }
                 }
                 secondsBetweenKills = 0;

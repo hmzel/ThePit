@@ -1,9 +1,6 @@
 package me.zelha.thepit.zelenums;
 
-import me.zelha.thepit.upgrades.permanent.megastreaks.BeastmodeMegastreak;
-import me.zelha.thepit.upgrades.permanent.megastreaks.HermitMegastreak;
-import me.zelha.thepit.upgrades.permanent.megastreaks.Megastreak;
-import me.zelha.thepit.upgrades.permanent.megastreaks.OverdriveMegastreak;
+import me.zelha.thepit.upgrades.permanent.megastreaks.*;
 import org.bukkit.Material;
 
 import java.util.Arrays;
@@ -65,7 +62,7 @@ public enum Megastreaks {
             "§7kill over 50."
     ),
     HIGHLANDER(StreakBundles.HIGHLANDER, "§6§lHIGH", "§6§lHIGHLANDER", "Highlander", GOLDEN_BOOTS,
-            50, 7, 60, 30000, null,
+            50, 7, 60, 30000, new HighlanderMegastreak(),
             "§7Triggers on: §c50 kills",
             " ",
             "§7On trigger:",

@@ -6,8 +6,8 @@ import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.Megastreaks;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -26,7 +26,12 @@ public class Megastreak {
         );
 
         pData.setDummyStatus(builder.replace(2, builder.length(), pData.getMegastreak().getName()).toString());
-        player.getWorld().playSound(new Location(player.getWorld(), 0.5, -100, 0.5), Sound.ENTITY_WITHER_SPAWN, 50, 1);
+
+        for (Entity entity : player.getWorld().getEntities()) {
+            if (!(entity instanceof Player)) return;
+
+            player.playSound(player.getLocation(), Sound.ENTITY_WITHER_SPAWN, 0.5F, 1);
+        }
     }
 
     public void onEquip(Player player) {
@@ -36,7 +41,7 @@ public class Megastreak {
         return 0;
     }
 
-    public double getBuff(Player player) {
+    public double getBuff(Player player, PitDamageEvent event) {
         return 0;
     }
 
