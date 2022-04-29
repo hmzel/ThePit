@@ -1,6 +1,8 @@
 package me.zelha.thepit.zelenums;
 
+import me.zelha.thepit.upgrades.permanent.megastreaks.BeastmodeMegastreak;
 import me.zelha.thepit.upgrades.permanent.megastreaks.Megastreak;
+import me.zelha.thepit.upgrades.permanent.megastreaks.OverdriveMegastreak;
 import org.bukkit.Material;
 
 import java.util.Arrays;
@@ -26,7 +28,7 @@ public enum Megastreaks {
             "§e■ §7Gain §b4,000 XP§7."
     ),
     BEASTMODE(StreakBundles.BEASTMODE, "§a§lBEAST", "§a§lBEASTMODE", "Beastmode", DIAMOND_HELMET,
-            50, 3, 30, 10000, null,
+            50, 3, 30, 10000, new BeastmodeMegastreak(),
             "§7Triggers on: §c50 kills",
             " ",
             "§7On trigger:",

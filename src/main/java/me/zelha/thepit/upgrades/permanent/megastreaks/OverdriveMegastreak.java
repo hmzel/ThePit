@@ -1,6 +1,7 @@
 package me.zelha.thepit.upgrades.permanent.megastreaks;
 
 import me.zelha.thepit.Main;
+import me.zelha.thepit.events.PitDamageEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -14,7 +15,7 @@ public class OverdriveMegastreak extends Megastreak {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (!Main.getInstance().getPlayerData(player).isMegaActive()) {
+                if (!zl.playerCheck(player) || !Main.getInstance().getPlayerData(player).isMegaActive()) {
                     cancel();
                     return;
                 }
@@ -27,7 +28,7 @@ public class OverdriveMegastreak extends Megastreak {
     }
 
     @Override
-    public double getDebuff(Player player) {
+    public double getDebuff(Player player, PitDamageEvent event) {
         double damage = ((Main.getInstance().getPlayerData(player).getStreak() - 50) / 5) * 0.1;
 
         if (damage > 0D) zl.trueDamage(player, null, damage, "§cOverdrive");
