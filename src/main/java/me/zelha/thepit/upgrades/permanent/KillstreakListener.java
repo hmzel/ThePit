@@ -8,11 +8,13 @@ import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.megastreaks.Megastreak;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class KillstreakListener implements Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onKill(PitKillEvent e) {
         Player p = e.getKiller();
         PlayerData pData = Main.getInstance().getPlayerData(p);
@@ -50,7 +52,13 @@ public class KillstreakListener implements Listener {
         if (!pData.isMegaActive()) return;
         if (pData.getMegastreak().getMethods() == null) return;
 
-        pData.getMegastreak().getMethods().onDeath(p);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                pData.getMegastreak().getMethods().onDeath(p);
+            }
+        }.runTaskLater(Main.getInstance(), 1);
+
         pData.setMegaActive(false);
     }
 

@@ -23,7 +23,7 @@ public class Megastreak {
         );
 
         pData.setDummyStatus(builder.replace(2, builder.length(), pData.getMegastreak().getName()).toString());
-        player.getWorld().playSound(new Location(player.getWorld(), 0.5, -50, 0.5), Sound.ENTITY_WITHER_SPAWN, 100, 1);
+        player.getWorld().playSound(new Location(player.getWorld(), 0.5, -100, 0.5), Sound.ENTITY_WITHER_SPAWN, 100, 1);
     }
 
     public double getDebuff(Player player, PitDamageEvent event) {
