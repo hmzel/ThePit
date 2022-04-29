@@ -6,24 +6,12 @@ import me.zelha.thepit.mainpkg.data.PlayerData;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class OverdriveMegastreak extends Megastreak {
 
     @Override
     public void onTrigger(Player player) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!zl.playerCheck(player) || !Main.getInstance().getPlayerData(player).isMegaActive()) {
-                    cancel();
-                    return;
-                }
-
-                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 100, 0, false, false, true));
-            }
-        }.runTaskTimer(Main.getInstance(), 0, 80);
-
+        permanentEffect(player, new PotionEffect(PotionEffectType.SPEED, 100, 0, false, false, true), true);
         super.onTrigger(player);
     }
 
@@ -32,7 +20,7 @@ public class OverdriveMegastreak extends Megastreak {
         double damage = ((Main.getInstance().getPlayerData(player).getStreak() - 50) / 5) * 0.1;
 
         if (damage > 0D) zl.trueDamage(player, null, damage, "§cOverdrive");
-        return 1;
+        return 0;
     }
 
     @Override

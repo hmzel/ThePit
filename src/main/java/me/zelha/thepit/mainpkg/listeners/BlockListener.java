@@ -2,6 +2,7 @@ package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.zelenums.Megastreaks;
 import me.zelha.thepit.zelenums.Passives;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,7 +24,7 @@ public class BlockListener implements Listener {
     //note: block placement prevention in spawn is handled in SpawnListener
 
     public static final List<Block> placedBlocks = new ArrayList<>();
-    private final Material[] placeable = {OBSIDIAN, COBBLESTONE, OAK_WOOD};
+    private final Material[] placeable = {OBSIDIAN, COBBLESTONE, OAK_WOOD, BEDROCK};
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
@@ -38,6 +39,7 @@ public class BlockListener implements Listener {
         Location loc = e.getBlock().getLocation();
         Player p = e.getPlayer();
         PlayerData pData = Main.getInstance().getPlayerData(p);
+        double time = 0;
 
         if (!Arrays.asList(placeable).contains(blockType) && !Main.getInstance().blockPriviledges.contains(p)) {
             e.setCancelled(true);
@@ -48,12 +50,13 @@ public class BlockListener implements Listener {
             return;
         }
 
-        if (blockType == OBSIDIAN) {
-            blockPoof(e.getBlock(), e.getBlockReplacedState().getType(), Math.round(2400 * (1 + (pData.getPassiveTier(Passives.BUILD_BATTLER) * 0.6))));
-        } else if (blockType == COBBLESTONE) {
-            blockPoof(e.getBlock(), e.getBlockReplacedState().getType(), Math.round(300 * (1 + (pData.getPassiveTier(Passives.BUILD_BATTLER) * 0.6))));
-        }
+        if (blockType == OBSIDIAN) time = 2400; else time = 300;
 
+        time *= (1 + (pData.getPassiveTier(Passives.BUILD_BATTLER) * 0.6));
+
+        if (pData.getMegastreak() == Megastreaks.HERMIT) time *= 2;
+
+        blockPoof(e.getBlock(), e.getBlockReplacedState().getType(), Math.round(time));
         placedBlocks.add(e.getBlock());
     }
 

@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class KillstreakListener implements Listener {
 
@@ -20,7 +19,7 @@ public class KillstreakListener implements Listener {
         PlayerData pData = Main.getInstance().getPlayerData(p);
         Megastreak megaMethods = pData.getMegastreak().getMethods();
 
-        if ((int) pData.getStreak() + 1 < pData.getMegastreak().getTrigger()) return;
+        if ((int) pData.getStreak() < pData.getMegastreak().getTrigger()) return;
         if (pData.isMegaActive()) return;
         if (megaMethods == null) return;
 
@@ -52,13 +51,7 @@ public class KillstreakListener implements Listener {
         if (!pData.isMegaActive()) return;
         if (pData.getMegastreak().getMethods() == null) return;
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                pData.getMegastreak().getMethods().onDeath(p);
-            }
-        }.runTaskLater(Main.getInstance(), 1);
-
+        pData.getMegastreak().getMethods().onDeath(p);
         pData.setMegaActive(false);
     }
 
@@ -66,7 +59,7 @@ public class KillstreakListener implements Listener {
         PlayerData pData = Main.getInstance().getPlayerData(player);
         Megastreak megaMethods = pData.getMegastreak().getMethods();
 
-        if ((int) pData.getStreak() + 1 < pData.getMegastreak().getTrigger()) return false;
+        if ((int) pData.getStreak() < pData.getMegastreak().getTrigger()) return false;
         if (!pData.isMegaActive()) return false;
         if (megaMethods == null) return false;
 

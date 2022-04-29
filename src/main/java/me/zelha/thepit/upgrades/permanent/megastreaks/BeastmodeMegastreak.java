@@ -5,6 +5,7 @@ import me.zelha.thepit.events.PitDamageEvent;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Collections;
 
@@ -25,7 +26,7 @@ public class BeastmodeMegastreak extends Megastreak {
     public double getDebuff(Player player, PitDamageEvent event) {
         event.setDamage(event.getDamage() + Math.max(0, ((Main.getInstance().getPlayerData(player).getStreak() - 50) / 5) * 0.1));
 
-        return 1;
+        return 0;
     }
 
     @Override
@@ -47,9 +48,14 @@ public class BeastmodeMegastreak extends Megastreak {
     public void onDeath(Player player) {
         if (zl.itemCheck(player.getInventory().getHelmet()) && zl.firstEmptySlot(player.getInventory()) == -1) return;
 
-        zl.itemPlacementHandler(player, EquipmentSlot.HEAD, zl.itemBuilder(
-                Material.DIAMOND_HELMET, 1, "§aBeastmode Helmet", null, true
-        ));
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                zl.itemPlacementHandler(player, EquipmentSlot.HEAD, zl.itemBuilder(
+                        Material.DIAMOND_HELMET, 1, "§aBeastmode Helmet", null, true
+                ));
+            }
+        }.runTaskLater(Main.getInstance(), 1);
     }
 }
 

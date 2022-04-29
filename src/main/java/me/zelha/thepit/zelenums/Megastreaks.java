@@ -1,6 +1,7 @@
 package me.zelha.thepit.zelenums;
 
 import me.zelha.thepit.upgrades.permanent.megastreaks.BeastmodeMegastreak;
+import me.zelha.thepit.upgrades.permanent.megastreaks.HermitMegastreak;
 import me.zelha.thepit.upgrades.permanent.megastreaks.Megastreak;
 import me.zelha.thepit.upgrades.permanent.megastreaks.OverdriveMegastreak;
 import org.bukkit.Material;
@@ -44,7 +45,7 @@ public enum Megastreaks {
             "§e■ §7Keep the §bDiamond Helmet§7."
     ),
     HERMIT(StreakBundles.HERMIT, "§9§lHERMIT", "§9§lHERMIT", "Hermit", RED_BED,
-            50, 4, 50, 20000, null,
+            50, 4, 50, 20000, new HermitMegastreak(),
             "§7Triggers on: §c50 kills",
             " ",
             "§7From 0 kills:",
