@@ -89,7 +89,7 @@ public class KillRecap implements CommandExecutor, Listener {
         return true;
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onAttack(PitDamageEvent e) {
         addDamageLog(e.getDamaged(), new DamageLog(e, false));
         addDamageLog(e.getDamager(), new DamageLog(e, true));
@@ -320,7 +320,10 @@ public class KillRecap implements CommandExecutor, Listener {
         if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.OVERDRIVE) {
             builder.append("§fOverdrive: §b+100%\n");
         }
-        //beastmode "§fBeastmode: §b+?%"
+
+        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.BEASTMODE) {
+            builder.append("§fBeastmode: §b+50%\n");
+        }
         //royalty "§fRoyalty: §b+10%"
         //genesis "§fGenesis: §b+?%"
         //assistant "§fAssistant: §b+?%"
@@ -377,7 +380,10 @@ public class KillRecap implements CommandExecutor, Listener {
         if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.OVERDRIVE) {
             builder.append("§fOverdrive: §6+50%\n");
         }
-        //beastmode "§fBeastmode: §6+?%"
+
+        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.BEASTMODE) {
+            builder.append("§fBeastmode: §6+75%\n");
+        }
         //highlander "§fHighlander: §6+?%"
 
         if (!isKiller) builder.append("§fKill participation: §6-"

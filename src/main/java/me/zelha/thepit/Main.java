@@ -59,7 +59,6 @@ public final class Main extends JavaPlugin {
         attackListener = new AttackListener();
         killListener = new KillListener();
         deathListener = new DeathListener();
-        KillRecap recap = new KillRecap();
         ScoreboardListener scoreboardListener = new ScoreboardListener();
         confirmGUIHandler = new ConfirmGUIHandler();
 
@@ -80,7 +79,6 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new GoldIngotListener(), this);
         getServer().getPluginManager().registerEvents(new ChatListener(), this);
         getServer().getPluginManager().registerEvents(assistListener, this);
-        getServer().getPluginManager().registerEvents(recap, this);
         getServer().getPluginManager().registerEvents(confirmGUIHandler, this);
         getServer().getPluginManager().registerEvents(new ArrowListener(), this);
         getServer().getPluginManager().registerEvents(new NPCInteractEventCaller(), this);
@@ -100,11 +98,15 @@ public final class Main extends JavaPlugin {
         getCommand("npccheck").setExecutor(new NPCCheckCommand());
         getCommand("hologramcheck").setExecutor(new HologramCheckCommand());
         getCommand("setperk").setExecutor(new SetPerkCommand());
-        getCommand("killrecap").setExecutor(recap);
         getCommand("oof").setExecutor(new OofCommand());
         getCommand("setmegastreak").setExecutor(new SetMegastreakCommand());
         getCommand("setministreak").setExecutor(new SetMinistreakCommand());
         getCommand("reset").setExecutor(new ResetCommand());
+
+        KillRecap recap = new KillRecap();
+
+        getServer().getPluginManager().registerEvents(recap, this);
+        getCommand("killrecap").setExecutor(recap);
 
         storage.runDataSaver();
         scoreboardListener.startAnimation();

@@ -35,7 +35,7 @@ public class DamageLog {
             this.item = damager.getInventory().getItemInMainHand();
         }
 
-        this.damage = event.getDamage();
+        this.damage = event.getDamage() * event.getBoost();
         this.time = MinecraftServer.currentTick;
         this.subName = damaged.getName();
 
