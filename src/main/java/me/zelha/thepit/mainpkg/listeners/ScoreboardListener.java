@@ -164,7 +164,7 @@ public class ScoreboardListener implements Listener {
 
             scoreList.add("§3");
 
-            if (!pData.hideTimer() && pData.getStatus().equals("fighting")) {
+            if (!pData.hideTimer() && pData.getStatus().equals("fighting") && pData.getDummyStatus() == null) {
                 scoreList.add("§fStatus: " + status + " §7(" + pData.getCombatTimer() + ")");
             } else {
                 scoreList.add("§fStatus: " + status);
