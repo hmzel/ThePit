@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class KillstreakListener implements Listener {
 
@@ -53,6 +55,16 @@ public class KillstreakListener implements Listener {
 
         pData.getMegastreak().getMethods().onDeath(p);
         pData.setMegaActive(false);
+    }
+
+    @EventHandler
+    public void onDrop(PlayerDropItemEvent e) {
+        ItemMeta meta = e.getItemDrop().getItemStack().getItemMeta();
+
+        if (meta != null && meta.getLore() != null && meta.getLore().contains("§eSpecial item")) {
+            e.getPlayer().sendMessage("§c§lNOPE! §7You cannot drop this item!");
+            e.setCancelled(true);
+        }
     }
 
     private boolean canApply(Player player) {

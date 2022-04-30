@@ -24,7 +24,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.BoundingBox;
 
 import java.util.Arrays;
@@ -97,19 +96,12 @@ public class GeneralListener implements Listener {
 
     @EventHandler
     public void onDrop(PlayerDropItemEvent e) {
-        ItemMeta meta = e.getItemDrop().getItemStack().getItemMeta();
-
         if (Arrays.asList(disappearOnDrop).contains(e.getItemDrop().getItemStack().getType())) {
             e.getItemDrop().remove();
             return;
         }
 
         if (Arrays.asList(undroppable).contains(e.getItemDrop().getItemStack().getType())) e.setCancelled(true);
-
-        if (meta != null && meta.getLore() != null && meta.getLore().contains("§7Special item")) {
-            e.getPlayer().sendMessage("§c§lNOPE! §7You cannot drop this item!");
-            e.setCancelled(true);
-        }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
