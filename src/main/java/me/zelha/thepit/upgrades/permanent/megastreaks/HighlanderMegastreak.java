@@ -44,5 +44,6 @@ public class HighlanderMegastreak extends Megastreak {
         PlayerData pData = Main.getInstance().getPlayerData(player);
 
         pData.setGold(pData.getGold() + pData.getBounty());
+        player.sendMessage("§6§lHIGHLANDER! §7Earned §6+" + zl.getFancyGoldString(pData.getBounty()) + "g §7from megastreak!");
     }
 }
