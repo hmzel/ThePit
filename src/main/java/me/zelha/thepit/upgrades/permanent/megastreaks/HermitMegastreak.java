@@ -15,9 +15,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static org.bukkit.Material.BEDROCK;
 
@@ -32,7 +30,7 @@ public class HermitMegastreak extends Megastreak implements Listener {
     @Override
     public void onTrigger(Player player) {
         permanentEffect(player, new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 0, false, false, true), true);
-        player.getInventory().addItem(zl.itemBuilder(BEDROCK, 32));
+        player.getInventory().addItem(zl.itemBuilder(BEDROCK, 32, null, Collections.singletonList("§7Perk item")));
         super.onTrigger(player);
     }
 
@@ -69,7 +67,7 @@ public class HermitMegastreak extends Megastreak implements Listener {
         bedrockGiveMap.put(uuid, bedrockGiveMap.get(uuid) + 1);
 
         if (bedrockGiveMap.get(uuid) >= 10) {
-            p.getInventory().addItem(zl.itemBuilder(BEDROCK, 16));
+            p.getInventory().addItem(zl.itemBuilder(BEDROCK, 16, null, Collections.singletonList("§7Perk item")));
             bedrockGiveMap.put(uuid, 0);
         }
     }
