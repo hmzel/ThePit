@@ -324,6 +324,10 @@ public class KillRecap implements CommandExecutor, Listener {
         if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.BEASTMODE) {
             builder.append("§fBeastmode: §b+50%\n");
         }
+
+        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.HERMIT && receiverData.getMegastreak().getMethods().getEXPModifier(receiver) != 1) {
+            builder.append("§fHermit: §b+" + (receiverData.getMegastreak().getMethods().getEXPModifier(receiver) - 1) * 100 + "%\n");
+        }
         //royalty "§fRoyalty: §b+10%"
         //genesis "§fGenesis: §b+?%"
         //assistant "§fAssistant: §b+?%"
@@ -387,6 +391,10 @@ public class KillRecap implements CommandExecutor, Listener {
 
         if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.HIGHLANDER) {
             builder.append("§fHighlander: §6+110%\n");
+        }
+
+        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.HERMIT && receiverData.getMegastreak().getMethods().getGoldModifier(receiver) != 1) {
+            builder.append("§fHermit: §6+" + (receiverData.getMegastreak().getMethods().getGoldModifier(receiver) * 100) + "%\n");
         }
 
         if (!isKiller) builder.append("§fKill participation: §6-"
