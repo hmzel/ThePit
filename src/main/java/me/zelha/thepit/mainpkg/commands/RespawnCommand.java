@@ -23,7 +23,13 @@ public class RespawnCommand implements CommandExecutor {
         Player p = (Player) sender;
         PlayerData pData = Main.getInstance().getPlayerData(p);
 
-        if (pData.getStatus().equals("fighting")) {
+        if (pData.isMegaActive()) {
+            p.sendMessage(
+                    "§c§lHOLD UP! §7Can't respawn while on a mega streak!\n" +
+                    "§c§lHOLD UP! §7Use /oof to force respawn! (Causes death)"
+            );
+            return true;
+        } else if (pData.getStatus().equals("fighting")) {
             p.sendMessage("§c§lHOLD UP! §7Can't /respawn while fighting (§c" + pData.getCombatTimer() + "s §7left)");
             return true;
         } else if (Main.getInstance().getZelLogic().spawnCheck(p.getLocation())) {
