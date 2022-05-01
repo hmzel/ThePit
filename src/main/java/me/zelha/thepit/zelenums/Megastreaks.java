@@ -80,7 +80,7 @@ public enum Megastreaks {
             "§e■ §7Earn your own bounty aswell."
     ),
     MAGNUM_OPUS(StreakBundles.MAGNUM_OPUS, "", "§e§lMAGNUM OPUS", "Magnum Opus", NETHER_STAR,
-            50, 10, 70, 40000, null,
+            50, 10, 70, 40000, new MagnumOpusMegastreak(),
             "§7Triggers on: §c50 kills",
             " ",
             "§7On trigger:",

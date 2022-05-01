@@ -26,7 +26,6 @@ public class KillstreakListener implements Listener {
         if (megaMethods == null) return;
 
         megaMethods.onTrigger(p);
-        pData.setMegaActive(true);
     }
 
     @EventHandler

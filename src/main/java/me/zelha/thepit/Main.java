@@ -24,6 +24,7 @@ import me.zelha.thepit.utils.ZelLogic;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -47,7 +48,6 @@ public final class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         //Plugin startup logic
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "minecraft:kick @a");
         mongoClient = MongoClients.create(DatabaseLogin.DATABASE_LOGIN);
         MongoDatabase mongoDatabase = mongoClient.getDatabase("zelhadb");
         playerDataCollection = mongoDatabase.getCollection("playerdata");
@@ -111,6 +111,10 @@ public final class Main extends JavaPlugin {
         storage.runDataSaver();
         scoreboardListener.startAnimation();
         new ParticipationRunnable().runTaskTimer(this, 0, 1);
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            Bukkit.getPluginManager().callEvent(new PlayerJoinEvent(player, null));
+        }
     }
 
     @Override

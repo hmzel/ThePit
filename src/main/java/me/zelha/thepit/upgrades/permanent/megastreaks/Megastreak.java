@@ -26,6 +26,7 @@ public class Megastreak {
         );
 
         pData.setDummyStatus(builder.replace(2, builder.length(), pData.getMegastreak().getName()).toString());
+        pData.setMegaActive(true);
 
         for (Entity entity : player.getWorld().getEntities()) {
             if (!(entity instanceof Player)) return;
