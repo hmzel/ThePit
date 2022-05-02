@@ -4,6 +4,8 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.mainpkg.data.DamageLog;
 import me.zelha.thepit.mainpkg.data.KillRecap;
 import me.zelha.thepit.utils.ZelLogic;
+import me.zelha.thepit.zelenums.Worlds;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -184,13 +186,20 @@ public class GeneralListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        if (Main.getInstance().getPlayerData(e.getPlayer()).hasCombatLogged()) {
-            e.getPlayer().sendMessage("§c§lALERT! §r§cInventory/bounty reset for quitting mid-fight!");
-            e.getPlayer().sendMessage("§e§lWARNING! §r§eThis action is logged for moderation.");
+        Player p = e.getPlayer();
+
+        if (Worlds.findByName(p.getWorld().getName()) == null) {
+            p.getLocation().setWorld(Bukkit.getWorld("elementals"));
+            p.teleport(p.getLocation());
+        }
+
+        if (Main.getInstance().getPlayerData(p).hasCombatLogged()) {
+            p.sendMessage("§c§lALERT! §r§cInventory/bounty reset for quitting mid-fight!");
+            p.sendMessage("§e§lWARNING! §r§eThis action is logged for moderation.");
             return;
         }
 
-        Main.getInstance().getPlayerData(e.getPlayer()).setCombatLogged(false);
+        Main.getInstance().getPlayerData(p).setCombatLogged(false);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
