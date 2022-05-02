@@ -651,7 +651,7 @@ public class ZelLogic {//zel
         } else if (pData.getPrestige() < 40) {
             return "§b[" + getColorLevel(player) + "§b]";
         } else if (pData.getPrestige() < 45) {
-            return "§2[" + getColorLevel(player) + "§2]";
+            return "§1[" + getColorLevel(player) + "§1]";
         } else if (pData.getPrestige() < 50) {
             return "§3[" + getColorLevel(player) + "§3]";
         } else if (pData.getPrestige() == 50) {
