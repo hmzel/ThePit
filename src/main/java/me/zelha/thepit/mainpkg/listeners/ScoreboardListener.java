@@ -35,6 +35,7 @@ public class ScoreboardListener implements Listener {
     private final RunTracker runTracker = Main.getInstance().generateRunTracker();
     private final RunTracker runTracker2 = Main.getInstance().generateRunTracker();
     private final Map<UUID, Team> teamMap = new HashMap<>();
+    private final Map<UUID, SidebarUpdater> sidebarMap = new HashMap<>();
 
     public void startAnimation() {
         new BukkitRunnable() {
@@ -85,15 +86,23 @@ public class ScoreboardListener implements Listener {
         }.runTaskTimer(Main.getInstance(), 0, 1);
     }
 
+    public void clearSidebar() {
+        for (SidebarUpdater sidebarUpdater : sidebarMap.values()) {
+            sidebarUpdater.clearSidebar();
+        }
+    }
+
     @EventHandler
     public void addOnJoin(PlayerJoinEvent e) {
-        new SidebarUpdater(e.getPlayer()).runTaskTimer(Main.getInstance(),0, 20);
+        sidebarMap.put(e.getPlayer().getUniqueId(), new SidebarUpdater(e.getPlayer()));
         new TabAndNameUpdater(e.getPlayer()).runTaskTimer(Main.getInstance(),0, 20);
     }
 
     @EventHandler
     public void removeOnLeave(PlayerQuitEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
+
+        sidebarMap.remove(uuid);
 
         if (runTracker.hasID(uuid)) runTracker.stop(uuid);
         if (runTracker2.hasID(uuid)) runTracker2.stop(uuid);
@@ -110,9 +119,20 @@ public class ScoreboardListener implements Listener {
         private final Player p;
         private final StrengthChainingPerk strengthPerk = (StrengthChainingPerk) STRENGTH_CHAINING.getMethods();
         private List<String> previousScores = new ArrayList<>();
+        private boolean needsToClear = false;
 
         public SidebarUpdater(Player player) {
             this.p = player;
+
+            runTaskTimer(Main.getInstance(),0, 20);
+        }
+
+        public void clearSidebar() {
+            needsToClear = true;
+
+            for (String prevScore : previousScores) {
+                ((CraftPlayer) p).getHandle().b.sendPacket(new PacketPlayOutScoreboardScore(ScoreboardServer.Action.b, "main", prevScore, 0));
+            }
         }
 
         @Override
@@ -203,6 +223,11 @@ public class ScoreboardListener implements Listener {
 
             for (String prevScore : previousScores) {
                 pConnect.sendPacket(new PacketPlayOutScoreboardScore(ScoreboardServer.Action.b, "main", prevScore, 0));
+            }
+
+            if (needsToClear) {
+                cancel();
+                return;
             }
 
             for (String score : scoreList) {

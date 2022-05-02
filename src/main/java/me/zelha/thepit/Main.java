@@ -43,6 +43,7 @@ public final class Main extends JavaPlugin {
     private KillListener killListener;
     private AssistListener assistListener;
     private AttackListener attackListener;
+    private ScoreboardListener scoreboardListener;
     private ConfirmGUIHandler confirmGUIHandler;
 
     @Override
@@ -59,7 +60,7 @@ public final class Main extends JavaPlugin {
         attackListener = new AttackListener();
         killListener = new KillListener();
         deathListener = new DeathListener();
-        ScoreboardListener scoreboardListener = new ScoreboardListener();
+        scoreboardListener = new ScoreboardListener();
         confirmGUIHandler = new ConfirmGUIHandler();
 
         getServer().getPluginManager().registerEvents(storage, this);
@@ -121,6 +122,7 @@ public final class Main extends JavaPlugin {
     public void onDisable() {
         mongoClient.close();
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "minecraft:kill @e[type=armor_stand,tag=bounty]");
+        scoreboardListener.clearSidebar();
     }
 
     public static Main getInstance() {
