@@ -12,7 +12,7 @@ public enum Ministreaks {
     SECOND_GAPPLE(null, 3, "Second Gapple", GOLDEN_APPLE, 0, 0, 1500,
             "§7Every: §c3 kills",
             " ",
-            "§7Gain §b50 XP§7, §6+5g §7and an",
+            "§7Gain §b5 XP§7, §6+5g §7and an",
             "§7extra golden apple."
     ),
     EXPLICIOUS(null, 3, "Explicious", LIGHT_BLUE_DYE, 0, 0, 3000,
