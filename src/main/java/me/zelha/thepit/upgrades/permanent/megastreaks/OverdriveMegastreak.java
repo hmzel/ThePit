@@ -17,7 +17,7 @@ public class OverdriveMegastreak extends Megastreak {
 
     @Override
     public double getDebuff(Player player, PitDamageEvent event) {
-        double damage = ((Main.getInstance().getPlayerData(player).getStreak() - 50) / 5) * 0.1;
+        double damage = Math.floor((Main.getInstance().getPlayerData(player).getStreak() - 50) / 5) * 0.2;
 
         if (damage > 0D) zl.trueDamage(player, null, damage, "§cOverdrive");
         return 0;

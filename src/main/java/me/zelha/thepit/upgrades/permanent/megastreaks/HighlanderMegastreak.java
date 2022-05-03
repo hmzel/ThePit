@@ -22,7 +22,7 @@ public class HighlanderMegastreak extends Megastreak {
 
         if (!Main.getInstance().getPlayerData(damager).hasPerkEquipped(Perks.BOUNTY_HUNTER)) return 0;
 
-        return Math.max(0, (Main.getInstance().getPlayerData(player).getStreak() - 50) * 0.03);
+        return Math.max(0, (Main.getInstance().getPlayerData(player).getStreak() - 50) * 0.003);
     }
 
     @Override
