@@ -513,7 +513,7 @@ public class UpgradesVillagerListener implements Listener {
             } else if (pData.getPerkUnlockStatus(perk)) {
                 lore.add("§eClick to select!");
             } else {
-                lore.add("§7Cost: §6" + zl.getFancyGoldString(cost) + "g");
+                lore.add("§7Cost: §6" + zl.getFancyNumberString(cost) + "g");
 
                 if (pData.getLevel() >= level) {
                     if (pData.getGold() - cost >= 0) {
@@ -663,7 +663,7 @@ public class UpgradesVillagerListener implements Listener {
             } else if (pData.getMegastreakUnlockStatus(mega)) {
                 lore.add("§eClick to select!");
             } else {
-                lore.add("§7Cost: §6" + zl.getFancyGoldString(mega.getCost()) + "g");
+                lore.add("§7Cost: §6" + zl.getFancyNumberString(mega.getCost()) + "g");
 
                 if (pData.getLevel() < mega.getLevel()) {
                     lore.add("§7Required level: " + zl.getColorBracketAndLevel(pData.getPrestige(), mega.getLevel()));
@@ -731,7 +731,7 @@ public class UpgradesVillagerListener implements Listener {
             } else if (pData.getMinistreakUnlockStatus(mini)) {
                 lore.add("§eClick to select!");
             } else {
-                lore.add("§7Cost: §6" + zl.getFancyGoldString(mini.getCost()) + "g");
+                lore.add("§7Cost: §6" + zl.getFancyNumberString(mini.getCost()) + "g");
 
                 if (pData.getLevel() < mini.getLevel()) {
                     lore.add("§7Required level: " + zl.getColorBracketAndLevel(pData.getPrestige(), mini.getLevel()));

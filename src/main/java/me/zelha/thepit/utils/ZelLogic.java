@@ -331,8 +331,8 @@ public class ZelLogic {//zel
      * @param gold gold to make fancy
      * @return fancy gold string
      */
-    public String getFancyGoldString(int gold) {
-        return new DecimalFormat("#,##0").format(gold);
+    public String getFancyNumberString(int number) {
+        return new DecimalFormat("#,##0").format(number);
     }
     //string makers
 

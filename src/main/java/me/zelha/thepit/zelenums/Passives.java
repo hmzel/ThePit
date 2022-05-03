@@ -171,9 +171,9 @@ public enum Passives {//0 tierMultipler is just a placeholder dont hurt me pleas
         if (tier < 5) {
             if (pData.getLevel() >= getLevelReq(p)) {
                 if (tier > 0) {
-                    lore.add("§7Upgrade cost: §6" + zl.getFancyGoldString(getCost(p)) + "g");
+                    lore.add("§7Upgrade cost: §6" + zl.getFancyNumberString(getCost(p)) + "g");
                 } else {
-                    lore.add("§7Cost: §6" + zl.getFancyGoldString(getCost(p)) + "g");
+                    lore.add("§7Cost: §6" + zl.getFancyNumberString(getCost(p)) + "g");
                 }
 
                 if ((pData.getGold() - getCost(p)) >= 0) {
