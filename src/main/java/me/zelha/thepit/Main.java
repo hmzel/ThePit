@@ -121,7 +121,6 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        mongoClient.close();
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "minecraft:kill @e[type=armor_stand,tag=bounty]");
         scoreboardListener.clearSidebar();
 

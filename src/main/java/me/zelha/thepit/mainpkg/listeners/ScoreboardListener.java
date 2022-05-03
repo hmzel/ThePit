@@ -119,7 +119,7 @@ public class ScoreboardListener implements Listener {
         private final Player p;
         private final StrengthChainingPerk strengthPerk = (StrengthChainingPerk) STRENGTH_CHAINING.getMethods();
         private List<String> previousScores = new ArrayList<>();
-        private boolean needsToClear = false;
+        private boolean isClearing = false;
 
         public SidebarUpdater(Player player) {
             this.p = player;
@@ -128,7 +128,7 @@ public class ScoreboardListener implements Listener {
         }
 
         public void clearSidebar() {
-            needsToClear = true;
+            isClearing = true;
 
             for (String prevScore : previousScores) {
                 ((CraftPlayer) p).getHandle().b.sendPacket(new PacketPlayOutScoreboardScore(ScoreboardServer.Action.b, "main", prevScore, 0));
@@ -225,14 +225,11 @@ public class ScoreboardListener implements Listener {
                 pConnect.sendPacket(new PacketPlayOutScoreboardScore(ScoreboardServer.Action.b, "main", prevScore, 0));
             }
 
-            if (needsToClear) {
-                cancel();
-                return;
-            }
-
-            for (String score : scoreList) {
-                pConnect.sendPacket(new PacketPlayOutScoreboardScore(ScoreboardServer.Action.a, "main", score, scoreIndex));
-                scoreIndex--;
+            if (!isClearing) {
+                for (String score : scoreList) {
+                    pConnect.sendPacket(new PacketPlayOutScoreboardScore(ScoreboardServer.Action.a, "main", score, scoreIndex));
+                    scoreIndex--;
+                }
             }
 
             previousScores = scoreList;
