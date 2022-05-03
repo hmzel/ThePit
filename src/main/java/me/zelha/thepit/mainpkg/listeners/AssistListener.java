@@ -170,7 +170,7 @@ public class AssistListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                assistMap.put(dead.getUniqueId(), new ArrayList<>());
+                if (zl.playerCheck(dead)) assistMap.put(dead.getUniqueId(), new ArrayList<>());
             }
         }.runTaskLater(Main.getInstance(), 1);
     }

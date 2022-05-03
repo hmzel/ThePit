@@ -51,6 +51,8 @@ public class BeastmodeMegastreak extends Megastreak {
         new BukkitRunnable() {
             @Override
             public void run() {
+                if (!zl.playerCheck(player)) return;
+
                 zl.itemPlacementHandler(player, EquipmentSlot.HEAD, zl.itemBuilder(
                         Material.DIAMOND_HELMET, 1, "§aBeastmode Helmet", null, true
                 ));

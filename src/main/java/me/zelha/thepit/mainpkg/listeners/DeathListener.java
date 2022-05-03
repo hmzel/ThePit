@@ -51,7 +51,7 @@ public class DeathListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                p.setHealth(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+                if (zl.playerCheck(p)) p.setHealth(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
             }
         }.runTaskLater(Main.getInstance(), 1);
 
@@ -194,7 +194,7 @@ public class DeathListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                teleportToSpawnMethod(dead);
+                if (zl.playerCheck(dead)) teleportToSpawnMethod(dead);
             }
         }.runTaskLater(Main.getInstance(), 1);
     }
