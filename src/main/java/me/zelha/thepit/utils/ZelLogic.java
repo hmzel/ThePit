@@ -328,8 +328,8 @@ public class ZelLogic {//zel
     /**
      * formats the given int so that 5000 would be 5,000
      *
-     * @param gold gold to make fancy
-     * @return fancy gold string
+     * @param number number to make fancy
+     * @return fancy number string
      */
     public String getFancyNumberString(int number) {
         return new DecimalFormat("#,##0").format(number);
@@ -487,6 +487,8 @@ public class ZelLogic {//zel
         } else {
             KillRecap.addDamageLog(damagee, new DamageLog(damage, cause, false));
         }
+
+        Bukkit.broadcastMessage(damage + "");//testing line
 
         if (willDie) {
             damagee.damage(131313);

@@ -95,8 +95,8 @@ public enum Megastreaks {
             "§7to fix §c4 lives §7on the item",
             "§7in the §dMystic Well§7."
     ),
-    TO_THE_MOON(StreakBundles.TO_THE_MOON, "§b§lMOON", "§a§lTO THE MOON", "To the Moon", END_STONE,
-            100, 15, 80, 50000, null,
+    TO_THE_MOON(StreakBundles.TO_THE_MOON, "§b§lMOON", "§b§lTO THE MOON", "To the Moon", END_STONE,
+            100, 15, 80, 50000, new ToTheMoonMegastreak(),
             "§7Triggers on: §c100 kills",
             " ",
             "§7On trigger:",

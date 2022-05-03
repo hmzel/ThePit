@@ -2,9 +2,11 @@ package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.upgrades.permanent.megastreaks.ToTheMoonMegastreak;
 import me.zelha.thepit.upgrades.permanent.perks.StrengthChainingPerk;
 import me.zelha.thepit.utils.RunTracker;
 import me.zelha.thepit.utils.ZelLogic;
+import me.zelha.thepit.zelenums.Megastreaks;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardScore;
 import net.minecraft.server.ScoreboardServer;
 import net.minecraft.server.network.PlayerConnection;
@@ -118,6 +120,7 @@ public class ScoreboardListener implements Listener {
 
         private final Player p;
         private final StrengthChainingPerk strengthPerk = (StrengthChainingPerk) STRENGTH_CHAINING.getMethods();
+        private final ToTheMoonMegastreak moonStreak = (ToTheMoonMegastreak) Megastreaks.TO_THE_MOON.getMethods();
         private List<String> previousScores = new ArrayList<>();
         private boolean isClearing = false;
 
@@ -165,7 +168,7 @@ public class ScoreboardListener implements Listener {
                 }
             }
 
-            scoreList.add("§7" + DateTimeFormatter.ofPattern("MM/dd/yy").format(LocalDateTime.now()) + " §8mega13Z");
+            scoreList.add("§7" + DateTimeFormatter.ofPattern("MM/dd/yy").format(LocalDateTime.now()) + " §8M13Z");
             scoreList.add("§1");
 
             if (pData.getPrestige() >= 1) scoreList.add("§fPrestige: §e" + zl.toRoman(pData.getPrestige()));
@@ -179,7 +182,7 @@ public class ScoreboardListener implements Listener {
             if (pData.getGold() < 10000) {
                 scoreList.add("§fGold: §6" + zl.getFancyGoldString(pData.getGold()) + "g");
             } else {
-                scoreList.add("§fGold: §6" + zl.getFancyGoldString((int) pData.getGold()) + "g");
+                scoreList.add("§fGold: §6" + zl.getFancyNumberString((int) pData.getGold()) + "g");
             }
 
             scoreList.add("§3");
@@ -190,7 +193,7 @@ public class ScoreboardListener implements Listener {
                 scoreList.add("§fStatus: " + status);
             }
 
-            if (pData.getBounty() != 0) scoreList.add("§fBounty: §6" + zl.getFancyGoldString(pData.getBounty()) + "g");
+            if (pData.getBounty() != 0) scoreList.add("§fBounty: §6" + zl.getFancyNumberString(pData.getBounty()) + "g");
 
             if (pData.getStreak() > 0) {
                 if (pData.getStreak() % 1 == 0) {
@@ -200,7 +203,19 @@ public class ScoreboardListener implements Listener {
                 }
             }
 
-            if (strengthPerk.getLevel(p) != null) {
+            if (pData.isMegaActive() && pData.getMegastreak() == Megastreaks.TO_THE_MOON) {
+                String color = (moonStreak.getPercentage(p) >= 0.4) ? "§a" : "§c";
+                String percentage;
+
+                if (moonStreak.getPercentage(p) < 1) {
+                    percentage = "0." + (int) (moonStreak.getPercentage(p) * 10);
+                } else {
+                    percentage = (int) moonStreak.getPercentage(p) + ".0";
+                    color = "§b";
+                }
+
+                scoreList.add("Stored XP: §b" + zl.getFancyNumberString(moonStreak.getStoredEXP(p)) + " §7(" + color + percentage + "x§7)");
+            } else if (strengthPerk.getLevel(p) != null) {
                 scoreList.add("§fStrength: §c" + zl.toRoman(strengthPerk.getLevel(p)) + " §7(" + strengthPerk.getTimer(p) + ")");
             } else if (GLADIATOR.getMethods().getDamageModifier(null, p) != 0D && !zl.spawnCheck(p.getLocation())) {
                 scoreList.add("§fGladiator: §9" + (int) (GLADIATOR.getMethods().getDamageModifier(null, p) * 100) + "%");

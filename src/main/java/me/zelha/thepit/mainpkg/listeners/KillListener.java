@@ -6,6 +6,7 @@ import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.perks.SpammerPerk;
 import me.zelha.thepit.utils.RunTracker;
 import me.zelha.thepit.utils.ZelLogic;
+import me.zelha.thepit.zelenums.Megastreaks;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -77,6 +78,10 @@ public class KillListener implements Listener {
             exp *= killerData.getMegastreak().getMethods().getEXPModifier(killer);
         }
 
+        if (killerData.isMegaActive() && killerData.getMegastreak() == Megastreaks.TO_THE_MOON) {
+            maxEXP += 100;
+        }
+
         return (int) Math.min(Math.ceil(exp), maxEXP);
     }
 
@@ -127,7 +132,7 @@ public class KillListener implements Listener {
         if (deadData.getBounty() != 0) {
             Bukkit.broadcastMessage("§6§lBOUNTY CLAIMED! " + zl.getColorBracketAndLevel(killer)
                     + "§7 " + killer.getName() + " killed " + zl.getColorBracketAndLevel(dead)
-                    + "§7 " + dead.getName() + " for §6§l" + zl.getFancyGoldString(deadData.getBounty()) + "g");
+                    + "§7 " + dead.getName() + " for §6§l" + zl.getFancyNumberString(deadData.getBounty()) + "g");
             deadData.setBounty(0);
         }
 
