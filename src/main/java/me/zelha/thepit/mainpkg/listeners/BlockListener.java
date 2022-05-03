@@ -41,11 +41,14 @@ public class BlockListener implements Listener {
         PlayerData pData = Main.getInstance().getPlayerData(p);
         double time = 0;
 
-        if (!Arrays.asList(placeable).contains(blockType) && !Main.getInstance().blockPriviledges.contains(p)) {
+        if (Main.getInstance().blockPriviledges.contains(p)) return;
+
+        if (!Arrays.asList(placeable).contains(blockType)) {
             e.setCancelled(true);
+            return;
         }
 
-        if (loc.distance(new Location(loc.getWorld(), 0.5, loc.getY(), 0.5)) < 9 && !Main.getInstance().blockPriviledges.contains(p)) {
+        if (loc.distance(new Location(loc.getWorld(), 0.5, loc.getY(), 0.5)) < 9) {
             e.setCancelled(true);
             return;
         }
