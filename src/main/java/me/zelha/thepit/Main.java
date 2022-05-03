@@ -26,6 +26,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,6 +124,10 @@ public final class Main extends JavaPlugin {
         mongoClient.close();
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "minecraft:kill @e[type=armor_stand,tag=bounty]");
         scoreboardListener.clearSidebar();
+
+        for (Team team : getServer().getScoreboardManager().getMainScoreboard().getTeams()) {
+            team.unregister();
+        }
     }
 
     public static Main getInstance() {
