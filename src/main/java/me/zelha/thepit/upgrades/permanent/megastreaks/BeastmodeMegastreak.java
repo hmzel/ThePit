@@ -23,14 +23,14 @@ public class BeastmodeMegastreak extends Megastreak {
     }
 
     @Override
-    public double getDebuff(Player player, PitDamageEvent event) {
-        event.setDamage(event.getDamage() + Math.max(0, Math.floor((Main.getInstance().getPlayerData(player).getStreak() - 50) / 5) * 0.2));
+    public double getDamagedModifier(Player damaged, PitDamageEvent event) {
+        event.setDamage(event.getDamage() + Math.max(0, Math.floor((Main.getInstance().getPlayerData(damaged).getStreak() - 50) / 5) * 0.2));
 
         return 0;
     }
 
     @Override
-    public double getBuff(Player player, PitDamageEvent event) {
+    public double getDamagerModifier(Player damager, PitDamageEvent event) {
         return 0.25;
     }
 

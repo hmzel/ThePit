@@ -118,7 +118,7 @@ public enum Megastreaks {
             "§7above 100, up to §b1x§7."
     ),
     UBERSTREAK(StreakBundles.UBERSTREAK, "§d§lUBER", "§d§lUBERSTREAK", "Uberstreak", GOLDEN_SWORD,
-            100, 20, 90, 50000, null,
+            100, 20, 90, 50000, new UberstreakMegastreak(),
             "§7Triggers on: §c100 kills",
             " ",
             "§7On trigger:",

@@ -38,11 +38,11 @@ public class Megastreak {
     public void onEquip(Player player) {
     }
 
-    public double getDebuff(Player player, PitDamageEvent event) {
+    public double getDamagedModifier(Player damaged, PitDamageEvent event) {
         return 0;
     }
 
-    public double getBuff(Player player, PitDamageEvent event) {
+    public double getDamagerModifier(Player damager, PitDamageEvent event) {
         return 0;
     }
 

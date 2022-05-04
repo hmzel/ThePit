@@ -36,11 +36,11 @@ public class KillstreakListener implements Listener {
         PlayerData damagerData = Main.getInstance().getPlayerData(damager);
 
         if (canApply(damaged)) {
-            e.setBoost(e.getBoost() + damagedData.getMegastreak().getMethods().getDebuff(damaged, e));
+            e.setBoost(e.getBoost() + damagedData.getMegastreak().getMethods().getDamagedModifier(damaged, e));
         }
 
         if (canApply(damager)) {
-            e.setBoost(e.getBoost() + damagerData.getMegastreak().getMethods().getBuff(damager, e));
+            e.setBoost(e.getBoost() + damagerData.getMegastreak().getMethods().getDamagerModifier(damager, e));
         }
     }
 

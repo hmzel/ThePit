@@ -17,16 +17,16 @@ public class HighlanderMegastreak extends Megastreak {
     }
 
     @Override
-    public double getDebuff(Player player, PitDamageEvent event) {
+    public double getDamagedModifier(Player damaged, PitDamageEvent event) {
         Player damager = event.getDamager();
 
         if (!Main.getInstance().getPlayerData(damager).hasPerkEquipped(Perks.BOUNTY_HUNTER)) return 0;
 
-        return Math.max(0, (Main.getInstance().getPlayerData(player).getStreak() - 50) * 0.003);
+        return Math.max(0, (Main.getInstance().getPlayerData(damaged).getStreak() - 50) * 0.003);
     }
 
     @Override
-    public double getBuff(Player player, PitDamageEvent event) {
+    public double getDamagerModifier(Player damager, PitDamageEvent event) {
         Player damaged = event.getDamaged();
 
         if (Main.getInstance().getPlayerData(damaged).getBounty() == 0) return 0;

@@ -40,8 +40,8 @@ public class HermitMegastreak extends Megastreak implements Listener {
     }
 
     @Override
-    public double getDebuff(Player player, PitDamageEvent event) {
-        return Math.max(0, (Main.getInstance().getPlayerData(player).getStreak() - 50) * 0.003);
+    public double getDamagedModifier(Player damaged, PitDamageEvent event) {
+        return Math.max(0, (Main.getInstance().getPlayerData(damaged).getStreak() - 50) * 0.003);
     }
 
     @Override
