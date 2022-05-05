@@ -28,8 +28,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import static me.zelha.thepit.zelenums.Perks.GLADIATOR;
-import static me.zelha.thepit.zelenums.Perks.STRENGTH_CHAINING;
+import static me.zelha.thepit.zelenums.Perks.*;
 
 public class ScoreboardListener implements Listener {
 
@@ -175,7 +174,11 @@ public class ScoreboardListener implements Listener {
 
             scoreList.add("§fLevel: " + zl.getColorBracketAndLevel(p));
 
-            if (pData.getLevel() < 120) scoreList.add("§fNeeded XP: §b" + pData.getExp()); else scoreList.add("§fXP: §bMAXED!");
+            if (pData.getLevel() < 120) {
+                scoreList.add("§fNeeded XP: §b" + zl.getFancyNumberString(pData.getExp()));
+            } else {
+                scoreList.add("§fXP: §bMAXED!");
+            }
 
             scoreList.add("§2");
 
@@ -196,10 +199,15 @@ public class ScoreboardListener implements Listener {
             if (pData.getBounty() != 0) scoreList.add("§fBounty: §6" + zl.getFancyNumberString(pData.getBounty()) + "g");
 
             if (pData.getStreak() > 0) {
-                if (pData.getStreak() % 1 == 0) {
-                    scoreList.add("§fStreak: §a" + (int) pData.getStreak());
+                if (pData.hasPerkEquipped(ASSISTANT_STREAKER)) {
+                    //in original pit the comma doesnt actually show if the streak has a decimal
+                    //but thats not gonna fly for me
+                    scoreList.add(
+                            "§fStreak: §a" + zl.getFancyNumberString((int) pData.getStreak()) + "." +
+                            (int) ((pData.getStreak() - (int) pData.getStreak()) * 10)
+                            );
                 } else {
-                    scoreList.add("§fStreak: §a" + pData.getStreak());
+                    scoreList.add("§fStreak: §a" + zl.getFancyNumberString((int) pData.getStreak()));
                 }
             }
 
@@ -284,7 +292,13 @@ public class ScoreboardListener implements Listener {
             StringBuilder sort = new StringBuilder();
 
             if (pData.getBounty() != 0) suffix += " §6§l" + pData.getBounty() + "g";
-            if (pData.isMegaActive()) prefix = pData.getMegastreak().getDisplayName() + " ";
+            if (pData.isMegaActive()) {
+                prefix = pData.getMegastreak().getDisplayName();
+
+                if (pData.getMegastreak() == Megastreaks.UBERSTREAK) prefix += (int) (pData.getStreak() / 100) * 100;
+            }
+
+            prefix += " ";
 
             while (level >= 100) {
                 if (!sort.toString().contains("a")) sort.append("a");
