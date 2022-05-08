@@ -1,9 +1,6 @@
 package me.zelha.thepit.zelenums;
 
-import me.zelha.thepit.upgrades.permanent.ministreaks.ExpliciousMinistreak;
-import me.zelha.thepit.upgrades.permanent.ministreaks.Ministreak;
-import me.zelha.thepit.upgrades.permanent.ministreaks.RAndRMinistreak;
-import me.zelha.thepit.upgrades.permanent.ministreaks.SecondGappleMinistreak;
+import me.zelha.thepit.upgrades.permanent.ministreaks.*;
 import org.bukkit.Material;
 
 import java.util.Arrays;
@@ -30,7 +27,7 @@ public enum Ministreaks {
             "§7Gain §9Resistance I §7and",
             "§cRegen II §7for 3s."
     ),
-    ARQUEBUSIER(null, 3, "Arquebusier", ARROW, 0, 50, 5000, null,
+    ARQUEBUSIER(null, 3, "Arquebusier", ARROW, 0, 50, 5000, new ArquebusierMinistreak(),
             "§7Every: §c3 kills",
             " ",
             "§7Gain:",
