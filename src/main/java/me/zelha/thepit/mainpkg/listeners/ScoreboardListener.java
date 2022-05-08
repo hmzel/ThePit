@@ -296,9 +296,9 @@ public class ScoreboardListener implements Listener {
                 prefix = pData.getMegastreak().getDisplayName();
 
                 if (pData.getMegastreak() == Megastreaks.UBERSTREAK) prefix += (int) (pData.getStreak() / 100) * 100;
-            }
 
-            prefix += " ";
+                prefix += " ";
+            }
 
             while (level >= 100) {
                 if (!sort.toString().contains("a")) sort.append("a");
