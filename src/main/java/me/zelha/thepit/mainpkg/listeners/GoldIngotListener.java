@@ -8,7 +8,6 @@ import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -45,7 +44,7 @@ public class GoldIngotListener implements Listener {
 
         if (pData.hasPerkEquipped(Perks.TRICKLE_DOWN)) {
             ingotGold += 10;
-            p.setHealth(Math.min(p.getHealth() + 2, p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+            zl.addHealth(p, 2);
         }
 
         if (pData.getPassiveTier(Passives.GOLD_BOOST) != 0) ingotGold *= (1 + (pData.getPassiveTier(Passives.GOLD_BOOST) / 10D));

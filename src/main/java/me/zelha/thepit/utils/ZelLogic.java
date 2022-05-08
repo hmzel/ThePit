@@ -23,6 +23,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -408,6 +409,32 @@ public class ZelLogic {//zel
             inventory.setItem(slot, item);
         } else if (!inventory.contains(item.getType())) {
             inventory.setItem(firstEmptySlot(inventory), item);
+        }
+    }
+
+    /**
+     * a replacement for increasing health via {@link Player#setHealth(double)} <p>
+     * which calls EntityRegainHealthEvent and acts accordingly, unlike setHealth
+     *
+     * @param player player to increase health of
+     * @param increase HP to increase player's health by
+     */
+    public void addHealth(Player player, double increase) {
+        double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+        double heal = increase;
+
+        if (player.getHealth() == maxHealth) return;
+
+        if (player.getHealth() + increase > maxHealth) {
+            heal = maxHealth - player.getHealth();
+        }
+
+        EntityRegainHealthEvent event = new EntityRegainHealthEvent(player, heal, EntityRegainHealthEvent.RegainReason.CUSTOM);
+
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (!event.isCancelled()) {
+            player.setHealth(heal);
         }
     }
     //misc stuff
