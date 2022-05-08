@@ -42,9 +42,7 @@ public class PerkListener implements Listener {
         int count = 0;
 
         for (ItemStack invItem : killer.getInventory().all(GOLDEN_APPLE).values()) {
-            if (zl.itemCheck(invItem) && invItem.isSimilar(new ItemStack(GOLDEN_APPLE))) {
-                count += invItem.getAmount();
-            }
+            count += invItem.getAmount();
         }
 
         if (count < 2) killer.getInventory().addItem(new ItemStack(GOLDEN_APPLE, 1));

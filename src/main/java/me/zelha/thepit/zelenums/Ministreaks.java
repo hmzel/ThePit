@@ -1,6 +1,7 @@
 package me.zelha.thepit.zelenums;
 
 import me.zelha.thepit.upgrades.permanent.ministreaks.Ministreak;
+import me.zelha.thepit.upgrades.permanent.ministreaks.SecondGappleMinistreak;
 import org.bukkit.Material;
 
 import java.util.Arrays;
@@ -10,7 +11,7 @@ import static me.zelha.thepit.zelenums.StreakBundles.*;
 import static org.bukkit.Material.*;
 
 public enum Ministreaks {
-    SECOND_GAPPLE(null, 3, "Second Gapple", GOLDEN_APPLE, 0, 0, 1500,null,
+    SECOND_GAPPLE(null, 3, "Second Gapple", GOLDEN_APPLE, 0, 0, 1500,new SecondGappleMinistreak(),
             "§7Every: §c3 kills",
             " ",
             "§7Gain §b5 XP§7, §6+5g §7and an",
@@ -198,7 +199,7 @@ public enum Ministreaks {
             "§e■ §7Multiple of 12: §6+4❤ absorption",
             "§e■ §7Multiple of 13: §c+25% damage §7(0:30)"
     ),
-    UNSET(null, 0, "unset", GOLD_BLOCK, 13131313, 0, 0,null,
+    UNSET(null, 13131313, "unset", GOLD_BLOCK, 13131313, 0, 0,null,
             "§7Select a killstreak for this",
             "§7slot."
     );

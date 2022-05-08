@@ -118,4 +118,8 @@ public class GoldenHeadsPerk extends Perk implements Listener {
     public void onLeave(PlayerQuitEvent e) {
         gheadCooldown.remove(e.getPlayer().getUniqueId());
     }
+
+    public ItemStack getGoldenHeadItem() {
+        return goldenHeadItem;
+    }
 }
