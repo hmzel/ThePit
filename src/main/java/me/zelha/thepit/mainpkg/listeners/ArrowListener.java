@@ -35,17 +35,12 @@ public class ArrowListener implements Listener {
         if (!(e.getEntity() instanceof Arrow)) return;
         if (!(e.getEntity().getShooter() instanceof Player)) return;
 
-        if (e.getHitBlock() != null) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    arrowItemMap.remove(e.getEntity().getUniqueId());
-                }
-            }.runTaskLater(Main.getInstance(), 1200);
-            return;
-        }
-
-        arrowItemMap.remove(e.getEntity().getUniqueId());
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                arrowItemMap.remove(e.getEntity().getUniqueId());
+            }
+        }.runTaskLater(Main.getInstance(), 1);
     }
 }
 
