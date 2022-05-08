@@ -35,7 +35,7 @@ public enum Ministreaks {
             "§7■ §f16 arrows §7(max 128)",
             "§7■ §eSpeed §7for 10 seconds"
     ),
-    KHANATE(HIGHLANDER, 3, "Khanate", GOLDEN_HELMET, 7, 60, 6000, null,
+    KHANATE(HIGHLANDER, 3, "Khanate", GOLDEN_HELMET, 7, 60, 6000, new KhanateMinistreak(),
             "§7Every: §c3 kills",
             " ",
             "§7Earn §6+8g§7.",
