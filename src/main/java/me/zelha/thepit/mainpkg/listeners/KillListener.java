@@ -7,6 +7,7 @@ import me.zelha.thepit.upgrades.permanent.perks.SpammerPerk;
 import me.zelha.thepit.utils.RunTracker;
 import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.Megastreaks;
+import me.zelha.thepit.zelenums.Ministreaks;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -78,6 +79,12 @@ public class KillListener implements Listener {
             exp *= killerData.getMegastreak().getMethods().getEXPModifier(killer);
         }
 
+        for (Ministreaks ministreak : killerData.getEquippedMinistreaks()) {
+            if (ministreak.getMethods() == null) continue;
+
+            exp *= ministreak.getMethods().getEXPModifier(killer);
+        }
+
         if (killerData.isMegaActive() && killerData.getMegastreak() == Megastreaks.TO_THE_MOON) {
             maxEXP += 100;
         }
@@ -105,6 +112,12 @@ public class KillListener implements Listener {
 
         if (killerData.isMegaActive() && killerData.getMegastreak().getMethods() != null) {
             gold *= killerData.getMegastreak().getMethods().getGoldModifier(killer);
+        }
+
+        for (Ministreaks ministreak : killerData.getEquippedMinistreaks()) {
+            if (ministreak.getMethods() == null) continue;
+
+            gold *= ministreak.getMethods().getGoldModifier(killer);
         }
 
         return Math.min(gold, 2500) + deadData.getBounty();

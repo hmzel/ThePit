@@ -6,6 +6,7 @@ import me.zelha.thepit.events.PitDeathEvent;
 import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.megastreaks.Megastreak;
+import me.zelha.thepit.zelenums.Ministreaks;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -21,6 +22,13 @@ public class KillstreakListener implements Listener {
         PlayerData pData = Main.getInstance().getPlayerData(p);
         Megastreak megaMethods = pData.getMegastreak().getMethods();
 
+        for (Ministreaks ministreak : pData.getEquippedMinistreaks()) {
+            if ((int) pData.getStreak() % ministreak.getTrigger() != 0) continue;
+            if (ministreak.getMethods() == null) continue;
+
+            ministreak.getMethods().onTrigger(p);
+        }
+
         if ((int) pData.getStreak() < pData.getMegastreak().getTrigger()) return;
         if (pData.isMegaActive()) return;
         if (megaMethods == null) return;
@@ -34,6 +42,18 @@ public class KillstreakListener implements Listener {
         Player damager = e.getDamager();
         PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
         PlayerData damagerData = Main.getInstance().getPlayerData(damager);
+
+        for (Ministreaks ministreak : damagedData.getEquippedMinistreaks()) {
+            if (ministreak.getMethods() == null) continue;
+
+            e.setBoost(e.getBoost() + ministreak.getMethods().getDamagedModifier(damaged, e));
+        }
+
+        for (Ministreaks ministreak : damagerData.getEquippedMinistreaks()) {
+            if (ministreak.getMethods() == null) continue;
+
+            e.setBoost(e.getBoost() + ministreak.getMethods().getDamagerModifier(damager, e));
+        }
 
         if (canApply(damaged)) {
             e.setBoost(e.getBoost() + damagedData.getMegastreak().getMethods().getDamagedModifier(damaged, e));
