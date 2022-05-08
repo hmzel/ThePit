@@ -49,6 +49,7 @@ public class AttackListener implements Listener {
         Player damager;
         double boost = 1;
 
+        if (!zl.playerCheck(damagerEntity)) return;
         if (zl.spawnCheck(damagedEntity.getLocation()) || zl.spawnCheck(damagerEntity.getLocation())) return;
         if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
 
