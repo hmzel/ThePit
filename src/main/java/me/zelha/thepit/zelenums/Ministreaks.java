@@ -43,7 +43,7 @@ public enum Ministreaks {
             "§7Stack §c+4% damage §7vs bountied players",
             "§7up to §c+40%§7."
     ),
-    LEECH(MAGNUM_OPUS, 3, "Leech", CHICKEN_SPAWN_EGG, 10, 70, 6000, null,
+    LEECH(MAGNUM_OPUS, 3, "Leech", CHICKEN_SPAWN_EGG, 10, 70, 6000, new LeechMinistreak(),
             "§7Every: §c3 kills",
             " ",
             "§7Next hit heals for §c0.5❤ §7+",
