@@ -2,6 +2,7 @@ package me.zelha.thepit.zelenums;
 
 import me.zelha.thepit.upgrades.permanent.ministreaks.ExpliciousMinistreak;
 import me.zelha.thepit.upgrades.permanent.ministreaks.Ministreak;
+import me.zelha.thepit.upgrades.permanent.ministreaks.RAndRMinistreak;
 import me.zelha.thepit.upgrades.permanent.ministreaks.SecondGappleMinistreak;
 import org.bukkit.Material;
 
@@ -23,7 +24,7 @@ public enum Ministreaks {
             " ",
             "§7Gain §b+12 XP§7."
     ),
-    R_AND_R(BEASTMODE, 3, "R&R", GOLDEN_CARROT, 3, 40, 4000, null,
+    R_AND_R(BEASTMODE, 3, "R&R", GOLDEN_CARROT, 3, 40, 4000, new RAndRMinistreak(),
             "§7Every: §c3 kills",
             " ",
             "§7Gain §9Resistance I §7and",
