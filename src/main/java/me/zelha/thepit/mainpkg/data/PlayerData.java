@@ -35,6 +35,7 @@ public class PlayerData {
     private Megastreaks megastreak;
     private boolean megaActive;
     private boolean combatLogged;
+    private int uberdropMysticChance;
 
     public PlayerData(Document document) {
         this.uuid = UUID.fromString(document.getString("uuid"));
@@ -50,6 +51,7 @@ public class PlayerData {
         megastreak = Megastreaks.findByEnumName(document.getString("megastreak"));
         megaActive = false;
         combatLogged = document.getBoolean("combat_logged");
+        uberdropMysticChance = document.getEmbedded(Arrays.asList("misc", "uberdrop_mystic_chance"), Integer.class);
 
         for (String slot : slots) {
             perkSlots.put((slots.indexOf(slot) + 1), Perks.findByEnumName(document.getEmbedded(Arrays.asList("perk_slots", slot), String.class)));
@@ -192,6 +194,10 @@ public class PlayerData {
         return combatLogged;
     }
 
+    public int getUberdropMysticChance() {
+        return uberdropMysticChance;
+    }
+
     //setters
 
     public void setPrestige(int prestige) {
@@ -273,6 +279,10 @@ public class PlayerData {
 
     public void setCombatLogged(boolean bool) {
         this.combatLogged = bool;
+    }
+
+    public void setUberdropMysticChance(int uberdropMysticChance) {
+        this.uberdropMysticChance = uberdropMysticChance;
     }
 }
 

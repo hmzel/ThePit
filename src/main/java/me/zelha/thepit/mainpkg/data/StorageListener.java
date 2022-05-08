@@ -84,6 +84,7 @@ public class StorageListener implements Listener {
         Document unlockedPerksEmbed = new Document();
         Document unlockedMegastreaksEmbed = new Document();
         Document unlockedMinistreaksEmbed = new Document();
+        Document miscEmbed = new Document();
 
         for (String slot : slots) perkSlotsEmbed.append(slot, pData.getPerkAtSlot((slots.indexOf(slot) + 1)).name().toLowerCase());
         for (int i = 0; i < 3; i++) ministreakSlotsEmbed.append(slots.get(i), pData.getMinistreakAtSlot(i + 1).name().toLowerCase());
@@ -92,6 +93,7 @@ public class StorageListener implements Listener {
         for (Megastreaks mega : Megastreaks.values()) unlockedMegastreaksEmbed.append(mega.name().toLowerCase(), pData.getMegastreakUnlockStatus(mega));
         for (Ministreaks mini : Ministreaks.values()) unlockedMinistreaksEmbed.append(mini.name().toLowerCase(), pData.getMinistreakUnlockStatus(mini));
 
+        miscEmbed.put("uberdrop_mystic_chance", pData.getUberdropMysticChance());
         pDoc.put("prestige", pData.getPrestige());
         pDoc.put("level", pData.getLevel());
         pDoc.put("exp", pData.getExp());
@@ -104,6 +106,7 @@ public class StorageListener implements Listener {
         pDoc.put("perk_unlocks", unlockedPerksEmbed);
         pDoc.put("megastreak_unlocks", unlockedMegastreaksEmbed);
         pDoc.put("ministreak_unlocks", unlockedMinistreaksEmbed);
+        pDoc.put("misc", miscEmbed);
         pDoc.put("combat_logged", pData.hasCombatLogged());
 
         pDataCol.replaceOne(new Document("uuid", uuid), pDoc);
@@ -116,6 +119,7 @@ public class StorageListener implements Listener {
         Document unlockedPerksEmbed = new Document();
         Document unlockedMegastreaksEmbed = new Document();
         Document unlockedMinistreaksEmbed = new Document();
+        Document miscEmbed = new Document();
 
         for (String slot : slots) {
             if (document.getEmbedded(Arrays.asList("perk_slots", slot), String.class) == null) {
@@ -165,6 +169,7 @@ public class StorageListener implements Listener {
             }
         }
 
+        if (document.getEmbedded(Arrays.asList("misc", "uberdrop_mystic_chance"), Integer.class) == null) miscEmbed.append("uberdrop_mystic_chance", 0);
         if (document.get("prestige") == null) document.append("prestige", 0);
         if (document.get("level") == null) document.append("level", 1);
         if (document.get("exp") == null) document.append("exp", 15);
@@ -178,6 +183,7 @@ public class StorageListener implements Listener {
         document.append("perk_unlocks", unlockedPerksEmbed);
         document.append("megastreak_unlocks", unlockedMegastreaksEmbed);
         document.append("ministreak_unlocks", unlockedMinistreaksEmbed);
+        document.append("misc", miscEmbed);
 
         if (document.get("combat_logged") == null) document.append("combat_logged", false);
 
@@ -227,7 +233,8 @@ public class StorageListener implements Listener {
                 && document.get("gold") != null
                 && document.get("bounty") != null
                 && document.get("megastreak") != null
-                && document.get("combat_logged") != null;
+                && document.get("combat_logged") != null
+                && document.getEmbedded(Arrays.asList("misc", "uberdrop_mystic_chance"), Integer.class) != null;
     }
 }
 

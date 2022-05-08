@@ -1,9 +1,11 @@
 package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.utils.ZelLogic;
 import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,19 +23,27 @@ public class SpawnListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
+        Player p = e.getPlayer();
+
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (!zl.playerCheck(e.getPlayer())) {
+                if (!zl.playerCheck(p)) {
                     cancel();
                     return;
                 }
 
-                PlayerData pData = Main.getInstance().getPlayerData(e.getPlayer());
+                PlayerData pData = Main.getInstance().getPlayerData(p);
 
-                if (zl.spawnCheck(e.getPlayer().getLocation()) && pData.getStreak() != 0) {
+                if (zl.spawnCheck(p.getLocation()) && pData.getStreak() != 0) {
                     pData.setStreak(0);
-                    e.getPlayer().sendMessage("§c§lRESET! §7streak reset for standing in the spawn area!");
+                    p.sendMessage("§c§lRESET! §7streak reset for standing in the spawn area!");
+
+                    for (AttributeModifier modifier : p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers()) {
+                        if (modifier.getName().equals("Uberstreak")) {
+                            p.getAttribute(Attribute.GENERIC_MAX_HEALTH).removeModifier(modifier);
+                        }
+                    }
                 }
             }
         }.runTaskTimer(Main.getInstance(), 0, 100);
