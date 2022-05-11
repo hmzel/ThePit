@@ -55,7 +55,7 @@ public enum Ministreaks {
             "§7Receive §9-3% §7damage.",
             "§7Stacks up to §9-24%§7."
     ),
-    FIGHT_OR_FLIGHT(null, 5, "Fight or Flight", FIRE_CHARGE, 0, 50, 5000, null,
+    FIGHT_OR_FLIGHT(null, 5, "Fight or Flight", FIRE_CHARGE, 0, 50, 5000,  new FightOrFlightMinistreak(),
             "§7Every: §c5 kills",
             " ",
             "§7If below half §c❤§7:",
