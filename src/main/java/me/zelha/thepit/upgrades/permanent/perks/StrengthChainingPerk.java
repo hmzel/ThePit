@@ -14,7 +14,7 @@ public class StrengthChainingPerk extends Perk {
 
     private final Map<UUID, Integer> strengthChaining = new HashMap<>();
     private final Map<UUID, Integer> strengthChainingTimer = new HashMap<>();
-    private final RunTracker runTracker = Main.getInstance().generateRunTracker();
+    private final RunTracker runTracker = new RunTracker();
 
     public StrengthChainingPerk() {
     }

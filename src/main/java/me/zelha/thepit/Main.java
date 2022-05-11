@@ -19,7 +19,6 @@ import me.zelha.thepit.upgrades.permanent.KillstreakListener;
 import me.zelha.thepit.upgrades.permanent.PerkListener;
 import me.zelha.thepit.upgrades.permanent.UpgradesVillagerListener;
 import me.zelha.thepit.utils.ConfirmGUIHandler;
-import me.zelha.thepit.utils.RunTracker;
 import me.zelha.thepit.utils.ZelLogic;
 import org.bson.Document;
 import org.bukkit.Bukkit;
@@ -151,10 +150,6 @@ public final class Main extends JavaPlugin {
 
     public AssistListener getAssistUtils() {
         return assistListener;
-    }
-
-    public RunTracker generateRunTracker() {
-        return new RunTracker();
     }
 
     public AttackListener getAttackUtils() {

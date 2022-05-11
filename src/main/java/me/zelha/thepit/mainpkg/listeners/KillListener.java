@@ -40,9 +40,9 @@ import static org.bukkit.Material.GOLDEN_LEGGINGS;
 public class KillListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-    private final RunTracker runTracker = Main.getInstance().generateRunTracker();
-    private final RunTracker runTracker2 = Main.getInstance().generateRunTracker();
-    private final RunTracker runTracker3 = Main.getInstance().generateRunTracker();
+    private final RunTracker runTracker = new RunTracker();
+    private final RunTracker runTracker2 = new RunTracker();
+    private final RunTracker runTracker3 = new RunTracker();
 
     public int calculateEXP(Player dead, Player killer) {
         double exp = 5;

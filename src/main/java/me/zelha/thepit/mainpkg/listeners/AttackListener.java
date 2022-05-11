@@ -31,7 +31,7 @@ public class AttackListener implements Listener {
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final AssistListener assistUtils = Main.getInstance().getAssistUtils();
     private final PluginManager manager = Main.getInstance().getServer().getPluginManager();
-    private final RunTracker runTracker = Main.getInstance().generateRunTracker();
+    private final RunTracker runTracker = new RunTracker();
 
     public void startCombatTimer(Player damaged, Player damager) {
         if (runTracker.hasID(damaged.getUniqueId())) runTracker.stop(damaged.getUniqueId());

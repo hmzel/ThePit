@@ -33,8 +33,8 @@ import static me.zelha.thepit.zelenums.Perks.*;
 public class ScoreboardListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-    private final RunTracker runTracker = Main.getInstance().generateRunTracker();
-    private final RunTracker runTracker2 = Main.getInstance().generateRunTracker();
+    private final RunTracker runTracker = new RunTracker();
+    private final RunTracker runTracker2 = new RunTracker();
     private final Map<UUID, Team> teamMap = new HashMap<>();
     private final Map<UUID, SidebarUpdater> sidebarMap = new HashMap<>();
 

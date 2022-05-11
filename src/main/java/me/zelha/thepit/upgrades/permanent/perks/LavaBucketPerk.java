@@ -29,7 +29,7 @@ import static org.bukkit.Material.*;
 
 public class LavaBucketPerk extends Perk implements Listener {
 
-    private final RunTracker runTracker = Main.getInstance().generateRunTracker();
+    private final RunTracker runTracker = new RunTracker();
     private final Map<UUID, Integer> lavaExistTimer = new HashMap<>();
     private final Map<UUID, Block> placedLava = new HashMap<>();
     private final Map<UUID, Material> previousLavaBlock = new HashMap<>();
