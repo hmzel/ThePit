@@ -49,7 +49,7 @@ public enum Ministreaks {
             "§7Next hit heals for §c0.5❤ §7+",
             "§c20% §7of its damage."
     ),
-    TOUGH_SKIN(BEASTMODE, 5, "Tough Skin", LEATHER_CHESTPLATE, 3, 30, 3000, null,
+    TOUGH_SKIN(BEASTMODE, 5, "Tough Skin", LEATHER_CHESTPLATE, 3, 30, 3000, new ToughSkinMinistreak(),
             "§7Every: §c5 kills",
             " ",
             "§7Receive §9-3% §7damage.",

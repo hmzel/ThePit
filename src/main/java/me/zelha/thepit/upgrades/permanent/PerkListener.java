@@ -5,7 +5,6 @@ import me.zelha.thepit.events.PitDamageEvent;
 import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.perks.BonkPerk;
-import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,8 +21,6 @@ import static org.bukkit.Material.GOLDEN_APPLE;
 //trickle down is handled in GoldIngotListener because thats just way easier
 //all resource-related stuff is handled in KillListener
 public class PerkListener implements Listener {
-
-    private final ZelLogic zl = Main.getInstance().getZelLogic();
 
     @EventHandler
     public void onKill(PitKillEvent e) {
