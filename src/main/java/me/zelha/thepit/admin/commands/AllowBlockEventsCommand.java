@@ -19,7 +19,7 @@ public class AllowBlockEventsCommand implements CommandExecutor {
             p.sendMessage("§5ok, since you asked so nicely");
         } else {
             Main.getInstance().blockPriviledges.remove(p);
-            p.sendMessage("§5you no longer have block priviledges");
+            p.sendMessage("§5you no longer have block privileges");
         }
         return true;
     }

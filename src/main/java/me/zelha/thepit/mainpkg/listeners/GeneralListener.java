@@ -12,7 +12,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
@@ -31,6 +30,7 @@ import org.bukkit.util.BoundingBox;
 import java.util.Arrays;
 
 import static org.bukkit.Material.*;
+import static org.bukkit.event.EventPriority.LOWEST;
 
 public class GeneralListener implements Listener {
 
@@ -106,7 +106,7 @@ public class GeneralListener implements Listener {
         if (Arrays.asList(undroppable).contains(e.getItemDrop().getItemStack().getType())) e.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = LOWEST)
     public void onVoid(PlayerMoveEvent e) {
         Player p = e.getPlayer();
 
@@ -141,7 +141,7 @@ public class GeneralListener implements Listener {
         if (e.getBlock().getType() == LAVA || e.getBlock().getType() == WATER) e.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = LOWEST)
     public void onFire(EntityDamageEvent e) {
         if (!zl.playerCheck(e.getEntity())) return;
 
@@ -151,7 +151,7 @@ public class GeneralListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = LOWEST)
     public void onMerchantInventory(InventoryOpenEvent e) {
         if (e.getInventory().getType() == InventoryType.MERCHANT) e.setCancelled(true);
     }
@@ -184,13 +184,12 @@ public class GeneralListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = LOWEST)
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
 
         if (Worlds.findByName(p.getWorld().getName()) == null) {
-            p.getLocation().setWorld(Bukkit.getWorld("elementals"));
-            p.teleport(p.getLocation());
+            p.teleport(new Location(Bukkit.getWorld("elementals"), 0.5, 114, 9.5));
         }
 
         if (Main.getInstance().getPlayerData(p).hasCombatLogged()) {
@@ -202,7 +201,7 @@ public class GeneralListener implements Listener {
         Main.getInstance().getPlayerData(p).setCombatLogged(false);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = LOWEST)
     public void onLeave(PlayerQuitEvent e) {
         zl.pitReset(e.getPlayer());
     }
