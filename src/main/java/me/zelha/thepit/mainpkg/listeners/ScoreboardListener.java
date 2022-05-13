@@ -264,7 +264,7 @@ public class ScoreboardListener implements Listener {
 
         private final Player p;
         private final PlayerData pData;
-        private final char[] sortHelp = {'z', 'y', 'x', 'w', 'v', 'u', 't', 's', 'r', 'q'};
+        private final char[] sortHelp = {'y', 'x', 'w', 'v', 'u', 't', 's', 'r', 'q', 'p'};
         private boolean hasHeaderAndFooter = false;
 
         public TabAndNameUpdater(Player player) {
@@ -300,7 +300,9 @@ public class ScoreboardListener implements Listener {
                 prefix += " ";
             }
 
-            while (level >= 100) {
+            if (level < 10) sort.append('z');
+
+                while (level >= 100) {
                 if (!sort.toString().contains("a")) sort.append("a");
 
                 level -= 100;
