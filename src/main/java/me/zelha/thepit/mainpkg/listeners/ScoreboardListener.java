@@ -302,7 +302,7 @@ public class ScoreboardListener implements Listener {
 
             if (level < 10) sort.append('z');
 
-                while (level >= 100) {
+            if (level >= 100) {
                 if (!sort.toString().contains("a")) sort.append("a");
 
                 level -= 100;
@@ -313,6 +313,8 @@ public class ScoreboardListener implements Listener {
 
                 sort.append(sortHelp[Integer.parseInt((level + "").charAt(i) + "")]);
             }
+
+            while (sort.length() + p.getName().length() > 64) sort.deleteCharAt(sort.length() - 1);
 
             sort.append(p.getName());
 
