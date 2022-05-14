@@ -64,7 +64,7 @@ public enum Ministreaks {
             "§7Otherwise:",
             "§7Deal §c+20% §7damage for 7 seconds."
     ),
-    PUNGENT(HERMIT, 5, "Pungent", FERMENTED_SPIDER_EYE, 4, 70, 9000, null,
+    PUNGENT(HERMIT, 5, "Pungent", FERMENTED_SPIDER_EYE, 4, 70, 9000, new PungentMinistreak(),
             "§7Every: §c5 kills",
             " ",
             "§7Obtain a §cSmelly Bomb§7:",
