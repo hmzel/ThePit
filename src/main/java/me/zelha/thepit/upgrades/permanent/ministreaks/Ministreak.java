@@ -27,4 +27,7 @@ public class Ministreak {
     public double getGoldModifier(Player player) {
         return 1;
     }
+
+    public void onReset(Player player) {
+    }
 }
