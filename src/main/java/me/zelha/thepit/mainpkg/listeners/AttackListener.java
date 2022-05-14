@@ -49,17 +49,19 @@ public class AttackListener implements Listener {
         Player damager;
         double boost = 1;
 
-        if (!zl.playerCheck(damagerEntity)) return;
         if (zl.spawnCheck(damagedEntity.getLocation()) || zl.spawnCheck(damagerEntity.getLocation())) return;
         if (zl.playerCheck(damagedEntity)) damaged = (Player) damagedEntity; else return;
 
         if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player) {
             damager = (Player) ((Arrow) damagerEntity).getShooter();
+            Bukkit.broadcastMessage(damager.getName());
         } else if (zl.playerCheck(damagerEntity)) {
             damager = (Player) damagerEntity;
         } else {
             return;
         }
+
+        if (!zl.playerCheck(damager)) return;
 
         PlayerData damagedData = Main.getInstance().getPlayerData(damaged);
         PlayerData damagerData = Main.getInstance().getPlayerData(damager);
