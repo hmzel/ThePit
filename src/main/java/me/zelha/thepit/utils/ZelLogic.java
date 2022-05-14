@@ -5,6 +5,7 @@ import me.zelha.thepit.events.TrueDamageEvent;
 import me.zelha.thepit.mainpkg.data.DamageLog;
 import me.zelha.thepit.mainpkg.data.KillRecap;
 import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.zelenums.Ministreaks;
 import me.zelha.thepit.zelenums.Perks;
 import me.zelha.thepit.zelenums.Worlds;
 import net.md_5.bungee.api.ChatMessageType;
@@ -453,6 +454,10 @@ public class ZelLogic {//zel
 
         for (Perks perk : Perks.values()) {
             if (perk.getMethods() != null) perk.getMethods().onReset(p, pData);
+        }
+
+        for (Ministreaks mini : Ministreaks.values()) {
+            if (mini.getMethods() != null) mini.getMethods().onReset(p);
         }
 
         if (pData.getMegastreak().getMethods() != null) pData.getMegastreak().getMethods().onEquip(p);
