@@ -3,9 +3,7 @@ package me.zelha.thepit.upgrades.permanent.ministreaks;
 import me.zelha.thepit.Main;
 import me.zelha.thepit.events.PitDamageEvent;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashSet;
@@ -44,10 +42,5 @@ public class LeechMinistreak extends Ministreak implements Listener {
     @Override
     public void onReset(Player player) {
         triggered.remove(player.getUniqueId());
-    }
-
-    @EventHandler
-    public void onLeave(PlayerQuitEvent e) {
-        triggered.remove(e.getPlayer().getUniqueId());
     }
 }

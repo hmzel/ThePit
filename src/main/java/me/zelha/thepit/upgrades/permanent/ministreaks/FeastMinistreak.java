@@ -8,7 +8,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -86,11 +85,6 @@ public class FeastMinistreak extends Ministreak implements Listener {
 
         p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 100, 0, false, false, true));
         p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 0, false, false, true));
-    }
-
-    @EventHandler
-    public void onLeave(PlayerQuitEvent e) {
-        timesEaten.remove(e.getPlayer().getUniqueId());
     }
 }
 

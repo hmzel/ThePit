@@ -4,9 +4,7 @@ import me.zelha.thepit.Main;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,10 +39,5 @@ public class RushMinistreak extends Ministreak implements Listener {
         AttributeInstance speed = player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
         speed.setBaseValue(speed.getBaseValue() - speedMap.get(player.getUniqueId()));
         speedMap.remove(player.getUniqueId());
-    }
-
-    @EventHandler
-    public void onLeave(PlayerQuitEvent e) {
-        speedMap.remove(e.getPlayer().getUniqueId());
     }
 }
