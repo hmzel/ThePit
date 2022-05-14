@@ -71,7 +71,7 @@ public enum Ministreaks {
             "§7Applies §9Slowness I §7to players",
             "§7within 3 blocks for 5 seconds."
     ),
-    HEROS_HASTE(null, 5, "Hero's Haste", ENCHANTED_BOOK, 0, 100, 15000, null,
+    HEROS_HASTE(null, 5, "Hero's Haste", ENCHANTED_BOOK, 0, 100, 15000, new HerosHasteMinistreak(),
             "§7Every: §c5 kills",
             " ",
             "§7Gain §eSpeed II §7for 5 seconds."

@@ -258,6 +258,7 @@ public class UpgradesVillagerListener implements Listener {
         while (finder.lastIndexOf(" ") != -1) finder.setCharAt(finder.lastIndexOf(" "), '_');
         while (finder.lastIndexOf("-") != -1) finder.setCharAt(finder.lastIndexOf("-"), '_');
         while (finder.lastIndexOf("&") != -1) finder.replace(1, 2, "_AND_");
+        while (finder.lastIndexOf("'") != -1) finder.deleteCharAt(finder.lastIndexOf("'"));
 
         Ministreaks mini = Ministreaks.findByEnumName(finder.toString());
         Ministreaks sameFrequency = null;
