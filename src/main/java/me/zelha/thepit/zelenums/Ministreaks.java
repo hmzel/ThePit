@@ -82,7 +82,7 @@ public enum Ministreaks {
             "§7Gain §e1.5% Speed§7.",
             "§7Max §e+15% Speed§7."
     ),
-    FEAST(null, 7, "Feast", MUTTON, 0, 30, 4000, null,
+    FEAST(null, 7, "Feast", MUTTON, 0, 30, 4000, new FeastMinistreak(),
             "§7Every: §c7 kills",
             " ",
             "§7Obtain a §6AAA-Rated Steak§7:",
