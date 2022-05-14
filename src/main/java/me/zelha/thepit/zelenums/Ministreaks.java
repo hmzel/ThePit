@@ -91,7 +91,7 @@ public enum Ministreaks {
             "§7■ §9Resistance I",
             "§7Insta-eat (0:10)"
     ),
-    COUNTER_STRIKE(null, 7, "Counter-Strike", IRON_HORSE_ARMOR, 0, 40, 5000, null,
+    COUNTER_STRIKE(null, 7, "Counter-Strike", IRON_HORSE_ARMOR, 0, 40, 5000, new CounterStrikeMinistreak(),
             "§7Every: §c7 kills",
             " ",
             "§7Deal §c+15% damage §7and block",
