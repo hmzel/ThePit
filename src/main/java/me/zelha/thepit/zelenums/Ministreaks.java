@@ -76,7 +76,7 @@ public enum Ministreaks {
             " ",
             "§7Gain §eSpeed II §7for 5 seconds."
     ),
-    RUSH(HIGHLANDER, 5, "Rush", SUGAR, 7, 110, 25000, null,
+    RUSH(HIGHLANDER, 5, "Rush", SUGAR, 7, 110, 25000, new RushMinistreak(),
             "§7Every: §c5 kills",
             " ",
             "§7Gain §e1.5% Speed§7.",
