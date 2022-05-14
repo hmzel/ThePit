@@ -16,17 +16,26 @@ import java.util.Arrays;
 
 public class PungentMinistreak extends Ministreak implements Listener {
 
+    private final ItemStack pungentItem = zl.itemBuilder(Material.FERMENTED_SPIDER_EYE, 1, "§cSmelly Bomb", Arrays.asList(
+            "§7Perk item",
+            "§7Confuses players around you,",
+            "§7slowing them for 4 seconds."
+    ));
+
     public PungentMinistreak() {
         Main.getInstance().getServer().getPluginManager().registerEvents(this, Main.getInstance());
     }
 
     @Override
     public void onTrigger(Player player) {//why was this added to the game
-        player.getInventory().addItem(zl.itemBuilder(Material.FERMENTED_SPIDER_EYE, 1, "§cSmelly Bomb", Arrays.asList(
-                "§7Perk item",
-                "§7Confuses players around you,",
-                "§7slowing them for 4 seconds."
-        )));
+        player.getInventory().addItem(pungentItem);
+    }
+
+    @Override
+    public void onReset(Player player) {
+        for (ItemStack item : player.getInventory().all(Material.FERMENTED_SPIDER_EYE).values()) {
+            if (item.isSimilar(pungentItem)) player.getInventory().remove(item);
+        }
     }
 
     @EventHandler
