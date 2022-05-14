@@ -33,9 +33,7 @@ public class PungentMinistreak extends Ministreak implements Listener {
 
     @Override
     public void onReset(Player player) {
-        for (ItemStack item : player.getInventory().all(Material.FERMENTED_SPIDER_EYE).values()) {
-            if (item.isSimilar(pungentItem)) player.getInventory().remove(item);
-        }
+        removeAll(player.getInventory(), pungentItem);
     }
 
     @EventHandler
