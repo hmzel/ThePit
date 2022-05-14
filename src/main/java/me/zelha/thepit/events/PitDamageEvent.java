@@ -23,6 +23,7 @@ public class PitDamageEvent extends Event implements Cancellable {
     private boolean cancelled = false;
     private double damage;
     private double boost;
+    private double finalDamageModifier = 0;
 
     public PitDamageEvent(EntityDamageByEntityEvent event, double boost) {
         Entity damagerEntity = event.getDamager();
@@ -92,11 +93,19 @@ public class PitDamageEvent extends Event implements Cancellable {
         return arrow;
     }
 
+    public double getFinalDamageModifier() {
+        return finalDamageModifier;
+    }
+
     public void setDamage(double damage) {
         this.damage = damage;
     }
 
     public void setBoost(double boost) {
         this.boost = boost;
+    }
+
+    public void addFinalDamageModifier(double damage) {
+        this.finalDamageModifier += damage;
     }
 }

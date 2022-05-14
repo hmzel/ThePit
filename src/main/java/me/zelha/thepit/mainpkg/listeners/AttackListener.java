@@ -91,7 +91,7 @@ public class AttackListener implements Listener {
             return;
         }
 
-        e.setDamage(damageEvent.getDamage() * damageEvent.getBoost());
+        e.setDamage((damageEvent.getDamage() * damageEvent.getBoost()) + damageEvent.getFinalDamageModifier());
 
         if (zl.playerCheck(Bukkit.getPlayer("hazelis"))) {
             Bukkit.getPlayer("hazelis").sendMessage(e.getFinalDamage() + "");
