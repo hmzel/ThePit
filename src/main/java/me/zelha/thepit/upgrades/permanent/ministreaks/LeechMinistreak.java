@@ -41,6 +41,11 @@ public class LeechMinistreak extends Ministreak implements Listener {
         return 0;
     }
 
+    @Override
+    public void onReset(Player player) {
+        triggered.remove(player.getUniqueId());
+    }
+
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
         triggered.remove(e.getPlayer().getUniqueId());
