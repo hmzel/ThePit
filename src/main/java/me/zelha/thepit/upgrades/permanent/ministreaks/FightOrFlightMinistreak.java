@@ -46,4 +46,11 @@ public class FightOrFlightMinistreak extends Ministreak {
 
         return 0;
     }
+
+    @Override
+    public void onReset(Player player) {
+        if (runTracker.hasID(player.getUniqueId())) runTracker.stop(player.getUniqueId());
+
+        triggered.remove(player.getUniqueId());
+    }
 }
