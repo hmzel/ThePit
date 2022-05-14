@@ -693,6 +693,7 @@ public class UpgradesVillagerListener implements Listener {
         int trigger = 0;
         int index = (pData.getPrestige() >= 4) ? 1 : 10;
         int frame = index;
+        Ministreaks willBeDisabled = null;
 
         for (Ministreaks mini : Ministreaks.values()) {
             if (pData.getPrestige() < mini.getPrestige()) continue;
@@ -704,6 +705,15 @@ public class UpgradesVillagerListener implements Listener {
 
                 trigger = mini.getTrigger();
                 index = frame + 1;
+                willBeDisabled = null;
+
+                for (int i = 1; i <= 3; i++) {
+                    if (i == slot) continue;
+
+                    if (pData.getMinistreakAtSlot(i).getTrigger() == trigger) {
+                        willBeDisabled = pData.getMinistreakAtSlot(i);
+                    }
+                }
             }
 
             if (pData.getPrestige() == 0 && pData.getLevel() < mini.getLevel()) {
@@ -731,6 +741,10 @@ public class UpgradesVillagerListener implements Listener {
                 lore.add("§aAlready selected!");
             } else if (pData.getMinistreakUnlockStatus(mini)) {
                 lore.add("§eClick to select!");
+
+                if (willBeDisabled != null) {
+                    lore.add("§7§oDisables " + willBeDisabled.getName());
+                }
             } else {
                 lore.add("§7Cost: §6" + zl.getFancyNumberString(mini.getCost()) + "g");
 
