@@ -25,6 +25,7 @@ import java.util.UUID;
 
 import static org.bukkit.event.EventPriority.HIGHEST;
 import static org.bukkit.event.EventPriority.LOWEST;
+import static org.bukkit.event.entity.EntityDamageEvent.DamageModifier.ARMOR;
 
 public class AttackListener implements Listener {
 
@@ -91,7 +92,8 @@ public class AttackListener implements Listener {
             return;
         }
 
-        e.setDamage((damageEvent.getDamage() * damageEvent.getBoost()) + damageEvent.getFinalDamageModifier());
+        e.setDamage(damageEvent.getDamage() * damageEvent.getBoost());
+        e.setDamage(ARMOR, e.getDamage(ARMOR) + damageEvent.getFinalDamageModifier());
 
         if (zl.playerCheck(Bukkit.getPlayer("hazelis"))) {
             Bukkit.getPlayer("hazelis").sendMessage(e.getFinalDamage() + "");
