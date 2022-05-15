@@ -97,7 +97,7 @@ public enum Ministreaks {
             "§7Deal §c+15% damage §7and block",
             "§91❤ §7per hit for 8s."
     ),
-    GOLD_NANO_FACTORY(HIGHLANDER, 7, "Gold Nano-factory", GOLD_NUGGET, 7, 50, 6000, null,
+    GOLD_NANO_FACTORY(HIGHLANDER, 7, "Gold Nano-factory", GOLD_NUGGET, 7, 50, 6000, new GoldNanofactoryMinistreak(),
             "§7Every: §c7 kills",
             " ",
             "§7Obtain a molecular assembler:",

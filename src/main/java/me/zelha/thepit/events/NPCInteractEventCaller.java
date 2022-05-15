@@ -25,7 +25,9 @@ public class NPCInteractEventCaller implements Listener {
 
     @EventHandler
     public void onLeftClick(EntityDamageByEntityEvent e) {
-        if (zl.playerCheck(e.getDamager())) callEvent((Player) e.getDamager(), e.getEntity());
+        if (zl.playerCheck(e.getDamager()) && zl.spawnCheck(e.getDamager().getLocation())) {
+            callEvent((Player) e.getDamager(), e.getEntity());
+        }
     }
 
     private void callEvent(Player clicker, Entity clicked) {
