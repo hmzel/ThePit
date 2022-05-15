@@ -104,7 +104,7 @@ public enum Ministreaks {
             "§7Spawns §67 gold ingots§7.",
             "§7Grants §cRegen IV §7for 2 seconds."
     ),
-    TACTICAL_RETREAT(BEASTMODE, 7, "Tactical Retreat", GRASS, 3, 50, 5000, null,
+    TACTICAL_RETREAT(BEASTMODE, 7, "Tactical Retreat", GRASS, 3, 50, 5000, new TacticalRetreatMinistreak(),
             "§7Every: §c7 kills",
             " ",
             "§7Gain §cRegeneration IV §7and",
