@@ -38,5 +38,6 @@ public class OverdriveMegastreak extends Megastreak {
         PlayerData pData = Main.getInstance().getPlayerData(player);
 
         pData.setExp(pData.getExp() - 4000);
+        player.sendMessage("§c§lOVRDRV! §7Earned §b+4,000 XP §7from megastreak!");
     }
 }
