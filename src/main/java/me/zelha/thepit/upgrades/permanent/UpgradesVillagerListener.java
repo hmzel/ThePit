@@ -582,6 +582,7 @@ public class UpgradesVillagerListener implements Listener {
 
         for (int i = 1; i <= 2; i++) {
             if (i == 2) level = 75;
+            if (i == 3) level = 100;
 
             Ministreaks mini = pData.getMinistreakAtSlot(i);
 
@@ -614,7 +615,12 @@ public class UpgradesVillagerListener implements Listener {
             lore.addAll(mini.getLore());
             lore.add(" ");
             lore.add("§eClick to switch streak!");
-            streakGUI.setItem(index, zl.itemBuilder(mini.getMaterial(), amount, "§aPerk Slot #" + i, lore));
+
+            ItemStack item = zl.itemBuilder(mini.getMaterial(), amount, "§aPerk Slot #" + i, lore);
+
+            if (mini == Ministreaks.GLASS_PICKAXE) item = zl.itemBuilder(mini.getMaterial(), amount, "§aPerk Slot #" + i, lore, false, false, Pair.of(Enchantment.ARROW_INFINITE, 1));
+
+            streakGUI.setItem(index, item);
 
             index += 2;
             amount++;
@@ -769,6 +775,7 @@ public class UpgradesVillagerListener implements Listener {
             }
 
             if (mini == Ministreaks.ARQUEBUSIER) item.setAmount(12);
+            if (mini == Ministreaks.GLASS_PICKAXE) item = zl.itemBuilder(mini.getMaterial(), 1, color + mini.getName(), lore, false, false, Pair.of(Enchantment.ARROW_INFINITE, 1));
 
             gui.setItem(index, item);
             index++;
