@@ -256,8 +256,6 @@ public class ZelLogic {//zel
 
     /**
      * Creates an item via {@link #itemBuilder(Material, int, String, List, Boolean)} and adds enchants to it
-     * <p>
-     * enchants and enchantTiers must be ordered so that enchants[0]'s tier is enchantTiers[0]
      *
      * @param material item material
      * @param count item stack amount

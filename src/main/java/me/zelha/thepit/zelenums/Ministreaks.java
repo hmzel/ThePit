@@ -110,7 +110,7 @@ public enum Ministreaks {
             "§7Gain §cRegeneration IV §7and",
             "§cWeakness IV §7for 5 seconds."
     ),
-    GLASS_PICKAXE(HERMIT, 7, "Glass Pickaxe", DIAMOND_PICKAXE, 4, 60, 6000, null,
+    GLASS_PICKAXE(HERMIT, 7, "Glass Pickaxe", DIAMOND_PICKAXE, 4, 60, 6000, new GlassPickaxeMinistreak(),
             "§7Every: §c7 kills",
             " ",
             "§7Get a single-use weapon with",
