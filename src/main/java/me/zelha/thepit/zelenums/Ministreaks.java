@@ -124,7 +124,7 @@ public enum Ministreaks {
             "§cdamage §7and grants §eSpeed I",
             "§7for 20 seconds."
     ),
-    AURA_OF_PROTECTION(HERMIT, 10, "Aura of Protection", SLIME_BALL, 4, 50, 8000, null,
+    AURA_OF_PROTECTION(HERMIT, 10, "Aura of Protection", SLIME_BALL, 4, 50, 8000, new AuraOfProtectionMinistreak(),
             "§7Every: §c10 kills",
             " ",
             "§7Gain an §aAura of Protection §7spell item.",
