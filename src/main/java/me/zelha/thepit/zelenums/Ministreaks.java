@@ -117,7 +117,7 @@ public enum Ministreaks {
             "§9+8.5 Damage §7and §c+0.5❤",
             "§7true damage."
     ),
-    ASSURED_STRIKE(MAGNUM_OPUS, 7, "Assured Strike", COOKED_RABBIT, 10, 80, 10000, null,
+    ASSURED_STRIKE(MAGNUM_OPUS, 7, "Assured Strike", COOKED_RABBIT, 10, 80, 10000, new AssuredStrikeMinistreak(),
             "§7Every: §c7 kills",
             " ",
             "§7Your next melee hit deals §c+35%",
