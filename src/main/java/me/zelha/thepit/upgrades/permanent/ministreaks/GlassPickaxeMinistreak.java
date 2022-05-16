@@ -1,5 +1,6 @@
 package me.zelha.thepit.upgrades.permanent.ministreaks;
 
+import me.zelha.thepit.Main;
 import me.zelha.thepit.events.PitDamageEvent;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -7,6 +8,7 @@ import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
 
@@ -41,7 +43,13 @@ public class GlassPickaxeMinistreak extends Ministreak {///why is the item calle
 
         zl.trueDamage(event.getDamaged(), damager, 1, "§cGlass Pickaxe");
         damager.playSound(damager.getLocation(), Sound.BLOCK_GLASS_BREAK, 1, 1);
-        damager.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                damager.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+            }
+        }.runTaskLater(Main.getInstance(), 1);
 
         return 0;
     }

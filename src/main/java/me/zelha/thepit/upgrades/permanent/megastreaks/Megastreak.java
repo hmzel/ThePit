@@ -31,7 +31,7 @@ public class Megastreak {
         for (Entity entity : player.getWorld().getEntities()) {
             if (!(entity instanceof Player)) return;
 
-            player.playSound(player.getLocation(), Sound.ENTITY_WITHER_SPAWN, 0.5F, 1);
+            player.playSound(player.getLocation(), Sound.ENTITY_WITHER_SPAWN, 0.5F, 1.5F);
         }
     }
 
