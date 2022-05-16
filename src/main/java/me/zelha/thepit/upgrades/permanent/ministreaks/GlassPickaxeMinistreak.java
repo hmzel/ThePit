@@ -39,9 +39,11 @@ public class GlassPickaxeMinistreak extends Ministreak {///why is the item calle
         ItemStack item = damager.getInventory().getItemInMainHand();
 
         if (!zl.itemCheck(item)) return 0;
-        if (!item.isSimilar(glassPickaxeItem)) return 0;
+        if (item.getType() != Material.DIAMOND_PICKAXE) return 0;
+        if (item.getItemMeta() == null) return 0;
+        if (!item.getItemMeta().getDisplayName().equals("§bGlass Sword")) return 0;
 
-        zl.trueDamage(event.getDamaged(), damager, 1, "§cGlass Pickaxe");
+        zl.trueDamage(event.getDamaged(), damager, 1, "§cGlass Pickaxe", false);
         damager.playSound(damager.getLocation(), Sound.BLOCK_GLASS_BREAK, 1, 1);
 
         new BukkitRunnable() {

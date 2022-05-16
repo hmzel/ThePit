@@ -181,7 +181,7 @@ public class LavaBucketPerk extends Perk implements Listener {
             damager = null;
         }
 
-        zl.trueDamage(damaged, damager, 1, "§6Lava");
+        zl.trueDamage(damaged, damager, 1, "§6Lava", false);
     }
 
     @EventHandler

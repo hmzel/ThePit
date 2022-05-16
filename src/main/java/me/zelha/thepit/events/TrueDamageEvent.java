@@ -13,12 +13,14 @@ public class TrueDamageEvent extends Event implements Cancellable {
     private final Player damaged;
     private final Player damager;
     private boolean cancelled = false;
+    private boolean isVeryTrue;
     private double damage;
 
-    public TrueDamageEvent(Player damaged, @Nullable Player damager, double damage) {
+    public TrueDamageEvent(Player damaged, @Nullable Player damager, double damage, boolean isVeryTrue) {
         this.damaged = damaged;
         this.damager = damager;
         this.damage = damage;
+        this.isVeryTrue = isVeryTrue;
     }
 
     public static HandlerList getHandlerList() {
@@ -51,6 +53,10 @@ public class TrueDamageEvent extends Event implements Cancellable {
 
     public double getDamage() {
         return damage;
+    }
+
+    public boolean isVeryTrue() {
+        return isVeryTrue;
     }
 
     public void setDamage(double damage) {

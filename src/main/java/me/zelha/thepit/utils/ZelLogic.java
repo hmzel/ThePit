@@ -494,8 +494,8 @@ public class ZelLogic {//zel
      * @param damage damage to deal
      * @param cause cause to show in kill recap
      */
-    public void trueDamage(Player damagee, @Nullable Player damager, double damage, String cause) {
-        TrueDamageEvent event = new TrueDamageEvent(damagee, damager, damage);
+    public void trueDamage(Player damagee, @Nullable Player damager, double damage, String cause, boolean veryTrue) {
+        TrueDamageEvent event = new TrueDamageEvent(damagee, damager, damage, veryTrue);
 
         Bukkit.getPluginManager().callEvent(event);
 

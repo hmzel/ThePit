@@ -39,7 +39,7 @@ public class ToTheMoonMegastreak extends Megastreak implements Listener {
         PlayerData pData = Main.getInstance().getPlayerData(damaged);
 
         if (pData.getStreak() >= 220) {
-            zl.trueDamage(damaged, null, Math.floor((Math.floor(pData.getStreak()) - 200) / 20) * 0.2, "§bTo the Moon");
+            zl.trueDamage(damaged, null, Math.floor((Math.floor(pData.getStreak()) - 200) / 20) * 0.2, "§bTo the Moon", false);
         }
 
         return Math.max(0, Math.floor((Math.floor(pData.getStreak()) - 100) / 20) * 0.1);
