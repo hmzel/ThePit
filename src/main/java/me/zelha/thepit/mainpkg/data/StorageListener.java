@@ -46,7 +46,7 @@ public class StorageListener implements Listener {
         Document playerDocument;
 
         if (pDataCol.countDocuments(filter) < 1) {
-            playerDocument = updateDocument(filter);
+            playerDocument = updateDocument(filter, uuid);
 
             pDataCol.insertOne(playerDocument);
             logger.info("Created new player data document assigned to " + uuid);
@@ -55,7 +55,7 @@ public class StorageListener implements Listener {
         }
 
         if (!dataCheck(playerDocument)) {
-            playerDocument = updateDocument(playerDocument);
+            playerDocument = updateDocument(playerDocument, uuid);
 
             logger.info("Successfully updated player data document assigned to " + uuid);
         }
@@ -96,6 +96,7 @@ public class StorageListener implements Listener {
 
         miscEmbed.put("uberdrop_mystic_chance", pData.getUberdropMysticChance());
         miscEmbed.put("gold_stack", pData.getGoldStack());
+        miscEmbed.put("xp_stack", pData.getXpStack());
         pDoc.put("prestige", pData.getPrestige());
         pDoc.put("level", pData.getLevel());
         pDoc.put("exp", pData.getExp());
@@ -114,7 +115,10 @@ public class StorageListener implements Listener {
         pDataCol.replaceOne(new Document("uuid", uuid), pDoc);
     }
 
-    private Document updateDocument(Document document) {
+    private Document updateDocument(Document document, String uuid) {
+        if (document == null) document = new Document("uuid", uuid);
+
+        Document updating = new Document("uuid", uuid);
         Document perkSlotsEmbed = new Document();
         Document ministreakSlotsEmbed = new Document();
         Document passivesEmbed = new Document();
@@ -124,73 +128,48 @@ public class StorageListener implements Listener {
         Document miscEmbed = new Document();
 
         for (String slot : slots) {
-            if (document.getEmbedded(Arrays.asList("perk_slots", slot), String.class) == null) {
-                perkSlotsEmbed.append(slot, "unset");
-            } else {
-                perkSlotsEmbed.append(slot, document.getEmbedded(Arrays.asList("perk_slots", slot), String.class));
-            }
+            perkSlotsEmbed.append(slot, document.getEmbedded(Arrays.asList("perk_slots", slot), "unset"));
         }
 
         for (int i = 0; i < 3; i++) {
-            if (document.getEmbedded(Arrays.asList("ministreak_slots", slots.get(i)), String.class) == null) {
-                ministreakSlotsEmbed.append(slots.get(i), "unset");
-            } else {
-                ministreakSlotsEmbed.append(slots.get(i), document.getEmbedded(Arrays.asList("ministreak_slots", slots.get(i)), String.class));
-            }
+            ministreakSlotsEmbed.append(slots.get(i), document.getEmbedded(Arrays.asList("ministreak_slots", slots.get(i)), "unset"));
         }
 
         for (Passives passive : Passives.values()) {
-            if (document.getEmbedded(Arrays.asList("passives", passive.name().toLowerCase()), Integer.class) == null) {
-                passivesEmbed.append(passive.name().toLowerCase(), 0);
-            } else {
-                passivesEmbed.append(passive.name().toLowerCase(), document.getEmbedded(Arrays.asList("passives", passive.name().toLowerCase()), Integer.class));
-            }
+            passivesEmbed.append(passive.name().toLowerCase(), document.getEmbedded(Arrays.asList("passives", passive.name().toLowerCase()), 0));
         }
 
         for (Perks perk : Perks.values()) {
-            if (document.getEmbedded(Arrays.asList("perk_unlocks", perk.name().toLowerCase()), Boolean.class) == null) {
-                unlockedPerksEmbed.append(perk.name().toLowerCase(), false);
-            } else {
-                unlockedPerksEmbed.append(perk.name().toLowerCase(), document.getEmbedded(Arrays.asList("perk_unlocks", perk.name().toLowerCase()), Boolean.class));
-            }
+            unlockedPerksEmbed.append(perk.name().toLowerCase(), document.getEmbedded(Arrays.asList("perk_unlocks", perk.name().toLowerCase()), false));
         }
 
         for (Megastreaks mega : Megastreaks.values()) {
-            if (document.getEmbedded(Arrays.asList("megastreak_unlocks", mega.name().toLowerCase()), Boolean.class) == null) {
-                unlockedMegastreaksEmbed.append(mega.name().toLowerCase(), false);
-            } else {
-                unlockedMegastreaksEmbed.append(mega.name().toLowerCase(), document.getEmbedded(Arrays.asList("megastreak_unlocks", mega.name().toLowerCase()), Boolean.class));
-            }
+            unlockedMegastreaksEmbed.append(mega.name().toLowerCase(), document.getEmbedded(Arrays.asList("megastreak_unlocks", mega.name().toLowerCase()), false));
         }
 
         for (Ministreaks mini : Ministreaks.values()) {
-            if (document.getEmbedded(Arrays.asList("ministreak_unlocks", mini.name().toLowerCase()), Boolean.class) == null) {
-                unlockedMinistreaksEmbed.append(mini.name().toLowerCase(), false);
-            } else {
-                unlockedMinistreaksEmbed.append(mini.name().toLowerCase(), document.getEmbedded(Arrays.asList("ministreak_unlocks", mini.name().toLowerCase()), Boolean.class));
-            }
+            unlockedMinistreaksEmbed.append(mini.name().toLowerCase(), document.getEmbedded(Arrays.asList("ministreak_unlocks", mini.name().toLowerCase()), false));
         }
 
-        if (document.getEmbedded(Arrays.asList("misc", "uberdrop_mystic_chance"), Integer.class) == null) miscEmbed.append("uberdrop_mystic_chance", 0);
-        if (document.getEmbedded(Arrays.asList("misc", "gold_stack"), Double.class) == null) miscEmbed.append("gold_stack", 0D);
-        if (document.get("prestige") == null) document.append("prestige", 0);
-        if (document.get("level") == null) document.append("level", 1);
-        if (document.get("exp") == null) document.append("exp", 15);
-        if (document.get("gold") == null) document.append("gold", 0.0);
-        if (document.get("bounty") == null) document.append("bounty", 0);
-        if (document.get("megastreak") == null) document.append("megastreak", Megastreaks.OVERDRIVE.name().toLowerCase());
+        miscEmbed.append("uberdrop_mystic_chance", document.getEmbedded(Arrays.asList("misc", "uberdrop_mystic_chance"), 0));
+        miscEmbed.append("gold_stack", document.getEmbedded(Arrays.asList("misc", "gold_stack"), 0D));
+        miscEmbed.append("xp_stack", document.getEmbedded(Arrays.asList("misc", "xp_stack"), 0D));
+        updating.append("prestige", document.get("prestige", 0));
+        updating.append("level", document.get("level", 1));
+        updating.append("exp", document.get("exp", 15));
+        updating.append("gold", document.get("gold", 0D));
+        updating.append("bounty", document.get("bounty", 0));
+        updating.append("megastreak", document.get("megastreak", Megastreaks.OVERDRIVE.name().toLowerCase()));
+        updating.append("perk_slots", perkSlotsEmbed);
+        updating.append("ministreak_slots", ministreakSlotsEmbed);
+        updating.append("passives", passivesEmbed);
+        updating.append("perk_unlocks", unlockedPerksEmbed);
+        updating.append("megastreak_unlocks", unlockedMegastreaksEmbed);
+        updating.append("ministreak_unlocks", unlockedMinistreaksEmbed);
+        updating.append("misc", miscEmbed);
+        updating.append("combat_logged", document.get("combat_logged", false));
 
-        document.append("perk_slots", perkSlotsEmbed);
-        document.append("ministreak_slots", ministreakSlotsEmbed);
-        document.append("passives", passivesEmbed);
-        document.append("perk_unlocks", unlockedPerksEmbed);
-        document.append("megastreak_unlocks", unlockedMegastreaksEmbed);
-        document.append("ministreak_unlocks", unlockedMinistreaksEmbed);
-        document.append("misc", miscEmbed);
-
-        if (document.get("combat_logged") == null) document.append("combat_logged", false);
-
-        return document;
+        return updating;
     }
 
     private boolean dataCheck(Document document) {
@@ -238,7 +217,8 @@ public class StorageListener implements Listener {
                 && document.get("megastreak") != null
                 && document.get("combat_logged") != null
                 && document.getEmbedded(Arrays.asList("misc", "uberdrop_mystic_chance"), Integer.class) != null
-                && document.getEmbedded(Arrays.asList("misc", "gold_stack"), Double.class) != null;
+                && document.getEmbedded(Arrays.asList("misc", "gold_stack"), Double.class) != null
+                && document.getEmbedded(Arrays.asList("misc", "xp_stack"), Double.class) != null;
     }
 }
 
