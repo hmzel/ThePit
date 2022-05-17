@@ -37,6 +37,7 @@ public class PlayerData {
     private boolean combatLogged;
     private int uberdropMysticChance;
     private double goldStack;
+    private double xpStack;
 
     public PlayerData(Document document) {
         this.uuid = UUID.fromString(document.getString("uuid"));
@@ -54,6 +55,7 @@ public class PlayerData {
         combatLogged = document.getBoolean("combat_logged");
         uberdropMysticChance = document.getEmbedded(Arrays.asList("misc", "uberdrop_mystic_chance"), Integer.class);
         goldStack = document.getEmbedded(Arrays.asList("misc", "gold_stack"), Double.class);
+        xpStack = document.getEmbedded(Arrays.asList("misc", "xp_stack"), Double.class);
 
         for (String slot : slots) {
             perkSlots.put((slots.indexOf(slot) + 1), Perks.findByEnumName(document.getEmbedded(Arrays.asList("perk_slots", slot), String.class)));
@@ -101,12 +103,10 @@ public class PlayerData {
     }
 
     public int getMaxBounty() {
-        if (isMegaActive() && getMegastreak() == Megastreaks.HIGHLANDER) return 10000;
+        if (megaActive && megastreak == Megastreaks.HIGHLANDER) return 10000;
 
         return 5000;
     }
-
-    //getters
 
     public int getPrestige() {
         return prestige;
@@ -204,7 +204,9 @@ public class PlayerData {
         return goldStack;
     }
 
-    //setters
+    public double getXpStack() {
+        return xpStack;
+    }
 
     public void setPrestige(int prestige) {
         this.prestige = prestige;
@@ -293,6 +295,10 @@ public class PlayerData {
 
     public void setGoldStack(double goldStack) {
         this.goldStack = goldStack;
+    }
+
+    public void setXpStack(double xpStack) {
+        this.xpStack = xpStack;
     }
 }
 

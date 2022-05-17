@@ -165,7 +165,7 @@ public enum Ministreaks {
             "§8Bonus also applies when not selected.",
             "§8Resets on prestige."
     ),
-    XP_STACK(TO_THE_MOON, 10, "XP Stack", DIAMOND_ORE, 15, 90, 25000, null,
+    XP_STACK(TO_THE_MOON, 10, "XP Stack", DIAMOND_ORE, 15, 90, 25000, new XpStackMinistreak(),
             "§7Every: §c10 kills",
             " ",
             "§7Permanently gain §b+0.05 XP §7per kill.",
@@ -274,6 +274,11 @@ public enum Ministreaks {
 
         if (this == GOLD_STACK && pData.getGoldStack() != 0) {
             list.add(5, "§7You have: §6+" + pData.getGoldStack() + "g");
+            list.add(6, "");
+        }
+
+        if (this == XP_STACK && pData.getXpStack() != 0) {
+            list.add(5, "§7You have: §b+" + pData.getXpStack() + " XP §7per kill");
             list.add(6, "");
         }
 

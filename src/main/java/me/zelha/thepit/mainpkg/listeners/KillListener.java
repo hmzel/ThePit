@@ -70,6 +70,9 @@ public class KillListener implements Listener {
         if (deadData.getStreak() > 5) exp += (int) Math.min(Math.round(deadData.getStreak()), 25);
         if (killerData.getStreak() <= 3 && (killerData.getLevel() <= 30 || killerData.getPrestige() == 0)) exp += 4;
         if (deadData.getLevel() > killerData.getLevel()) exp += (int) Math.round((deadData.getLevel() - killerData.getLevel()) / 4.5);
+
+        exp += killerData.getXpStack();
+
         if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) exp *= 0.91;
         if (killerData.getPassiveTier(Passives.XP_BOOST) > 0) exp *= 1 + (killerData.getPassiveTier(Passives.XP_BOOST) / 10.0);
 

@@ -313,6 +313,7 @@ public class KillRecap implements CommandExecutor, Listener {
         if (deadData.getStreak() > 5 && isKiller) builder.append("§fStreak Shutdown: §b+" + (int) Math.min(Math.round(deadData.getStreak()), 25) + "\n");
         if (receiverData.getStreak() <= 3 && (receiverData.getLevel() <= 30 || receiverData.getPrestige() == 0) && isKiller) builder.append("§fFirst 3 kills: §b+4\n");
         if (deadData.getLevel() > receiverData.getLevel()) builder.append("§fLevel difference: §b+" + (int) Math.round((deadData.getLevel() - receiverData.getLevel()) / 4.5) + "\n");
+        if (isKiller && receiverData.getXpStack() != 0) builder.append("§fXP Stack: §b+" + receiverData.getXpStack() + "\n");
 
         //koth "§fKOTH: §b+300%"
         //2x event "§f2x Event: §b+100%"
