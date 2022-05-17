@@ -45,9 +45,12 @@ public class IceCubeMinistreak extends Ministreak {
 
         if (item.getAmount() == 1) {
             new BukkitRunnable() {
+
+                private final int slot = damager.getInventory().getHeldItemSlot();
+
                 @Override
                 public void run() {
-                    damager.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+                    damager.getInventory().setItem(slot, new ItemStack(Material.AIR));
                 }
             }.runTaskLater(Main.getInstance(), 1);
         } else {
