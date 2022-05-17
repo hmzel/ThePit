@@ -57,13 +57,11 @@ public class KillListener implements Listener {
             streakModifier = 3;
         } else if (killerData.getStreak() >= 5 && killerData.getStreak() < 20) {
             streakModifier = 5;
-        } else if (killerData.getStreak() < 200 && killerData.getStreak() >= 20) {
+        } else if (killerData.getStreak() < 100 && killerData.getStreak() >= 20) {
             streakModifier = Math.floor(killerData.getStreak() / 10.0D) * 3;
-        } else if (killerData.getStreak() >= 200) {
-            streakModifier = 60;
+        } else if (killerData.getStreak() >= 100) {
+            streakModifier = 30;
         }
-        //note for later: streak xp might not go up to 200
-        //skewed result from dying to a high pres
 
         if (killerData.hasPerkEquipped(STREAKER)) streakModifier *= 3;
 
