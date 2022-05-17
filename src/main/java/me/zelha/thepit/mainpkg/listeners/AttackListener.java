@@ -55,7 +55,6 @@ public class AttackListener implements Listener {
 
         if (damagerEntity instanceof Arrow && ((Arrow) damagerEntity).getShooter() instanceof Player) {
             damager = (Player) ((Arrow) damagerEntity).getShooter();
-            Bukkit.broadcastMessage(damager.getName());
         } else if (zl.playerCheck(damagerEntity)) {
             damager = (Player) damagerEntity;
         } else {

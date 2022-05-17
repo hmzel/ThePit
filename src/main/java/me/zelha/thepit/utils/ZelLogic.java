@@ -461,6 +461,8 @@ public class ZelLogic {//zel
         PlayerData pData = Main.getInstance().getPlayerData(p);
         int arrowCount = 0;
 
+        p.setAbsorptionAmount(0);
+
         for (Perks perk : Perks.values()) {
             if (perk.getMethods() != null) perk.getMethods().onReset(p, pData);
         }

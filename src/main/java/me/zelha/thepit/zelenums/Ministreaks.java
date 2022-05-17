@@ -179,7 +179,7 @@ public enum Ministreaks {
             " ",
             "§7Gain an extra max §c❤ §7(max 2)."
     ),
-    SPONGESTEVE(null, 25, "Spongesteve", SPONGE, 0, 70, 12000, null,
+    SPONGESTEVE(null, 25, "Spongesteve", SPONGE, 0, 70, 12000, new SpongesteveMinistreak(),
             "§7Every: §c25 kills",
             " ",
             "§7Gain §615❤ Absorption§7."
