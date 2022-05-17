@@ -8,6 +8,7 @@ import me.zelha.thepit.mainpkg.listeners.KillListener;
 import me.zelha.thepit.upgrades.permanent.perks.SpammerPerk;
 import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.Megastreaks;
+import me.zelha.thepit.zelenums.Ministreaks;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -317,7 +318,9 @@ public class KillRecap implements CommandExecutor, Listener {
         //2x event "§f2x Event: §b+100%"
         if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) builder.append("§fKilled a noob: §b-10%\n");
         if (receiverData.getPassiveTier(Passives.XP_BOOST) > 0) builder.append("§fXP Boost: §b+" + receiverData.getPassiveTier(Passives.XP_BOOST) * 10 + "%\n");
-        //super streaker "§fSuper Streaker: §b+x%"
+        if (isKiller && receiverData.hasMinistreakEquipped(Ministreaks.SUPER_STREAKER)) {
+            builder.append("§fSuper Streaker: §b+" + Math.min(((int) ((int) receiverData.getStreak() / 10) * 5), 50) + "%\n");
+        }
 
         if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.OVERDRIVE) {
             builder.append("§fOverdrive: §b+100%\n");
