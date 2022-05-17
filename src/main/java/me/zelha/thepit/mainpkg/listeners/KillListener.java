@@ -98,7 +98,7 @@ public class KillListener implements Listener {
 
         if (((SpammerPerk) Perks.SPAMMER.getMethods()).hasBeenShotBySpammer(killer, dead)) gold *= 3;
         if (killerData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS) gold += 4;
-        if (killerData.getStreak() <= killerData.getPassiveTier(Passives.EL_GATO)) gold += 5;
+        if (killerData.getStreak() < killerData.getPassiveTier(Passives.EL_GATO)) gold += 5;
         if (deadData.getStreak() > 5) gold += Math.min((int) Math.round(deadData.getStreak()), 30);
         if (killerData.getStreak() <= 3 && (killerData.getLevel() <= 30 || killerData.getPrestige() == 0)) gold += 4;
         if (dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() > killer.getAttribute(Attribute.GENERIC_ARMOR).getValue()) {
