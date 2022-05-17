@@ -174,7 +174,7 @@ public enum Ministreaks {
             "§8Bonus also applies when not selected.",
             "§8Resets on prestige."
     ),
-    MONSTER(BEASTMODE, 25, "Monster", APPLE, 3, 40, 10000, null,
+    MONSTER(BEASTMODE, 25, "Monster", APPLE, 3, 40, 10000, new MonsterMinistreak(),
             "§7Every: §c25 kills",
             " ",
             "§7Gain an extra max §c❤ §7(max 2)."

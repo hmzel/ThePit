@@ -5,6 +5,7 @@ import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.utils.ZelLogic;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
@@ -36,13 +37,16 @@ public class SpawnListener implements Listener {
                 PlayerData pData = Main.getInstance().getPlayerData(p);
 
                 if (zl.spawnCheck(p.getLocation()) && pData.getStreak() != 0) {
+                    AttributeInstance attribute = p.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+
                     pData.setStreak(0);
+                    pData.setMegaActive(false);
+                    pData.setDummyStatus(null);
                     p.sendMessage("§c§lRESET! §7streak reset for standing in the spawn area!");
 
-                    for (AttributeModifier modifier : p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers()) {
-                        if (modifier.getName().equals("Uberstreak")) {
-                            p.getAttribute(Attribute.GENERIC_MAX_HEALTH).removeModifier(modifier);
-                        }
+                    for (AttributeModifier modifier : attribute.getModifiers()) {
+                        if (modifier.getName().equals("Uberstreak")) attribute.removeModifier(modifier);
+                        if (modifier.getName().equals("Monster")) attribute.removeModifier(modifier);
                     }
                 }
             }
