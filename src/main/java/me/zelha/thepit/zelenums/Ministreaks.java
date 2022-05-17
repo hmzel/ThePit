@@ -144,7 +144,7 @@ public enum Ministreaks {
             "§7Gain §b40 XP§7.",
             "§7Attacks slow enemies for 10 seconds."
     ),
-    SUPER_STREAKER(TO_THE_MOON, 10, "Super Streaker", BREAD, 15, 80, 20000, null,
+    SUPER_STREAKER(TO_THE_MOON, 10, "Super Streaker", BREAD, 15, 80, 20000, new SuperStreakerMinistreak(),
             "§7Every: §c10 kills",
             " ",
             "§7Gain §b+50 XP§7.",

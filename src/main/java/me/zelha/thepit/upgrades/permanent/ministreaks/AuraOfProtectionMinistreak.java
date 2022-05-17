@@ -37,6 +37,11 @@ public class AuraOfProtectionMinistreak extends Ministreak implements Listener {
         player.getInventory().addItem(auraItem);
     }
 
+    @Override
+    public void onReset(Player player) {
+        removeAll(player.getInventory(), auraItem);
+    }
+
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
         Player p = e.getPlayer();

@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 
 import static org.bukkit.Material.GOLDEN_APPLE;
 
-public class SecondGappleMinistreak extends Ministreak {
+public class SecondGappleMinistreak extends Ministreak {//REMEMBER: needs to be added to killrecap
 
     @Override
     public void onTrigger(Player player) {
