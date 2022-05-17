@@ -140,7 +140,9 @@ public class LavaBucketPerk extends Perk implements Listener {
         mainLoop:
         while (true) {
             for (int y = 0; y < 3; y++) {
-                if (damaged.getLocation().add(x, y, z).getBlock().getType() == LAVA) {
+                Block blocc = damaged.getLocation().add(x, y, z).getBlock();
+
+                if (blocc.getType() == LAVA && blocc.hasMetadata("placer")) {
                     block = damaged.getLocation().add(x, y, z).getBlock();
                     break mainLoop;
                 }
@@ -173,9 +175,7 @@ public class LavaBucketPerk extends Perk implements Listener {
             }
         }
 
-        if (block == null) return;
-
-        if (block.hasMetadata("placer")) {
+        if (block != null) {
             damager = Bukkit.getPlayer(UUID.fromString(block.getMetadata("placer").get(0).asString()));
         } else {
             damager = null;
