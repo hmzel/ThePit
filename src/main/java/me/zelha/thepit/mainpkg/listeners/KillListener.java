@@ -104,6 +104,7 @@ public class KillListener implements Listener {
         if (dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() > killer.getAttribute(Attribute.GENERIC_ARMOR).getValue()) {
             gold += Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - killer.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5);
         }
+        gold += killerData.getGoldStack();
 
         if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) gold *= 0.91;
         if (killerData.getPassiveTier(Passives.GOLD_BOOST) > 0) gold *= 1 + (killerData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);

@@ -60,12 +60,13 @@ public class StorageListener implements Listener {
             logger.info("Successfully updated player data document assigned to " + uuid);
         }
 
-        if (playerDocument != null) {
+        if (dataCheck(playerDocument)) {
             playerDataMap.put(uuid, new PlayerData(playerDocument));
         } else {
-            e.getPlayer().kickPlayer("§5Something went wrong getting player data.");
+            e.getPlayer().sendMessage("§5Something went wrong getting player data.");
             logger.warning("BEPIS.");
-            logger.warning("Player data file " + uuid + " is null, what the hell happened?");
+            logger.warning("Player data file " + uuid + " failed the data check, what the hell happened?");
+            Main.getInstance().getServer().getPluginManager().disablePlugin(Main.getInstance());
         }
     }
 
@@ -94,6 +95,7 @@ public class StorageListener implements Listener {
         for (Ministreaks mini : Ministreaks.values()) unlockedMinistreaksEmbed.append(mini.name().toLowerCase(), pData.getMinistreakUnlockStatus(mini));
 
         miscEmbed.put("uberdrop_mystic_chance", pData.getUberdropMysticChance());
+        miscEmbed.put("gold_stack", pData.getGoldStack());
         pDoc.put("prestige", pData.getPrestige());
         pDoc.put("level", pData.getLevel());
         pDoc.put("exp", pData.getExp());
@@ -170,6 +172,7 @@ public class StorageListener implements Listener {
         }
 
         if (document.getEmbedded(Arrays.asList("misc", "uberdrop_mystic_chance"), Integer.class) == null) miscEmbed.append("uberdrop_mystic_chance", 0);
+        if (document.getEmbedded(Arrays.asList("misc", "gold_stack"), Double.class) == null) miscEmbed.append("gold_stack", 0D);
         if (document.get("prestige") == null) document.append("prestige", 0);
         if (document.get("level") == null) document.append("level", 1);
         if (document.get("exp") == null) document.append("exp", 15);
@@ -234,7 +237,8 @@ public class StorageListener implements Listener {
                 && document.get("bounty") != null
                 && document.get("megastreak") != null
                 && document.get("combat_logged") != null
-                && document.getEmbedded(Arrays.asList("misc", "uberdrop_mystic_chance"), Integer.class) != null;
+                && document.getEmbedded(Arrays.asList("misc", "uberdrop_mystic_chance"), Integer.class) != null
+                && document.getEmbedded(Arrays.asList("misc", "gold_stack"), Double.class) != null;
     }
 }
 

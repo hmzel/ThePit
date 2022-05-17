@@ -612,7 +612,7 @@ public class UpgradesVillagerListener implements Listener {
                 lore.add(" ");
             }
 
-            lore.addAll(mini.getLore());
+            lore.addAll(mini.getLore(p));
             lore.add(" ");
             lore.add("§eClick to switch streak!");
 
@@ -730,7 +730,7 @@ public class UpgradesVillagerListener implements Listener {
                 continue;
             }
 
-            List<String> lore = new ArrayList<>(mini.getLore());
+            List<String> lore = new ArrayList<>(mini.getLore(p));
             String color;
 
             if (pData.hasMinistreakEquipped(mini) || pData.getMinistreakUnlockStatus(mini)) {

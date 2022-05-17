@@ -1,8 +1,12 @@
 package me.zelha.thepit.zelenums;
 
+import me.zelha.thepit.Main;
+import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.upgrades.permanent.ministreaks.*;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -152,7 +156,7 @@ public enum Ministreaks {
             "§7Stack a buff of §b+5% XP §7from kills.",
             "§7(Up to §b+50%§7)"
     ),
-    GOLD_STACK(TO_THE_MOON, 10, "Gold Stack", GOLD_ORE, 15, 90, 25000, null,
+    GOLD_STACK(TO_THE_MOON, 10, "Gold Stack", GOLD_ORE, 15, 90, 25000, new GoldStackMinistreak(),
             "§7Every: §c10 kills",
             " ",
             "§7Permanently gain §6+0.1g §7per kill.",
@@ -264,8 +268,16 @@ public enum Ministreaks {
         return methods;
     }
 
-    public List<String> getLore() {
-        return Arrays.asList(lore);
+    public List<String> getLore(Player player) {
+        List<String> list = new ArrayList<>(Arrays.asList(lore));
+        PlayerData pData = Main.getInstance().getPlayerData(player);
+
+        if (this == GOLD_STACK && pData.getGoldStack() != 0) {
+            list.add(5, "§7You have: §6+" + pData.getGoldStack() + "g");
+            list.add(6, "");
+        }
+
+        return list;
     }
 }
 

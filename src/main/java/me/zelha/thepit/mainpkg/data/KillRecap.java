@@ -308,6 +308,7 @@ public class KillRecap implements CommandExecutor, Listener {
 
         //second gapple "§fSecond Gapple: §b+?"
         //explicious "§fExplicious: §b+?"
+        //super streaker "§fSuper Streaker: §b+50"
         if (deadData.getStreak() > 5 && isKiller) builder.append("§fStreak Shutdown: §b+" + (int) Math.min(Math.round(deadData.getStreak()), 25) + "\n");
         if (receiverData.getStreak() <= 3 && (receiverData.getLevel() <= 30 || receiverData.getPrestige() == 0) && isKiller) builder.append("§fFirst 3 kills: §b+4\n");
         if (deadData.getLevel() > receiverData.getLevel()) builder.append("§fLevel difference: §b+" + (int) Math.round((deadData.getLevel() - receiverData.getLevel()) / 4.5) + "\n");
@@ -316,6 +317,7 @@ public class KillRecap implements CommandExecutor, Listener {
         //2x event "§f2x Event: §b+100%"
         if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) builder.append("§fKilled a noob: §b-10%\n");
         if (receiverData.getPassiveTier(Passives.XP_BOOST) > 0) builder.append("§fXP Boost: §b+" + receiverData.getPassiveTier(Passives.XP_BOOST) * 10 + "%\n");
+        //super streaker "§fSuper Streaker: §b+x%"
 
         if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.OVERDRIVE) {
             builder.append("§fOverdrive: §b+100%\n");
@@ -372,7 +374,7 @@ public class KillRecap implements CommandExecutor, Listener {
         if (dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() > receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue() && Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5) != 0) {
             builder.append("§fArmor difference: §6+" + Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5) + "\n");
         }
-        //gold stack "§fGold Stack: §6+?"
+        if (isKiller && receiverData.getGoldStack() != 0) builder.append("§fGold Stack: §6+" + receiverData.getGoldStack() + "\n");
         //assistant "§fAssistant: §6+?"
 
         //koth "§fKOTH: §6+300%"
