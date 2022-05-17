@@ -436,6 +436,17 @@ public class ZelLogic {//zel
             player.setHealth(heal);
         }
     }
+
+    /**
+     * used to prevent things like 0.150000000000000000002
+     *
+     * @param value double to normalize
+     * @param scale max decimal scale the double should be at
+     * @return normalized double
+     */
+    public double normalizeDouble(double value, int scale) {
+        return Double.parseDouble(BigDecimal.valueOf(value).setScale(scale, RoundingMode.HALF_EVEN) + "");
+    }
     //misc stuff
 
 
