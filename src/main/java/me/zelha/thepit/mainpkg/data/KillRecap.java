@@ -294,10 +294,10 @@ public class KillRecap implements CommandExecutor, Listener {
             streakModifier = 3;
         } else if (receiverData.getStreak() >= 5 && receiverData.getStreak() < 20) {
             streakModifier = 5;
-        } else if (receiverData.getStreak() < 200 && receiverData.getStreak() >= 20) {
+        } else if (receiverData.getStreak() < 100 && receiverData.getStreak() >= 20) {
             streakModifier = Math.floor(receiverData.getStreak() / 10.0D) * 3;
-        } else if (receiverData.getStreak() >= 200) {
-            streakModifier = 60;
+        } else if (receiverData.getStreak() >= 100) {
+            streakModifier = 30;
         }
 
         if (receiverData.getStreak() >= 4 && receiverData.hasPerkEquipped(STREAKER) && isKiller) {
