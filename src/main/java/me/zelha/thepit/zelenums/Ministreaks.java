@@ -133,7 +133,7 @@ public enum Ministreaks {
             "§9Resistance II §7(0:04)",
             "§eTrue Damage §7immunity (0:15)"
     ),
-    ICE_CUBE(HERMIT, 10, "Ice Cube", PACKED_ICE, 4, 60, 9000, null,
+    ICE_CUBE(HERMIT, 10, "Ice Cube", PACKED_ICE, 4, 60, 9000, new IceCubeMinistreak(),
             "§7Every: §c10 kills",
             " ",
             "§7Get an §bIce Cube §7item.",
