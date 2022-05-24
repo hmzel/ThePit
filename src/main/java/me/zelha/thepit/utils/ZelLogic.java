@@ -244,10 +244,7 @@ public class ZelLogic {//zel
         ItemStack item = itemBuilder(material, count, displayName, lore);
         ItemMeta itemMeta = item.getItemMeta();
 
-        if (showJuicyStuff) {
-            itemMeta.removeItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-            itemMeta.removeItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-        }
+        if (showJuicyStuff) itemMeta.removeItemFlags(ItemFlag.HIDE_UNBREAKABLE);
 
         item.setItemMeta(itemMeta);
 
@@ -397,18 +394,25 @@ public class ZelLogic {//zel
      * @param player player to give item to
      * @param slot slot to put the item in
      * @param item item to give
+     * @return true if successful, false if not
      */
-    public void itemPlacementHandler(Player player, EquipmentSlot slot, ItemStack item) {
+    public boolean itemPlacementHandler(Player player, EquipmentSlot slot, ItemStack item) {
         PlayerInventory inventory = player.getInventory();
+        boolean successful = false;
 
         if (!itemCheck(inventory.getItem(slot)) || determineWeight(inventory.getItem(slot).getType()) == 0) {
             inventory.setItem(slot, item);
-        } else if (determineWeight(inventory.getItem(slot).getType()) < determineWeight(item.getType())) {
+            successful = true;
+        } else if (determineWeight(inventory.getItem(slot).getType()) < determineWeight(item.getType()) && firstEmptySlot(inventory) != -1) {
             inventory.setItem(firstEmptySlot(inventory), inventory.getItem(slot));
             inventory.setItem(slot, item);
-        } else if (!inventory.contains(item.getType())) {
+            successful = true;
+        } else if (!inventory.contains(item.getType()) && firstEmptySlot(inventory) != -1) {
             inventory.setItem(firstEmptySlot(inventory), item);
+            successful = true;
         }
+
+        return successful;
     }
 
     /**
