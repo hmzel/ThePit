@@ -314,7 +314,7 @@ public class ScoreboardListener implements Listener {
                 sort.append(sortHelp[Integer.parseInt((level + "").charAt(i) + "")]);
             }
 
-            while (sort.length() + p.getName().length() > 64) sort.deleteCharAt(sort.length() - 1);
+            while (sort.length() + p.getName().length() > 16) sort.deleteCharAt(sort.length() - 1);
 
             sort.append(p.getName());
 
@@ -327,10 +327,9 @@ public class ScoreboardListener implements Listener {
 
                 teamMap.put(uuid, team);
             } else if (!teamMap.get(uuid).getName().equals(sort.toString())) {
-                teamMap.get(uuid).unregister();
-
                 team = main.registerNewTeam(sort.toString());
 
+                teamMap.get(uuid).unregister();
                 teamMap.put(uuid, team);
             } else {
                 team = teamMap.get(uuid);
