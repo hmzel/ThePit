@@ -5,12 +5,19 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class PitKillEvent extends Event implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
     private boolean cancelled = false;
     private final Player dead;
     private final Player killer;
+    private final Map<String, Integer> expAdditions = new HashMap<>();
+    private final Map<String, Double> expBoosts = new HashMap<>();
+    private final Map<String, Double> goldAdditions = new HashMap<>();
+    private final Map<String, Double> goldBoosts = new HashMap<>();
     private final boolean disconnected;
 
     public PitKillEvent(Player dead, Player killer, boolean disconnected) {
@@ -38,6 +45,22 @@ public class PitKillEvent extends Event implements Cancellable {
         this.cancelled = cancel;
     }
 
+    public void addExp(Integer exp, String reason) {
+        expAdditions.put(reason, exp);
+    }
+
+    public void addExpBoost(Double boost, String reason) {
+        expBoosts.put(reason, boost);
+    }
+
+    public void addGold(Double gold, String reason) {
+        goldAdditions.put(reason, gold);
+    }
+
+    public void addGoldBoost(Double boost, String reason) {
+        goldBoosts.put(reason, boost);
+    }
+
     public Player getDead() {
         return dead;
     }
@@ -46,7 +69,33 @@ public class PitKillEvent extends Event implements Cancellable {
         return killer;
     }
 
+    public Map<String, Integer> getExpAdditions() {
+        return expAdditions;
+    }
+
+    public Map<String, Double> getExpBoosts() {
+        return expBoosts;
+    }
+
+    public Map<String, Double> getGoldAdditions() {
+        return goldAdditions;
+    }
+
+    public Map<String, Double> getGoldBoosts() {
+        return goldBoosts;
+    }
+
     public boolean causedByDisconnect() {
         return disconnected;
     }
 }
+
+
+
+
+
+
+
+
+
+
