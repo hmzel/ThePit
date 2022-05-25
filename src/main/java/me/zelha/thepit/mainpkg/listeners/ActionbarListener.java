@@ -13,7 +13,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 
 public class ActionbarListener implements Listener {
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onDamage(PitDamageEvent e) {
         Player damaged = e.getDamaged();
         Player damager = e.getDamager();
