@@ -110,6 +110,11 @@ public class AttackListener implements Listener {
 
     @EventHandler(priority = HIGHEST, ignoreCancelled = true)
     public void onOtherDamage(EntityDamageEvent e) {
+        if (e.getCause() == EntityDamageEvent.DamageCause.LIGHTNING) {
+            e.setCancelled(true);
+            return;
+        }
+
         if (!zl.playerCheck(e.getEntity())) return;
         if (e.getCause() == EntityDamageEvent.DamageCause.FALL) return;
 

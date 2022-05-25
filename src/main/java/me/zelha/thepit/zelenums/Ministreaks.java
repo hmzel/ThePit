@@ -184,7 +184,7 @@ public enum Ministreaks {
             " ",
             "§7Gain §615❤ Absorption§7."
     ),
-    APOSTLE_TO_RNGESUS(MAGNUM_OPUS, 25, "Apostle to RNGesus", QUARTZ_SLAB, 10, 100, 50000, null,
+    APOSTLE_TO_RNGESUS(MAGNUM_OPUS, 25, "Apostle to RNGesus", QUARTZ_SLAB, 10, 100, 50000, new ApostleToRngesusMinistreak(),
             "§7Every: §c25 kills",
             " ",
             "§7Roll a number between 1-100:",
