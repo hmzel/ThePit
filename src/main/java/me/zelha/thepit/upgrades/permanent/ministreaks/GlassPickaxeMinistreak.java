@@ -7,7 +7,6 @@ import org.bukkit.Sound;
 import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -23,11 +22,7 @@ public class GlassPickaxeMinistreak extends Ministreak {///why is the item calle
             "§a5s cooldown §7by player",
             "",
             "§9+8.5 Attack Damage"
-    ), false, false, Pair.of(Enchantment.DAMAGE_ALL, 6));
-
-    public GlassPickaxeMinistreak() {
-        glassPickaxeItem.getItemMeta().removeItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-    }
+    ), false, true, Pair.of(Enchantment.DAMAGE_ALL, 6));
 
     @Override
     public void onTrigger(Player player) {
