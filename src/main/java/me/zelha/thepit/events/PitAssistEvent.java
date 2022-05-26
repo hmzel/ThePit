@@ -8,22 +8,22 @@ import org.bukkit.event.HandlerList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PitKillEvent extends Event implements Cancellable {
+public class PitAssistEvent extends Event implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
     private boolean cancelled = false;
     private final Player dead;
-    private final Player killer;
+    private final Player assisted;
+    private final double percentage;
     private final Map<String, Integer> expAdditions = new HashMap<>();
     private final Map<String, Double> expBoosts = new HashMap<>();
     private final Map<String, Double> goldAdditions = new HashMap<>();
     private final Map<String, Double> goldBoosts = new HashMap<>();
-    private final boolean disconnected;
 
-    public PitKillEvent(Player dead, Player killer, boolean disconnected) {
+    public PitAssistEvent(Player dead, Player assisted, double percentage) {
         this.dead = dead;
-        this.killer = killer;
-        this.disconnected = disconnected;
+        this.assisted = assisted;
+        this.percentage = percentage;
 
         expAdditions.put("Base §bXP", 10);
         goldAdditions.put("Base §6gold (g)", 5D);
@@ -45,7 +45,7 @@ public class PitKillEvent extends Event implements Cancellable {
 
     @Override
     public void setCancelled(boolean cancel) {
-        this.cancelled = cancel;
+        cancelled = cancel;
     }
 
     public void addExp(Integer exp, String reason) {
@@ -68,37 +68,11 @@ public class PitKillEvent extends Event implements Cancellable {
         return dead;
     }
 
-    public Player getKiller() {
-        return killer;
+    public Player getAssisted() {
+        return assisted;
     }
 
-    public Map<String, Integer> getExpAdditions() {
-        return expAdditions;
-    }
-
-    public Map<String, Double> getExpBoosts() {
-        return expBoosts;
-    }
-
-    public Map<String, Double> getGoldAdditions() {
-        return goldAdditions;
-    }
-
-    public Map<String, Double> getGoldBoosts() {
-        return goldBoosts;
-    }
-
-    public boolean causedByDisconnect() {
-        return disconnected;
+    public double getPercentage() {
+        return percentage;
     }
 }
-
-
-
-
-
-
-
-
-
-
