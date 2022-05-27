@@ -355,7 +355,7 @@ public class KillRecap implements CommandExecutor, Listener {
         builder.replace(builder.length() - 1, builder.length(), "");
 
         if (isKiller) {
-            return new ComponentBuilder("§3+" + killUtils.calculateEXP(dead, receiver) + "XP ").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
+            return new ComponentBuilder("§3+" + killUtils.calculateEXP(dead, receiver, event) + "XP ").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
         } else {
             return new ComponentBuilder("§3+" + assistUtils.calculateAssistEXP(dead, receiver) + "XP ").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
         }
@@ -435,7 +435,7 @@ public class KillRecap implements CommandExecutor, Listener {
         builder.replace(builder.length() - 1, builder.length(), "");
 
         if (isKiller) {
-            return new ComponentBuilder("§6" + zl.getFancyGoldString(killUtils.calculateGold(dead, receiver)) + "g\n").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
+            return new ComponentBuilder("§6" + zl.getFancyGoldString(killUtils.calculateGold(dead, receiver, event)) + "g\n").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
         } else {
             return new ComponentBuilder("§6" + zl.getFancyGoldString(assistUtils.calculateAssistGold(dead, receiver)) + "g\n").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
         }

@@ -48,19 +48,19 @@ public class PitKillEvent extends Event implements Cancellable {
         this.cancelled = cancel;
     }
 
-    public void addExp(Integer exp, String reason) {
+    public void addExp(int exp, String reason) {
         expAdditions.put(reason, exp);
     }
 
-    public void addExpBoost(Double boost, String reason) {
+    public void addExpBoost(double boost, String reason) {
         expBoosts.put(reason, boost);
     }
 
-    public void addGold(Double gold, String reason) {
+    public void addGold(double gold, String reason) {
         goldAdditions.put(reason, gold);
     }
 
-    public void addGoldBoost(Double boost, String reason) {
+    public void addGoldBoost(double boost, String reason) {
         goldBoosts.put(reason, boost);
     }
 

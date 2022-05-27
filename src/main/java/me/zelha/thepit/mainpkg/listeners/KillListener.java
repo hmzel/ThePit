@@ -44,12 +44,14 @@ public class KillListener implements Listener {
     private final RunTracker runTracker2 = new RunTracker();
     private final RunTracker runTracker3 = new RunTracker();
 
-    public int calculateEXP(Player dead, Player killer) {
-        double exp = 5;
+    public int calculateEXP(Player dead, Player killer, PitKillEvent event) {
+        double exp = 0;
         double streakModifier = 0;
         int maxEXP = 250;
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData killerData = Main.getInstance().getPlayerData(killer);
+
+        for (Integer value : event.getExpAdditions().values()) exp += value;
 
         if (killerData.getStreak() <= (killerData.getPassiveTier(Passives.EL_GATO) - 1)) exp += 5;
 
@@ -93,11 +95,13 @@ public class KillListener implements Listener {
         return (int) Math.min(Math.ceil(exp), maxEXP);
     }
 
-    public double calculateGold(Player dead, Player killer) {
-        double gold = 10;
+    public double calculateGold(Player dead, Player killer, PitKillEvent event) {
+        double gold = 0;
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData killerData = Main.getInstance().getPlayerData(killer);
         PlayerInventory killerInv = killer.getInventory();
+
+        for (Double value : event.getGoldAdditions().values()) gold += value;
 
         if (((SpammerPerk) Perks.SPAMMER.getMethods()).hasBeenShotBySpammer(killer, dead)) gold *= 3;
         if (killerData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS) gold += 4;
@@ -131,10 +135,10 @@ public class KillListener implements Listener {
         Player killer = e.getKiller();
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData killerData = Main.getInstance().getPlayerData(killer);
-        double calculatedGold = calculateGold(dead, killer);
+        double calculatedGold = calculateGold(dead, killer, e);
 
         killerData.setStreak(killerData.getStreak() + 1);
-        killerData.setExp(killerData.getExp() - calculateEXP(dead, killer));
+        killerData.setExp(killerData.getExp() - calculateEXP(dead, killer, e));
         killerData.setGold(killerData.getGold() + calculatedGold);
         killerData.setMultiKill(killerData.getMultiKill() + 1);
         multiKillTimer(killer);
@@ -176,7 +180,7 @@ public class KillListener implements Listener {
 
         killer.spigot().sendMessage(
                 new ComponentBuilder(killMessage + " §7on " + zl.getColorBracketAndLevel(dead)
-                + " §7" + dead.getName() + " §b+" + calculateEXP(dead, killer) + "§bXP §6+" + zl.getFancyGoldString(calculatedGold) + "§6g")
+                + " §7" + dead.getName() + " §b+" + calculateEXP(dead, killer, e) + "§bXP §6+" + zl.getFancyGoldString(calculatedGold) + "§6g")
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§eClick to view kill recap!")))
                 .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/killrecap " + dead.getUniqueId()))
                 .create()
