@@ -40,10 +40,7 @@ public class DeathListener implements Listener {
     public void teleportToSpawnMethod(Player p) {
         Worlds world = Worlds.findByName(p.getWorld().getName());
 
-        if (world == null) {
-            p.sendMessage("§5World not supported.");
-            return;
-        }
+        if (world == null) world = Worlds.ELEMENTALS;
 
         p.setFireTicks(0);
         Main.getInstance().getPlayerData(p).setStreak(0);

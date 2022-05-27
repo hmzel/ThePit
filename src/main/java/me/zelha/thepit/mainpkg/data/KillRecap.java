@@ -43,6 +43,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import static me.zelha.thepit.zelenums.Perks.BOUNTY_HUNTER;
@@ -124,7 +125,7 @@ public class KillRecap implements CommandExecutor, Listener {
         if (damageType != null) addDamageLog(p, new DamageLog(e.getDamage(), damageType, true));
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onKill(PitKillEvent e) {
         Player dead = e.getDead();
         Player killer = e.getKiller();
@@ -143,8 +144,8 @@ public class KillRecap implements CommandExecutor, Listener {
         raw.add(new ComponentBuilder("Killer:\n").create());
         raw.add(playerComponent(killer));
         raw.add(new ComponentBuilder("§8for ").create());
-        raw.add(expComponent(dead, killer));
-        raw.add(goldComponent(dead, killer));
+        raw.add(expComponent(dead, killer, e));
+        raw.add(goldComponent(dead, killer, e));
         raw.add(new ComponentBuilder("\n").create());
 
         Map<UUID, Double> sortedAssistsMap = assistUtils.getAssistMap(dead).entrySet().stream()
@@ -162,8 +163,8 @@ public class KillRecap implements CommandExecutor, Listener {
             raw.add(new ComponentBuilder((int) ((Double.parseDouble(BigDecimal.valueOf(sortedAssistsMap.get(uuid) / assistUtils.getTotalDamage(dead)).setScale(2, RoundingMode.HALF_EVEN).toString())) * 100) + "% ").create());
             raw.add(playerComponent(Bukkit.getPlayer(uuid)));
             raw.add(new ComponentBuilder("§8for ").create());
-            raw.add(expComponent(dead, Bukkit.getPlayer(uuid)));
-            raw.add(goldComponent(dead, Bukkit.getPlayer(uuid)));
+            raw.add(expComponent(dead, Bukkit.getPlayer(uuid), e));
+            raw.add(goldComponent(dead, Bukkit.getPlayer(uuid), e));
 
             addAssistTitle = false;
         }
@@ -279,14 +280,19 @@ public class KillRecap implements CommandExecutor, Listener {
         return new ComponentBuilder("§7" + player.getName() + "\n").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
     }
 
-    private BaseComponent[] expComponent(Player dead, Player receiver) {
+    private BaseComponent[] expComponent(Player dead, Player receiver, PitKillEvent event) {
         boolean isKiller = receiver.getUniqueId().equals(assistUtils.getLastDamager(dead).getUniqueId());
         StringBuilder builder = new StringBuilder();
+        String plus = "";
         double streakModifier = 0;
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData receiverData = Main.getInstance().getPlayerData(receiver);
 
-        builder.append("§fBase §bXP§f: §b5\n");
+        for (Entry<String, Integer> entry : event.getExpAdditions().entrySet()) {
+            builder.append(entry.getKey() + "§f: §b" + plus + entry.getValue() + "\n");
+
+            if (plus.equals("")) plus = "+";
+        }
 
         //xp bump "§fRenown XP Bump: §b+?"
         if (receiverData.getStreak() <= (receiverData.getPassiveTier(Passives.EL_GATO) - 1) && isKiller) builder.append("§fEl Gato: §b+5\n");
@@ -355,14 +361,23 @@ public class KillRecap implements CommandExecutor, Listener {
         }
     }
 
-    private BaseComponent[] goldComponent(Player dead, Player receiver) {
+    private BaseComponent[] goldComponent(Player dead, Player receiver, PitKillEvent event) {
         boolean isKiller = receiver.equals(assistUtils.getLastDamager(dead));
         StringBuilder builder = new StringBuilder();
+        String plus = "";
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData receiverData = Main.getInstance().getPlayerData(receiver);
         PlayerInventory killerInv = receiver.getInventory();
 
-        builder.append("§fBase §6gold (g)§f: §610\n");
+        for (Entry<String, Double> entry : event.getGoldAdditions().entrySet()) {
+            String value = entry.getValue() + "";
+
+            if (entry.getValue() == (int) entry.getValue().doubleValue()) value = (int) entry.getValue().doubleValue() + "";
+
+            builder.append(entry.getKey() + "§f: §6" + plus + value + "\n");
+
+            if (plus.equals("")) plus = "+";
+        }
 
         if (((SpammerPerk) Perks.SPAMMER.getMethods()).hasBeenShotBySpammer(receiver, dead) && isKiller) builder.append("§fSpammer: §6+200%\n");
         if (receiverData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS && isKiller) {
