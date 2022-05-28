@@ -42,11 +42,17 @@ public class BaseResourceListener implements Listener {
     //using two eventhandlers to mimic behavior in pit, i dont know why its actually in this order in regular pit but i like being accurate
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onKill2(PitKillEvent e) {
+        PlayerData killerData = Main.getInstance().getPlayerData(e.getKiller());
         PlayerData deadData = Main.getInstance().getPlayerData(e.getDead());
 
         if (deadData.getStreak() > 5) {
             e.addExp((int) Math.min(Math.round(deadData.getStreak()), 25), "Streak Shutdown");
             e.addGold(Math.min((int) Math.round(deadData.getStreak()), 30), "Streak Shutdown");
+        }
+
+        if (killerData.getStreak() <= 3 && (killerData.getLevel() <= 30 || killerData.getPrestige() == 0)) {
+            e.addExp(4, "First 3 kills");
+            e.addGold(4, "First 3 kills");
         }
     }
 }
