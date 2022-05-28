@@ -1,9 +1,7 @@
 package me.zelha.thepit;
 
-import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import me.zelha.thepit.admin.commands.*;
 import me.zelha.thepit.events.NPCInteractEventCaller;
 import me.zelha.thepit.mainpkg.commands.OofCommand;
@@ -36,7 +34,6 @@ public final class Main extends JavaPlugin {
     public List<Player> blockPriviledges = new ArrayList<>();
     private static Main instance;
     private MongoCollection<Document> playerDataCollection;
-    private MongoClient mongoClient;
     private ZelLogic zelLogic;
     private StorageListener storage;
     private DeathListener deathListener;
@@ -49,9 +46,7 @@ public final class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         //Plugin startup logic
-        mongoClient = MongoClients.create(DatabaseLogin.DATABASE_LOGIN);
-        MongoDatabase mongoDatabase = mongoClient.getDatabase("zelhadb");
-        playerDataCollection = mongoDatabase.getCollection("playerdata");
+        playerDataCollection = MongoClients.create(DatabaseLogin.DATABASE_LOGIN).getDatabase("zelhadb").getCollection("playerdata");
 
         instance = this;
         zelLogic = new ZelLogic();

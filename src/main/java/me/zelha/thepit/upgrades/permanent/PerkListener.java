@@ -20,6 +20,7 @@ import static org.bukkit.Material.GOLDEN_APPLE;
 
 //trickle down is handled in GoldIngotListener because thats just way easier
 //all resource-related stuff is handled in KillListener
+//streaker is hardcoded into BaseResourceListener for efficiency
 public class PerkListener implements Listener {
 
     @EventHandler

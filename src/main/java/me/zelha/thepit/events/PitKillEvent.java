@@ -1,12 +1,12 @@
 package me.zelha.thepit.events;
 
+import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class PitKillEvent extends Event implements Cancellable {
 
@@ -14,10 +14,11 @@ public class PitKillEvent extends Event implements Cancellable {
     private boolean cancelled = false;
     private final Player dead;
     private final Player killer;
-    private final Map<String, Integer> expAdditions = new HashMap<>();
-    private final Map<String, Double> expBoosts = new HashMap<>();
-    private final Map<String, Double> goldAdditions = new HashMap<>();
-    private final Map<String, Double> goldBoosts = new HashMap<>();
+    //i wish i could use maps here but they were causing weird issues and i couldnt figure out how to fix it
+    private final List<Pair<String, Integer>> expAdditions = new ArrayList<>();
+    private final List<Pair<String, Double>> expBoosts = new ArrayList<>();
+    private final List<Pair<String, Double>> goldAdditions = new ArrayList<>();
+    private final List<Pair<String, Double>> goldBoosts = new ArrayList<>();
     private final boolean disconnected;
 
     public PitKillEvent(Player dead, Player killer, boolean disconnected) {
@@ -25,8 +26,8 @@ public class PitKillEvent extends Event implements Cancellable {
         this.killer = killer;
         this.disconnected = disconnected;
 
-        expAdditions.put("Base §bXP", 10);
-        goldAdditions.put("Base §6gold (g)", 5D);
+        addExp(10, "Base §bXP");
+        addGold(5, "Base §6gold (g)");
     }
 
     public static HandlerList getHandlerList() {
@@ -49,19 +50,19 @@ public class PitKillEvent extends Event implements Cancellable {
     }
 
     public void addExp(int exp, String reason) {
-        expAdditions.put(reason, exp);
+        expAdditions.add(Pair.of(reason, exp));
     }
 
     public void addExpBoost(double boost, String reason) {
-        expBoosts.put(reason, boost);
+        expBoosts.add(Pair.of(reason, boost));
     }
 
     public void addGold(double gold, String reason) {
-        goldAdditions.put(reason, gold);
+        goldAdditions.add(Pair.of(reason, gold));
     }
 
     public void addGoldBoost(double boost, String reason) {
-        goldBoosts.put(reason, boost);
+        goldBoosts.add(Pair.of(reason, boost));
     }
 
     public Player getDead() {
@@ -72,19 +73,19 @@ public class PitKillEvent extends Event implements Cancellable {
         return killer;
     }
 
-    public Map<String, Integer> getExpAdditions() {
+    public List<Pair<String, Integer>> getExpAdditions() {
         return expAdditions;
     }
 
-    public Map<String, Double> getExpBoosts() {
+    public List<Pair<String, Double>> getExpBoosts() {
         return expBoosts;
     }
 
-    public Map<String, Double> getGoldAdditions() {
+    public List<Pair<String, Double>> getGoldAdditions() {
         return goldAdditions;
     }
 
-    public Map<String, Double> getGoldBoosts() {
+    public List<Pair<String, Double>> getGoldBoosts() {
         return goldBoosts;
     }
 

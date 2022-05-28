@@ -19,6 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -31,13 +32,9 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 
 import static me.zelha.thepit.zelenums.Perks.BOUNTY_HUNTER;
-import static me.zelha.thepit.zelenums.Perks.STREAKER;
 import static org.bukkit.Material.GOLDEN_LEGGINGS;
 
 public class KillListener implements Listener {
@@ -54,25 +51,23 @@ public class KillListener implements Listener {
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData killerData = Main.getInstance().getPlayerData(killer);
 
-        List<Integer> additions = Arrays.asList(event.getExpAdditions().values().toArray(new Integer[0]));
-
-        Collections.reverse(additions);
-
-        for (Integer value : additions) exp += value;
-
-        //if (killerData.getStreak() <= (killerData.getPassiveTier(Passives.EL_GATO) - 1)) exp += 5;
-
-        if (killerData.getStreak() == 4) {
-            streakModifier = 3;
-        } else if (killerData.getStreak() >= 5 && killerData.getStreak() < 20) {
-            streakModifier = 5;
-        } else if (killerData.getStreak() < 100 && killerData.getStreak() >= 20) {
-            streakModifier = Math.floor(killerData.getStreak() / 10.0D) * 3;
-        } else if (killerData.getStreak() >= 100) {
-            streakModifier = 30;
+        for (Pair<String, Integer> pair : event.getExpAdditions()) {
+            exp += pair.getValue();
         }
 
-        if (killerData.hasPerkEquipped(STREAKER)) streakModifier *= 3;
+//        if (killerData.getStreak() <= (killerData.getPassiveTier(Passives.EL_GATO) - 1)) exp += 5;
+
+//        if (killerData.getStreak() == 4) {
+//            streakModifier = 3;
+//        } else if (killerData.getStreak() >= 5 && killerData.getStreak() < 20) {
+//            streakModifier = 5;
+//        } else if (killerData.getStreak() < 100 && killerData.getStreak() >= 20) {
+//            streakModifier = Math.floor(killerData.getStreak() / 10.0D) * 3;
+//        } else if (killerData.getStreak() >= 100) {
+//            streakModifier = 30;
+//        }
+//
+//        if (killerData.hasPerkEquipped(STREAKER)) streakModifier *= 3;
 
         exp += streakModifier;
 
@@ -108,11 +103,7 @@ public class KillListener implements Listener {
         PlayerData killerData = Main.getInstance().getPlayerData(killer);
         PlayerInventory killerInv = killer.getInventory();
 
-        List<Double> additions = Arrays.asList(event.getGoldAdditions().values().toArray(new Double[0]));
-
-        Collections.reverse(additions);
-
-        for (Double value : additions) gold += value;
+        for (Pair<String, Double> pair : event.getGoldAdditions()) gold += pair.getValue();
 
         if (((SpammerPerk) Perks.SPAMMER.getMethods()).hasBeenShotBySpammer(killer, dead)) gold *= 3;
         if (killerData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS) gold += 4;

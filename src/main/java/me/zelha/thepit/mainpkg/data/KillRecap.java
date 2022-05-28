@@ -25,6 +25,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -43,11 +44,9 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import static me.zelha.thepit.zelenums.Perks.BOUNTY_HUNTER;
-import static me.zelha.thepit.zelenums.Perks.STREAKER;
 import static org.bukkit.Material.GOLDEN_LEGGINGS;
 
 public class KillRecap implements CommandExecutor, Listener {
@@ -284,38 +283,34 @@ public class KillRecap implements CommandExecutor, Listener {
         boolean isKiller = receiver.getUniqueId().equals(assistUtils.getLastDamager(dead).getUniqueId());
         StringBuilder builder = new StringBuilder();
         String plus = "";
-        double streakModifier = 0;
+        //double streakModifier = 0;
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData receiverData = Main.getInstance().getPlayerData(receiver);
 
-        List<Entry<String, Integer>> additions = Arrays.asList(event.getExpAdditions().entrySet().toArray(new Entry[0]));
-
-        Collections.reverse(additions);
-
-        for (Entry<String, Integer> entry : additions) {
-            builder.append("§f" + entry.getKey() + "§f: §b" + plus + entry.getValue() + "\n");
+        for (Pair<String, Integer> pair : event.getExpAdditions()) {
+            builder.append("§f" + pair.getKey() + "§f: §b" + plus + pair.getValue() + "\n");
 
             if (plus.equals("")) plus = "+";
         }
 
         //xp bump "§fRenown XP Bump: §b+?"
-        //if (receiverData.getStreak() <= (receiverData.getPassiveTier(Passives.EL_GATO) - 1) && isKiller) builder.append("§fEl Gato: §b+5\n");
+//        if (receiverData.getStreak() <= (receiverData.getPassiveTier(Passives.EL_GATO) - 1) && isKiller) builder.append("§fEl Gato: §b+5\n");
 
-        if (receiverData.getStreak() == 4) {
-            streakModifier = 3;
-        } else if (receiverData.getStreak() >= 5 && receiverData.getStreak() < 20) {
-            streakModifier = 5;
-        } else if (receiverData.getStreak() < 100 && receiverData.getStreak() >= 20) {
-            streakModifier = Math.floor(receiverData.getStreak() / 10.0D) * 3;
-        } else if (receiverData.getStreak() >= 100) {
-            streakModifier = 30;
-        }
-
-        if (receiverData.getStreak() >= 4 && receiverData.hasPerkEquipped(STREAKER) && isKiller) {
-            builder.append("§fKiller on streak (Streaker Perk): §b+" + (int) (streakModifier * 3) + "\n");
-        } else if (receiverData.getStreak() >= 4 && isKiller) {
-            builder.append("§fKiller on streak: §b+" + (int) streakModifier + "\n");
-        }
+//        if (receiverData.getStreak() == 4) {
+//            streakModifier = 3;
+//        } else if (receiverData.getStreak() >= 5 && receiverData.getStreak() < 20) {
+//            streakModifier = 5;
+//        } else if (receiverData.getStreak() < 100 && receiverData.getStreak() >= 20) {
+//            streakModifier = Math.floor(receiverData.getStreak() / 10.0D) * 3;
+//        } else if (receiverData.getStreak() >= 100) {
+//            streakModifier = 30;
+//        }
+//
+//        if (receiverData.getStreak() >= 4 && receiverData.hasPerkEquipped(STREAKER) && isKiller) {
+//            builder.append("§fKiller on streak (Streaker Perk): §b+" + (int) (streakModifier * 3) + "\n");
+//        } else if (receiverData.getStreak() >= 4 && isKiller) {
+//            builder.append("§fKiller on streak: §b+" + (int) streakModifier + "\n");
+//        }
 
         //second gapple "§fSecond Gapple: §b+?"
         //explicious "§fExplicious: §b+?"
@@ -373,16 +368,12 @@ public class KillRecap implements CommandExecutor, Listener {
         PlayerData receiverData = Main.getInstance().getPlayerData(receiver);
         PlayerInventory killerInv = receiver.getInventory();
 
-        List<Entry<String, Double>> additions = Arrays.asList(event.getGoldAdditions().entrySet().toArray(new Entry[0]));
+        for (Pair<String, Double> pair : event.getGoldAdditions()) {
+            String value = pair.getValue() + "";
 
-        Collections.reverse(additions);
+            if (pair.getValue() == (int) pair.getValue().doubleValue()) value = (int) pair.getValue().doubleValue() + "";
 
-        for (Entry<String, Double> entry : additions) {
-            String value = entry.getValue() + "";
-
-            if (entry.getValue() == (int) entry.getValue().doubleValue()) value = (int) entry.getValue().doubleValue() + "";
-
-            builder.append("§f" + entry.getKey() + "§f: §6" + plus + value + "\n");
+            builder.append("§f" + pair.getKey() + "§f: §6" + plus + value + "\n");
 
             if (plus.equals("")) plus = "+";
         }
