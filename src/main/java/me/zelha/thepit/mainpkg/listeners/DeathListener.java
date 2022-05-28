@@ -186,12 +186,13 @@ public class DeathListener implements Listener {
             deadData.setStatus("idling");
         }
 
-        zl.pitReset(dead);
-
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (zl.playerCheck(dead)) teleportToSpawnMethod(dead);
+                if (zl.playerCheck(dead)) {
+                    zl.pitReset(dead);
+                    teleportToSpawnMethod(dead);
+                }
             }
         }.runTaskLater(Main.getInstance(), 1);
     }

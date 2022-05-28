@@ -315,7 +315,7 @@ public class KillRecap implements CommandExecutor, Listener {
         //second gapple "§fSecond Gapple: §b+?"
         //explicious "§fExplicious: §b+?"
         //super streaker "§fSuper Streaker: §b+50"
-        if (deadData.getStreak() > 5 && isKiller) builder.append("§fStreak Shutdown: §b+" + (int) Math.min(Math.round(deadData.getStreak()), 25) + "\n");
+//        if (deadData.getStreak() > 5 && isKiller) builder.append("§fStreak Shutdown: §b+" + (int) Math.min(Math.round(deadData.getStreak()), 25) + "\n");
         if (receiverData.getStreak() <= 3 && (receiverData.getLevel() <= 30 || receiverData.getPrestige() == 0) && isKiller) builder.append("§fFirst 3 kills: §b+4\n");
         if (deadData.getLevel() > receiverData.getLevel()) builder.append("§fLevel difference: §b+" + (int) Math.round((deadData.getLevel() - receiverData.getLevel()) / 4.5) + "\n");
         if (isKiller && receiverData.getXpStack() != 0) builder.append("§fXP Stack: §b+" + receiverData.getXpStack() + "\n");
@@ -384,7 +384,7 @@ public class KillRecap implements CommandExecutor, Listener {
         }
 
         //if (receiverData.getStreak() <= receiverData.getPassiveTier(Passives.EL_GATO) && isKiller) builder.append("§fEl Gato: §6+5\n");
-        if (deadData.getStreak() > 5 && isKiller) builder.append("§fStreak shutdown: §6+" + Math.min((int) Math.round(deadData.getStreak()), 30) + "\n");
+//        if (deadData.getStreak() > 5 && isKiller) builder.append("§fStreak shutdown: §6+" + Math.min((int) Math.round(deadData.getStreak()), 30) + "\n");
         if (receiverData.getStreak() <= 3 && (receiverData.getLevel() <= 30 || receiverData.getPrestige() == 0) && isKiller) builder.append("§fFirst 3 kills: §6+4\n");
         //genesis "§fGenesis: §6+?"
         //moctezuma "§fMoctezuma: §6+?"

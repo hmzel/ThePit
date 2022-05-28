@@ -5,6 +5,7 @@ import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.Passives;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import static me.zelha.thepit.zelenums.Perks.STREAKER;
@@ -37,4 +38,40 @@ public class BaseResourceListener implements Listener {
             e.addExp((int) streakModifier, "Killer on streak");
         }
     }
+
+    //using two eventhandlers to mimic behavior in pit, i dont know why its actually in this order in regular pit but i like being accurate
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onKill2(PitKillEvent e) {
+        PlayerData deadData = Main.getInstance().getPlayerData(e.getDead());
+
+        if (deadData.getStreak() > 5) {
+            e.addExp((int) Math.min(Math.round(deadData.getStreak()), 25), "Streak Shutdown");
+            e.addGold(Math.min((int) Math.round(deadData.getStreak()), 30), "Streak Shutdown");
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

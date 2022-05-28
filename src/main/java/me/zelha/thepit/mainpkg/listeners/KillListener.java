@@ -46,7 +46,7 @@ public class KillListener implements Listener {
 
     public int calculateEXP(Player dead, Player killer, PitKillEvent event) {
         double exp = 0;
-        double streakModifier = 0;
+//        double streakModifier = 0;
         int maxEXP = 250;
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData killerData = Main.getInstance().getPlayerData(killer);
@@ -69,9 +69,9 @@ public class KillListener implements Listener {
 //
 //        if (killerData.hasPerkEquipped(STREAKER)) streakModifier *= 3;
 
-        exp += streakModifier;
+//        exp += streakModifier;
 
-        if (deadData.getStreak() > 5) exp += (int) Math.min(Math.round(deadData.getStreak()), 25);
+//        if (deadData.getStreak() > 5) exp += (int) Math.min(Math.round(deadData.getStreak()), 25);
         if (killerData.getStreak() <= 3 && (killerData.getLevel() <= 30 || killerData.getPrestige() == 0)) exp += 4;
         if (deadData.getLevel() > killerData.getLevel()) exp += (int) Math.round((deadData.getLevel() - killerData.getLevel()) / 4.5);
 
@@ -107,8 +107,8 @@ public class KillListener implements Listener {
 
         if (((SpammerPerk) Perks.SPAMMER.getMethods()).hasBeenShotBySpammer(killer, dead)) gold *= 3;
         if (killerData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS) gold += 4;
-        //if (killerData.getStreak() < killerData.getPassiveTier(Passives.EL_GATO)) gold += 5;
-        if (deadData.getStreak() > 5) gold += Math.min((int) Math.round(deadData.getStreak()), 30);
+//        if (killerData.getStreak() < killerData.getPassiveTier(Passives.EL_GATO)) gold += 5;
+//        if (deadData.getStreak() > 5) gold += Math.min((int) Math.round(deadData.getStreak()), 30);
         if (killerData.getStreak() <= 3 && (killerData.getLevel() <= 30 || killerData.getPrestige() == 0)) gold += 4;
         if (dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() > killer.getAttribute(Attribute.GENERIC_ARMOR).getValue()) {
             gold += Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - killer.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5);
@@ -131,7 +131,7 @@ public class KillListener implements Listener {
         return Math.min(gold, 2500) + deadData.getBounty();
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerDeath(PitKillEvent e) {
         Player dead = e.getDead();
         Player killer = e.getKiller();
