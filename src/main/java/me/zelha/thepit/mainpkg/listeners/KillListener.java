@@ -31,6 +31,9 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 import static me.zelha.thepit.zelenums.Perks.BOUNTY_HUNTER;
@@ -51,9 +54,13 @@ public class KillListener implements Listener {
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData killerData = Main.getInstance().getPlayerData(killer);
 
-        for (Integer value : event.getExpAdditions().values()) exp += value;
+        List<Integer> additions = Arrays.asList(event.getExpAdditions().values().toArray(new Integer[0]));
 
-        if (killerData.getStreak() <= (killerData.getPassiveTier(Passives.EL_GATO) - 1)) exp += 5;
+        Collections.reverse(additions);
+
+        for (Integer value : additions) exp += value;
+
+        //if (killerData.getStreak() <= (killerData.getPassiveTier(Passives.EL_GATO) - 1)) exp += 5;
 
         if (killerData.getStreak() == 4) {
             streakModifier = 3;
@@ -101,11 +108,15 @@ public class KillListener implements Listener {
         PlayerData killerData = Main.getInstance().getPlayerData(killer);
         PlayerInventory killerInv = killer.getInventory();
 
-        for (Double value : event.getGoldAdditions().values()) gold += value;
+        List<Double> additions = Arrays.asList(event.getGoldAdditions().values().toArray(new Double[0]));
+
+        Collections.reverse(additions);
+
+        for (Double value : additions) gold += value;
 
         if (((SpammerPerk) Perks.SPAMMER.getMethods()).hasBeenShotBySpammer(killer, dead)) gold *= 3;
         if (killerData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS) gold += 4;
-        if (killerData.getStreak() < killerData.getPassiveTier(Passives.EL_GATO)) gold += 5;
+        //if (killerData.getStreak() < killerData.getPassiveTier(Passives.EL_GATO)) gold += 5;
         if (deadData.getStreak() > 5) gold += Math.min((int) Math.round(deadData.getStreak()), 30);
         if (killerData.getStreak() <= 3 && (killerData.getLevel() <= 30 || killerData.getPrestige() == 0)) gold += 4;
         if (dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() > killer.getAttribute(Attribute.GENERIC_ARMOR).getValue()) {

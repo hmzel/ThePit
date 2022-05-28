@@ -85,6 +85,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new NPCInteractEventCaller(), this);
         getServer().getPluginManager().registerEvents(new ActionbarListener(), this);
         getServer().getPluginManager().registerEvents(new KillstreakListener(), this);
+        getServer().getPluginManager().registerEvents(new BaseResourceListener(), this);
 
         getCommand("setprestige").setExecutor(new SetPrestigeCommand());
         getCommand("setlevel").setExecutor(new SetLevelCommand());

@@ -288,14 +288,18 @@ public class KillRecap implements CommandExecutor, Listener {
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData receiverData = Main.getInstance().getPlayerData(receiver);
 
-        for (Entry<String, Integer> entry : event.getExpAdditions().entrySet()) {
-            builder.append(entry.getKey() + "§f: §b" + plus + entry.getValue() + "\n");
+        List<Entry<String, Integer>> additions = Arrays.asList(event.getExpAdditions().entrySet().toArray(new Entry[0]));
+
+        Collections.reverse(additions);
+
+        for (Entry<String, Integer> entry : additions) {
+            builder.append("§f" + entry.getKey() + "§f: §b" + plus + entry.getValue() + "\n");
 
             if (plus.equals("")) plus = "+";
         }
 
         //xp bump "§fRenown XP Bump: §b+?"
-        if (receiverData.getStreak() <= (receiverData.getPassiveTier(Passives.EL_GATO) - 1) && isKiller) builder.append("§fEl Gato: §b+5\n");
+        //if (receiverData.getStreak() <= (receiverData.getPassiveTier(Passives.EL_GATO) - 1) && isKiller) builder.append("§fEl Gato: §b+5\n");
 
         if (receiverData.getStreak() == 4) {
             streakModifier = 3;
@@ -369,12 +373,16 @@ public class KillRecap implements CommandExecutor, Listener {
         PlayerData receiverData = Main.getInstance().getPlayerData(receiver);
         PlayerInventory killerInv = receiver.getInventory();
 
-        for (Entry<String, Double> entry : event.getGoldAdditions().entrySet()) {
+        List<Entry<String, Double>> additions = Arrays.asList(event.getGoldAdditions().entrySet().toArray(new Entry[0]));
+
+        Collections.reverse(additions);
+
+        for (Entry<String, Double> entry : additions) {
             String value = entry.getValue() + "";
 
             if (entry.getValue() == (int) entry.getValue().doubleValue()) value = (int) entry.getValue().doubleValue() + "";
 
-            builder.append(entry.getKey() + "§f: §6" + plus + value + "\n");
+            builder.append("§f" + entry.getKey() + "§f: §6" + plus + value + "\n");
 
             if (plus.equals("")) plus = "+";
         }
@@ -384,7 +392,7 @@ public class KillRecap implements CommandExecutor, Listener {
             builder.append("§fBounty Hunter: §6+4\n");
         }
 
-        if (receiverData.getStreak() <= receiverData.getPassiveTier(Passives.EL_GATO) && isKiller) builder.append("§fEl Gato: §6+5\n");
+        //if (receiverData.getStreak() <= receiverData.getPassiveTier(Passives.EL_GATO) && isKiller) builder.append("§fEl Gato: §6+5\n");
         if (deadData.getStreak() > 5 && isKiller) builder.append("§fStreak shutdown: §6+" + Math.min((int) Math.round(deadData.getStreak()), 30) + "\n");
         if (receiverData.getStreak() <= 3 && (receiverData.getLevel() <= 30 || receiverData.getPrestige() == 0) && isKiller) builder.append("§fFirst 3 kills: §6+4\n");
         //genesis "§fGenesis: §6+?"
