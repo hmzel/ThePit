@@ -287,8 +287,12 @@ public class KillRecap implements CommandExecutor, Listener {
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData receiverData = Main.getInstance().getPlayerData(receiver);
 
-        for (Pair<String, Integer> pair : event.getExpAdditions()) {
-            builder.append("§f" + pair.getKey() + "§f: §b" + plus + pair.getValue() + "\n");
+        for (Pair<String, Double> pair : event.getExpAdditions()) {
+            String value = pair.getValue() + "";
+
+            if (pair.getValue() == (int) pair.getValue().doubleValue()) value = (int) pair.getValue().doubleValue() + "";
+
+            builder.append("§f" + pair.getKey() + "§f: §b" + plus + value + "\n");
 
             if (plus.equals("")) plus = "+";
         }
@@ -318,7 +322,7 @@ public class KillRecap implements CommandExecutor, Listener {
 //        if (deadData.getStreak() > 5 && isKiller) builder.append("§fStreak Shutdown: §b+" + (int) Math.min(Math.round(deadData.getStreak()), 25) + "\n");
 //        if (receiverData.getStreak() <= 3 && (receiverData.getLevel() <= 30 || receiverData.getPrestige() == 0) && isKiller) builder.append("§fFirst 3 kills: §b+4\n");
 //        if (deadData.getLevel() > receiverData.getLevel()) builder.append("§fLevel difference: §b+" + (int) Math.round((deadData.getLevel() - receiverData.getLevel()) / 4.5) + "\n");
-        if (isKiller && receiverData.getXpStack() != 0) builder.append("§fXP Stack: §b+" + receiverData.getXpStack() + "\n");
+//        if (isKiller && receiverData.getXpStack() != 0) builder.append("§fXP Stack: §b+" + receiverData.getXpStack() + "\n");
 
         //koth "§fKOTH: §b+300%"
         //2x event "§f2x Event: §b+100%"
@@ -392,7 +396,7 @@ public class KillRecap implements CommandExecutor, Listener {
         if (dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() > receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue() && Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5) != 0) {
             builder.append("§fArmor difference: §6+" + Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5) + "\n");
         }
-        if (isKiller && receiverData.getGoldStack() != 0) builder.append("§fGold Stack: §6+" + receiverData.getGoldStack() + "\n");
+//        if (isKiller && receiverData.getGoldStack() != 0) builder.append("§fGold Stack: §6+" + receiverData.getGoldStack() + "\n");
         //assistant "§fAssistant: §6+?"
 
         //koth "§fKOTH: §6+300%"

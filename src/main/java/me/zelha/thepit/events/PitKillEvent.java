@@ -15,7 +15,7 @@ public class PitKillEvent extends Event implements Cancellable {
     private final Player dead;
     private final Player killer;
     //i wish i could use maps here but they were causing weird issues and i couldnt figure out how to fix it
-    private final List<Pair<String, Integer>> expAdditions = new ArrayList<>();
+    private final List<Pair<String, Double>> expAdditions = new ArrayList<>();
     private final List<Pair<String, Double>> expBoosts = new ArrayList<>();
     private final List<Pair<String, Double>> goldAdditions = new ArrayList<>();
     private final List<Pair<String, Double>> goldBoosts = new ArrayList<>();
@@ -49,7 +49,7 @@ public class PitKillEvent extends Event implements Cancellable {
         this.cancelled = cancel;
     }
 
-    public void addExp(int exp, String reason) {
+    public void addExp(double exp, String reason) {
         expAdditions.add(Pair.of(reason, exp));
     }
 
@@ -73,7 +73,7 @@ public class PitKillEvent extends Event implements Cancellable {
         return killer;
     }
 
-    public List<Pair<String, Integer>> getExpAdditions() {
+    public List<Pair<String, Double>> getExpAdditions() {
         return expAdditions;
     }
 

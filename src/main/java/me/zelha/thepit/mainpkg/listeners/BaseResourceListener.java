@@ -59,7 +59,13 @@ public class BaseResourceListener implements Listener {
             e.addExp((int) Math.round((deadData.getLevel() - killerData.getLevel()) / 4.5), "Level difference");
         }
 
+        if (killerData.getXpStack() != 0) {
+            e.addExp(killerData.getXpStack(), "XP Stack");
+        }
 
+        if (killerData.getGoldStack() != 0) {
+            e.addGold(killerData.getGoldStack(), "Gold Stack");
+        }
     }
 }
 

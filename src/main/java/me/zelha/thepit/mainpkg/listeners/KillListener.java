@@ -51,7 +51,7 @@ public class KillListener implements Listener {
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData killerData = Main.getInstance().getPlayerData(killer);
 
-        for (Pair<String, Integer> pair : event.getExpAdditions()) {
+        for (Pair<String, Double> pair : event.getExpAdditions()) {
             exp += pair.getValue();
         }
 
@@ -75,7 +75,7 @@ public class KillListener implements Listener {
 //        if (killerData.getStreak() <= 3 && (killerData.getLevel() <= 30 || killerData.getPrestige() == 0)) exp += 4;
 //        if (deadData.getLevel() > killerData.getLevel()) exp += (int) Math.round((deadData.getLevel() - killerData.getLevel()) / 4.5);
 
-        exp += killerData.getXpStack();
+//        exp += killerData.getXpStack();
 
         if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) exp *= 0.91;
         if (killerData.getPassiveTier(Passives.XP_BOOST) > 0) exp *= 1 + (killerData.getPassiveTier(Passives.XP_BOOST) / 10.0);
@@ -113,7 +113,7 @@ public class KillListener implements Listener {
         if (dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() > killer.getAttribute(Attribute.GENERIC_ARMOR).getValue()) {
             gold += Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - killer.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5);
         }
-        gold += killerData.getGoldStack();
+//        gold += killerData.getGoldStack();
 
         if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) gold *= 0.91;
         if (killerData.getPassiveTier(Passives.GOLD_BOOST) > 0) gold *= 1 + (killerData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
