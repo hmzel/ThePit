@@ -4,6 +4,8 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.Passives;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -11,6 +13,8 @@ import org.bukkit.event.Listener;
 import static me.zelha.thepit.zelenums.Perks.STREAKER;
 
 public class BaseResourceListener implements Listener {
+
+    //using three eventhandlers to mimic behavior in pit, i dont know why its actually in this order in regular pit but i like being accurate
 
     @EventHandler
     public void onKill(PitKillEvent e) {
@@ -39,8 +43,7 @@ public class BaseResourceListener implements Listener {
         }
     }
 
-    //using two eventhandlers to mimic behavior in pit, i dont know why its actually in this order in regular pit but i like being accurate
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onKill2(PitKillEvent e) {
         PlayerData killerData = Main.getInstance().getPlayerData(e.getKiller());
         PlayerData deadData = Main.getInstance().getPlayerData(e.getDead());
@@ -57,6 +60,17 @@ public class BaseResourceListener implements Listener {
 
         if (deadData.getLevel() > killerData.getLevel()) {
             e.addExp((int) Math.round((deadData.getLevel() - killerData.getLevel()) / 4.5), "Level difference");
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onKill3(PitKillEvent e) {
+        Player dead = e.getDead();
+        Player killer = e.getKiller();
+        PlayerData killerData = Main.getInstance().getPlayerData(killer);
+
+        if (dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() > killer.getAttribute(Attribute.GENERIC_ARMOR).getValue() && Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - killer.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5) != 0) {
+            e.addGold(Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - killer.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5), "Armor difference");
         }
 
         if (killerData.getXpStack() != 0) {

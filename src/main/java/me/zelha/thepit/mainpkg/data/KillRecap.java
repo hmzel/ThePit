@@ -21,7 +21,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -35,7 +34,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -367,7 +365,6 @@ public class KillRecap implements CommandExecutor, Listener {
         String plus = "";
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData receiverData = Main.getInstance().getPlayerData(receiver);
-        PlayerInventory killerInv = receiver.getInventory();
 
         for (Pair<String, Double> pair : event.getGoldAdditions()) {
             String value = pair.getValue() + "";
@@ -391,9 +388,9 @@ public class KillRecap implements CommandExecutor, Listener {
         //genesis "§fGenesis: §6+?"
         //moctezuma "§fMoctezuma: §6+?"
         //gold bump enchant "§fGold Bump Enchant: §6+?"
-        if (dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() > receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue() && Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5) != 0) {
-            builder.append("§fArmor difference: §6+" + Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5) + "\n");
-        }
+//        if (dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() > receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue() && Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5) != 0) {
+//            builder.append("§fArmor difference: §6+" + Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5) + "\n");
+//        }
 //        if (isKiller && receiverData.getGoldStack() != 0) builder.append("§fGold Stack: §6+" + receiverData.getGoldStack() + "\n");
         //assistant "§fAssistant: §6+?"
 
