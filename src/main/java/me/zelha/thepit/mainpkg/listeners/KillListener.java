@@ -34,9 +34,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Random;
 
-import static me.zelha.thepit.zelenums.Perks.BOUNTY_HUNTER;
-import static org.bukkit.Material.GOLDEN_LEGGINGS;
-
 public class KillListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
@@ -77,7 +74,7 @@ public class KillListener implements Listener {
 
 //        exp += killerData.getXpStack();
 
-        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) exp *= 0.91;
+        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) exp *= 0.90;
         if (killerData.getPassiveTier(Passives.XP_BOOST) > 0) exp *= 1 + (killerData.getPassiveTier(Passives.XP_BOOST) / 10.0);
 
         if (killerData.isMegaActive() && killerData.getMegastreak().getMethods() != null) {
@@ -105,8 +102,9 @@ public class KillListener implements Listener {
 
         for (Pair<String, Double> pair : event.getGoldAdditions()) gold += pair.getValue();
 
+        //spammer needs to remain hardcoded because it doesnt follow the norm and way its easier to just leave it like this
         if (((SpammerPerk) Perks.SPAMMER.getMethods()).hasBeenShotBySpammer(killer, dead)) gold *= 3;
-        if (killerData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS) gold += 4;
+//        if (killerData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS) gold += 4;
 //        if (killerData.getStreak() < killerData.getPassiveTier(Passives.EL_GATO)) gold += 5;
 //        if (deadData.getStreak() > 5) gold += Math.min((int) Math.round(deadData.getStreak()), 30);
 //        if (killerData.getStreak() <= 3 && (killerData.getLevel() <= 30 || killerData.getPrestige() == 0)) gold += 4;
@@ -115,7 +113,7 @@ public class KillListener implements Listener {
         }
 //        gold += killerData.getGoldStack();
 
-        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) gold *= 0.91;
+        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) gold *= 0.90;
         if (killerData.getPassiveTier(Passives.GOLD_BOOST) > 0) gold *= 1 + (killerData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
 
         if (killerData.isMegaActive() && killerData.getMegastreak().getMethods() != null) {

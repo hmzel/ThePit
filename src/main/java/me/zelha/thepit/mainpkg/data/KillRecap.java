@@ -46,9 +46,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static me.zelha.thepit.zelenums.Perks.BOUNTY_HUNTER;
-import static org.bukkit.Material.GOLDEN_LEGGINGS;
-
 public class KillRecap implements CommandExecutor, Listener {
 
     private static final Map<UUID, List<DamageLog>> damageTrackerMap = new HashMap<>();
@@ -382,10 +379,11 @@ public class KillRecap implements CommandExecutor, Listener {
             if (plus.equals("")) plus = "+";
         }
 
+        //spammer needs to remain hardcoded because it doesnt follow the norm and its way easier to just leave it like this
         if (((SpammerPerk) Perks.SPAMMER.getMethods()).hasBeenShotBySpammer(receiver, dead) && isKiller) builder.append("§fSpammer: §6+200%\n");
-        if (receiverData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS && isKiller) {
-            builder.append("§fBounty Hunter: §6+4\n");
-        }
+//        if (receiverData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS && isKiller) {
+//            builder.append("§fBounty Hunter: §6+4\n");
+//        }
 
 //        if (receiverData.getStreak() <= receiverData.getPassiveTier(Passives.EL_GATO) && isKiller) builder.append("§fEl Gato: §6+5\n");
 //        if (deadData.getStreak() > 5 && isKiller) builder.append("§fStreak shutdown: §6+" + Math.min((int) Math.round(deadData.getStreak()), 30) + "\n");

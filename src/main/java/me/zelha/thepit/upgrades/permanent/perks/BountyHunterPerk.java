@@ -29,6 +29,14 @@ public class BountyHunterPerk extends Perk {
     }
 
     @Override
+    public double getGoldAddition(Player killer, Player dead) {
+        if (!zl.itemCheck(killer.getInventory().getLeggings())) return 0;
+        if (killer.getInventory().getLeggings().getType() != GOLDEN_LEGGINGS) return 0;
+
+        return 4;
+    }
+
+    @Override
     public void onReset(Player player, PlayerData playerData) {
         PlayerInventory inv = player.getInventory();
 
