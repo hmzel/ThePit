@@ -54,6 +54,12 @@ public class BaseResourceListener implements Listener {
             e.addExp(4, "First 3 kills");
             e.addGold(4, "First 3 kills");
         }
+
+        if (deadData.getLevel() > killerData.getLevel()) {
+            e.addExp((int) Math.round((deadData.getLevel() - killerData.getLevel()) / 4.5), "Level difference");
+        }
+
+
     }
 }
 
