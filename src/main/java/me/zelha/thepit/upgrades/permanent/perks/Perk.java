@@ -33,6 +33,22 @@ public class Perk {
     public void onKill(Player killer, Player dead) {
     }
 
+    public double getExpAddition(Player killer, Player dead) {
+        return 0;
+    }
+
+    public double getGoldAddition(Player killer, Player dead) {
+        return 0;
+    }
+
+    public double getExpModifier(Player killer, Player dead) {
+        return 1;
+    }
+
+    public double getGoldModifier(Player killer, Player dead) {
+        return 1;
+    }
+
     public void onReset(Player player, PlayerData playerData) {
     }
 
