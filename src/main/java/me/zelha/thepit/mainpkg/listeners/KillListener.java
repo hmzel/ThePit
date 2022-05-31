@@ -3,13 +3,11 @@ package me.zelha.thepit.mainpkg.listeners;
 import me.zelha.thepit.Main;
 import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
-import me.zelha.thepit.upgrades.permanent.perks.SpammerPerk;
 import me.zelha.thepit.utils.RunTracker;
 import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.Megastreaks;
 import me.zelha.thepit.zelenums.Ministreaks;
 import me.zelha.thepit.zelenums.Passives;
-import me.zelha.thepit.zelenums.Perks;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -28,7 +26,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Random;
@@ -97,12 +94,19 @@ public class KillListener implements Listener {
         double gold = 0;
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData killerData = Main.getInstance().getPlayerData(killer);
-        PlayerInventory killerInv = killer.getInventory();
+        boolean baseGoldModifiersApplied = false;
 
-        for (Pair<String, Double> pair : event.getGoldAdditions()) gold += pair.getValue();
+        for (Pair<String, Double> pair : event.getGoldAdditions()) {
+            gold += pair.getValue();
 
-        //spammer needs to remain hardcoded because it doesnt follow the norm and way its easier to just leave it like this
-        if (((SpammerPerk) Perks.SPAMMER.getMethods()).hasBeenShotBySpammer(killer, dead)) gold *= 3;
+            if (!baseGoldModifiersApplied) {
+                for (Pair<String, Double> pair2 : event.getBaseGoldBoosts()) gold *= pair2.getValue();
+
+                baseGoldModifiersApplied = true;
+            }
+        }
+
+//        if (((SpammerPerk) Perks.SPAMMER.getMethods()).hasBeenShotBySpammer(killer, dead)) gold *= 3;
 //        if (killerData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS) gold += 4;
 //        if (killerData.getStreak() < killerData.getPassiveTier(Passives.EL_GATO)) gold += 5;
 //        if (deadData.getStreak() > 5) gold += Math.min((int) Math.round(deadData.getStreak()), 30);

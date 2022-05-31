@@ -5,7 +5,6 @@ import me.zelha.thepit.events.PitDamageEvent;
 import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.listeners.AssistListener;
 import me.zelha.thepit.mainpkg.listeners.KillListener;
-import me.zelha.thepit.upgrades.permanent.perks.SpammerPerk;
 import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.Megastreaks;
 import me.zelha.thepit.zelenums.Ministreaks;
@@ -373,11 +372,26 @@ public class KillRecap implements CommandExecutor, Listener {
 
             builder.append("§f" + pair.getKey() + "§f: §6" + plus + value + "\n");
 
-            if (plus.equals("")) plus = "+";
+            if (plus.equals("")) {
+                for (Pair<String, Double> pair2 : event.getBaseGoldBoosts()) {
+                    String operation = "+";
+                    int value2 = (int) (100 * pair2.getValue());
+
+                    if (value2 < 100) {
+                        operation = "-";
+                        value2 = 100 - value2;
+                    } else {
+                        value2 -= 100;
+                    }
+
+                    builder.append("§f" + pair2.getKey() + "§f: §6" + operation + value2 + "%\n");
+                }
+
+                plus = "+";
+            }
         }
 
-        //spammer needs to remain hardcoded because it doesnt follow the norm and its way easier to just leave it like this
-        if (((SpammerPerk) Perks.SPAMMER.getMethods()).hasBeenShotBySpammer(receiver, dead) && isKiller) builder.append("§fSpammer: §6+200%\n");
+//        if (((SpammerPerk) Perks.SPAMMER.getMethods()).hasBeenShotBySpammer(receiver, dead) && isKiller) builder.append("§fSpammer: §6+200%\n");
 //        if (receiverData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS && isKiller) {
 //            builder.append("§fBounty Hunter: §6+4\n");
 //        }
