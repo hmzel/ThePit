@@ -17,8 +17,10 @@ public class PitKillEvent extends Event implements Cancellable {
     //i wish i could use maps here but they were causing weird issues and i couldnt figure out how to fix it
     private final List<Pair<String, Double>> expAdditions = new ArrayList<>();
     private final List<Pair<String, Double>> expBoosts = new ArrayList<>();
+    private final List<Pair<String, Double>> baseGoldBoosts = new ArrayList<>();
     private final List<Pair<String, Double>> goldAdditions = new ArrayList<>();
     private final List<Pair<String, Double>> goldBoosts = new ArrayList<>();
+    private final List<Pair<String, Double>> addAfterGoldBoosts = new ArrayList<>();
     private final boolean disconnected;
 
     public PitKillEvent(Player dead, Player killer, boolean disconnected) {
@@ -57,12 +59,20 @@ public class PitKillEvent extends Event implements Cancellable {
         expBoosts.add(Pair.of(reason, boost));
     }
 
+    public void addBaseGoldBoost(double boost, String reason) {
+        baseGoldBoosts.add(Pair.of(reason, boost));
+    }
+
     public void addGold(double gold, String reason) {
         goldAdditions.add(Pair.of(reason, gold));
     }
 
     public void addGoldBoost(double boost, String reason) {
         goldBoosts.add(Pair.of(reason, boost));
+    }
+
+    public void addAfterGoldBoost(double gold, String reason) {
+        addAfterGoldBoosts.add(Pair.of(reason, gold));
     }
 
     public Player getDead() {
@@ -81,12 +91,20 @@ public class PitKillEvent extends Event implements Cancellable {
         return expBoosts;
     }
 
+    public List<Pair<String, Double>> getBaseGoldBoosts() {
+        return baseGoldBoosts;
+    }
+
     public List<Pair<String, Double>> getGoldAdditions() {
         return goldAdditions;
     }
 
     public List<Pair<String, Double>> getGoldBoosts() {
         return goldBoosts;
+    }
+
+    public List<Pair<String, Double>> getAddAfterGoldBoosts() {
+        return addAfterGoldBoosts;
     }
 
     public boolean causedByDisconnect() {

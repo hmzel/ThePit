@@ -1,12 +1,13 @@
 package me.zelha.thepit.events;
 
+import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PitAssistEvent extends Event implements Cancellable {
 
@@ -15,18 +16,20 @@ public class PitAssistEvent extends Event implements Cancellable {
     private final Player dead;
     private final Player assisted;
     private final double percentage;
-    private final Map<String, Integer> expAdditions = new HashMap<>();
-    private final Map<String, Double> expBoosts = new HashMap<>();
-    private final Map<String, Double> goldAdditions = new HashMap<>();
-    private final Map<String, Double> goldBoosts = new HashMap<>();
+    private final List<Pair<String, Double>> expAdditions = new ArrayList<>();
+    private final List<Pair<String, Double>> expBoosts = new ArrayList<>();
+    private final List<Pair<String, Double>> baseGoldBoosts = new ArrayList<>();
+    private final List<Pair<String, Double>> goldAdditions = new ArrayList<>();
+    private final List<Pair<String, Double>> goldBoosts = new ArrayList<>();
+    private final List<Pair<String, Double>> addAfterGoldBoosts = new ArrayList<>();
 
     public PitAssistEvent(Player dead, Player assisted, double percentage) {
         this.dead = dead;
         this.assisted = assisted;
         this.percentage = percentage;
 
-        expAdditions.put("Base §bXP", 10);
-        goldAdditions.put("Base §6gold (g)", 5D);
+        addExp(10, "Base §bXP");
+        addGold(5, "Base §6gold (g)");
     }
 
     public static HandlerList getHandlerList() {
@@ -48,20 +51,28 @@ public class PitAssistEvent extends Event implements Cancellable {
         cancelled = cancel;
     }
 
-    public void addExp(Integer exp, String reason) {
-        expAdditions.put(reason, exp);
+    public void addExp(double exp, String reason) {
+        expAdditions.add(Pair.of(reason, exp));
     }
 
-    public void addExpBoost(Double boost, String reason) {
-        expBoosts.put(reason, boost);
+    public void addExpBoost(double boost, String reason) {
+        expBoosts.add(Pair.of(reason, boost));
     }
 
-    public void addGold(Double gold, String reason) {
-        goldAdditions.put(reason, gold);
+    public void addBaseGoldBoost(double boost, String reason) {
+        baseGoldBoosts.add(Pair.of(reason, boost));
     }
 
-    public void addGoldBoost(Double boost, String reason) {
-        goldBoosts.put(reason, boost);
+    public void addGold(double gold, String reason) {
+        goldAdditions.add(Pair.of(reason, gold));
+    }
+
+    public void addGoldBoost(double boost, String reason) {
+        goldBoosts.add(Pair.of(reason, boost));
+    }
+
+    public void addAfterGoldBoost(double gold, String reason) {
+        addAfterGoldBoosts.add(Pair.of(reason, gold));
     }
 
     public Player getDead() {
@@ -74,5 +85,29 @@ public class PitAssistEvent extends Event implements Cancellable {
 
     public double getPercentage() {
         return percentage;
+    }
+
+    public List<Pair<String, Double>> getExpAdditions() {
+        return expAdditions;
+    }
+
+    public List<Pair<String, Double>> getExpBoosts() {
+        return expBoosts;
+    }
+
+    public List<Pair<String, Double>> getBaseGoldBoosts() {
+        return baseGoldBoosts;
+    }
+
+    public List<Pair<String, Double>> getGoldAdditions() {
+        return goldAdditions;
+    }
+
+    public List<Pair<String, Double>> getGoldBoosts() {
+        return goldBoosts;
+    }
+
+    public List<Pair<String, Double>> getAddAfterGoldBoosts() {
+        return addAfterGoldBoosts;
     }
 }
