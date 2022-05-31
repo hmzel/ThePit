@@ -318,6 +318,20 @@ public class KillRecap implements CommandExecutor, Listener {
 //        if (deadData.getLevel() > receiverData.getLevel()) builder.append("§fLevel difference: §b+" + (int) Math.round((deadData.getLevel() - receiverData.getLevel()) / 4.5) + "\n");
 //        if (isKiller && receiverData.getXpStack() != 0) builder.append("§fXP Stack: §b+" + receiverData.getXpStack() + "\n");
 
+        for (Pair<String, Double> pair : event.getExpBoosts()) {
+            String operation = "+";
+            int value = (int) (100 * pair.getValue());
+
+            if (value < 100) {
+                operation = "-";
+                value = 100 - value;
+            } else {
+                value -= 100;
+            }
+
+            builder.append("§f" + pair.getKey() + "§f: §b" + operation + value + "%\n");
+        }
+
         //koth "§fKOTH: §b+300%"
         //2x event "§f2x Event: §b+100%"
         if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) builder.append("§fKilled a noob: §b-10%\n");
@@ -407,6 +421,20 @@ public class KillRecap implements CommandExecutor, Listener {
 //        }
 //        if (isKiller && receiverData.getGoldStack() != 0) builder.append("§fGold Stack: §6+" + receiverData.getGoldStack() + "\n");
         //assistant "§fAssistant: §6+?"
+
+        for (Pair<String, Double> pair : event.getGoldBoosts()) {
+            String operation = "+";
+            int value = (int) (100 * pair.getValue());
+
+            if (value < 100) {
+                operation = "-";
+                value = 100 - value;
+            } else {
+                value -= 100;
+            }
+
+            builder.append("§f" + pair.getKey() + "§f: §6" + operation + value + "%\n");
+        }
 
         //koth "§fKOTH: §6+300%"
         //2x event "§f2x Event: §6+100%"
