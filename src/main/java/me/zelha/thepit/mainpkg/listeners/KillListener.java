@@ -72,7 +72,7 @@ public class KillListener implements Listener {
 
         for (Pair<String, Double> pair : event.getExpModifiers()) exp *= pair.getValue();
 
-        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) exp *= 0.90;
+//        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) exp *= 0.90;
         if (killerData.getPassiveTier(Passives.XP_BOOST) > 0) exp *= 1 + (killerData.getPassiveTier(Passives.XP_BOOST) / 10.0);
 
         if (killerData.isMegaActive() && killerData.getMegastreak().getMethods() != null) {
@@ -120,7 +120,7 @@ public class KillListener implements Listener {
 
         for (Pair<String, Double> pair : event.getGoldModifiers()) gold *= pair.getValue();
 
-        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) gold *= 0.90;
+//        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) gold *= 0.90;
         if (killerData.getPassiveTier(Passives.GOLD_BOOST) > 0) gold *= 1 + (killerData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
 
         if (killerData.isMegaActive() && killerData.getMegastreak().getMethods() != null) {

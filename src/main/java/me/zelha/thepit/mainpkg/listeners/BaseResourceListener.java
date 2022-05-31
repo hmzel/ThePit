@@ -19,6 +19,7 @@ public class BaseResourceListener implements Listener {
     @EventHandler
     public void onKill(PitKillEvent e) {
         PlayerData killerData = Main.getInstance().getPlayerData(e.getKiller());
+        PlayerData deadData = Main.getInstance().getPlayerData(e.getDead());
         double streakModifier = 0;
 
         if (killerData.getStreak() <= (killerData.getPassiveTier(Passives.EL_GATO) - 1)) {
@@ -40,6 +41,11 @@ public class BaseResourceListener implements Listener {
             e.addExp((int) (streakModifier * 3), "Killer on streak (Streaker Perk)");
         } else if (killerData.getStreak() >= 4) {
             e.addExp((int) streakModifier, "Killer on streak");
+        }
+
+        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) {
+            e.addExpModifier(0.90, "Killed a noob");
+            e.addGoldModifier(0.90, "Killed a noob");
         }
     }
 
