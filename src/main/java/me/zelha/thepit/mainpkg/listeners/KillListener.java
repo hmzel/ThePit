@@ -7,7 +7,6 @@ import me.zelha.thepit.utils.RunTracker;
 import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.Megastreaks;
 import me.zelha.thepit.zelenums.Ministreaks;
-import me.zelha.thepit.zelenums.Passives;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -73,7 +72,7 @@ public class KillListener implements Listener {
         for (Pair<String, Double> pair : event.getExpModifiers()) exp *= pair.getValue();
 
 //        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) exp *= 0.90;
-        if (killerData.getPassiveTier(Passives.XP_BOOST) > 0) exp *= 1 + (killerData.getPassiveTier(Passives.XP_BOOST) / 10.0);
+//        if (killerData.getPassiveTier(Passives.XP_BOOST) > 0) exp *= 1 + (killerData.getPassiveTier(Passives.XP_BOOST) / 10.0);
 
         if (killerData.isMegaActive() && killerData.getMegastreak().getMethods() != null) {
             exp *= killerData.getMegastreak().getMethods().getEXPModifier(killer);
@@ -121,7 +120,7 @@ public class KillListener implements Listener {
         for (Pair<String, Double> pair : event.getGoldModifiers()) gold *= pair.getValue();
 
 //        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) gold *= 0.90;
-        if (killerData.getPassiveTier(Passives.GOLD_BOOST) > 0) gold *= 1 + (killerData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
+//        if (killerData.getPassiveTier(Passives.GOLD_BOOST) > 0) gold *= 1 + (killerData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
 
         if (killerData.isMegaActive() && killerData.getMegastreak().getMethods() != null) {
             gold *= killerData.getMegastreak().getMethods().getGoldModifier(killer);
