@@ -36,16 +36,7 @@ public class PerkListener implements Listener {
             if (methods == null) continue;
 
             methods.onKill(killer, dead);
-
-            double expAddition = methods.getExpAddition(killer, dead);
-            double goldAddition = methods.getGoldAddition(killer, dead);
-            double expModifier = methods.getExpModifier(killer, dead);
-            double goldModifier = methods.getGoldModifier(killer, dead);
-
-            if (expAddition != 0) e.addExp(expAddition, perk.getName());
-            if (goldAddition != 0) e.addGold(goldAddition, perk.getName());
-            if (expModifier != 1) e.addExpBoost(expModifier, perk.getName());
-            if (goldModifier != 1) e.addGoldBoost(goldModifier, perk.getName());
+            methods.applyResourceModifiers(e);
         }
 
         if (killerData.hasPerkEquipped(GOLDEN_HEADS)) return;

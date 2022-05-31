@@ -1,6 +1,7 @@
 package me.zelha.thepit.upgrades.permanent.perks;
 
 import me.zelha.thepit.Main;
+import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -29,11 +30,13 @@ public class BountyHunterPerk extends Perk {
     }
 
     @Override
-    public double getGoldAddition(Player killer, Player dead) {
-        if (!zl.itemCheck(killer.getInventory().getLeggings())) return 0;
-        if (killer.getInventory().getLeggings().getType() != GOLDEN_LEGGINGS) return 0;
+    public void applyResourceModifiers(PitKillEvent e) {
+        Player killer = e.getKiller();
 
-        return 4;
+        if (!zl.itemCheck(killer.getInventory().getLeggings())) return;
+        if (killer.getInventory().getLeggings().getType() != GOLDEN_LEGGINGS) return;
+
+        e.addGold(4, "Bounty Hunter");
     }
 
     @Override
