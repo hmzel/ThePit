@@ -38,7 +38,7 @@ public class SpammerPerk extends Perk implements Listener {
         if (!spammerShotIdentifier.containsKey(killer.getUniqueId())) return;
         if (spammerShotIdentifier.get(killer.getUniqueId()) != e.getDead().getUniqueId()) return;
 
-        e.addBaseGoldBoost(3, "Spammer");
+        e.addBaseGoldModifier(3, "Spammer");
         spammerShotIdentifier.remove(killer.getUniqueId());
     }
 

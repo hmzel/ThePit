@@ -70,7 +70,7 @@ public class KillListener implements Listener {
 
 //        exp += killerData.getXpStack();
 
-        for (Pair<String, Double> pair : event.getExpBoosts()) exp *= pair.getValue();
+        for (Pair<String, Double> pair : event.getExpModifiers()) exp *= pair.getValue();
 
         if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) exp *= 0.90;
         if (killerData.getPassiveTier(Passives.XP_BOOST) > 0) exp *= 1 + (killerData.getPassiveTier(Passives.XP_BOOST) / 10.0);
@@ -102,7 +102,7 @@ public class KillListener implements Listener {
             gold += pair.getValue();
 
             if (!baseGoldModifiersApplied) {
-                for (Pair<String, Double> pair2 : event.getBaseGoldBoosts()) gold *= pair2.getValue();
+                for (Pair<String, Double> pair2 : event.getBaseGoldModifiers()) gold *= pair2.getValue();
 
                 baseGoldModifiersApplied = true;
             }
@@ -118,7 +118,7 @@ public class KillListener implements Listener {
 //        }
 //        gold += killerData.getGoldStack();
 
-        for (Pair<String, Double> pair : event.getGoldBoosts()) gold *= pair.getValue();
+        for (Pair<String, Double> pair : event.getGoldModifiers()) gold *= pair.getValue();
 
         if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) gold *= 0.90;
         if (killerData.getPassiveTier(Passives.GOLD_BOOST) > 0) gold *= 1 + (killerData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);

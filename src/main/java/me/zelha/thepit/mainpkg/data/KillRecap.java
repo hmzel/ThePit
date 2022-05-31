@@ -318,7 +318,7 @@ public class KillRecap implements CommandExecutor, Listener {
 //        if (deadData.getLevel() > receiverData.getLevel()) builder.append("§fLevel difference: §b+" + (int) Math.round((deadData.getLevel() - receiverData.getLevel()) / 4.5) + "\n");
 //        if (isKiller && receiverData.getXpStack() != 0) builder.append("§fXP Stack: §b+" + receiverData.getXpStack() + "\n");
 
-        for (Pair<String, Double> pair : event.getExpBoosts()) {
+        for (Pair<String, Double> pair : event.getExpModifiers()) {
             String operation = "+";
             int value = (int) (100 * pair.getValue());
 
@@ -387,7 +387,7 @@ public class KillRecap implements CommandExecutor, Listener {
             builder.append("§f" + pair.getKey() + "§f: §6" + plus + value + "\n");
 
             if (plus.equals("")) {
-                for (Pair<String, Double> pair2 : event.getBaseGoldBoosts()) {
+                for (Pair<String, Double> pair2 : event.getBaseGoldModifiers()) {
                     String operation = "+";
                     int value2 = (int) (100 * pair2.getValue());
 
@@ -422,7 +422,7 @@ public class KillRecap implements CommandExecutor, Listener {
 //        if (isKiller && receiverData.getGoldStack() != 0) builder.append("§fGold Stack: §6+" + receiverData.getGoldStack() + "\n");
         //assistant "§fAssistant: §6+?"
 
-        for (Pair<String, Double> pair : event.getGoldBoosts()) {
+        for (Pair<String, Double> pair : event.getGoldModifiers()) {
             String operation = "+";
             int value = (int) (100 * pair.getValue());
 
