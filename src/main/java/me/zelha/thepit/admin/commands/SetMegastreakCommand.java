@@ -1,6 +1,7 @@
 package me.zelha.thepit.admin.commands;
 
 import me.zelha.thepit.Main;
+import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.Megastreaks;
 import org.bukkit.Bukkit;
@@ -28,8 +29,13 @@ public class SetMegastreakCommand implements CommandExecutor {
                 return true;
             }
 
-            Main.getInstance().getPlayerData((Player) sender).setMegastreak(Megastreaks.findByEnumName(args[0]));
+            PlayerData pData = Main.getInstance().getPlayerData((Player) sender);
+            StringBuilder builder = new StringBuilder(pData.getMegastreak().getChatName());
+
+            pData.setMegastreak(Megastreaks.findByEnumName(args[0]));
             sender.sendMessage("§aSuccessfully set your megastreak to §e" + Megastreaks.findByEnumName(args[0]).getName());
+
+            if (pData.isMegaActive()) pData.setDummyStatus(builder.replace(2, builder.length(), pData.getMegastreak().getName()).toString());
         }
 
         if (args.length == 2) {
@@ -42,9 +48,13 @@ public class SetMegastreakCommand implements CommandExecutor {
             }
 
             Player p2 = Bukkit.getPlayer(args[0]);
+            PlayerData pData = Main.getInstance().getPlayerData(p2);
+            StringBuilder builder = new StringBuilder(pData.getMegastreak().getChatName());
 
-            Main.getInstance().getPlayerData(p2).setMegastreak(Megastreaks.findByEnumName(args[1]));
+            pData.setMegastreak(Megastreaks.findByEnumName(args[1]));
             sender.sendMessage("§aSuccessfully set §7" + p2.getName() + "§a's megastreak to §e" + Megastreaks.findByEnumName(args[1]).getName());
+
+            if (pData.isMegaActive()) pData.setDummyStatus(builder.replace(2, builder.length(), pData.getMegastreak().getName()).toString());
         }
         return true;
     }
