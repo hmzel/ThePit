@@ -144,7 +144,7 @@ public class StorageListener implements Listener {
         }
 
         for (Megastreaks mega : Megastreaks.values()) {
-            unlockedMegastreaksEmbed.append(mega.name().toLowerCase(), document.getEmbedded(Arrays.asList("megastreak_unlocks", mega.name().toLowerCase()), false));
+            unlockedMegastreaksEmbed.append(mega.name().toLowerCase(), document.getEmbedded(Arrays.asList("megastreak_unlocks", mega.name().toLowerCase()), mega == Megastreaks.OVERDRIVE));
         }
 
         for (Ministreaks mini : Ministreaks.values()) {
