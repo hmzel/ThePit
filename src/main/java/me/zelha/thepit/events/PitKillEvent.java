@@ -113,7 +113,7 @@ public class PitKillEvent extends Event implements Cancellable {
         return goldModifiers;
     }
 
-    public List<Pair<String, Double>> getAddAfterGoldModifiers() {
+    public List<Pair<String, Double>> getAddedAfterGoldModifiers() {
         return addAfterGoldModifiers;
     }
 

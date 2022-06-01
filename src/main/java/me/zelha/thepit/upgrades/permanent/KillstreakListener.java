@@ -36,7 +36,7 @@ public class KillstreakListener implements Listener {
         megaMethods.onTrigger(p);
     }
 
-    //using two eventhandlers to preserve accuracy between normal pit and this recreation
+    //using two eventhandlers to preserve accuracy between normal pit and this one
     @EventHandler(priority = EventPriority.HIGH)
     public void addResourceModifiers(PitKillEvent e) {
         Player p = e.getKiller();

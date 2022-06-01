@@ -467,7 +467,15 @@ public class KillRecap implements CommandExecutor, Listener {
             builder.append("§fBounty Hunter Assist: §6+" + zl.getFancyGoldString(deadData.getBounty() * (assistUtils.getAssistMap(dead).get(receiver.getUniqueId()) / assistUtils.getTotalDamage(dead))) + "\n");
         }
 
-        if (deadData.getBounty() != 0 && isKiller) builder.append("§fBounty: §6+" + deadData.getBounty() + "\n");
+        for (Pair<String, Double> pair : event.getAddedAfterGoldModifiers()) {
+            String value = pair.getValue() + "";
+
+            if (pair.getValue() == (int) pair.getValue().doubleValue()) value = (int) pair.getValue().doubleValue() + "";
+
+            builder.append("§f" + pair.getKey() + "§f: §6+" + value + "\n");
+        }
+
+//        if (deadData.getBounty() != 0 && isKiller) builder.append("§fBounty: §6+" + deadData.getBounty() + "\n");
 
         builder.replace(builder.length() - 1, builder.length(), "");
 

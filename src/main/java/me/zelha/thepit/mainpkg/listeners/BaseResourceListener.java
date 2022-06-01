@@ -55,6 +55,8 @@ public class BaseResourceListener implements Listener {
         if (killerData.getPassiveTier(Passives.XP_BOOST) > 0) {
             e.addExpModifier(1 + (killerData.getPassiveTier(Passives.XP_BOOST) / 10.0), "XP Boost");
         }
+
+        if (deadData.getBounty() != 0) e.addAfterGoldModifier(deadData.getBounty(), "Bounty");
     }
 
     @EventHandler(priority = EventPriority.HIGH)

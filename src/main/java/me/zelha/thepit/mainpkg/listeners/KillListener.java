@@ -126,7 +126,11 @@ public class KillListener implements Listener {
 //            gold *= ministreak.getMethods().getGoldModifier(killer);
 //        }
 
-        return Math.min(gold, 2500) + deadData.getBounty();
+        gold = Math.min(gold, event.getMaxGold());
+
+        for (Pair<String, Double> pair : event.getAddedAfterGoldModifiers()) gold += pair.getValue();
+
+        return gold;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
