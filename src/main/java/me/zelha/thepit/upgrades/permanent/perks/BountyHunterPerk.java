@@ -30,13 +30,13 @@ public class BountyHunterPerk extends Perk {
     }
 
     @Override
-    public void applyResourceModifiers(PitKillEvent e) {
-        Player killer = e.getKiller();
+    public void addResourceModifiers(PitKillEvent event) {
+        Player killer = event.getKiller();
 
         if (!zl.itemCheck(killer.getInventory().getLeggings())) return;
         if (killer.getInventory().getLeggings().getType() != GOLDEN_LEGGINGS) return;
 
-        e.addGold(4, "Bounty Hunter");
+        event.addGold(4, "Bounty Hunter");
     }
 
     @Override

@@ -6,7 +6,6 @@ import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.listeners.AssistListener;
 import me.zelha.thepit.mainpkg.listeners.KillListener;
 import me.zelha.thepit.utils.ZelLogic;
-import me.zelha.thepit.zelenums.Megastreaks;
 import me.zelha.thepit.zelenums.Ministreaks;
 import me.zelha.thepit.zelenums.Perks;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -339,17 +338,17 @@ public class KillRecap implements CommandExecutor, Listener {
             builder.append("§fSuper Streaker: §b+" + Math.min(((int) ((int) receiverData.getStreak() / 10) * 5), 50) + "%\n");
         }
 
-        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.OVERDRIVE) {
-            builder.append("§fOverdrive: §b+100%\n");
-        }
-
-        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.BEASTMODE) {
-            builder.append("§fBeastmode: §b+50%\n");
-        }
-
-        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.HERMIT && receiverData.getMegastreak().getMethods().getEXPModifier(receiver) != 1) {
-            builder.append("§fHermit: §b+" + (receiverData.getMegastreak().getMethods().getEXPModifier(receiver) - 1) * 100 + "%\n");
-        }
+//        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.OVERDRIVE) {
+//            builder.append("§fOverdrive: §b+100%\n");
+//        }
+//
+//        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.BEASTMODE) {
+//            builder.append("§fBeastmode: §b+50%\n");
+//        }
+//
+//        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.HERMIT && receiverData.getMegastreak().getMethods().getEXPModifier(receiver) != 1) {
+//            builder.append("§fHermit: §b+" + (receiverData.getMegastreak().getMethods().getEXPModifier(receiver) - 1) * 100 + "%\n");
+//        }
         //royalty "§fRoyalty: §b+10%"
         //genesis "§fGenesis: §b+?%"
         //assistant "§fAssistant: §b+?%"
@@ -441,21 +440,21 @@ public class KillRecap implements CommandExecutor, Listener {
 //        if (receiverData.getPassiveTier(Passives.GOLD_BOOST) > 0) builder.append("§fGold Boost: §6+" + receiverData.getPassiveTier(Passives.GOLD_BOOST) * 10 + "%\n");
         //renown gold boost "§fRenown Gold Boost: §6+?%"
         //gold boost enchant "§fGold Boost Enchant: §6+?%"
-        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.OVERDRIVE) {
-            builder.append("§fOverdrive: §6+50%\n");
-        }
-
-        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.BEASTMODE) {
-            builder.append("§fBeastmode: §6+75%\n");
-        }
-
-        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.HIGHLANDER) {
-            builder.append("§fHighlander: §6+110%\n");
-        }
-
-        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.HERMIT && receiverData.getMegastreak().getMethods().getGoldModifier(receiver) != 1) {
-            builder.append("§fHermit: §6+" + (receiverData.getMegastreak().getMethods().getGoldModifier(receiver) * 100) + "%\n");
-        }
+//        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.OVERDRIVE) {
+//            builder.append("§fOverdrive: §6+50%\n");
+//        }
+//
+//        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.BEASTMODE) {
+//            builder.append("§fBeastmode: §6+75%\n");
+//        }
+//
+//        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.HIGHLANDER) {
+//            builder.append("§fHighlander: §6+110%\n");
+//        }
+//
+//        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.HERMIT && receiverData.getMegastreak().getMethods().getGoldModifier(receiver) != 1) {
+//            builder.append("§fHermit: §6+" + (receiverData.getMegastreak().getMethods().getGoldModifier(receiver) * 100) + "%\n");
+//        }
 
         if (!isKiller) builder.append("§fKill participation: §6-"
                 + (int) ((1 - (Double.parseDouble(BigDecimal.valueOf(assistUtils.getAssistMap(dead).get(receiver.getUniqueId()) / assistUtils.getTotalDamage(dead)).setScale(2, RoundingMode.HALF_EVEN).toString()))) * 100)

@@ -2,6 +2,7 @@ package me.zelha.thepit.upgrades.permanent.megastreaks;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.events.PitDamageEvent;
+import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.Megastreaks;
@@ -46,12 +47,7 @@ public class Megastreak {
         return 0;
     }
 
-    public double getEXPModifier(Player player) {
-        return 1;
-    }
-
-    public double getGoldModifier(Player player) {
-        return 1;
+    public void addResourceModifiers(PitKillEvent event) {
     }
 
     public void onDeath(Player player) {

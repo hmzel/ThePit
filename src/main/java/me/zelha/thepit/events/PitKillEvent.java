@@ -14,6 +14,8 @@ public class PitKillEvent extends Event implements Cancellable {
     private boolean cancelled = false;
     private final Player dead;
     private final Player killer;
+    private int maxExp = 250;
+    private int maxGold = 2500;
     //i wish i could use maps here but they were causing weird issues and i couldnt figure out how to fix it
     private final List<Pair<String, Double>> expAdditions = new ArrayList<>();
     private final List<Pair<String, Double>> expModifiers = new ArrayList<>();
@@ -49,6 +51,14 @@ public class PitKillEvent extends Event implements Cancellable {
     @Override
     public void setCancelled(boolean cancel) {
         this.cancelled = cancel;
+    }
+
+    public void setMaxExp(int maxExp) {
+        this.maxExp = maxExp;
+    }
+
+    public void setMaxGold(int maxGold) {
+        this.maxGold = maxGold;
     }
 
     public void addExp(double exp, String reason) {
@@ -105,6 +115,14 @@ public class PitKillEvent extends Event implements Cancellable {
 
     public List<Pair<String, Double>> getAddAfterGoldModifiers() {
         return addAfterGoldModifiers;
+    }
+
+    public int getMaxExp() {
+        return maxExp;
+    }
+
+    public int getMaxGold() {
+        return maxGold;
     }
 
     public boolean causedByDisconnect() {

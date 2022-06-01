@@ -36,7 +36,7 @@ public class PerkListener implements Listener {
             if (methods == null) continue;
 
             methods.onKill(killer, dead);
-            methods.applyResourceModifiers(e);
+            methods.addResourceModifiers(e);
         }
 
         if (killerData.hasPerkEquipped(GOLDEN_HEADS)) return;

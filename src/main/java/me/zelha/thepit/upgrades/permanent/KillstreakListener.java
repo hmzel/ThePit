@@ -16,7 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class KillstreakListener implements Listener {
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onKill(PitKillEvent e) {
         Player p = e.getKiller();
         PlayerData pData = Main.getInstance().getPlayerData(p);
@@ -30,10 +30,19 @@ public class KillstreakListener implements Listener {
         }
 
         if ((int) pData.getStreak() < pData.getMegastreak().getTrigger()) return;
-        if (pData.isMegaActive()) return;
         if (megaMethods == null) return;
+        if (pData.isMegaActive()) return;
 
         megaMethods.onTrigger(p);
+    }
+
+    //using two eventhandlers to preserve accuracy between normal pit and this recreation
+    @EventHandler(priority = EventPriority.HIGH)
+    public void addResourceModifiers(PitKillEvent e) {
+        Player p = e.getKiller();
+        PlayerData pData = Main.getInstance().getPlayerData(p);
+
+        if (pData.isMegaActive()) pData.getMegastreak().getMethods().addResourceModifiers(e);
     }
 
     @EventHandler
@@ -64,7 +73,7 @@ public class KillstreakListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onDeath(PitDeathEvent e) {
         Player p = e.getDead();
         PlayerData pData = Main.getInstance().getPlayerData(p);

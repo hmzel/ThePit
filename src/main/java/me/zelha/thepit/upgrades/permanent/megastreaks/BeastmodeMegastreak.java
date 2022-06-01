@@ -2,6 +2,7 @@ package me.zelha.thepit.upgrades.permanent.megastreaks;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.events.PitDamageEvent;
+import me.zelha.thepit.events.PitKillEvent;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
@@ -35,13 +36,9 @@ public class BeastmodeMegastreak extends Megastreak {
     }
 
     @Override
-    public double getEXPModifier(Player player) {
-        return 1.5;
-    }
-
-    @Override
-    public double getGoldModifier(Player player) {
-        return 1.75;
+    public void addResourceModifiers(PitKillEvent event) {
+        event.addExpModifier(1.5, "Beastmode");
+        event.addGoldModifier(1.75, "Beastmode");
     }
 
     @Override

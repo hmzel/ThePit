@@ -34,7 +34,7 @@ public class Perk {
     public void onKill(Player killer, Player dead) {
     }
 
-    public void applyResourceModifiers(PitKillEvent e) {
+    public void addResourceModifiers(PitKillEvent event) {
     }
 
     public void onReset(Player player, PlayerData playerData) {

@@ -5,7 +5,6 @@ import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.utils.RunTracker;
 import me.zelha.thepit.utils.ZelLogic;
-import me.zelha.thepit.zelenums.Megastreaks;
 import me.zelha.thepit.zelenums.Ministreaks;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -39,7 +38,7 @@ public class KillListener implements Listener {
     public int calculateEXP(Player dead, Player killer, PitKillEvent event) {
         double exp = 0;
 //        double streakModifier = 0;
-        int maxEXP = 250;
+//        int maxEXP = 250;
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData killerData = Main.getInstance().getPlayerData(killer);
 
@@ -74,9 +73,9 @@ public class KillListener implements Listener {
 //        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) exp *= 0.90;
 //        if (killerData.getPassiveTier(Passives.XP_BOOST) > 0) exp *= 1 + (killerData.getPassiveTier(Passives.XP_BOOST) / 10.0);
 
-        if (killerData.isMegaActive() && killerData.getMegastreak().getMethods() != null) {
-            exp *= killerData.getMegastreak().getMethods().getEXPModifier(killer);
-        }
+//        if (killerData.isMegaActive() && killerData.getMegastreak().getMethods() != null) {
+//            exp *= killerData.getMegastreak().getMethods().getEXPModifier(killer);
+//        }
 
         for (Ministreaks ministreak : killerData.getEquippedMinistreaks()) {
             if (ministreak.getMethods() == null) continue;
@@ -84,11 +83,7 @@ public class KillListener implements Listener {
             exp *= ministreak.getMethods().getEXPModifier(killer);
         }
 
-        if (killerData.isMegaActive() && killerData.getMegastreak() == Megastreaks.TO_THE_MOON) {
-            maxEXP += 100;
-        }
-
-        return (int) Math.min(Math.ceil(exp), maxEXP);
+        return (int) Math.min(Math.ceil(exp), event.getMaxExp());
     }
 
     public double calculateGold(Player dead, Player killer, PitKillEvent event) {
@@ -122,9 +117,9 @@ public class KillListener implements Listener {
 //        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) gold *= 0.90;
 //        if (killerData.getPassiveTier(Passives.GOLD_BOOST) > 0) gold *= 1 + (killerData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
 
-        if (killerData.isMegaActive() && killerData.getMegastreak().getMethods() != null) {
-            gold *= killerData.getMegastreak().getMethods().getGoldModifier(killer);
-        }
+//        if (killerData.isMegaActive() && killerData.getMegastreak().getMethods() != null) {
+//            gold *= killerData.getMegastreak().getMethods().getGoldModifier(killer);
+//        }
 
         for (Ministreaks ministreak : killerData.getEquippedMinistreaks()) {
             if (ministreak.getMethods() == null) continue;

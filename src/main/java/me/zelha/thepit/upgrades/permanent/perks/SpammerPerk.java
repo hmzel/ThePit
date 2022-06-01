@@ -32,13 +32,13 @@ public class SpammerPerk extends Perk implements Listener {
     }
 
     @Override
-    public void applyResourceModifiers(PitKillEvent e) {
-        Player killer = e.getKiller();
+    public void addResourceModifiers(PitKillEvent event) {
+        Player killer = event.getKiller();
 
         if (!spammerShotIdentifier.containsKey(killer.getUniqueId())) return;
-        if (spammerShotIdentifier.get(killer.getUniqueId()) != e.getDead().getUniqueId()) return;
+        if (spammerShotIdentifier.get(killer.getUniqueId()) != event.getDead().getUniqueId()) return;
 
-        e.addBaseGoldModifier(3, "Spammer");
+        event.addBaseGoldModifier(3, "Spammer");
         spammerShotIdentifier.remove(killer.getUniqueId());
     }
 

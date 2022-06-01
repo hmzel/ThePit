@@ -2,6 +2,7 @@ package me.zelha.thepit.upgrades.permanent.megastreaks;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.events.PitDamageEvent;
+import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -24,13 +25,9 @@ public class OverdriveMegastreak extends Megastreak {
     }
 
     @Override
-    public double getEXPModifier(Player player) {
-        return 2;
-    }
-
-    @Override
-    public double getGoldModifier(Player player) {
-        return 1.5;
+    public void addResourceModifiers(PitKillEvent event) {
+        event.addExpModifier(2, "Overdrive");
+        event.addGoldModifier(1.5, "Overdrive");
     }
 
     @Override

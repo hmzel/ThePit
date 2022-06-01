@@ -45,13 +45,9 @@ public class HermitMegastreak extends Megastreak implements Listener {
     }
 
     @Override
-    public double getEXPModifier(Player player) {
-        return Math.max(1, 1 + Math.floor(((Math.min(Main.getInstance().getPlayerData(player).getStreak(), 200) - 50) / 10)) * 0.05);
-    }
-
-    @Override
-    public double getGoldModifier(Player player) {
-        return Math.max(1, 1 + Math.floor(((Math.min(Main.getInstance().getPlayerData(player).getStreak(), 200) - 50) / 10)) * 0.05);
+    public void addResourceModifiers(PitKillEvent event) {
+        event.addExpModifier(Math.max(1, 1 + Math.floor(((Math.min(Main.getInstance().getPlayerData(event.getKiller()).getStreak(), 200) - 50) / 10)) * 0.05), "Hermit");
+        event.addGoldModifier(Math.max(1, 1 + Math.floor(((Math.min(Main.getInstance().getPlayerData(event.getKiller()).getStreak(), 200) - 50) / 10)) * 0.05), "Hermit");
     }
 
     @EventHandler

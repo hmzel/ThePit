@@ -2,6 +2,7 @@ package me.zelha.thepit.upgrades.permanent.megastreaks;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.events.PitDamageEvent;
+import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.entity.Player;
@@ -35,8 +36,8 @@ public class HighlanderMegastreak extends Megastreak {
     }
 
     @Override
-    public double getGoldModifier(Player player) {
-        return 2.1;
+    public void addResourceModifiers(PitKillEvent event) {
+        event.addGoldModifier(2.1, "Highlander");
     }
 
     @Override

@@ -46,8 +46,9 @@ public class ToTheMoonMegastreak extends Megastreak implements Listener {
     }
 
     @Override
-    public double getEXPModifier(Player player) {
-        return 1.2;
+    public void addResourceModifiers(PitKillEvent event) {
+        event.addExpModifier(1.2, "To the Moon");
+        event.setMaxExp(event.getMaxExp() + 100);
     }
 
     @Override
