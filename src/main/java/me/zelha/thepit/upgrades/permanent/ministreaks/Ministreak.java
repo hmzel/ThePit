@@ -2,6 +2,7 @@ package me.zelha.thepit.upgrades.permanent.ministreaks;
 
 import me.zelha.thepit.Main;
 import me.zelha.thepit.events.PitDamageEvent;
+import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.utils.ZelLogic;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -22,12 +23,7 @@ public class Ministreak {
         return 0;
     }
 
-    public double getEXPModifier(Player player) {
-        return 1;
-    }
-
-    public double getGoldModifier(Player player) {
-        return 1;
+    public void addResourceModifiers(PitKillEvent e) {
     }
 
     public void onReset(Player player) {

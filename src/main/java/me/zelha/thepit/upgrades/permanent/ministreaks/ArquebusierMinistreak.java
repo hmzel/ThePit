@@ -1,7 +1,8 @@
 package me.zelha.thepit.upgrades.permanent.ministreaks;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.events.PitKillEvent;
+import me.zelha.thepit.zelenums.Ministreaks;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -13,9 +14,6 @@ public class ArquebusierMinistreak extends Ministreak {
 
     @Override
     public void onTrigger(Player player) {
-        PlayerData pData = Main.getInstance().getPlayerData(player);
-
-        pData.setGold(pData.getGold() + 7);
         player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 200, 0, false, false, true));
 
         int count = 0;
@@ -29,5 +27,12 @@ public class ArquebusierMinistreak extends Ministreak {
         } else if (count < 128) {
             player.getInventory().addItem(new ItemStack(ARROW, 128 - count));
         }
+    }
+
+    @Override
+    public void addResourceModifiers(PitKillEvent e) {
+        if (((int) Main.getInstance().getPlayerData(e.getKiller()).getStreak() + 1) % Ministreaks.ARQUEBUSIER.getTrigger() != 0) return;
+
+        e.addGold(7, "Arquebusier");
     }
 }

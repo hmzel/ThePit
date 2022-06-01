@@ -5,7 +5,6 @@ import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.utils.RunTracker;
 import me.zelha.thepit.utils.ZelLogic;
-import me.zelha.thepit.zelenums.Ministreaks;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -77,11 +76,11 @@ public class KillListener implements Listener {
 //            exp *= killerData.getMegastreak().getMethods().getEXPModifier(killer);
 //        }
 
-        for (Ministreaks ministreak : killerData.getEquippedMinistreaks()) {
-            if (ministreak.getMethods() == null) continue;
-
-            exp *= ministreak.getMethods().getEXPModifier(killer);
-        }
+//        for (Ministreaks ministreak : killerData.getEquippedMinistreaks()) {
+//            if (ministreak.getMethods() == null) continue;
+//
+//            exp *= ministreak.getMethods().getEXPModifier(killer);
+//        }
 
         return (int) Math.min(Math.ceil(exp), event.getMaxExp());
     }
@@ -121,11 +120,11 @@ public class KillListener implements Listener {
 //            gold *= killerData.getMegastreak().getMethods().getGoldModifier(killer);
 //        }
 
-        for (Ministreaks ministreak : killerData.getEquippedMinistreaks()) {
-            if (ministreak.getMethods() == null) continue;
-
-            gold *= ministreak.getMethods().getGoldModifier(killer);
-        }
+//        for (Ministreaks ministreak : killerData.getEquippedMinistreaks()) {
+//            if (ministreak.getMethods() == null) continue;
+//
+//            gold *= ministreak.getMethods().getGoldModifier(killer);
+//        }
 
         return Math.min(gold, 2500) + deadData.getBounty();
     }

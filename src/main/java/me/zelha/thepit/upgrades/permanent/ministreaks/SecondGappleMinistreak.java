@@ -1,7 +1,9 @@
 package me.zelha.thepit.upgrades.permanent.ministreaks;
 
 import me.zelha.thepit.Main;
+import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
+import me.zelha.thepit.zelenums.Ministreaks;
 import me.zelha.thepit.zelenums.Perks;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -13,9 +15,6 @@ public class SecondGappleMinistreak extends Ministreak {//REMEMBER: needs to be 
     @Override
     public void onTrigger(Player player) {
         PlayerData pData = Main.getInstance().getPlayerData(player);
-
-        pData.setExp(pData.getExp() - 5);
-        pData.setGold(pData.getGold() + 5);
 
         if (pData.hasPerkEquipped(Perks.GOLDEN_HEADS)) {
             Perks.GOLDEN_HEADS.getMethods().onKill(player, null);
@@ -33,5 +32,13 @@ public class SecondGappleMinistreak extends Ministreak {//REMEMBER: needs to be 
         }
 
         if (count < 2) player.getInventory().addItem(new ItemStack(GOLDEN_APPLE, 1));
+    }
+
+    @Override
+    public void addResourceModifiers(PitKillEvent e) {
+        if (((int) Main.getInstance().getPlayerData(e.getKiller()).getStreak() + 1) % Ministreaks.SECOND_GAPPLE.getTrigger() != 0) return;
+
+        e.addExp(5, "Second Gapple");
+        e.addGold(5, "Second Gapple");
     }
 }

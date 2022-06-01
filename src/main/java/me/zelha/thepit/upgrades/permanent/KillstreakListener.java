@@ -42,6 +42,12 @@ public class KillstreakListener implements Listener {
         Player p = e.getKiller();
         PlayerData pData = Main.getInstance().getPlayerData(p);
 
+        for (Ministreaks ministreak : pData.getEquippedMinistreaks()) {
+            if (ministreak.getMethods() == null) continue;
+
+            ministreak.getMethods().addResourceModifiers(e);
+        }
+
         if (pData.isMegaActive()) pData.getMegastreak().getMethods().addResourceModifiers(e);
     }
 

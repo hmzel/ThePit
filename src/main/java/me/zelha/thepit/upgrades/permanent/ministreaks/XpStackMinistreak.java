@@ -5,6 +5,7 @@ import me.zelha.thepit.mainpkg.data.PlayerData;
 import org.bukkit.entity.Player;
 
 public class XpStackMinistreak extends Ministreak {
+    //hardcoded into BaseResourceListener because its active while the ministreak isnt equipped
 
     @Override
     public void onTrigger(Player player) {

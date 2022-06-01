@@ -1,24 +1,22 @@
 package me.zelha.thepit.upgrades.permanent.ministreaks;
 
 import me.zelha.thepit.Main;
+import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
-import org.bukkit.entity.Player;
+import me.zelha.thepit.zelenums.Ministreaks;
 
 public class SuperStreakerMinistreak extends Ministreak {//REMEMBER: needs to be added to killrecap
 
     @Override
-    public void onTrigger(Player player) {
-        PlayerData pData = Main.getInstance().getPlayerData(player);
+    public void addResourceModifiers(PitKillEvent e) {
+        PlayerData pData = Main.getInstance().getPlayerData(e.getKiller());
 
-        pData.setExp(pData.getExp() - 50);
-    }
+        if (pData.getStreak() < 1) return;
 
-    @Override
-    public double getEXPModifier(Player player) {
-        PlayerData pData = Main.getInstance().getPlayerData(player);
+        if (((int) pData.getStreak() + 1) % Ministreaks.SUPER_STREAKER.getTrigger() == 0) {
+            e.addExp(50, "Super Streaker");
+        }
 
-        if (pData.getStreak() < 1) return 1;
-
-        return Math.min(((int) ((int) pData.getStreak() / 10) * 0.05) + 1, 1.5);
+        e.addExpModifier(Math.min(((int) ((int) pData.getStreak() / 10.0) * 0.05) + 1, 1.5), "Super Streaker");
     }
 }
