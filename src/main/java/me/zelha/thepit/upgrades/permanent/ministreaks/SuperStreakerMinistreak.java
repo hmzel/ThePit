@@ -17,6 +17,10 @@ public class SuperStreakerMinistreak extends Ministreak {//REMEMBER: needs to be
             e.addExp(50, "Super Streaker");
         }
 
-        e.addExpModifier(Math.min(((int) ((int) pData.getStreak() / 10.0) * 0.05) + 1, 1.5), "Super Streaker");
+        double modifier = Math.min(((int) ((int) pData.getStreak() / 10.0) * 0.05) + 1, 1.5);
+
+        if (modifier <= 1) return;
+
+        e.addExpModifier(modifier, "Super Streaker");
     }
 }
