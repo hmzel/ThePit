@@ -122,19 +122,55 @@ public class KillRecap implements CommandExecutor, Listener {
         ItemStack recapBook = new ItemStack(Material.WRITTEN_BOOK);
         BookMeta bookMeta = (BookMeta) recapBook.getItemMeta();
         List<BaseComponent[]> raw = new ArrayList<>();
+        String plus = "";
 
         bookMeta.setTitle(dead.getName());
         bookMeta.setAuthor("13");
 
         raw.add(new ComponentBuilder("§c§lKILL RECAP\n").create());
-        raw.add(new ComponentBuilder("§8" + DateTimeFormatter.ofPattern("MM/dd/yy h:mm a").format(LocalDateTime.now()) + "\n")
-                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§7Hypixel server time"))).create());
+        raw.add(new ComponentBuilder("§8" + DateTimeFormatter.ofPattern("MM/dd/yy h:mm a").format(LocalDateTime.now()) + "\n").event(
+                new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§7Hypixel server time"))).create()
+        );
         raw.add(playerComponent(dead));
         raw.add(new ComponentBuilder("\n").create());
         raw.add(new ComponentBuilder("Killer:\n").create());
         raw.add(playerComponent(killer));
         raw.add(new ComponentBuilder("§8for ").create());
-        raw.add(expComponent(dead, killer, e));
+
+        double exp = 0;
+        StringBuilder expBuilder = new StringBuilder();
+
+        for (Pair<String, Double> pair : e.getExpAdditions()) {
+            String value = pair.getValue() + "";
+
+            if (pair.getValue() == (int) pair.getValue().doubleValue()) value = (int) pair.getValue().doubleValue() + "";
+
+            exp += pair.getValue();
+            expBuilder.append("§f" + pair.getKey() + "§f: §b" + plus + value + "\n");
+
+            if (plus.equals("")) plus = "+";
+        }
+
+        for (Pair<String, Double> pair : e.getExpModifiers()) {
+            String operation = "+";
+            int value = (int) (100 * pair.getValue());
+
+            if (value < 100) {
+                operation = "-";
+                value = 100 - value;
+            } else {
+                value -= 100;
+            }
+
+            exp *= pair.getValue();
+            expBuilder.append("§f" + pair.getKey() + "§f: §b" + operation + value + "%\n");
+        }
+
+        expBuilder.append("§fRounded up!");
+
+        raw.add(new ComponentBuilder("§3+" + (int) Math.min(Math.ceil(exp), e.getMaxExp()) + "XP ").event(
+                new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(expBuilder.toString()))).create()
+        );
         raw.add(goldComponent(dead, killer, e));
         raw.add(new ComponentBuilder("\n").create());
 

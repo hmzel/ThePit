@@ -122,7 +122,6 @@ public class AttackListener implements Listener {
 
         if (p.getHealth() - e.getFinalDamage() > 0) return;
         if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) return;
-        if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) return;
         if (e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE) return;
 
         e.setCancelled(true);

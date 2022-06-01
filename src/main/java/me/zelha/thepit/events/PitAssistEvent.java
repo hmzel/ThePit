@@ -17,11 +17,11 @@ public class PitAssistEvent extends Event implements Cancellable {
     private final Player assisted;
     private final double percentage;
     private final List<Pair<String, Double>> expAdditions = new ArrayList<>();
-    private final List<Pair<String, Double>> expBoosts = new ArrayList<>();
-    private final List<Pair<String, Double>> baseGoldBoosts = new ArrayList<>();
+    private final List<Pair<String, Double>> expModifiers = new ArrayList<>();
+    private final List<Pair<String, Double>> baseGoldModifiers = new ArrayList<>();
     private final List<Pair<String, Double>> goldAdditions = new ArrayList<>();
-    private final List<Pair<String, Double>> goldBoosts = new ArrayList<>();
-    private final List<Pair<String, Double>> addAfterGoldBoosts = new ArrayList<>();
+    private final List<Pair<String, Double>> goldModifiers = new ArrayList<>();
+    private final List<Pair<String, Double>> addAfterGoldModifiers = new ArrayList<>();
 
     public PitAssistEvent(Player dead, Player assisted, double percentage) {
         this.dead = dead;
@@ -55,24 +55,24 @@ public class PitAssistEvent extends Event implements Cancellable {
         expAdditions.add(Pair.of(reason, exp));
     }
 
-    public void addExpBoost(double boost, String reason) {
-        expBoosts.add(Pair.of(reason, boost));
+    public void addExpModifier(double boost, String reason) {
+        expModifiers.add(Pair.of(reason, boost));
     }
 
-    public void addBaseGoldBoost(double boost, String reason) {
-        baseGoldBoosts.add(Pair.of(reason, boost));
+    public void addBaseGoldModifier(double boost, String reason) {
+        baseGoldModifiers.add(Pair.of(reason, boost));
     }
 
     public void addGold(double gold, String reason) {
         goldAdditions.add(Pair.of(reason, gold));
     }
 
-    public void addGoldBoost(double boost, String reason) {
-        goldBoosts.add(Pair.of(reason, boost));
+    public void addGoldModifier(double boost, String reason) {
+        goldModifiers.add(Pair.of(reason, boost));
     }
 
-    public void addAfterGoldBoost(double gold, String reason) {
-        addAfterGoldBoosts.add(Pair.of(reason, gold));
+    public void addAfterGoldModifier(double gold, String reason) {
+        addAfterGoldModifiers.add(Pair.of(reason, gold));
     }
 
     public Player getDead() {
@@ -91,23 +91,23 @@ public class PitAssistEvent extends Event implements Cancellable {
         return expAdditions;
     }
 
-    public List<Pair<String, Double>> getExpBoosts() {
-        return expBoosts;
+    public List<Pair<String, Double>> getExpModifiers() {
+        return expModifiers;
     }
 
-    public List<Pair<String, Double>> getBaseGoldBoosts() {
-        return baseGoldBoosts;
+    public List<Pair<String, Double>> getBaseGoldModifiers() {
+        return baseGoldModifiers;
     }
 
     public List<Pair<String, Double>> getGoldAdditions() {
         return goldAdditions;
     }
 
-    public List<Pair<String, Double>> getGoldBoosts() {
-        return goldBoosts;
+    public List<Pair<String, Double>> getGoldModifiers() {
+        return goldModifiers;
     }
 
-    public List<Pair<String, Double>> getAddAfterGoldBoosts() {
-        return addAfterGoldBoosts;
+    public List<Pair<String, Double>> getAddedAfterGoldModifiers() {
+        return addAfterGoldModifiers;
     }
 }
