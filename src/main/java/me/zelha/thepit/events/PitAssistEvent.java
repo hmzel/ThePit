@@ -10,12 +10,11 @@ public class PitAssistEvent extends ResourceManager implements Cancellable {
     private boolean cancelled = false;
     private final Player dead;
     private final Player assisted;
-    private final double percentage;
 
     public PitAssistEvent(Player dead, Player assisted, double percentage) {
         this.dead = dead;
         this.assisted = assisted;
-        this.percentage = percentage;
+        super.percentage = percentage;
 
         addExp(10, "Base §bXP");
         addGold(5, "Base §6gold (g)");

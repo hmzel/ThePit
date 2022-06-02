@@ -13,7 +13,6 @@ import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -34,115 +33,17 @@ public class KillListener implements Listener {
     private final RunTracker runTracker2 = new RunTracker();
     private final RunTracker runTracker3 = new RunTracker();
 
-    public int calculateEXP(Player dead, Player killer, PitKillEvent event) {
-        double exp = 0;
-//        double streakModifier = 0;
-//        int maxEXP = 250;
-        PlayerData deadData = Main.getInstance().getPlayerData(dead);
-        PlayerData killerData = Main.getInstance().getPlayerData(killer);
-
-        for (Pair<String, Double> pair : event.getExpAdditions()) {
-            exp += pair.getValue();
-        }
-
-//        if (killerData.getStreak() <= (killerData.getPassiveTier(Passives.EL_GATO) - 1)) exp += 5;
-
-//        if (killerData.getStreak() == 4) {
-//            streakModifier = 3;
-//        } else if (killerData.getStreak() >= 5 && killerData.getStreak() < 20) {
-//            streakModifier = 5;
-//        } else if (killerData.getStreak() < 100 && killerData.getStreak() >= 20) {
-//            streakModifier = Math.floor(killerData.getStreak() / 10.0D) * 3;
-//        } else if (killerData.getStreak() >= 100) {
-//            streakModifier = 30;
-//        }
-//
-//        if (killerData.hasPerkEquipped(STREAKER)) streakModifier *= 3;
-
-//        exp += streakModifier;
-
-//        if (deadData.getStreak() > 5) exp += (int) Math.min(Math.round(deadData.getStreak()), 25);
-//        if (killerData.getStreak() <= 3 && (killerData.getLevel() <= 30 || killerData.getPrestige() == 0)) exp += 4;
-//        if (deadData.getLevel() > killerData.getLevel()) exp += (int) Math.round((deadData.getLevel() - killerData.getLevel()) / 4.5);
-
-//        exp += killerData.getXpStack();
-
-        for (Pair<String, Double> pair : event.getExpModifiers()) exp *= pair.getValue();
-
-//        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) exp *= 0.90;
-//        if (killerData.getPassiveTier(Passives.XP_BOOST) > 0) exp *= 1 + (killerData.getPassiveTier(Passives.XP_BOOST) / 10.0);
-
-//        if (killerData.isMegaActive() && killerData.getMegastreak().getMethods() != null) {
-//            exp *= killerData.getMegastreak().getMethods().getEXPModifier(killer);
-//        }
-
-//        for (Ministreaks ministreak : killerData.getEquippedMinistreaks()) {
-//            if (ministreak.getMethods() == null) continue;
-//
-//            exp *= ministreak.getMethods().getEXPModifier(killer);
-//        }
-
-        return (int) Math.min(Math.ceil(exp), event.getMaxExp());
-    }
-
-    public double calculateGold(Player dead, Player killer, PitKillEvent event) {
-        double gold = 0;
-        PlayerData deadData = Main.getInstance().getPlayerData(dead);
-        PlayerData killerData = Main.getInstance().getPlayerData(killer);
-        boolean baseGoldModifiersApplied = false;
-
-        for (Pair<String, Double> pair : event.getGoldAdditions()) {
-            gold += pair.getValue();
-
-            if (!baseGoldModifiersApplied) {
-                for (Pair<String, Double> pair2 : event.getBaseGoldModifiers()) gold *= pair2.getValue();
-
-                baseGoldModifiersApplied = true;
-            }
-        }
-
-//        if (((SpammerPerk) Perks.SPAMMER.getMethods()).hasBeenShotBySpammer(killer, dead)) gold *= 3;
-//        if (killerData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS) gold += 4;
-//        if (killerData.getStreak() < killerData.getPassiveTier(Passives.EL_GATO)) gold += 5;
-//        if (deadData.getStreak() > 5) gold += Math.min((int) Math.round(deadData.getStreak()), 30);
-//        if (killerData.getStreak() <= 3 && (killerData.getLevel() <= 30 || killerData.getPrestige() == 0)) gold += 4;
-//        if (dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() > killer.getAttribute(Attribute.GENERIC_ARMOR).getValue()) {
-//            gold += Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - killer.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5);
-//        }
-//        gold += killerData.getGoldStack();
-
-        for (Pair<String, Double> pair : event.getGoldModifiers()) gold *= pair.getValue();
-
-//        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) gold *= 0.90;
-//        if (killerData.getPassiveTier(Passives.GOLD_BOOST) > 0) gold *= 1 + (killerData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
-
-//        if (killerData.isMegaActive() && killerData.getMegastreak().getMethods() != null) {
-//            gold *= killerData.getMegastreak().getMethods().getGoldModifier(killer);
-//        }
-
-//        for (Ministreaks ministreak : killerData.getEquippedMinistreaks()) {
-//            if (ministreak.getMethods() == null) continue;
-//
-//            gold *= ministreak.getMethods().getGoldModifier(killer);
-//        }
-
-        gold = Math.min(gold, event.getMaxGold());
-
-        for (Pair<String, Double> pair : event.getAddedAfterGoldModifiers()) gold += pair.getValue();
-
-        return gold;
-    }
-
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerDeath(PitKillEvent e) {
         Player dead = e.getDead();
         Player killer = e.getKiller();
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData killerData = Main.getInstance().getPlayerData(killer);
-        double calculatedGold = calculateGold(dead, killer, e);
+        int calculatedExp = e.calculateEXP();
+        double calculatedGold = e.calculateGold();
 
         killerData.setStreak(killerData.getStreak() + 1);
-        killerData.setExp(killerData.getExp() - calculateEXP(dead, killer, e));
+        killerData.setExp(killerData.getExp() - calculatedExp);
         killerData.setGold(killerData.getGold() + calculatedGold);
         killerData.setMultiKill(killerData.getMultiKill() + 1);
         multiKillTimer(killer);
@@ -184,7 +85,7 @@ public class KillListener implements Listener {
 
         killer.spigot().sendMessage(
                 new ComponentBuilder(killMessage + " §7on " + zl.getColorBracketAndLevel(dead)
-                + " §7" + dead.getName() + " §b+" + calculateEXP(dead, killer, e) + "§bXP §6+" + zl.getFancyGoldString(calculatedGold) + "§6g")
+                + " §7" + dead.getName() + " §b+" + calculatedExp + "§bXP §6+" + zl.getFancyGoldString(calculatedGold) + "§6g")
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§eClick to view kill recap!")))
                 .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/killrecap " + dead.getUniqueId()))
                 .create()
