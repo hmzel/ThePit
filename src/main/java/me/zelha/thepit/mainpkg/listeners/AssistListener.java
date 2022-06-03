@@ -99,7 +99,10 @@ public class AssistListener implements Listener {
         //2x event
         if (assisterData.getPassiveTier(Passives.XP_BOOST) > 0) exp *= 1 + (assisterData.getPassiveTier(Passives.XP_BOOST) / 10.0);
         //royalty
-        exp *= getAssistMap(dead).get(assister.getUniqueId()) / getTotalDamage(dead);
+//        exp *= getAssistMap(dead).get(assister.getUniqueId()) / getTotalDamage(dead);
+
+        for (Pair<String, Double> pair : resources.getExpModifiers()) exp *= pair.getValue();
+
         //pit day
 
         return (int) Math.min(Math.ceil(exp), maxEXP);
@@ -120,7 +123,10 @@ public class AssistListener implements Listener {
         //2x event
         if (assisterData.getPassiveTier(Passives.GOLD_BOOST) > 0) gold *= 1 + (assisterData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
         //renown gold boost
-        gold *= getAssistMap(dead).get(assister.getUniqueId()) / getTotalDamage(dead);
+//        gold *= getAssistMap(dead).get(assister.getUniqueId()) / getTotalDamage(dead);
+
+        for (Pair<String, Double> pair : resources.getGoldModifiers()) gold *= pair.getValue();
+
         //celeb
         //pit day
         //conglomerate

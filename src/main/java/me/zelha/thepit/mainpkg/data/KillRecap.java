@@ -5,8 +5,6 @@ import me.zelha.thepit.events.PitAssistEvent;
 import me.zelha.thepit.events.PitDamageEvent;
 import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.events.ResourceManager;
-import me.zelha.thepit.mainpkg.listeners.AssistListener;
-import me.zelha.thepit.mainpkg.listeners.KillListener;
 import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
@@ -46,8 +44,6 @@ public class KillRecap implements CommandExecutor, Listener {
 
     private static final Map<UUID, List<DamageLog>> damageTrackerMap = new HashMap<>();
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-    private final KillListener killUtils = Main.getInstance().getKillUtils();
-    private final AssistListener assistUtils = Main.getInstance().getAssistUtils();
     private final Map<UUID, ItemStack> bookMap = new HashMap<>();
 
     /**
@@ -298,21 +294,6 @@ public class KillRecap implements CommandExecutor, Listener {
             builder.append("§fLevel difference: §b+" + (int) Math.round((deadData.getLevel() - receiverData.getLevel()) / 4.5) + "\n");
         }
 
-        for (Pair<String, Double> pair : resources.getExpModifiers()) {
-            String operation = "+";
-            int value = (int) (100 * pair.getValue());
-
-            if (value < 100) {
-                operation = "-";
-                value = 100 - value;
-            } else {
-                value -= 100;
-            }
-
-            exp *= pair.getValue();
-            builder.append("§f" + pair.getKey() + "§f: §b" + operation + value + "%\n");
-        }
-
         //koth "§fKOTH: §b+300%"
         //2x event "§f2x Event: §b+100%"
         if (isAssist && deadData.getPrestige() == 0 && deadData.getLevel() <= 20) {
@@ -328,11 +309,19 @@ public class KillRecap implements CommandExecutor, Listener {
         //genesis "§fGenesis: §b+?%"
         //assistant "§fAssistant: §b+?%"
 
-        if (isAssist) {
-            exp *= ((PitAssistEvent) resources).getPercentage();
-            builder.append("§fKill participation: §b-"
-                    + (int) ((1 - (Double.parseDouble(BigDecimal.valueOf(assistUtils.getAssistMap(dead).get(receiver.getUniqueId()) / assistUtils.getTotalDamage(dead)).setScale(2, RoundingMode.HALF_EVEN).toString()))) * 100)
-                    + "%\n");
+        for (Pair<String, Double> pair : resources.getExpModifiers()) {
+            String operation = "+";
+            int value = (int) (100 * pair.getValue());
+
+            if (value < 100) {
+                operation = "-";
+                value = 100 - value;
+            } else {
+                value -= 100;
+            }
+
+            exp *= pair.getValue();
+            builder.append("§f" + pair.getKey() + "§f: §b" + operation + value + "%\n");
         }
 
         builder.append("§fRounded up!\n");
@@ -389,6 +378,17 @@ public class KillRecap implements CommandExecutor, Listener {
         }
         //assistant "§fAssistant: §6+?"
 
+        //koth "§fKOTH: §6+300%"
+        //2x event "§f2x Event: §6+100%"
+        if (isAssist && deadData.getPrestige() == 0 && deadData.getLevel() <= 20) {
+            gold *= 0.90;
+            builder.append("§fKilled a noob: §6-10%\n");
+        }
+        if (isAssist && receiverData.getPassiveTier(Passives.GOLD_BOOST) > 0) {
+            gold *= 1 + (receiverData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
+            builder.append("§fGold Boost: §6+" + receiverData.getPassiveTier(Passives.GOLD_BOOST) * 10 + "%\n");
+        }
+
         for (Pair<String, Double> pair : resources.getGoldModifiers()) {
             String operation = "+";
             int value = (int) (100 * pair.getValue());
@@ -403,27 +403,9 @@ public class KillRecap implements CommandExecutor, Listener {
             gold *= pair.getValue();
             builder.append("§f" + pair.getKey() + "§f: §6" + operation + value + "%\n");
         }
-
-        //koth "§fKOTH: §6+300%"
-        //2x event "§f2x Event: §6+100%"
-        if (isAssist && deadData.getPrestige() == 0 && deadData.getLevel() <= 20) {
-            gold *= 0.90;
-            builder.append("§fKilled a noob: §6-10%\n");
-        }
-        if (isAssist && receiverData.getPassiveTier(Passives.GOLD_BOOST) > 0) {
-            gold *= 1 + (receiverData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
-            builder.append("§fGold Boost: §6+" + receiverData.getPassiveTier(Passives.GOLD_BOOST) * 10 + "%\n");
-        }
         //renown gold boost "§fRenown Gold Boost: §6+?%"
         //gold boost enchant "§fGold Boost Enchant: §6+?%"
-
-        if (isAssist) {
-            gold *= ((PitAssistEvent) resources).getPercentage();
-            builder.append("§fKill participation: §6-"
-                    + (int) ((1 - (Double.parseDouble(BigDecimal.valueOf(assistUtils.getAssistMap(dead).get(receiver.getUniqueId()) / assistUtils.getTotalDamage(dead)).setScale(2, RoundingMode.HALF_EVEN).toString()))) * 100)
-                    + "%\n");
-        }
-
+        //kill participation
         //celebrity "§fCelebrity: §6+100%"
         //pit day "§fGame Multiplier: §6+100%"
         //conglomerate "§fConglomerate: §6+?"
@@ -436,7 +418,7 @@ public class KillRecap implements CommandExecutor, Listener {
             builder.append("§fBounty Hunter Assist: §6+" + zl.getFancyGoldString(deadData.getBounty() * ((PitAssistEvent) resources).getPercentage()) + "\n");
         }
 
-        for (Pair<String, Double> pair : resources.getAddedAfterGoldModifiers()) {
+        for (Pair<String, Double> pair : resources.getSecondaryGoldAdditions()) {
             String value = pair.getValue() + "";
 
             if (pair.getValue() == (int) pair.getValue().doubleValue()) value = (int) pair.getValue().doubleValue() + "";

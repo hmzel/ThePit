@@ -1,6 +1,7 @@
 package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
+import me.zelha.thepit.events.PitAssistEvent;
 import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.zelenums.Passives;
@@ -9,6 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import static me.zelha.thepit.zelenums.Perks.STREAKER;
 
@@ -56,7 +60,7 @@ public class BaseResourceListener implements Listener {
             e.addExpModifier(1 + (killerData.getPassiveTier(Passives.XP_BOOST) / 10.0), "XP Boost");
         }
 
-        if (deadData.getBounty() != 0) e.addAfterGoldModifier(deadData.getBounty(), "Bounty");
+        if (deadData.getBounty() != 0) e.addSecondaryGold(deadData.getBounty(), "Bounty");
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -96,6 +100,14 @@ public class BaseResourceListener implements Listener {
         if (killerData.getGoldStack() != 0) {
             e.addGold(killerData.getGoldStack(), "Gold Stack");
         }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onAssist(PitAssistEvent e) {
+        double percentage = Double.parseDouble(BigDecimal.valueOf(e.getPercentage()).setScale(2, RoundingMode.HALF_EVEN).toString());
+
+        e.addExpModifier(percentage, "Kill participation");
+        e.addGoldModifier(percentage, "Kill participation");
     }
 }
 

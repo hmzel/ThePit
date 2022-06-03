@@ -17,7 +17,7 @@ public abstract class ResourceManager extends Event {
     private final List<Pair<String, Double>> baseGoldModifiers = new ArrayList<>();
     private final List<Pair<String, Double>> goldAdditions = new ArrayList<>();
     private final List<Pair<String, Double>> goldModifiers = new ArrayList<>();
-    private final List<Pair<String, Double>> addAfterGoldModifiers = new ArrayList<>();
+    private final List<Pair<String, Double>> secondaryGoldAdditions = new ArrayList<>();
 
     public int calculateEXP() {
         double exp = 0;
@@ -27,8 +27,6 @@ public abstract class ResourceManager extends Event {
         }
 
         for (Pair<String, Double> pair : expModifiers) exp *= pair.getValue();
-
-        exp *= percentage;
 
         return (int) Math.min(Math.ceil(exp), maxExp);
     }
@@ -51,10 +49,6 @@ public abstract class ResourceManager extends Event {
 
         if (gold > maxGold) gold = maxGold;
 
-        gold *= percentage;
-
-        for (Pair<String, Double> pair : addAfterGoldModifiers) gold += pair.getValue();
-
         return gold;
     }
 
@@ -70,24 +64,24 @@ public abstract class ResourceManager extends Event {
         expAdditions.add(Pair.of(reason, exp));
     }
 
-    public void addExpModifier(double boost, String reason) {
-        expModifiers.add(Pair.of(reason, boost));
+    public void addExpModifier(double modifier, String reason) {
+        expModifiers.add(Pair.of(reason, modifier));
     }
 
-    public void addBaseGoldModifier(double boost, String reason) {
-        baseGoldModifiers.add(Pair.of(reason, boost));
+    public void addBaseGoldModifier(double modifier, String reason) {
+        baseGoldModifiers.add(Pair.of(reason, modifier));
     }
 
     public void addGold(double gold, String reason) {
         goldAdditions.add(Pair.of(reason, gold));
     }
 
-    public void addGoldModifier(double boost, String reason) {
-        goldModifiers.add(Pair.of(reason, boost));
+    public void addGoldModifier(double modifier, String reason) {
+        goldModifiers.add(Pair.of(reason, modifier));
     }
 
-    public void addAfterGoldModifier(double gold, String reason) {
-        addAfterGoldModifiers.add(Pair.of(reason, gold));
+    public void addSecondaryGold(double gold, String reason) {
+        secondaryGoldAdditions.add(Pair.of(reason, gold));
     }
 
     public List<Pair<String, Double>> getExpAdditions() {
@@ -110,8 +104,8 @@ public abstract class ResourceManager extends Event {
         return goldModifiers;
     }
 
-    public List<Pair<String, Double>> getAddedAfterGoldModifiers() {
-        return addAfterGoldModifiers;
+    public List<Pair<String, Double>> getSecondaryGoldAdditions() {
+        return secondaryGoldAdditions;
     }
 
     public int getMaxExp() {

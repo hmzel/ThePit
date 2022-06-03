@@ -50,6 +50,7 @@ public final class Main extends JavaPlugin {
 
         instance = this;
         zelLogic = new ZelLogic();
+        KillRecap recap = new KillRecap();
         storage = new StorageListener();
         assistListener = new AssistListener();
         attackListener = new AttackListener();
@@ -58,6 +59,7 @@ public final class Main extends JavaPlugin {
         scoreboardListener = new ScoreboardListener();
         confirmGUIHandler = new ConfirmGUIHandler();
 
+        getServer().getPluginManager().registerEvents(recap, this);
         getServer().getPluginManager().registerEvents(storage, this);
         getServer().getPluginManager().registerEvents(new ExpChangeListener(), this);
         getServer().getPluginManager().registerEvents(scoreboardListener, this);
@@ -82,6 +84,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new KillstreakListener(), this);
         getServer().getPluginManager().registerEvents(new BaseResourceListener(), this);
 
+        getCommand("killrecap").setExecutor(recap);
         getCommand("setprestige").setExecutor(new SetPrestigeCommand());
         getCommand("setlevel").setExecutor(new SetLevelCommand());
         getCommand("setgold").setExecutor(new SetGoldCommand());
@@ -99,11 +102,6 @@ public final class Main extends JavaPlugin {
         getCommand("setmegastreak").setExecutor(new SetMegastreakCommand());
         getCommand("setministreak").setExecutor(new SetMinistreakCommand());
         getCommand("reset").setExecutor(new ResetCommand());
-
-        KillRecap recap = new KillRecap();
-
-        getServer().getPluginManager().registerEvents(recap, this);
-        getCommand("killrecap").setExecutor(recap);
 
         storage.runDataSaver();
         scoreboardListener.startAnimation();
