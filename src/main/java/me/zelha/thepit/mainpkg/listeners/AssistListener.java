@@ -60,22 +60,22 @@ public class AssistListener implements Listener {
         Player dead = e.getDead();
         Player killer = e.getKiller();
         double totalDamage = 0;
-        Map<UUID, Double> assists = assistMap.get(dead.getUniqueId());
+        Map<UUID, Double> sortedAssists = assistMap.get(dead.getUniqueId()).entrySet().stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 
-        for (Map.Entry<UUID, Double> entry : assists.entrySet()) {
+        for (Map.Entry<UUID, Double> entry : sortedAssists.entrySet()) {
             if (Bukkit.getPlayer(entry.getKey()) != null && !entry.getKey().equals(dead.getUniqueId())) {
                 totalDamage += entry.getValue();
             }
         }
 
-        Map<UUID, Double> sortedAssists = assists.entrySet().stream()
-                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-
         for (Map.Entry<UUID, Double> entry : sortedAssists.entrySet()) {
             Player p = Bukkit.getPlayer(entry.getKey());
 
-            if (p == null || p.getUniqueId().equals(dead.getUniqueId()) || p.getUniqueId().equals(killer.getUniqueId())) continue;
+            if (p == null) continue;
+            if (p.getUniqueId().equals(dead.getUniqueId())) continue;
+            if (p.getUniqueId().equals(killer.getUniqueId())) continue;
 
             PitAssistEvent assistEvent = new PitAssistEvent(dead, p, entry.getValue() / totalDamage);
 
@@ -102,14 +102,8 @@ public class AssistListener implements Listener {
             p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1F, 1.8F);
         }
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (zl.playerCheck(dead)) assistMap.put(dead.getUniqueId(), new HashMap<>());
-            }
-        }.runTaskLater(Main.getInstance(), 1);
+        assistMap.put(dead.getUniqueId(), new HashMap<>());
     }
-
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
