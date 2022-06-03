@@ -286,11 +286,6 @@ public class KillRecap implements CommandExecutor, Listener {
         //explicious "§fExplicious: §b+?"
         //super streaker "§fSuper Streaker: §b+50"
         //streak shutdown "§fStreak Shutdown: §b+?"
-        if (isAssist && deadData.getLevel() > receiverData.getLevel()) {
-            exp += (int) Math.round((deadData.getLevel() - receiverData.getLevel()) / 4.5);
-            builder.append("§fLevel difference: §b+" + (int) Math.round((deadData.getLevel() - receiverData.getLevel()) / 4.5) + "\n");
-        }
-
         //koth "§fKOTH: §b+300%"
         //2x event "§f2x Event: §b+100%"
 
@@ -323,7 +318,7 @@ public class KillRecap implements CommandExecutor, Listener {
 
         builder.replace(builder.length() - 1, builder.length(), "");
 
-        return new ComponentBuilder("§3+" + (int) Math.ceil(exp) + "XP ").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
+        return new ComponentBuilder("§3+" + (int) Math.min(Math.ceil(exp), resources.getMaxExp()) + "XP ").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
     }
 
     private BaseComponent[] goldComponent(Player dead, Player receiver, ResourceManager resources) {

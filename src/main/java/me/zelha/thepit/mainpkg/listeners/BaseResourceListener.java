@@ -104,11 +104,16 @@ public class BaseResourceListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onAssist(PitAssistEvent e) {
+        PlayerData assistedData = Main.getInstance().getPlayerData(e.getAssisted());
         PlayerData deadData = Main.getInstance().getPlayerData(e.getDead());
 
         if (deadData.getStreak() > 5) {
             e.addExp(Math.min((int) Math.round(deadData.getStreak()), 25), "Streak Shutdown");
             e.addGold(Math.min((int) Math.round(deadData.getStreak()), 30), "Streak Shutdown");
+        }
+
+        if (deadData.getLevel() > assistedData.getLevel()) {
+            e.addExp((int) Math.round((deadData.getLevel() - assistedData.getLevel()) / 4.5), "Level difference");
         }
 
         if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) {

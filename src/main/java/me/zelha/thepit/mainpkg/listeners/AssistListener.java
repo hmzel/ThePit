@@ -95,7 +95,7 @@ public class AssistListener implements Listener {
 
         //xp bump
 //        if (deadData.getStreak() > 5) exp += Math.min((int) Math.round(deadData.getStreak()), 25);
-        if (deadData.getLevel() > assisterData.getLevel()) exp += (int) Math.round((deadData.getLevel() - assisterData.getLevel()) / 4.5);
+//        if (deadData.getLevel() > assisterData.getLevel()) exp += (int) Math.round((deadData.getLevel() - assisterData.getLevel()) / 4.5);
 //        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) exp *= 0.90;
         //koth
         //2x event
