@@ -1,6 +1,7 @@
 package me.zelha.thepit.upgrades.permanent.perks;
 
 import me.zelha.thepit.Main;
+import me.zelha.thepit.events.PitAssistEvent;
 import me.zelha.thepit.events.PitKillEvent;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
@@ -40,6 +41,11 @@ public class SpammerPerk extends Perk implements Listener {
 
         event.addBaseGoldModifier(3, "Spammer");
         spammerShotIdentifier.remove(killer.getUniqueId());
+    }
+
+    @Override
+    public void addResourceModifiers(PitAssistEvent event) {
+        event.addSecondaryGold(2, "Spammer Assist");
     }
 
     @EventHandler

@@ -378,10 +378,6 @@ public class KillRecap implements CommandExecutor, Listener {
         //celebrity "§fCelebrity: §6+100%"
         //pit day "§fGame Multiplier: §6+100%"
         //conglomerate "§fConglomerate: §6+?"
-        if (receiverData.hasPerkEquipped(Perks.SPAMMER) && isAssist) {
-            gold += 2;
-            builder.append("§fSpammer Assist: §6+2\n");
-        }
         if (receiverData.hasPerkEquipped(Perks.BOUNTY_HUNTER) && zl.itemCheck(receiver.getInventory().getLeggings()) && receiver.getInventory().getLeggings().getType() == Material.GOLDEN_LEGGINGS && deadData.getBounty() != 0 && isAssist) {
             gold += deadData.getBounty() * ((PitAssistEvent) resources).getPercentage();
             builder.append("§fBounty Hunter Assist: §6+" + zl.getFancyGoldString(deadData.getBounty() * ((PitAssistEvent) resources).getPercentage()) + "\n");

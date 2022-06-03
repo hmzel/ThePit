@@ -1,6 +1,7 @@
 package me.zelha.thepit.upgrades.permanent;
 
 import me.zelha.thepit.Main;
+import me.zelha.thepit.events.PitAssistEvent;
 import me.zelha.thepit.events.PitDamageEvent;
 import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
@@ -51,6 +52,13 @@ public class PerkListener implements Listener {
         }
 
         if (count < 2) killer.getInventory().addItem(new ItemStack(GOLDEN_APPLE, 1));
+    }
+
+    @EventHandler
+    public void onAssist(PitAssistEvent e) {
+        for (Perks perk : Main.getInstance().getPlayerData(e.getAssisted()).getEquippedPerks()) {
+            if (perk.getMethods() != null) perk.getMethods().addResourceModifiers(e);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGH)

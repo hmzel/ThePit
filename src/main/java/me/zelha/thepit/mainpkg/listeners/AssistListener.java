@@ -4,7 +4,6 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.events.PitAssistEvent;
 import me.zelha.thepit.events.PitDamageEvent;
 import me.zelha.thepit.events.PitKillEvent;
-import me.zelha.thepit.events.ResourceManager;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.Perks;
@@ -83,71 +82,13 @@ public class AssistListener implements Listener {
         return damage;
     }
 
-    public int calculateAssistEXP(Player dead, Player assister, ResourceManager resources) {
-        double exp = 0;
-        int maxEXP = 250;
+    public double calculateAssistGold(Player dead, Player assister, PitAssistEvent e) {
+        double gold = e.calculateGold();
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData assisterData = Main.getInstance().getPlayerData(assister);
 
-        for (Pair<String, Double> pair : resources.getExpAdditions()) exp += pair.getValue();
-
-        //xp bump
-//        if (deadData.getStreak() > 5) exp += Math.min((int) Math.round(deadData.getStreak()), 25);
-//        if (deadData.getLevel() > assisterData.getLevel()) exp += (int) Math.round((deadData.getLevel() - assisterData.getLevel()) / 4.5);
-//        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) exp *= 0.90;
-        //koth
-        //2x event
-//        if (assisterData.getPassiveTier(Passives.XP_BOOST) > 0) exp *= 1 + (assisterData.getPassiveTier(Passives.XP_BOOST) / 10.0);
-        //royalty
-//        exp *= getAssistMap(dead).get(assister.getUniqueId()) / getTotalDamage(dead);
-
-        for (Pair<String, Double> pair : resources.getExpModifiers()) exp *= pair.getValue();
-
-        //pit day
-
-        return (int) Math.min(Math.ceil(exp), maxEXP);
-    }
-
-    public double calculateAssistGold(Player dead, Player assister, ResourceManager resources) {
-        double gold = 0;
-        PlayerData deadData = Main.getInstance().getPlayerData(dead);
-        PlayerData assisterData = Main.getInstance().getPlayerData(assister);
-        boolean baseGoldModifiersApplied = false;
-
-        for (Pair<String, Double> pair : resources.getGoldAdditions()) {
-            gold += pair.getValue();
-
-            if (!baseGoldModifiersApplied) {
-                for (Pair<String, Double> pair2 : resources.getBaseGoldModifiers()) gold *= pair2.getValue();
-
-                baseGoldModifiersApplied = true;
-            }
-        }
-
-//        if (dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() > assister.getAttribute(Attribute.GENERIC_ARMOR).getValue()) {
-//            gold += Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - assister.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5);
-//        }
-
-//        if (deadData.getStreak() > 5) gold += Math.min((int) Math.round(deadData.getStreak()), 30);
-//        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) gold *= 0.90;
-        //koth
-        //2x event
-//        if (assisterData.getPassiveTier(Passives.GOLD_BOOST) > 0) gold *= 1 + (assisterData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
-        //renown gold boost
-//        gold *= getAssistMap(dead).get(assister.getUniqueId()) / getTotalDamage(dead);
-
-        for (Pair<String, Double> pair : resources.getGoldModifiers()) gold *= pair.getValue();
-
-        if (gold > resources.getMaxGold()) gold = resources.getMaxGold();
-
-        for (Pair<String, Double> pair : resources.getSecondaryGoldAdditions()) gold += pair.getValue();
-
-        //celeb
-        //pit day
-        //conglomerate
-        if (assisterData.hasPerkEquipped(Perks.SPAMMER)) gold += 2;
         if (assisterData.hasPerkEquipped(Perks.BOUNTY_HUNTER) && zl.itemCheck(assister.getInventory().getLeggings()) && assister.getInventory().getLeggings().getType() == Material.GOLDEN_LEGGINGS && deadData.getBounty() != 0) {
-            gold += deadData.getBounty() * (getAssistMap(dead).get(assister.getUniqueId()) / getTotalDamage(dead));
+            gold += deadData.getBounty() * (getAssistMap(dead).get(assister.getUniqueId()) / e.getPercentage());
         }
 
         return gold;
@@ -188,7 +129,7 @@ public class AssistListener implements Listener {
 
             PlayerData pData = Main.getInstance().getPlayerData(p);
             double gold = calculateAssistGold(dead, p, assistEvent);
-            int exp = calculateAssistEXP(dead, p, assistEvent);
+            int exp = assistEvent.calculateEXP();
 
             pData.setGold(pData.getGold() + gold);
             pData.setExp(pData.getExp() - exp);

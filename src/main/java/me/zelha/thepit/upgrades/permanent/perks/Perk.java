@@ -1,6 +1,7 @@
 package me.zelha.thepit.upgrades.permanent.perks;
 
 import me.zelha.thepit.Main;
+import me.zelha.thepit.events.PitAssistEvent;
 import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.utils.ZelLogic;
@@ -35,6 +36,9 @@ public class Perk {
     }
 
     public void addResourceModifiers(PitKillEvent event) {
+    }
+
+    public void addResourceModifiers(PitAssistEvent event) {
     }
 
     public void onReset(Player player, PlayerData playerData) {
