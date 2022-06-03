@@ -478,6 +478,7 @@ public class ZelLogic {//zel
         if (pData.getMegastreak().getMethods() != null) pData.getMegastreak().getMethods().onEquip(p);
 
         pData.setStreak(0);
+        pData.setLastDamager(null);
 
         for (PotionEffect effects : p.getActivePotionEffects()) {
             p.removePotionEffect(effects.getType());

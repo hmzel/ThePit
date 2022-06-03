@@ -33,6 +33,7 @@ public class AttackListener implements Listener {
     private final AssistListener assistUtils = Main.getInstance().getAssistUtils();
     private final PluginManager manager = Main.getInstance().getServer().getPluginManager();
     private final RunTracker runTracker = new RunTracker();
+    private final RunTracker runTracker2 = new RunTracker();
 
     public void startCombatTimer(Player damaged, Player damager) {
         if (runTracker.hasID(damaged.getUniqueId())) runTracker.stop(damaged.getUniqueId());
@@ -98,7 +99,20 @@ public class AttackListener implements Listener {
             Bukkit.getPlayer("hazelis").sendMessage(e.getFinalDamage() + "");
         }
 
-        if (damaged.getHealth() - e.getFinalDamage() > 0) return;
+        if (damaged.getHealth() - e.getFinalDamage() > 0) {
+            return;
+        } else {
+            damagedData.setLastDamager(damager);
+
+            if (runTracker2.hasID(damaged.getUniqueId())) runTracker2.stop(damaged.getUniqueId());
+
+            runTracker2.setID(damaged.getUniqueId(), new BukkitRunnable() {
+                @Override
+                public void run() {
+                    damagedData.setLastDamager(null);
+                }
+            }.runTaskLater(Main.getInstance(), 300).getTaskId());
+        }
 
         e.setCancelled(true);
         manager.callEvent(new PitDeathEvent(damaged, false));
@@ -128,9 +142,11 @@ public class AttackListener implements Listener {
         e.setCancelled(true);
         manager.callEvent(new PitDeathEvent(p, false));
 
-        if (assistUtils.getLastDamager(p) == null) return;
+        Player lastDamager = Main.getInstance().getPlayerData(p).getLastDamager();
 
-        manager.callEvent(new PitKillEvent(p, assistUtils.getLastDamager(p), false));
+        if (lastDamager == null) return;
+
+        manager.callEvent(new PitKillEvent(p, lastDamager, false));
     }
 
     @EventHandler(priority = LOWEST)
@@ -140,11 +156,15 @@ public class AttackListener implements Listener {
 
         if (runTracker.hasID(e.getPlayer().getUniqueId())) runTracker.stop(e.getPlayer().getUniqueId());
         if (pData.getStatus().equals("idling") || pData.getStatus().equals("bountied")) return;
-        if (assistUtils.getLastDamager(p) == null) return;
 
         pData.setCombatLogged(true);
         manager.callEvent(new PitDeathEvent(p, true));
-        manager.callEvent(new PitKillEvent(p, assistUtils.getLastDamager(p), true));
+
+        Player lastDamager = Main.getInstance().getPlayerData(p).getLastDamager();
+
+        if (lastDamager == null) return;
+
+        manager.callEvent(new PitKillEvent(p, lastDamager, true));
     }
 
 

@@ -162,7 +162,7 @@ public class DeathListener implements Listener {
         if (!zl.itemCheck(inv.getLeggings())) inv.setLeggings(zl.itemBuilder(CHAINMAIL_LEGGINGS, 1));
         if (!zl.itemCheck(inv.getBoots())) inv.setBoots(zl.itemBuilder(CHAINMAIL_BOOTS, 1));
 
-        Player damager = Main.getInstance().getAssistUtils().getLastDamager(dead);
+        Player damager = deadData.getLastDamager();
 
         if (damager != null) {
             dead.spigot().sendMessage(

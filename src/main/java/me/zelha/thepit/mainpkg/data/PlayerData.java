@@ -8,7 +8,9 @@ import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import org.bson.Document;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class PlayerData {
@@ -21,6 +23,7 @@ public class PlayerData {
     private final Map<Megastreaks, Boolean> megastreakUnlocks = new HashMap<>();
     private final Map<Ministreaks, Boolean> ministreakUnlocks = new HashMap<>();
     private final List<String> slots = Arrays.asList("one", "two", "three", "four");
+    private UUID lastDamager = null;
     private int prestige;
     private int level;
     private double gold;
@@ -106,6 +109,11 @@ public class PlayerData {
         if (megaActive && megastreak == Megastreaks.HIGHLANDER) return 10000;
 
         return 5000;
+    }
+
+    @Nullable
+    public Player getLastDamager() {
+        return Bukkit.getPlayer(lastDamager);
     }
 
     public int getPrestige() {
@@ -206,6 +214,10 @@ public class PlayerData {
 
     public double getXpStack() {
         return xpStack;
+    }
+
+    public void setLastDamager(@Nullable Player player) {
+        this.lastDamager = (player != null) ? player.getUniqueId() : null;
     }
 
     public void setPrestige(int prestige) {

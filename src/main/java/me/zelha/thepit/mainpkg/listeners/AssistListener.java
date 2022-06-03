@@ -43,20 +43,6 @@ public class AssistListener implements Listener {
         }.runTaskLater(Main.getInstance(), 300);
     }
 
-    public Player getLastDamager(Player player) {
-        List<Pair<UUID, Double>> list = new ArrayList<>(assistMap.get(player.getUniqueId()));
-
-        Collections.reverse(list);
-
-        for (Pair<UUID, Double> pair : list) {
-            if (Bukkit.getPlayer(pair.getKey()) != null && !pair.getKey().equals(player.getUniqueId())) {
-                return Bukkit.getPlayer(pair.getKey());
-            }
-        }
-
-        return null;
-    }
-
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onAttack(PitDamageEvent e) {
         Player damaged = e.getDamaged();
