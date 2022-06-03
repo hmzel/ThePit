@@ -57,18 +57,6 @@ public class AssistListener implements Listener {
         return null;
     }
 
-    public double getTotalDamage(Player player) {
-        double damage = 0;
-
-        for (Pair<UUID, Double> pair : new ArrayList<>(assistMap.get(player.getUniqueId()))) {
-            if (Bukkit.getPlayer(pair.getKey()) != null && !pair.getKey().equals(player.getUniqueId())) {
-                damage += pair.getValue();
-            }
-        }
-
-        return damage;
-    }
-
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onAttack(PitDamageEvent e) {
         Player damaged = e.getDamaged();
@@ -84,13 +72,15 @@ public class AssistListener implements Listener {
     public void onDeath(PitKillEvent e) {
         Player dead = e.getDead();
         Player killer = e.getKiller();
+        double totalDamage = 0;
         Map<UUID, Double> assists = new HashMap<>();
 
         for (Pair<UUID, Double> pair : assistMap.get(dead.getUniqueId())) {
-            if (assists.containsKey(pair.getKey())) {
-                assists.put(pair.getKey(), assists.get(pair.getKey()) + pair.getValue());
-            } else {
-                assists.put(pair.getKey(), pair.getValue());
+            assists.putIfAbsent(pair.getKey(), 0.0);
+            assists.put(pair.getKey(), assists.get(pair.getKey()) + pair.getValue());
+
+            if (Bukkit.getPlayer(pair.getKey()) != null && !pair.getKey().equals(dead.getUniqueId())) {
+                totalDamage += pair.getValue();
             }
         }
 
@@ -103,7 +93,7 @@ public class AssistListener implements Listener {
 
             if (p == null || p.getUniqueId().equals(dead.getUniqueId()) || p.getUniqueId().equals(killer.getUniqueId())) continue;
 
-            PitAssistEvent assistEvent = new PitAssistEvent(dead, p, entry.getValue() / getTotalDamage(dead));
+            PitAssistEvent assistEvent = new PitAssistEvent(dead, p, entry.getValue() / totalDamage);
 
             Bukkit.getPluginManager().callEvent(assistEvent);
 
