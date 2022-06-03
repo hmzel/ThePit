@@ -88,7 +88,7 @@ public class AssistListener implements Listener {
 
         if (damaged.getHealth() - e.getDamage() > 0) damage = e.getDamage(); else damage = damaged.getHealth();
 
-        assistMap.get(damaged.getUniqueId()).add(Pair.of(damager.getUniqueId(), damage));
+        addAssist(damaged, damager, damage);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -120,7 +120,7 @@ public class AssistListener implements Listener {
             pData.setGold(pData.getGold() + gold);
             pData.setExp(pData.getExp() - exp);
             p.spigot().sendMessage(
-                    new ComponentBuilder("§a§lASSIST! §7" + (int) Math.round((getAssistMap(dead).get(uuid) / getTotalDamage(dead)) * 100)
+                    new ComponentBuilder("§a§lASSIST! §7" + (int) Math.round(assistEvent.getPercentage() * 100)
                     + "% on " + zl.getColorBracketAndLevel(dead) + " §7" + dead.getName() + " §b+" + exp + "XP §6+"
                     + zl.getFancyGoldString(gold) + "g")
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§eClick to view kill recap!")))
