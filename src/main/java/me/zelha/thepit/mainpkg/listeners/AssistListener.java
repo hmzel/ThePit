@@ -1,8 +1,10 @@
 package me.zelha.thepit.mainpkg.listeners;
 
 import me.zelha.thepit.Main;
+import me.zelha.thepit.events.PitAssistEvent;
 import me.zelha.thepit.events.PitDamageEvent;
 import me.zelha.thepit.events.PitKillEvent;
+import me.zelha.thepit.events.ResourceManager;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.utils.ZelLogic;
 import me.zelha.thepit.zelenums.Passives;
@@ -25,6 +27,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class AssistListener implements Listener {
 
@@ -82,7 +85,7 @@ public class AssistListener implements Listener {
         return damage;
     }
 
-    public int calculateAssistEXP(Player dead, Player assister) {
+    public int calculateAssistEXP(Player dead, Player assister, ResourceManager resources) {
         double exp = 5;
         int maxEXP = 250;
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
@@ -91,7 +94,7 @@ public class AssistListener implements Listener {
         //xp bump
         if (deadData.getStreak() > 5) exp += Math.min((int) Math.round(deadData.getStreak()), 25);
         if (deadData.getLevel() > assisterData.getLevel()) exp += (int) Math.round((deadData.getLevel() - assisterData.getLevel()) / 4.5);
-        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) exp *= 0.91;
+        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) exp *= 0.90;
         //koth
         //2x event
         if (assisterData.getPassiveTier(Passives.XP_BOOST) > 0) exp *= 1 + (assisterData.getPassiveTier(Passives.XP_BOOST) / 10.0);
@@ -102,7 +105,7 @@ public class AssistListener implements Listener {
         return (int) Math.min(Math.ceil(exp), maxEXP);
     }
 
-    public double calculateAssistGold(Player dead, Player assister) {
+    public double calculateAssistGold(Player dead, Player assister, ResourceManager resources) {
         double gold = 10;
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData assisterData = Main.getInstance().getPlayerData(assister);
@@ -112,7 +115,7 @@ public class AssistListener implements Listener {
         }
 
         if (deadData.getStreak() > 5) gold += Math.min((int) Math.round(deadData.getStreak()), 30);
-        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) gold *= 0.91;
+        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) gold *= 0.90;
         //koth
         //2x event
         if (assisterData.getPassiveTier(Passives.GOLD_BOOST) > 0) gold *= 1 + (assisterData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
@@ -140,19 +143,31 @@ public class AssistListener implements Listener {
         assistMap.get(damaged.getUniqueId()).add(Pair.of(damager.getUniqueId(), damage));
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onDeath(PitKillEvent e) {
         Player dead = e.getDead();
         Player killer = e.getKiller();
 
-        for (UUID uuid : getAssistMap(dead).keySet()) {
+        Map<UUID, Double> sortedAssistsMap = getAssistMap(dead).entrySet().stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+        for (UUID uuid : sortedAssistsMap.keySet()) {
             Player p = Bukkit.getPlayer(uuid);
 
-            if (p == null || p.getUniqueId().equals(killer.getUniqueId())) continue;
+            if (p == null || p.getUniqueId().equals(dead.getUniqueId()) || p.getUniqueId().equals(killer.getUniqueId())) continue;
+
+            PitAssistEvent assistEvent = new PitAssistEvent(dead, p, getAssistMap(dead).get(uuid) / getTotalDamage(dead));
+
+            Bukkit.getPluginManager().callEvent(assistEvent);
+
+            if (assistEvent.isCancelled()) continue;
+
+            e.addAssistEvent(assistEvent);
 
             PlayerData pData = Main.getInstance().getPlayerData(p);
-            double gold = calculateAssistGold(dead, p);
-            int exp = calculateAssistEXP(dead, p);
+            double gold = calculateAssistGold(dead, p, assistEvent);
+            int exp = calculateAssistEXP(dead, p, assistEvent);
 
             pData.setGold(pData.getGold() + gold);
             pData.setExp(pData.getExp() - exp);

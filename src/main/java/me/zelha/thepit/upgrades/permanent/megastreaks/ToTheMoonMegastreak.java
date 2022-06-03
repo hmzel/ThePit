@@ -75,7 +75,7 @@ public class ToTheMoonMegastreak extends Megastreak implements Listener {
         if (pData.getMegastreak() != Megastreaks.TO_THE_MOON) return;
 
         storedEXPMap.putIfAbsent(p.getUniqueId(), 0);
-        storedEXPMap.put(p.getUniqueId(), storedEXPMap.get(p.getUniqueId()) + killUtils.calculateEXP(e.getDead(), p, e));
+        storedEXPMap.put(p.getUniqueId(), storedEXPMap.get(p.getUniqueId()) + e.calculateEXP());
     }
 
     @EventHandler

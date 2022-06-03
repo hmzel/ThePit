@@ -1,11 +1,14 @@
 package me.zelha.thepit.mainpkg.data;
 
 import me.zelha.thepit.Main;
+import me.zelha.thepit.events.PitAssistEvent;
 import me.zelha.thepit.events.PitDamageEvent;
 import me.zelha.thepit.events.PitKillEvent;
+import me.zelha.thepit.events.ResourceManager;
 import me.zelha.thepit.mainpkg.listeners.AssistListener;
 import me.zelha.thepit.mainpkg.listeners.KillListener;
 import me.zelha.thepit.utils.ZelLogic;
+import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -15,8 +18,8 @@ import net.md_5.bungee.api.chat.hover.content.Item;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -38,7 +41,6 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class KillRecap implements CommandExecutor, Listener {
 
@@ -115,7 +117,7 @@ public class KillRecap implements CommandExecutor, Listener {
         if (damageType != null) addDamageLog(p, new DamageLog(e.getDamage(), damageType, true));
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onKill(PitKillEvent e) {
         Player dead = e.getDead();
         Player killer = e.getKiller();
@@ -138,23 +140,17 @@ public class KillRecap implements CommandExecutor, Listener {
         raw.add(goldComponent(dead, killer, e));
         raw.add(new ComponentBuilder("\n").create());
 
-        Map<UUID, Double> sortedAssistsMap = assistUtils.getAssistMap(dead).entrySet().stream()
-                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
         boolean addAssistTitle = true;
 
-        for (UUID uuid : sortedAssistsMap.keySet()) {
-            if (Bukkit.getPlayer(uuid) == null || uuid.equals(dead.getUniqueId()) || uuid.equals(killer.getUniqueId())) {
-                continue;
-            }
-
+        for (PitAssistEvent assist : e.getAssistEvents()) {
+            if (assist.getAssisted() == null) continue;
             if (addAssistTitle) raw.add(new ComponentBuilder("Assists:\n").create());
 
-            raw.add(new ComponentBuilder((int) ((Double.parseDouble(BigDecimal.valueOf(sortedAssistsMap.get(uuid) / assistUtils.getTotalDamage(dead)).setScale(2, RoundingMode.HALF_EVEN).toString())) * 100) + "% ").create());
-            raw.add(playerComponent(Bukkit.getPlayer(uuid)));
+            raw.add(new ComponentBuilder((int) ((Double.parseDouble(BigDecimal.valueOf(assist.getPercentage()).setScale(2, RoundingMode.HALF_EVEN).toString())) * 100) + "% ").create());
+            raw.add(playerComponent(assist.getAssisted()));
             raw.add(new ComponentBuilder("§8for ").create());
-            raw.add(expComponent(dead, Bukkit.getPlayer(uuid), e));
-            raw.add(goldComponent(dead, Bukkit.getPlayer(uuid), e));
+            raw.add(expComponent(dead, assist.getAssisted(), assist));
+            raw.add(goldComponent(dead, assist.getAssisted(), assist));
 
             addAssistTitle = false;
         }
@@ -270,52 +266,39 @@ public class KillRecap implements CommandExecutor, Listener {
         return new ComponentBuilder("§7" + player.getName() + "\n").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
     }
 
-    private BaseComponent[] expComponent(Player dead, Player receiver, PitKillEvent event) {
-        boolean isKiller = receiver.getUniqueId().equals(assistUtils.getLastDamager(dead).getUniqueId());
+    private BaseComponent[] expComponent(Player dead, Player receiver, ResourceManager resources) {
+        double exp = 0;
+        boolean isAssist = resources instanceof PitAssistEvent;
         StringBuilder builder = new StringBuilder();
         String plus = "";
-        //double streakModifier = 0;
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData receiverData = Main.getInstance().getPlayerData(receiver);
 
-        for (Pair<String, Double> pair : event.getExpAdditions()) {
+        for (Pair<String, Double> pair : resources.getExpAdditions()) {
             String value = pair.getValue() + "";
 
             if (pair.getValue() == (int) pair.getValue().doubleValue()) value = (int) pair.getValue().doubleValue() + "";
 
+            exp += pair.getValue();
             builder.append("§f" + pair.getKey() + "§f: §b" + plus + value + "\n");
 
             if (plus.equals("")) plus = "+";
         }
 
         //xp bump "§fRenown XP Bump: §b+?"
-//        if (receiverData.getStreak() <= (receiverData.getPassiveTier(Passives.EL_GATO) - 1) && isKiller) builder.append("§fEl Gato: §b+5\n");
-
-//        if (receiverData.getStreak() == 4) {
-//            streakModifier = 3;
-//        } else if (receiverData.getStreak() >= 5 && receiverData.getStreak() < 20) {
-//            streakModifier = 5;
-//        } else if (receiverData.getStreak() < 100 && receiverData.getStreak() >= 20) {
-//            streakModifier = Math.floor(receiverData.getStreak() / 10.0D) * 3;
-//        } else if (receiverData.getStreak() >= 100) {
-//            streakModifier = 30;
-//        }
-//
-//        if (receiverData.getStreak() >= 4 && receiverData.hasPerkEquipped(STREAKER) && isKiller) {
-//            builder.append("§fKiller on streak (Streaker Perk): §b+" + (int) (streakModifier * 3) + "\n");
-//        } else if (receiverData.getStreak() >= 4 && isKiller) {
-//            builder.append("§fKiller on streak: §b+" + (int) streakModifier + "\n");
-//        }
-
         //second gapple "§fSecond Gapple: §b+?"
         //explicious "§fExplicious: §b+?"
         //super streaker "§fSuper Streaker: §b+50"
-//        if (deadData.getStreak() > 5 && isKiller) builder.append("§fStreak Shutdown: §b+" + (int) Math.min(Math.round(deadData.getStreak()), 25) + "\n");
-//        if (receiverData.getStreak() <= 3 && (receiverData.getLevel() <= 30 || receiverData.getPrestige() == 0) && isKiller) builder.append("§fFirst 3 kills: §b+4\n");
-//        if (deadData.getLevel() > receiverData.getLevel()) builder.append("§fLevel difference: §b+" + (int) Math.round((deadData.getLevel() - receiverData.getLevel()) / 4.5) + "\n");
-//        if (isKiller && receiverData.getXpStack() != 0) builder.append("§fXP Stack: §b+" + receiverData.getXpStack() + "\n");
+        if (isAssist && deadData.getStreak() > 5) {
+            exp += Math.min((int) Math.round(deadData.getStreak()), 25);
+            builder.append("§fStreak Shutdown: §b+" + (int) Math.min(Math.round(deadData.getStreak()), 25) + "\n");
+        }
+        if (isAssist && deadData.getLevel() > receiverData.getLevel()) {
+            exp += (int) Math.round((deadData.getLevel() - receiverData.getLevel()) / 4.5);
+            builder.append("§fLevel difference: §b+" + (int) Math.round((deadData.getLevel() - receiverData.getLevel()) / 4.5) + "\n");
+        }
 
-        for (Pair<String, Double> pair : event.getExpModifiers()) {
+        for (Pair<String, Double> pair : resources.getExpModifiers()) {
             String operation = "+";
             int value = (int) (100 * pair.getValue());
 
@@ -326,35 +309,31 @@ public class KillRecap implements CommandExecutor, Listener {
                 value -= 100;
             }
 
+            exp *= pair.getValue();
             builder.append("§f" + pair.getKey() + "§f: §b" + operation + value + "%\n");
         }
 
         //koth "§fKOTH: §b+300%"
         //2x event "§f2x Event: §b+100%"
-//        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) builder.append("§fKilled a noob: §b-10%\n");
-//        if (receiverData.getPassiveTier(Passives.XP_BOOST) > 0) builder.append("§fXP Boost: §b+" + receiverData.getPassiveTier(Passives.XP_BOOST) * 10 + "%\n");
-//        if (isKiller && receiverData.hasMinistreakEquipped(Ministreaks.SUPER_STREAKER)) {
-//            builder.append("§fSuper Streaker: §b+" + Math.min(((int) ((int) receiverData.getStreak() / 10) * 5), 50) + "%\n");
-//        }
+        if (isAssist && deadData.getPrestige() == 0 && deadData.getLevel() <= 20) {
+            exp *= 0.90;
+            builder.append("§fKilled a noob: §b-10%\n");
+        }
 
-//        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.OVERDRIVE) {
-//            builder.append("§fOverdrive: §b+100%\n");
-//        }
-//
-//        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.BEASTMODE) {
-//            builder.append("§fBeastmode: §b+50%\n");
-//        }
-//
-//        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.HERMIT && receiverData.getMegastreak().getMethods().getEXPModifier(receiver) != 1) {
-//            builder.append("§fHermit: §b+" + (receiverData.getMegastreak().getMethods().getEXPModifier(receiver) - 1) * 100 + "%\n");
-//        }
+        if (isAssist && receiverData.getPassiveTier(Passives.XP_BOOST) > 0) {
+            exp *= (receiverData.getPassiveTier(Passives.XP_BOOST) / 10.0) + 1;
+            builder.append("§fXP Boost: §b+" + receiverData.getPassiveTier(Passives.XP_BOOST) * 10 + "%\n");
+        }
         //royalty "§fRoyalty: §b+10%"
         //genesis "§fGenesis: §b+?%"
         //assistant "§fAssistant: §b+?%"
 
-        if (!isKiller) builder.append("§fKill participation: §b-"
-                + (int) ((1 - (Double.parseDouble(BigDecimal.valueOf(assistUtils.getAssistMap(dead).get(receiver.getUniqueId()) / assistUtils.getTotalDamage(dead)).setScale(2, RoundingMode.HALF_EVEN).toString()))) * 100)
-                + "%\n");
+        if (isAssist) {
+            exp *= ((PitAssistEvent) resources).getPercentage();
+            builder.append("§fKill participation: §b-"
+                    + (int) ((1 - (Double.parseDouble(BigDecimal.valueOf(assistUtils.getAssistMap(dead).get(receiver.getUniqueId()) / assistUtils.getTotalDamage(dead)).setScale(2, RoundingMode.HALF_EVEN).toString()))) * 100)
+                    + "%\n");
+        }
 
         builder.append("§fRounded up!\n");
 
@@ -362,29 +341,27 @@ public class KillRecap implements CommandExecutor, Listener {
 
         builder.replace(builder.length() - 1, builder.length(), "");
 
-        if (isKiller) {
-            return new ComponentBuilder("§3+" + killUtils.calculateEXP(dead, receiver, event) + "XP ").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
-        } else {
-            return new ComponentBuilder("§3+" + assistUtils.calculateAssistEXP(dead, receiver) + "XP ").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
-        }
+        return new ComponentBuilder("§3+" + (int) Math.ceil(exp) + "XP ").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
     }
 
-    private BaseComponent[] goldComponent(Player dead, Player receiver, PitKillEvent event) {
-        boolean isKiller = receiver.equals(assistUtils.getLastDamager(dead));
+    private BaseComponent[] goldComponent(Player dead, Player receiver, ResourceManager resources) {
+        double gold = 0;
+        boolean isAssist = resources instanceof PitAssistEvent;
         StringBuilder builder = new StringBuilder();
         String plus = "";
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData receiverData = Main.getInstance().getPlayerData(receiver);
 
-        for (Pair<String, Double> pair : event.getGoldAdditions()) {
+        for (Pair<String, Double> pair : resources.getGoldAdditions()) {
             String value = pair.getValue() + "";
 
             if (pair.getValue() == (int) pair.getValue().doubleValue()) value = (int) pair.getValue().doubleValue() + "";
 
+            gold += pair.getValue();
             builder.append("§f" + pair.getKey() + "§f: §6" + plus + value + "\n");
 
             if (plus.equals("")) {
-                for (Pair<String, Double> pair2 : event.getBaseGoldModifiers()) {
+                for (Pair<String, Double> pair2 : resources.getBaseGoldModifiers()) {
                     String operation = "+";
                     int value2 = (int) (100 * pair2.getValue());
 
@@ -395,6 +372,7 @@ public class KillRecap implements CommandExecutor, Listener {
                         value2 -= 100;
                     }
 
+                    gold *= pair2.getValue();
                     builder.append("§f" + pair2.getKey() + "§f: §6" + operation + value2 + "%\n");
                 }
 
@@ -402,24 +380,16 @@ public class KillRecap implements CommandExecutor, Listener {
             }
         }
 
-//        if (((SpammerPerk) Perks.SPAMMER.getMethods()).hasBeenShotBySpammer(receiver, dead) && isKiller) builder.append("§fSpammer: §6+200%\n");
-//        if (receiverData.hasPerkEquipped(BOUNTY_HUNTER) && zl.itemCheck(killerInv.getLeggings()) && killerInv.getLeggings().getType() == GOLDEN_LEGGINGS && isKiller) {
-//            builder.append("§fBounty Hunter: §6+4\n");
-//        }
-
-//        if (receiverData.getStreak() <= receiverData.getPassiveTier(Passives.EL_GATO) && isKiller) builder.append("§fEl Gato: §6+5\n");
-//        if (deadData.getStreak() > 5 && isKiller) builder.append("§fStreak shutdown: §6+" + Math.min((int) Math.round(deadData.getStreak()), 30) + "\n");
-//        if (receiverData.getStreak() <= 3 && (receiverData.getLevel() <= 30 || receiverData.getPrestige() == 0) && isKiller) builder.append("§fFirst 3 kills: §6+4\n");
         //genesis "§fGenesis: §6+?"
         //moctezuma "§fMoctezuma: §6+?"
         //gold bump enchant "§fGold Bump Enchant: §6+?"
-//        if (dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() > receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue() && Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5) != 0) {
-//            builder.append("§fArmor difference: §6+" + Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5) + "\n");
-//        }
-//        if (isKiller && receiverData.getGoldStack() != 0) builder.append("§fGold Stack: §6+" + receiverData.getGoldStack() + "\n");
+        if (isAssist && dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() > receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue() && Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5) != 0) {
+            gold += Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5);
+            builder.append("§fArmor difference: §6+" + Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5) + "\n");
+        }
         //assistant "§fAssistant: §6+?"
 
-        for (Pair<String, Double> pair : event.getGoldModifiers()) {
+        for (Pair<String, Double> pair : resources.getGoldModifiers()) {
             String operation = "+";
             int value = (int) (100 * pair.getValue());
 
@@ -430,60 +400,54 @@ public class KillRecap implements CommandExecutor, Listener {
                 value -= 100;
             }
 
+            gold *= pair.getValue();
             builder.append("§f" + pair.getKey() + "§f: §6" + operation + value + "%\n");
         }
 
         //koth "§fKOTH: §6+300%"
         //2x event "§f2x Event: §6+100%"
-//        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) builder.append("§fKilled a noob: §6-10%\n");
-//        if (receiverData.getPassiveTier(Passives.GOLD_BOOST) > 0) builder.append("§fGold Boost: §6+" + receiverData.getPassiveTier(Passives.GOLD_BOOST) * 10 + "%\n");
+        if (isAssist && deadData.getPrestige() == 0 && deadData.getLevel() <= 20) {
+            gold *= 0.90;
+            builder.append("§fKilled a noob: §6-10%\n");
+        }
+        if (isAssist && receiverData.getPassiveTier(Passives.GOLD_BOOST) > 0) {
+            gold *= 1 + (receiverData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
+            builder.append("§fGold Boost: §6+" + receiverData.getPassiveTier(Passives.GOLD_BOOST) * 10 + "%\n");
+        }
         //renown gold boost "§fRenown Gold Boost: §6+?%"
         //gold boost enchant "§fGold Boost Enchant: §6+?%"
-//        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.OVERDRIVE) {
-//            builder.append("§fOverdrive: §6+50%\n");
-//        }
-//
-//        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.BEASTMODE) {
-//            builder.append("§fBeastmode: §6+75%\n");
-//        }
-//
-//        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.HIGHLANDER) {
-//            builder.append("§fHighlander: §6+110%\n");
-//        }
-//
-//        if (receiverData.isMegaActive() && isKiller && receiverData.getMegastreak() == Megastreaks.HERMIT && receiverData.getMegastreak().getMethods().getGoldModifier(receiver) != 1) {
-//            builder.append("§fHermit: §6+" + (receiverData.getMegastreak().getMethods().getGoldModifier(receiver) * 100) + "%\n");
-//        }
 
-        if (!isKiller) builder.append("§fKill participation: §6-"
-                + (int) ((1 - (Double.parseDouble(BigDecimal.valueOf(assistUtils.getAssistMap(dead).get(receiver.getUniqueId()) / assistUtils.getTotalDamage(dead)).setScale(2, RoundingMode.HALF_EVEN).toString()))) * 100)
-                + "%\n");
+        if (isAssist) {
+            gold *= ((PitAssistEvent) resources).getPercentage();
+            builder.append("§fKill participation: §6-"
+                    + (int) ((1 - (Double.parseDouble(BigDecimal.valueOf(assistUtils.getAssistMap(dead).get(receiver.getUniqueId()) / assistUtils.getTotalDamage(dead)).setScale(2, RoundingMode.HALF_EVEN).toString()))) * 100)
+                    + "%\n");
+        }
 
         //celebrity "§fCelebrity: §6+100%"
         //pit day "§fGame Multiplier: §6+100%"
         //conglomerate "§fConglomerate: §6+?"
-        if (receiverData.hasPerkEquipped(Perks.SPAMMER) && !isKiller) builder.append("§fSpammer Assist: §6+2\n");
-        if (receiverData.hasPerkEquipped(Perks.BOUNTY_HUNTER) && zl.itemCheck(receiver.getInventory().getLeggings()) && receiver.getInventory().getLeggings().getType() == Material.GOLDEN_LEGGINGS && deadData.getBounty() != 0 && !isKiller) {
-            builder.append("§fBounty Hunter Assist: §6+" + zl.getFancyGoldString(deadData.getBounty() * (assistUtils.getAssistMap(dead).get(receiver.getUniqueId()) / assistUtils.getTotalDamage(dead))) + "\n");
+        if (receiverData.hasPerkEquipped(Perks.SPAMMER) && isAssist) {
+            gold += 2;
+            builder.append("§fSpammer Assist: §6+2\n");
+        }
+        if (receiverData.hasPerkEquipped(Perks.BOUNTY_HUNTER) && zl.itemCheck(receiver.getInventory().getLeggings()) && receiver.getInventory().getLeggings().getType() == Material.GOLDEN_LEGGINGS && deadData.getBounty() != 0 && isAssist) {
+            gold += deadData.getBounty() * ((PitAssistEvent) resources).getPercentage();
+            builder.append("§fBounty Hunter Assist: §6+" + zl.getFancyGoldString(deadData.getBounty() * ((PitAssistEvent) resources).getPercentage()) + "\n");
         }
 
-        for (Pair<String, Double> pair : event.getAddedAfterGoldModifiers()) {
+        for (Pair<String, Double> pair : resources.getAddedAfterGoldModifiers()) {
             String value = pair.getValue() + "";
 
             if (pair.getValue() == (int) pair.getValue().doubleValue()) value = (int) pair.getValue().doubleValue() + "";
 
+            gold += pair.getValue();
             builder.append("§f" + pair.getKey() + "§f: §6+" + value + "\n");
         }
 
-//        if (deadData.getBounty() != 0 && isKiller) builder.append("§fBounty: §6+" + deadData.getBounty() + "\n");
-
         builder.replace(builder.length() - 1, builder.length(), "");
 
-        if (isKiller) {
-            return new ComponentBuilder("§6" + zl.getFancyGoldString(killUtils.calculateGold(dead, receiver, event)) + "g\n").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
-        } else {
-            return new ComponentBuilder("§6" + zl.getFancyGoldString(assistUtils.calculateAssistGold(dead, receiver)) + "g\n").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
-        }
+        return new ComponentBuilder("§6" + zl.getFancyGoldString(gold) + "g\n").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
     }
 }
 

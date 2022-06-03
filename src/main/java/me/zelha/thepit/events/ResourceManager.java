@@ -28,7 +28,7 @@ public abstract class ResourceManager extends Event {
 
         for (Pair<String, Double> pair : expModifiers) exp *= pair.getValue();
 
-        exp /= percentage;
+        exp *= percentage;
 
         return (int) Math.min(Math.ceil(exp), maxExp);
     }
@@ -51,7 +51,7 @@ public abstract class ResourceManager extends Event {
 
         if (gold > maxGold) gold = maxGold;
 
-        gold /= percentage;
+        gold *= percentage;
 
         for (Pair<String, Double> pair : addAfterGoldModifiers) gold += pair.getValue();
 
