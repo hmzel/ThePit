@@ -43,20 +43,6 @@ public class AssistListener implements Listener {
         }.runTaskLater(Main.getInstance(), 300);
     }
 
-    public Map<UUID, Double> getAssistMap(Player player) {
-        Map<UUID, Double> map = new HashMap<>();
-
-        for (Pair<UUID, Double> pair : assistMap.get(player.getUniqueId())) {
-            if (map.containsKey(pair.getKey())) {
-                map.put(pair.getKey(), map.get(pair.getKey()) + pair.getValue());
-            } else {
-                map.put(pair.getKey(), pair.getValue());
-            }
-        }
-
-        return map;
-    }
-
     public Player getLastDamager(Player player) {
         List<Pair<UUID, Double>> list = new ArrayList<>(assistMap.get(player.getUniqueId()));
 
@@ -98,17 +84,26 @@ public class AssistListener implements Listener {
     public void onDeath(PitKillEvent e) {
         Player dead = e.getDead();
         Player killer = e.getKiller();
+        Map<UUID, Double> assists = new HashMap<>();
 
-        Map<UUID, Double> sortedAssistsMap = getAssistMap(dead).entrySet().stream()
+        for (Pair<UUID, Double> pair : assistMap.get(dead.getUniqueId())) {
+            if (assists.containsKey(pair.getKey())) {
+                assists.put(pair.getKey(), assists.get(pair.getKey()) + pair.getValue());
+            } else {
+                assists.put(pair.getKey(), pair.getValue());
+            }
+        }
+
+        Map<UUID, Double> sortedAssists = assists.entrySet().stream()
                 .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 
-        for (UUID uuid : sortedAssistsMap.keySet()) {
-            Player p = Bukkit.getPlayer(uuid);
+        for (Map.Entry<UUID, Double> entry : sortedAssists.entrySet()) {
+            Player p = Bukkit.getPlayer(entry.getKey());
 
             if (p == null || p.getUniqueId().equals(dead.getUniqueId()) || p.getUniqueId().equals(killer.getUniqueId())) continue;
 
-            PitAssistEvent assistEvent = new PitAssistEvent(dead, p, getAssistMap(dead).get(uuid) / getTotalDamage(dead));
+            PitAssistEvent assistEvent = new PitAssistEvent(dead, p, entry.getValue() / getTotalDamage(dead));
 
             Bukkit.getPluginManager().callEvent(assistEvent);
 
