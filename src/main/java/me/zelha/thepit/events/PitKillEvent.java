@@ -21,8 +21,8 @@ public class PitKillEvent extends ResourceManager implements Cancellable {
         this.killer = killer;
         this.disconnected = disconnected;
 
-        addExp(10, "Base §bXP");
-        addGold(5, "Base §6gold (g)");
+        addExp(5, "Base §bXP");
+        addGold(10, "Base §6gold (g)");
     }
 
     public static HandlerList getHandlerList() {

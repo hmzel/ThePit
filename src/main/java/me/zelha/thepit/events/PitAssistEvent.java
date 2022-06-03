@@ -16,8 +16,8 @@ public class PitAssistEvent extends ResourceManager implements Cancellable {
         this.assisted = assisted;
         super.percentage = percentage;
 
-        addExp(10, "Base §bXP");
-        addGold(5, "Base §6gold (g)");
+        addExp(5, "Base §bXP");
+        addGold(10, "Base §6gold (g)");
     }
 
     public static HandlerList getHandlerList() {
