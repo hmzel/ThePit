@@ -52,12 +52,12 @@ public class BaseResourceListener implements Listener {
             e.addGoldModifier(0.90, "Killed a noob");
         }
 
-        if (killerData.getPassiveTier(Passives.GOLD_BOOST) > 0) {
-            e.addGoldModifier(1 + (killerData.getPassiveTier(Passives.GOLD_BOOST) / 10.0), "Gold Boost");
-        }
-
         if (killerData.getPassiveTier(Passives.XP_BOOST) > 0) {
             e.addExpModifier(1 + (killerData.getPassiveTier(Passives.XP_BOOST) / 10.0), "XP Boost");
+        }
+
+        if (killerData.getPassiveTier(Passives.GOLD_BOOST) > 0) {
+            e.addGoldModifier(1 + (killerData.getPassiveTier(Passives.GOLD_BOOST) / 10.0), "Gold Boost");
         }
 
         if (deadData.getBounty() != 0) e.addSecondaryGold(deadData.getBounty(), "Bounty");
@@ -119,6 +119,14 @@ public class BaseResourceListener implements Listener {
         if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) {
             e.addExpModifier(0.90, "Killed a noob");
             e.addGoldModifier(0.90, "Killed a noob");
+        }
+
+        if (assistedData.getPassiveTier(Passives.XP_BOOST) > 0) {
+            e.addExpModifier(1 + (assistedData.getPassiveTier(Passives.XP_BOOST) / 10.0), "XP Boost");
+        }
+
+        if (assistedData.getPassiveTier(Passives.GOLD_BOOST) > 0) {
+            e.addGoldModifier(1 + (assistedData.getPassiveTier(Passives.GOLD_BOOST) / 10.0), "Gold Boost");
         }
     }
 

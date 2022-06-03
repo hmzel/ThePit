@@ -7,7 +7,6 @@ import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.events.ResourceManager;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.utils.ZelLogic;
-import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -99,7 +98,7 @@ public class AssistListener implements Listener {
 //        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) exp *= 0.90;
         //koth
         //2x event
-        if (assisterData.getPassiveTier(Passives.XP_BOOST) > 0) exp *= 1 + (assisterData.getPassiveTier(Passives.XP_BOOST) / 10.0);
+//        if (assisterData.getPassiveTier(Passives.XP_BOOST) > 0) exp *= 1 + (assisterData.getPassiveTier(Passives.XP_BOOST) / 10.0);
         //royalty
 //        exp *= getAssistMap(dead).get(assister.getUniqueId()) / getTotalDamage(dead);
 
@@ -134,7 +133,7 @@ public class AssistListener implements Listener {
 //        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) gold *= 0.90;
         //koth
         //2x event
-        if (assisterData.getPassiveTier(Passives.GOLD_BOOST) > 0) gold *= 1 + (assisterData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
+//        if (assisterData.getPassiveTier(Passives.GOLD_BOOST) > 0) gold *= 1 + (assisterData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
         //renown gold boost
 //        gold *= getAssistMap(dead).get(assister.getUniqueId()) / getTotalDamage(dead);
 

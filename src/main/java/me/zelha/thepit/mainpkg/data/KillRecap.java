@@ -6,7 +6,6 @@ import me.zelha.thepit.events.PitDamageEvent;
 import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.events.ResourceManager;
 import me.zelha.thepit.utils.ZelLogic;
-import me.zelha.thepit.zelenums.Passives;
 import me.zelha.thepit.zelenums.Perks;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -288,11 +287,6 @@ public class KillRecap implements CommandExecutor, Listener {
         //streak shutdown "§fStreak Shutdown: §b+?"
         //koth "§fKOTH: §b+300%"
         //2x event "§f2x Event: §b+100%"
-
-        if (isAssist && receiverData.getPassiveTier(Passives.XP_BOOST) > 0) {
-            exp *= 1 + (receiverData.getPassiveTier(Passives.XP_BOOST) / 10.0);
-            builder.append("§fXP Boost: §b+" + receiverData.getPassiveTier(Passives.XP_BOOST) * 10 + "%\n");
-        }
         //royalty "§fRoyalty: §b+10%"
         //genesis "§fGenesis: §b+?%"
         //assistant "§fAssistant: §b+?%"
@@ -368,10 +362,6 @@ public class KillRecap implements CommandExecutor, Listener {
         //streak shutdown "§fStreak Shutdown: §6+?"
         //koth "§fKOTH: §6+300%"
         //2x event "§f2x Event: §6+100%"
-        if (isAssist && receiverData.getPassiveTier(Passives.GOLD_BOOST) > 0) {
-            gold *= 1 + (receiverData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
-            builder.append("§fGold Boost: §6+" + receiverData.getPassiveTier(Passives.GOLD_BOOST) * 10 + "%\n");
-        }
 
         for (Pair<String, Double> pair : resources.getGoldModifiers()) {
             String operation = "+";
