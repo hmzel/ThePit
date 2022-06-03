@@ -293,10 +293,6 @@ public class KillRecap implements CommandExecutor, Listener {
 
         //koth "§fKOTH: §b+300%"
         //2x event "§f2x Event: §b+100%"
-        if (isAssist && deadData.getPrestige() == 0 && deadData.getLevel() <= 20) {
-            exp *= 0.90;
-            builder.append("§fKilled a noob: §b-10%\n");
-        }
 
         if (isAssist && receiverData.getPassiveTier(Passives.XP_BOOST) > 0) {
             exp *= 1 + (receiverData.getPassiveTier(Passives.XP_BOOST) / 10.0);
@@ -377,10 +373,6 @@ public class KillRecap implements CommandExecutor, Listener {
         //streak shutdown "§fStreak Shutdown: §6+?"
         //koth "§fKOTH: §6+300%"
         //2x event "§f2x Event: §6+100%"
-        if (isAssist && deadData.getPrestige() == 0 && deadData.getLevel() <= 20) {
-            gold *= 0.90;
-            builder.append("§fKilled a noob: §6-10%\n");
-        }
         if (isAssist && receiverData.getPassiveTier(Passives.GOLD_BOOST) > 0) {
             gold *= 1 + (receiverData.getPassiveTier(Passives.GOLD_BOOST) / 10.0);
             builder.append("§fGold Boost: §6+" + receiverData.getPassiveTier(Passives.GOLD_BOOST) * 10 + "%\n");

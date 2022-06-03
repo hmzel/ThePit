@@ -110,6 +110,11 @@ public class BaseResourceListener implements Listener {
             e.addExp(Math.min((int) Math.round(deadData.getStreak()), 25), "Streak Shutdown");
             e.addGold(Math.min((int) Math.round(deadData.getStreak()), 30), "Streak Shutdown");
         }
+
+        if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) {
+            e.addExpModifier(0.90, "Killed a noob");
+            e.addGoldModifier(0.90, "Killed a noob");
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
