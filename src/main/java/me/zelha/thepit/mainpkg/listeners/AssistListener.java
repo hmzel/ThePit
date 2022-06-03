@@ -30,12 +30,15 @@ public class AssistListener implements Listener {
     private final Map<UUID, List<Pair<UUID, Double>>> assistMap = new HashMap<>();
 
     public void addAssist(Player damaged, Player damager, double damage) {
-        assistMap.get(damaged.getUniqueId()).add(Pair.of(damager.getUniqueId(), damage));
+        UUID damagerUUID = damager.getUniqueId();
+        UUID damagedUUID = damaged.getUniqueId();
+
+        assistMap.get(damaged.getUniqueId()).add(Pair.of(damagerUUID, damage));
 
         new BukkitRunnable() {
             @Override
             public void run() {
-                assistMap.get(damaged.getUniqueId()).remove(Pair.of(damager.getUniqueId(), damage));
+                assistMap.get(damagedUUID).remove(Pair.of(damagerUUID, damage));
             }
         }.runTaskLater(Main.getInstance(), 300);
     }
