@@ -104,16 +104,22 @@ public class BaseResourceListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onAssist(PitAssistEvent e) {
-        PlayerData assistedData = Main.getInstance().getPlayerData(e.getAssisted());
+        Player dead = e.getDead();
+        Player assister = e.getAssisted();
+        PlayerData assisterData = Main.getInstance().getPlayerData(e.getAssisted());
         PlayerData deadData = Main.getInstance().getPlayerData(e.getDead());
+
+        if (dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() > assister.getAttribute(Attribute.GENERIC_ARMOR).getValue()) {
+            e.addGold(Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - assister.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5), "Armor difference");
+        }
 
         if (deadData.getStreak() > 5) {
             e.addExp(Math.min((int) Math.round(deadData.getStreak()), 25), "Streak Shutdown");
             e.addGold(Math.min((int) Math.round(deadData.getStreak()), 30), "Streak Shutdown");
         }
 
-        if (deadData.getLevel() > assistedData.getLevel()) {
-            e.addExp((int) Math.round((deadData.getLevel() - assistedData.getLevel()) / 4.5), "Level difference");
+        if (deadData.getLevel() > assisterData.getLevel()) {
+            e.addExp((int) Math.round((deadData.getLevel() - assisterData.getLevel()) / 4.5), "Level difference");
         }
 
         if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) {
@@ -121,12 +127,12 @@ public class BaseResourceListener implements Listener {
             e.addGoldModifier(0.90, "Killed a noob");
         }
 
-        if (assistedData.getPassiveTier(Passives.XP_BOOST) > 0) {
-            e.addExpModifier(1 + (assistedData.getPassiveTier(Passives.XP_BOOST) / 10.0), "XP Boost");
+        if (assisterData.getPassiveTier(Passives.XP_BOOST) > 0) {
+            e.addExpModifier(1 + (assisterData.getPassiveTier(Passives.XP_BOOST) / 10.0), "XP Boost");
         }
 
-        if (assistedData.getPassiveTier(Passives.GOLD_BOOST) > 0) {
-            e.addGoldModifier(1 + (assistedData.getPassiveTier(Passives.GOLD_BOOST) / 10.0), "Gold Boost");
+        if (assisterData.getPassiveTier(Passives.GOLD_BOOST) > 0) {
+            e.addGoldModifier(1 + (assisterData.getPassiveTier(Passives.GOLD_BOOST) / 10.0), "Gold Boost");
         }
     }
 

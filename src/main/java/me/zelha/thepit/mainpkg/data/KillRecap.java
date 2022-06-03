@@ -16,7 +16,6 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -354,10 +353,6 @@ public class KillRecap implements CommandExecutor, Listener {
         //genesis "§fGenesis: §6+?"
         //moctezuma "§fMoctezuma: §6+?"
         //gold bump enchant "§fGold Bump Enchant: §6+?"
-        if (isAssist && dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() > receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue() && Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5) != 0) {
-            gold += Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5);
-            builder.append("§fArmor difference: §6+" + Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5) + "\n");
-        }
         //assistant "§fAssistant: §6+?"
         //streak shutdown "§fStreak Shutdown: §6+?"
         //koth "§fKOTH: §6+300%"
