@@ -18,7 +18,7 @@ import static me.zelha.thepit.zelenums.Perks.STREAKER;
 
 public class BaseResourceListener implements Listener {
 
-    //using three eventhandlers to mimic behavior in pit, i dont know why its actually in this order in regular pit but i like being accurate
+    //using multiple eventhandlers to mimic behavior in pit, i dont know why its actually in this order in regular pit but i like being accurate
 
     @EventHandler
     public void onKill(PitKillEvent e) {
@@ -102,8 +102,18 @@ public class BaseResourceListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onAssist(PitAssistEvent e) {
+        PlayerData deadData = Main.getInstance().getPlayerData(e.getDead());
+
+        if (deadData.getStreak() > 5) {
+            e.addExp(Math.min((int) Math.round(deadData.getStreak()), 25), "Streak Shutdown");
+            e.addGold(Math.min((int) Math.round(deadData.getStreak()), 30), "Streak Shutdown");
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onAssist2(PitAssistEvent e) {
         double percentage = Double.parseDouble(BigDecimal.valueOf(e.getPercentage()).setScale(2, RoundingMode.HALF_EVEN).toString());
 
         e.addExpModifier(percentage, "Kill participation");

@@ -86,13 +86,15 @@ public class AssistListener implements Listener {
     }
 
     public int calculateAssistEXP(Player dead, Player assister, ResourceManager resources) {
-        double exp = 5;
+        double exp = 0;
         int maxEXP = 250;
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData assisterData = Main.getInstance().getPlayerData(assister);
 
+        for (Pair<String, Double> pair : resources.getExpAdditions()) exp += pair.getValue();
+
         //xp bump
-        if (deadData.getStreak() > 5) exp += Math.min((int) Math.round(deadData.getStreak()), 25);
+//        if (deadData.getStreak() > 5) exp += Math.min((int) Math.round(deadData.getStreak()), 25);
         if (deadData.getLevel() > assisterData.getLevel()) exp += (int) Math.round((deadData.getLevel() - assisterData.getLevel()) / 4.5);
         if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) exp *= 0.90;
         //koth
@@ -109,15 +111,26 @@ public class AssistListener implements Listener {
     }
 
     public double calculateAssistGold(Player dead, Player assister, ResourceManager resources) {
-        double gold = 10;
+        double gold = 0;
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerData assisterData = Main.getInstance().getPlayerData(assister);
+        boolean baseGoldModifiersApplied = false;
+
+        for (Pair<String, Double> pair : resources.getGoldAdditions()) {
+            gold += pair.getValue();
+
+            if (!baseGoldModifiersApplied) {
+                for (Pair<String, Double> pair2 : resources.getBaseGoldModifiers()) gold *= pair2.getValue();
+
+                baseGoldModifiersApplied = true;
+            }
+        }
 
         if (dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() > assister.getAttribute(Attribute.GENERIC_ARMOR).getValue()) {
             gold += Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - assister.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5);
         }
 
-        if (deadData.getStreak() > 5) gold += Math.min((int) Math.round(deadData.getStreak()), 30);
+//        if (deadData.getStreak() > 5) gold += Math.min((int) Math.round(deadData.getStreak()), 30);
         if (deadData.getPrestige() == 0 && deadData.getLevel() <= 20) gold *= 0.90;
         //koth
         //2x event
@@ -126,6 +139,10 @@ public class AssistListener implements Listener {
 //        gold *= getAssistMap(dead).get(assister.getUniqueId()) / getTotalDamage(dead);
 
         for (Pair<String, Double> pair : resources.getGoldModifiers()) gold *= pair.getValue();
+
+        if (gold > resources.getMaxGold()) gold = resources.getMaxGold();
+
+        for (Pair<String, Double> pair : resources.getSecondaryGoldAdditions()) gold += pair.getValue();
 
         //celeb
         //pit day

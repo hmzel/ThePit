@@ -22,10 +22,7 @@ public abstract class ResourceManager extends Event {
     public int calculateEXP() {
         double exp = 0;
 
-        for (Pair<String, Double> pair : expAdditions) {
-            exp += pair.getValue();
-        }
-
+        for (Pair<String, Double> pair : expAdditions) exp += pair.getValue();
         for (Pair<String, Double> pair : expModifiers) exp *= pair.getValue();
 
         return (int) Math.min(Math.ceil(exp), maxExp);
@@ -48,6 +45,8 @@ public abstract class ResourceManager extends Event {
         for (Pair<String, Double> pair : goldModifiers) gold *= pair.getValue();
 
         if (gold > maxGold) gold = maxGold;
+
+        for (Pair<String, Double> pair : secondaryGoldAdditions) gold += pair.getValue();
 
         return gold;
     }

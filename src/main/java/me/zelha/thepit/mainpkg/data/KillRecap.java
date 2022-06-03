@@ -285,10 +285,7 @@ public class KillRecap implements CommandExecutor, Listener {
         //second gapple "§fSecond Gapple: §b+?"
         //explicious "§fExplicious: §b+?"
         //super streaker "§fSuper Streaker: §b+50"
-        if (isAssist && deadData.getStreak() > 5) {
-            exp += Math.min((int) Math.round(deadData.getStreak()), 25);
-            builder.append("§fStreak Shutdown: §b+" + (int) Math.min(Math.round(deadData.getStreak()), 25) + "\n");
-        }
+        //streak shutdown "§fStreak Shutdown: §b+?"
         if (isAssist && deadData.getLevel() > receiverData.getLevel()) {
             exp += (int) Math.round((deadData.getLevel() - receiverData.getLevel()) / 4.5);
             builder.append("§fLevel difference: §b+" + (int) Math.round((deadData.getLevel() - receiverData.getLevel()) / 4.5) + "\n");
@@ -302,7 +299,7 @@ public class KillRecap implements CommandExecutor, Listener {
         }
 
         if (isAssist && receiverData.getPassiveTier(Passives.XP_BOOST) > 0) {
-            exp *= (receiverData.getPassiveTier(Passives.XP_BOOST) / 10.0) + 1;
+            exp *= 1 + (receiverData.getPassiveTier(Passives.XP_BOOST) / 10.0);
             builder.append("§fXP Boost: §b+" + receiverData.getPassiveTier(Passives.XP_BOOST) * 10 + "%\n");
         }
         //royalty "§fRoyalty: §b+10%"
@@ -377,7 +374,7 @@ public class KillRecap implements CommandExecutor, Listener {
             builder.append("§fArmor difference: §6+" + Math.round((dead.getAttribute(Attribute.GENERIC_ARMOR).getValue() - receiver.getAttribute(Attribute.GENERIC_ARMOR).getValue()) / 5) + "\n");
         }
         //assistant "§fAssistant: §6+?"
-
+        //streak shutdown "§fStreak Shutdown: §6+?"
         //koth "§fKOTH: §6+300%"
         //2x event "§f2x Event: §6+100%"
         if (isAssist && deadData.getPrestige() == 0 && deadData.getLevel() <= 20) {

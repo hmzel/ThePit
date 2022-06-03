@@ -61,6 +61,7 @@ public final class Main extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(recap, this);
         getServer().getPluginManager().registerEvents(storage, this);
+        getServer().getPluginManager().registerEvents(new BaseResourceListener(), this);
         getServer().getPluginManager().registerEvents(new ExpChangeListener(), this);
         getServer().getPluginManager().registerEvents(scoreboardListener, this);
         getServer().getPluginManager().registerEvents(killListener, this);
@@ -82,7 +83,6 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new NPCInteractEventCaller(), this);
         getServer().getPluginManager().registerEvents(new ActionbarListener(), this);
         getServer().getPluginManager().registerEvents(new KillstreakListener(), this);
-        getServer().getPluginManager().registerEvents(new BaseResourceListener(), this);
 
         getCommand("killrecap").setExecutor(recap);
         getCommand("setprestige").setExecutor(new SetPrestigeCommand());
