@@ -1,6 +1,7 @@
 package me.zelha.thepit.upgrades.permanent.perks;
 
 import me.zelha.thepit.Main;
+import me.zelha.thepit.events.PitAssistEvent;
 import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import org.bukkit.Material;
@@ -37,6 +38,16 @@ public class BountyHunterPerk extends Perk {
         if (killer.getInventory().getLeggings().getType() != GOLDEN_LEGGINGS) return;
 
         event.addGold(4, "Bounty Hunter");
+    }
+
+    @Override
+    public void addResourceModifiers(PitAssistEvent event) {
+        Player assister = event.getAssisted();
+        PlayerData deadData = Main.getInstance().getPlayerData(event.getDead());
+
+        if (zl.itemCheck(assister.getInventory().getLeggings()) && assister.getInventory().getLeggings().getType() == Material.GOLDEN_LEGGINGS && deadData.getBounty() != 0) {
+            event.addSecondaryGold(deadData.getBounty() * event.getPercentage(), "Bounty Hunter Assist");
+        }
     }
 
     @Override

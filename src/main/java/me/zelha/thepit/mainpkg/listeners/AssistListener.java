@@ -6,13 +6,11 @@ import me.zelha.thepit.events.PitDamageEvent;
 import me.zelha.thepit.events.PitKillEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.utils.ZelLogic;
-import me.zelha.thepit.zelenums.Perks;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.entity.Player;
@@ -82,18 +80,6 @@ public class AssistListener implements Listener {
         return damage;
     }
 
-    public double calculateAssistGold(Player dead, Player assister, PitAssistEvent e) {
-        double gold = e.calculateGold();
-        PlayerData deadData = Main.getInstance().getPlayerData(dead);
-        PlayerData assisterData = Main.getInstance().getPlayerData(assister);
-
-        if (assisterData.hasPerkEquipped(Perks.BOUNTY_HUNTER) && zl.itemCheck(assister.getInventory().getLeggings()) && assister.getInventory().getLeggings().getType() == Material.GOLDEN_LEGGINGS && deadData.getBounty() != 0) {
-            gold += deadData.getBounty() * (getAssistMap(dead).get(assister.getUniqueId()) / e.getPercentage());
-        }
-
-        return gold;
-    }
-
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onAttack(PitDamageEvent e) {
         Player damaged = e.getDamaged();
@@ -128,7 +114,7 @@ public class AssistListener implements Listener {
             e.addAssistEvent(assistEvent);
 
             PlayerData pData = Main.getInstance().getPlayerData(p);
-            double gold = calculateAssistGold(dead, p, assistEvent);
+            double gold = assistEvent.calculateGold();
             int exp = assistEvent.calculateEXP();
 
             pData.setGold(pData.getGold() + gold);

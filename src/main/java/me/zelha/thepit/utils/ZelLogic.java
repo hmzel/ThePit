@@ -319,7 +319,7 @@ public class ZelLogic {//zel
      * @return fancy gold string
      */
     public String getFancyGoldString(double gold) {
-        return new DecimalFormat("#,##0.00").format(BigDecimal.valueOf(gold).setScale(2, RoundingMode.DOWN));
+        return new DecimalFormat("#,##0.00").format(BigDecimal.valueOf(gold).setScale(2, RoundingMode.HALF_EVEN));
     }
 
     /**

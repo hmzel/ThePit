@@ -130,8 +130,8 @@ public class KillRecap implements CommandExecutor, Listener {
         raw.add(new ComponentBuilder("Killer:\n").create());
         raw.add(playerComponent(killer));
         raw.add(new ComponentBuilder("§8for ").create());
-        raw.add(expComponent(dead, killer, e));
-        raw.add(goldComponent(dead, killer, e));
+        raw.add(expComponent(e));
+        raw.add(goldComponent(e));
         raw.add(new ComponentBuilder("\n").create());
 
         boolean addAssistTitle = true;
@@ -143,8 +143,8 @@ public class KillRecap implements CommandExecutor, Listener {
             raw.add(new ComponentBuilder((int) ((Double.parseDouble(BigDecimal.valueOf(assist.getPercentage()).setScale(2, RoundingMode.HALF_EVEN).toString())) * 100) + "% ").create());
             raw.add(playerComponent(assist.getAssisted()));
             raw.add(new ComponentBuilder("§8for ").create());
-            raw.add(expComponent(dead, assist.getAssisted(), assist));
-            raw.add(goldComponent(dead, assist.getAssisted(), assist));
+            raw.add(expComponent(assist));
+            raw.add(goldComponent(assist));
 
             addAssistTitle = false;
         }
@@ -260,13 +260,10 @@ public class KillRecap implements CommandExecutor, Listener {
         return new ComponentBuilder("§7" + player.getName() + "\n").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
     }
 
-    private BaseComponent[] expComponent(Player dead, Player receiver, ResourceManager resources) {
+    private BaseComponent[] expComponent(ResourceManager resources) {
         double exp = 0;
-        boolean isAssist = resources instanceof PitAssistEvent;
         StringBuilder builder = new StringBuilder();
         String plus = "";
-        PlayerData deadData = Main.getInstance().getPlayerData(dead);
-        PlayerData receiverData = Main.getInstance().getPlayerData(receiver);
 
         for (Pair<String, Double> pair : resources.getExpAdditions()) {
             String value = pair.getValue() + "";
@@ -278,17 +275,6 @@ public class KillRecap implements CommandExecutor, Listener {
 
             if (plus.equals("")) plus = "+";
         }
-
-        //xp bump "§fRenown XP Bump: §b+?"
-        //second gapple "§fSecond Gapple: §b+?"
-        //explicious "§fExplicious: §b+?"
-        //super streaker "§fSuper Streaker: §b+50"
-        //streak shutdown "§fStreak Shutdown: §b+?"
-        //koth "§fKOTH: §b+300%"
-        //2x event "§f2x Event: §b+100%"
-        //royalty "§fRoyalty: §b+10%"
-        //genesis "§fGenesis: §b+?%"
-        //assistant "§fAssistant: §b+?%"
 
         for (Pair<String, Double> pair : resources.getExpModifiers()) {
             String operation = "+";
@@ -307,25 +293,24 @@ public class KillRecap implements CommandExecutor, Listener {
 
         builder.append("§fRounded up!\n");
 
-        //pit day "§fGame Multiplier: §6+100%"
-
         builder.replace(builder.length() - 1, builder.length(), "");
 
         return new ComponentBuilder("§3+" + (int) Math.min(Math.ceil(exp), resources.getMaxExp()) + "XP ").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(builder.toString()))).create();
     }
 
-    private BaseComponent[] goldComponent(Player dead, Player receiver, ResourceManager resources) {
+    private BaseComponent[] goldComponent(ResourceManager resources) {
         double gold = 0;
-        boolean isAssist = resources instanceof PitAssistEvent;
         StringBuilder builder = new StringBuilder();
         String plus = "";
-        PlayerData deadData = Main.getInstance().getPlayerData(dead);
-        PlayerData receiverData = Main.getInstance().getPlayerData(receiver);
 
         for (Pair<String, Double> pair : resources.getGoldAdditions()) {
-            String value = pair.getValue() + "";
+            String value;
 
-            if (pair.getValue() == (int) pair.getValue().doubleValue()) value = (int) pair.getValue().doubleValue() + "";
+            if (pair.getValue() == (int) pair.getValue().doubleValue()) {
+                value = (int) pair.getValue().doubleValue() + "";
+            } else {
+                value = BigDecimal.valueOf(pair.getValue()).setScale(2, RoundingMode.HALF_EVEN).toString();
+            }
 
             gold += pair.getValue();
             builder.append("§f" + pair.getKey() + "§f: §6" + plus + value + "\n");
@@ -350,14 +335,6 @@ public class KillRecap implements CommandExecutor, Listener {
             }
         }
 
-        //genesis "§fGenesis: §6+?"
-        //moctezuma "§fMoctezuma: §6+?"
-        //gold bump enchant "§fGold Bump Enchant: §6+?"
-        //assistant "§fAssistant: §6+?"
-        //streak shutdown "§fStreak Shutdown: §6+?"
-        //koth "§fKOTH: §6+300%"
-        //2x event "§f2x Event: §6+100%"
-
         for (Pair<String, Double> pair : resources.getGoldModifiers()) {
             String operation = "+";
             int value = (int) (100 * pair.getValue());
@@ -372,21 +349,15 @@ public class KillRecap implements CommandExecutor, Listener {
             gold *= pair.getValue();
             builder.append("§f" + pair.getKey() + "§f: §6" + operation + value + "%\n");
         }
-        //renown gold boost "§fRenown Gold Boost: §6+?%"
-        //gold boost enchant "§fGold Boost Enchant: §6+?%"
-        //kill participation
-        //celebrity "§fCelebrity: §6+100%"
-        //pit day "§fGame Multiplier: §6+100%"
-        //conglomerate "§fConglomerate: §6+?"
-        if (receiverData.hasPerkEquipped(Perks.BOUNTY_HUNTER) && zl.itemCheck(receiver.getInventory().getLeggings()) && receiver.getInventory().getLeggings().getType() == Material.GOLDEN_LEGGINGS && deadData.getBounty() != 0 && isAssist) {
-            gold += deadData.getBounty() * ((PitAssistEvent) resources).getPercentage();
-            builder.append("§fBounty Hunter Assist: §6+" + zl.getFancyGoldString(deadData.getBounty() * ((PitAssistEvent) resources).getPercentage()) + "\n");
-        }
 
         for (Pair<String, Double> pair : resources.getSecondaryGoldAdditions()) {
-            String value = pair.getValue() + "";
+            String value;
 
-            if (pair.getValue() == (int) pair.getValue().doubleValue()) value = (int) pair.getValue().doubleValue() + "";
+            if (pair.getValue() == (int) pair.getValue().doubleValue()) {
+                value = (int) pair.getValue().doubleValue() + "";
+            } else {
+                value = BigDecimal.valueOf(pair.getValue()).setScale(2, RoundingMode.HALF_EVEN).toString();
+            }
 
             gold += pair.getValue();
             builder.append("§f" + pair.getKey() + "§f: §6+" + value + "\n");
