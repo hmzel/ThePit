@@ -12,7 +12,6 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -27,18 +26,20 @@ import java.util.stream.Collectors;
 public class AssistListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-    private final Map<UUID, List<Pair<UUID, Double>>> assistMap = new HashMap<>();
+    private final Map<UUID, Map<UUID, Double>> assistMap = new HashMap<>();
 
     public void addAssist(Player damaged, Player damager, double damage) {
         UUID damagerUUID = damager.getUniqueId();
-        UUID damagedUUID = damaged.getUniqueId();
 
-        assistMap.get(damaged.getUniqueId()).add(Pair.of(damagerUUID, damage));
+        Map<UUID, Double> assists = assistMap.get(damaged.getUniqueId());
+
+        assists.putIfAbsent(damagerUUID, 0.0);
+        assists.put(damagerUUID, assists.get(damagerUUID) + damage);
 
         new BukkitRunnable() {
             @Override
             public void run() {
-                assistMap.get(damagedUUID).remove(Pair.of(damagerUUID, damage));
+                assists.remove(damagerUUID);
             }
         }.runTaskLater(Main.getInstance(), 300);
     }
@@ -59,14 +60,11 @@ public class AssistListener implements Listener {
         Player dead = e.getDead();
         Player killer = e.getKiller();
         double totalDamage = 0;
-        Map<UUID, Double> assists = new HashMap<>();
+        Map<UUID, Double> assists = assistMap.get(dead.getUniqueId());
 
-        for (Pair<UUID, Double> pair : assistMap.get(dead.getUniqueId())) {
-            assists.putIfAbsent(pair.getKey(), 0.0);
-            assists.put(pair.getKey(), assists.get(pair.getKey()) + pair.getValue());
-
-            if (Bukkit.getPlayer(pair.getKey()) != null && !pair.getKey().equals(dead.getUniqueId())) {
-                totalDamage += pair.getValue();
+        for (Map.Entry<UUID, Double> entry : assists.entrySet()) {
+            if (Bukkit.getPlayer(entry.getKey()) != null && !entry.getKey().equals(dead.getUniqueId())) {
+                totalDamage += entry.getValue();
             }
         }
 
@@ -107,7 +105,7 @@ public class AssistListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (zl.playerCheck(dead)) assistMap.put(dead.getUniqueId(), new ArrayList<>());
+                if (zl.playerCheck(dead)) assistMap.put(dead.getUniqueId(), new HashMap<>());
             }
         }.runTaskLater(Main.getInstance(), 1);
     }
@@ -115,7 +113,7 @@ public class AssistListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        assistMap.put(e.getPlayer().getUniqueId(), new ArrayList<>());
+        assistMap.put(e.getPlayer().getUniqueId(), new HashMap<>());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
