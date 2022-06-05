@@ -12,8 +12,8 @@ public class TrueDamageEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
     private final Player damaged;
     private final Player damager;
+    private final boolean isVeryTrue;
     private boolean cancelled = false;
-    private boolean isVeryTrue;
     private double damage;
 
     public TrueDamageEvent(Player damaged, @Nullable Player damager, double damage, boolean isVeryTrue) {

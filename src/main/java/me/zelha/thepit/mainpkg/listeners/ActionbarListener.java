@@ -23,7 +23,7 @@ public class ActionbarListener implements Listener {
         StringBuilder barBuilder2 = new StringBuilder();
 
         int health = (int) Math.ceil(damaged.getHealth() / 2);
-        int healthAfterDmg = (int) Math.floor(Math.max(((damaged.getHealth() / 2D) - (e.getDamage() / 2D)), 0));
+        int healthAfterDmg = (int) Math.floor(Math.max(((damaged.getHealth() / 2D) - (e.getFinalDamage() / 2D)), 0));
         int maxHealth = (int) damaged.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 2;
 
         for (int i = 0; i < maxHealth; i++) barBuilder.append("❤");

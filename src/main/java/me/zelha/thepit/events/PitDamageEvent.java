@@ -1,5 +1,6 @@
 package me.zelha.thepit.events;
 
+import com.google.common.base.Function;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -8,20 +9,23 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
+import java.lang.reflect.Field;
+import java.util.EnumMap;
 import java.util.Map;
 
 public class PitDamageEvent extends Event implements Cancellable {
+    //bunch of copied & semi-copied code here to try and get accurate results when calculating final damage using this class
 
     private static final HandlerList HANDLERS = new HandlerList();
     private final Player damaged;
     private final Player damager;
-    private final Map<EntityDamageEvent.DamageModifier, Double> modifiers;
+    private Map<EntityDamageEvent.DamageModifier, Double> modifiers = new EnumMap<>(DamageModifier.class);
+    private Map<EntityDamageEvent.DamageModifier, Function<? super Double, Double>> modifierFunctions = new EnumMap<>(DamageModifier.class);
     private final Arrow arrow;
     private boolean cancelled = false;
-    private double damage;
     private double boost;
     private double finalDamageModifier = 0;
 
@@ -40,12 +44,34 @@ public class PitDamageEvent extends Event implements Cancellable {
 
         this.damaged = damaged;
         this.damager = damager;
-        this.damage = event.getFinalDamage();
-        this.modifiers = new HashMap<>();
         this.boost = boost;
 
-        for (EntityDamageEvent.DamageModifier modifier : EntityDamageEvent.DamageModifier.values()) {
-            modifiers.put(modifier, event.getDamage(modifier));
+        try {
+            Field modifiersField = EntityDamageEvent.class.getDeclaredField("modifiers");
+            Field modifierFunctionsField = EntityDamageEvent.class.getDeclaredField("modifierFunctions");
+
+            modifiersField.setAccessible(true);
+            modifierFunctionsField.setAccessible(true);
+
+            Map<DamageModifier, Double> modifiers = (Map<EntityDamageEvent.DamageModifier, Double>) modifiersField.get(event);
+            Map<DamageModifier, Function<? super Double, Double>> modifierFunctions = (Map<EntityDamageEvent.DamageModifier, Function<? super Double, Double>>) modifierFunctionsField.get(event);
+
+            this.modifiers.put(DamageModifier.BASE, modifiers.get(DamageModifier.BASE));
+            this.modifiers.put(DamageModifier.HARD_HAT, modifiers.get(DamageModifier.HARD_HAT));
+            this.modifiers.put(DamageModifier.BLOCKING, modifiers.get(DamageModifier.BLOCKING));
+            this.modifiers.put(DamageModifier.ARMOR, modifiers.get(DamageModifier.ARMOR));
+            this.modifiers.put(DamageModifier.RESISTANCE, modifiers.get(DamageModifier.RESISTANCE));
+            this.modifiers.put(DamageModifier.MAGIC, modifiers.get(DamageModifier.MAGIC));
+            this.modifiers.put(DamageModifier.ABSORPTION, modifiers.get(DamageModifier.ABSORPTION));
+            this.modifierFunctions.put(DamageModifier.BASE, modifierFunctions.get(DamageModifier.BASE));
+            this.modifierFunctions.put(DamageModifier.HARD_HAT, modifierFunctions.get(DamageModifier.HARD_HAT));
+            this.modifierFunctions.put(DamageModifier.BLOCKING, modifierFunctions.get(DamageModifier.BLOCKING));
+            this.modifierFunctions.put(DamageModifier.ARMOR, modifierFunctions.get(DamageModifier.ARMOR));
+            this.modifierFunctions.put(DamageModifier.RESISTANCE, modifierFunctions.get(DamageModifier.RESISTANCE));
+            this.modifierFunctions.put(DamageModifier.MAGIC, modifierFunctions.get(DamageModifier.MAGIC));
+            this.modifierFunctions.put(DamageModifier.ABSORPTION, modifierFunctions.get(DamageModifier.ABSORPTION));
+        } catch (NoSuchFieldException | IllegalAccessException err) {
+            err.printStackTrace();
         }
     }
 
@@ -77,11 +103,26 @@ public class PitDamageEvent extends Event implements Cancellable {
     }
 
     public double getDamage() {
-        return damage;
+        return getDamage(DamageModifier.BASE);
     }
 
-    public double getDamage(EntityDamageEvent.DamageModifier modifier) {
-        return modifiers.get(modifier);
+    public double getDamage(DamageModifier modifier) {
+        return (modifiers.get(modifier) == null) ? 0 : modifiers.get(modifier);
+    }
+
+    public double getFinalDamage() {
+        double old = getDamage();
+        double damage = 0;
+        Map<DamageModifier, Double> finalModifiers = new EnumMap<>(modifiers);
+
+        setDamage(old * boost);
+        finalModifiers.put(DamageModifier.ARMOR, finalModifiers.get(DamageModifier.ARMOR) + finalDamageModifier);
+
+        for (DamageModifier modifier : DamageModifier.values()) damage += getDamage(modifier);
+
+        setDamage(old);
+
+        return damage;
     }
 
     public double getBoost() {
@@ -97,8 +138,43 @@ public class PitDamageEvent extends Event implements Cancellable {
         return finalDamageModifier;
     }
 
-    public void setDamage(double damage) {
-        this.damage = damage;
+    /**
+     * Sets the raw amount of damage caused by the event.
+     * <p>
+     * For compatibility this also recalculates the modifiers and scales
+     * them by the difference between the modifier for the previous damage
+     * value and the new one.
+     *
+     * @param damage The raw amount of damage caused by the event
+     */
+    public void setDamage(double damage) {//stolen code poggers
+        // These have to happen in the same order as the server calculates them, keep the enum sorted
+        double remaining = damage;
+        double oldRemaining = getDamage(DamageModifier.BASE);
+
+        for (DamageModifier modifier : DamageModifier.values()) {
+            if (modifiers.get(modifier) == null) continue;
+            if (modifierFunctions.get(modifier) == null) continue;
+
+            Function<? super Double, Double> modifierFunction = modifierFunctions.get(modifier);
+            double newVanilla = modifierFunction.apply(remaining);
+            double oldVanilla = modifierFunction.apply(oldRemaining);
+            double difference = oldVanilla - newVanilla;
+
+            // Don't allow value to cross zero, assume zero values should be negative
+            double old = getDamage(modifier);
+
+            if (old > 0) {
+                setDamage(modifier, Math.max(0, old - difference));
+            } else {
+                setDamage(modifier, Math.min(0, old - difference));
+            }
+
+            remaining += newVanilla;
+            oldRemaining += oldVanilla;
+        }
+
+        setDamage(DamageModifier.BASE, damage);
     }
 
     public void setBoost(double boost) {
@@ -107,5 +183,13 @@ public class PitDamageEvent extends Event implements Cancellable {
 
     public void addFinalDamageModifier(double damage) {
         this.finalDamageModifier += damage;
+    }
+
+    private void setDamage(EntityDamageEvent.DamageModifier type, double damage) throws IllegalArgumentException, UnsupportedOperationException {
+        if (!modifiers.containsKey(type)) {
+            throw type == null ? new IllegalArgumentException("Cannot have null DamageModifier") : new UnsupportedOperationException(type + " is not applicable to " + damaged);
+        }
+
+        modifiers.put(type, damage);
     }
 }

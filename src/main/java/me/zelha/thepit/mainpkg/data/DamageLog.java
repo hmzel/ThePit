@@ -35,7 +35,7 @@ public class DamageLog {
             this.item = damager.getInventory().getItemInMainHand();
         }
 
-        this.damage = event.getDamage() * event.getBoost();
+        this.damage = event.getFinalDamage();
         this.time = MinecraftServer.currentTick;
         this.subName = damaged.getName();
 
@@ -47,7 +47,7 @@ public class DamageLog {
             this.prestigeToShow = zl.getColorBracketAndLevel(damaged);
         }
 
-        this.damagedHealth = damaged.getHealth() - event.getDamage();
+        this.damagedHealth = damaged.getHealth() - event.getFinalDamage();
         this.isAttacker = isAttacker;
 
         if (event.getArrow() != null) {

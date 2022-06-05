@@ -50,7 +50,7 @@ public class AssistListener implements Listener {
         Player damager = e.getDamager();
         double damage;
 
-        if (damaged.getHealth() - e.getDamage() > 0) damage = e.getDamage(); else damage = damaged.getHealth();
+        if (damaged.getHealth() - e.getFinalDamage() > 0) damage = e.getFinalDamage(); else damage = damaged.getHealth();
 
         addAssist(damaged, damager, damage);
     }

@@ -6,6 +6,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 public class PitDeathEvent extends Event implements Cancellable {
+
     private static final HandlerList HANDLERS = new HandlerList();
     private boolean cancelled = false;
     private final Player dead;

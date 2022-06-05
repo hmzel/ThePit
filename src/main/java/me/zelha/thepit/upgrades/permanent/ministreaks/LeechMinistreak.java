@@ -29,7 +29,7 @@ public class LeechMinistreak extends Ministreak implements Listener {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    zl.addHealth(damager, 1 + ((event.getDamage() * event.getBoost()) * 0.2));
+                    zl.addHealth(damager, 1 + ((event.getFinalDamage()) * 0.2));
                 }
             }.runTaskLater(Main.getInstance(), 1);
 
