@@ -266,9 +266,17 @@ public class KillRecap implements CommandExecutor, Listener {
         String plus = "";
 
         for (Pair<String, Double> pair : resources.getExpAdditions()) {
-            String value = pair.getValue() + "";
+            String value;
 
-            if (pair.getValue() == (int) pair.getValue().doubleValue()) value = (int) pair.getValue().doubleValue() + "";
+            if (pair.getValue() == (int) pair.getValue().doubleValue()) {
+                value = (int) pair.getValue().doubleValue() + "";
+            } else {
+                value = BigDecimal.valueOf(pair.getValue()).setScale(2, RoundingMode.HALF_EVEN).toString();
+
+                if (Double.valueOf(value).equals(Double.valueOf(BigDecimal.valueOf(pair.getValue()).setScale(1, RoundingMode.HALF_EVEN).toString()))) {
+                    value = BigDecimal.valueOf(pair.getValue()).setScale(1, RoundingMode.HALF_EVEN).toString();
+                }
+            }
 
             exp += pair.getValue();
             builder.append("§f" + pair.getKey() + "§f: §b" + plus + value + "\n");
@@ -310,6 +318,10 @@ public class KillRecap implements CommandExecutor, Listener {
                 value = (int) pair.getValue().doubleValue() + "";
             } else {
                 value = BigDecimal.valueOf(pair.getValue()).setScale(2, RoundingMode.HALF_EVEN).toString();
+
+                if (Double.valueOf(value).equals(Double.valueOf(BigDecimal.valueOf(pair.getValue()).setScale(1, RoundingMode.HALF_EVEN).toString()))) {
+                    value = BigDecimal.valueOf(pair.getValue()).setScale(1, RoundingMode.HALF_EVEN).toString();
+                }
             }
 
             gold += pair.getValue();
@@ -357,6 +369,10 @@ public class KillRecap implements CommandExecutor, Listener {
                 value = (int) pair.getValue().doubleValue() + "";
             } else {
                 value = BigDecimal.valueOf(pair.getValue()).setScale(2, RoundingMode.HALF_EVEN).toString();
+
+                if (Double.valueOf(value).equals(Double.valueOf(BigDecimal.valueOf(pair.getValue()).setScale(1, RoundingMode.HALF_EVEN).toString()))) {
+                    value = BigDecimal.valueOf(pair.getValue()).setScale(1, RoundingMode.HALF_EVEN).toString();
+                }
             }
 
             gold += pair.getValue();
