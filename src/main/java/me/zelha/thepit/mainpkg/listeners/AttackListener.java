@@ -30,17 +30,43 @@ import static org.bukkit.event.entity.EntityDamageEvent.DamageModifier.ARMOR;
 public class AttackListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
-    private final AssistListener assistUtils = Main.getInstance().getAssistUtils();
     private final PluginManager manager = Main.getInstance().getServer().getPluginManager();
     private final RunTracker runTracker = new RunTracker();
     private final RunTracker runTracker2 = new RunTracker();
 
     public void startCombatTimer(Player damaged, Player damager) {
-        if (runTracker.hasID(damaged.getUniqueId())) runTracker.stop(damaged.getUniqueId());
-        if (runTracker.hasID(damager.getUniqueId())) runTracker.stop(damager.getUniqueId());
+        for (UUID uuid : new UUID[] {damaged.getUniqueId(), damager.getUniqueId()}) {
+            if (runTracker.hasID(uuid)) runTracker.stop(uuid);
 
-        new CombatTimerRunnable(damaged.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
-        new CombatTimerRunnable(damager.getUniqueId()).runTaskTimer(Main.getInstance(), 0, 20);
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    PlayerData pData = Main.getInstance().getPlayerData(uuid);
+
+                    if (pData == null) {
+                        cancel();
+                        return;
+                    }
+
+                    if (!runTracker.hasID(uuid)) {
+                        runTracker.setID(uuid, getTaskId());
+                        pData.setCombatTimer(15 + (int) (Math.floor(pData.getBounty() / 1000D) * 10));
+                        pData.setStatus("fighting");
+                    }
+
+                    pData.setCombatTimer(pData.getCombatTimer() - 1);
+
+                    int current = pData.getCombatTimer();
+
+                    if (current <= 0) {
+                        pData.setStatus((pData.getBounty() != 0) ? "bountied" : "idling");
+                        cancel();
+                    }
+
+                    pData.setHideTimer((pData.getBounty() == 0 && current >= 10) || current <= 0);
+                }
+            }.runTaskTimer(Main.getInstance(), 0, 20);
+        }
     }
 
     @EventHandler(priority = HIGHEST, ignoreCancelled = true)
@@ -165,56 +191,6 @@ public class AttackListener implements Listener {
         if (lastDamager == null) return;
 
         manager.callEvent(new PitKillEvent(p, lastDamager, true));
-    }
-
-
-    private class CombatTimerRunnable extends BukkitRunnable {
-
-        private final UUID uuid;
-        private int hideTimer;
-        private boolean reset;
-
-        private CombatTimerRunnable(UUID uuid) {
-            this.uuid = uuid;
-            this.hideTimer = 1;
-            this.reset = true;
-        }
-
-        @Override
-        public void run() {
-            PlayerData pData = Main.getInstance().getPlayerData(uuid);
-
-            if (!runTracker.hasID(uuid)) runTracker.setID(uuid, super.getTaskId());
-            if (pData == null) return;
-
-            if (reset) {
-                pData.setCombatTimer(15 + (int) (Math.floor(pData.getBounty() / 1000D) * 10));
-                pData.setStatus("fighting");
-                reset = false;
-            }
-
-            if (pData.getCombatTimer() > 1) {
-                pData.setCombatTimer(pData.getCombatTimer() - 1);
-            } else {
-                pData.setCombatTimer(pData.getCombatTimer() - 1);
-
-                if (pData.getBounty() != 0) {
-                    pData.setStatus("bountied");
-                } else {
-                    pData.setStatus("idling");
-                }
-                cancel();
-            }
-
-            if (pData.getBounty() != 0) {
-                pData.setHideTimer(pData.getCombatTimer() == 0);
-            } else if (hideTimer < 10 && !pData.hideTimer()) {
-                pData.setHideTimer(true);
-            } else if (hideTimer >= 10) {
-                pData.setHideTimer(pData.getCombatTimer() == 0);
-            }
-            hideTimer++;
-        }
     }
 }
 
