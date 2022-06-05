@@ -88,7 +88,7 @@ public class KillRecap implements CommandExecutor, Listener {
         if (zl.spawnCheck(e.getEntity().getLocation())) return;
         if (!zl.playerCheck(e.getEntity())) return;
         if (e.getCause() == EntityDamageEvent.DamageCause.FALL) return;
-        if (e.getFinalDamage() <= 0) return;
+        if (e.getDamage() <= 0) return;
 
         Player p = (Player) e.getEntity();
         String damageType = null;
