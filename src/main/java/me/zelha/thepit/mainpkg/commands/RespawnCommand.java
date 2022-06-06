@@ -40,7 +40,7 @@ public class RespawnCommand implements CommandExecutor {
             return true;
         }
 
-        Main.getInstance().getDeathUtils().teleportToSpawnMethod(p);
+        Main.getInstance().getZelLogic().teleportToSpawnMethod(p);
         cooldown.add(p.getUniqueId());
 
         new BukkitRunnable() {

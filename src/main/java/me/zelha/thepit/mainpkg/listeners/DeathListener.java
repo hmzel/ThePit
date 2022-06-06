@@ -4,15 +4,12 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.events.PitDeathEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.utils.ZelLogic;
-import me.zelha.thepit.zelenums.Worlds;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.hover.content.Text;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -36,91 +33,6 @@ public class DeathListener implements Listener {
             CHAINMAIL_HELMET, CHAINMAIL_CHESTPLATE, CHAINMAIL_LEGGINGS, CHAINMAIL_BOOTS,
             BEDROCK, OBSIDIAN, GOLDEN_PICKAXE
     };
-
-    public void teleportToSpawnMethod(Player p) {
-        Worlds world = Worlds.findByName(p.getWorld().getName());
-
-        if (world == null) world = Worlds.ELEMENTALS;
-
-        p.setFireTicks(0);
-        Main.getInstance().getPlayerData(p).setStreak(0);
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (zl.playerCheck(p)) p.setHealth(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-            }
-        }.runTaskLater(Main.getInstance(), 1);
-
-        double spawnY;
-
-        if (world == Worlds.CASTLE) {
-            spawnY = 95;
-        } else if (world == Worlds.GENESIS) {
-            spawnY = 86;
-        } else {
-            spawnY = 114;
-        }
-
-        if (p.getLocation().distance(new Location(p.getWorld(), 0, p.getLocation().getY(), 0)) < 9) {
-            double spawnPerimeter;
-
-            if (world != Worlds.GENESIS) spawnPerimeter = 8.5; else spawnPerimeter = 9.5;
-
-            switch (new Random().nextInt(4)) {
-                case 0:
-                    p.teleport(new Location(p.getWorld(), 0.5, spawnY, -(spawnPerimeter - 1), 0, 0));
-                    break;
-                case 1:
-                    p.teleport(new Location(p.getWorld(), 0.5, spawnY, spawnPerimeter, 180, 0));
-                    break;
-                case 2:
-                    p.teleport(new Location(p.getWorld(), -(spawnPerimeter - 1), spawnY, 0.5, -90, 0));
-                    break;
-                case 3:
-                    p.teleport(new Location(p.getWorld(), spawnPerimeter, spawnY, 0.5, 90, 0));
-                    break;
-            }
-            return;
-        }
-
-        double[] southEastSpawn;
-        double[] northEastSpawn;
-        double[] northWestSpawn;
-        double[] southWestSpawn;
-
-        if (world == Worlds.CASTLE) {
-            southEastSpawn = new double[] {12.5, 12.5};
-            southWestSpawn = new double[] {-11.5, 12.5};
-            northWestSpawn = new double[] {-11.5, -11.5};
-            northEastSpawn = new double[] {12.5, -11.5};
-        } else if (world == Worlds.GENESIS) {
-            southEastSpawn = new double[] {17.5, 15.5};
-            southWestSpawn = new double[] {-14.5, 16.5};
-            northWestSpawn = new double[] {-15.5, -14.5};
-            northEastSpawn = new double[] {15.5, -15.5};
-        } else {
-            southEastSpawn = new double[] {11.5, 14.5};
-            southWestSpawn = new double[] {-9.5, 10.5};
-            northWestSpawn = new double[] {-8.5, -8.5};
-            northEastSpawn = new double[] {12.5, -12.5};
-        }
-
-        switch (new Random().nextInt(4)) {
-            case 0:
-                p.teleport(new Location(p.getWorld(), southEastSpawn[0], spawnY, southEastSpawn[1], -45, 0));
-                break;
-            case 1:
-                p.teleport(new Location(p.getWorld(), southWestSpawn[0], spawnY, southWestSpawn[1], 45, 0));
-                break;
-            case 2:
-                p.teleport(new Location(p.getWorld(), northWestSpawn[0], spawnY, northWestSpawn[1], 135, 0));
-                break;
-            case 3:
-                p.teleport(new Location(p.getWorld(), northEastSpawn[0], spawnY, northEastSpawn[1], -135, 0));
-                break;
-        }
-    }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerDeath(PitDeathEvent e) {
@@ -191,7 +103,7 @@ public class DeathListener implements Listener {
             public void run() {
                 if (zl.playerCheck(dead)) {
                     zl.pitReset(dead);
-                    teleportToSpawnMethod(dead);
+                    zl.teleportToSpawnMethod(dead);
                 }
             }
         }.runTaskLater(Main.getInstance(), 1);

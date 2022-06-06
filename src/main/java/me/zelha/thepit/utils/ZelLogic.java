@@ -40,6 +40,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Random;
 import java.util.TreeMap;
 
 import static me.zelha.thepit.zelenums.Perks.BARBARIAN;
@@ -48,6 +49,8 @@ import static me.zelha.thepit.zelenums.Worlds.GENESIS;
 import static org.bukkit.Material.*;
 
 public class ZelLogic {//zel
+
+    private final Random rng = new Random();
 
     //boolean checks
     /**
@@ -455,6 +458,88 @@ public class ZelLogic {//zel
 
 
     //pit logic
+    /**
+     * teleports the given player to spawn, as well as running pitReset, resetting health, etc.
+     *
+     * @param player - player to teleport to spawn
+     */
+    public void teleportToSpawnMethod(Player player) {
+        Worlds world = Worlds.findByName(player.getWorld().getName());
+
+        if (world == null) world = Worlds.ELEMENTALS;
+
+        player.setFireTicks(0);
+        Main.getInstance().getPlayerData(player).setStreak(0);
+        player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+
+        double spawnY;
+
+        if (world == Worlds.CASTLE) {
+            spawnY = 95;
+        } else if (world == Worlds.GENESIS) {
+            spawnY = 86;
+        } else {
+            spawnY = 114;
+        }
+
+        if (player.getLocation().distance(new Location(player.getWorld(), 0, player.getLocation().getY(), 0)) < 9) {
+            double spawnPerimeter = (world == Worlds.GENESIS) ? 9.5 : 8.5;
+
+            switch (rng.nextInt(4)) {
+                case 0:
+                    player.teleport(new Location(player.getWorld(), 0.5, spawnY, -(spawnPerimeter - 1), 0, 0));
+                    break;
+                case 1:
+                    player.teleport(new Location(player.getWorld(), 0.5, spawnY, spawnPerimeter, 180, 0));
+                    break;
+                case 2:
+                    player.teleport(new Location(player.getWorld(), -(spawnPerimeter - 1), spawnY, 0.5, -90, 0));
+                    break;
+                case 3:
+                    player.teleport(new Location(player.getWorld(), spawnPerimeter, spawnY, 0.5, 90, 0));
+                    break;
+            }
+            return;
+        }
+
+        double[] southEastSpawn;
+        double[] northEastSpawn;
+        double[] northWestSpawn;
+        double[] southWestSpawn;
+
+        if (world == Worlds.CASTLE) {
+            southEastSpawn = new double[] {12.5, 12.5};
+            southWestSpawn = new double[] {-11.5, 12.5};
+            northWestSpawn = new double[] {-11.5, -11.5};
+            northEastSpawn = new double[] {12.5, -11.5};
+        } else if (world == Worlds.GENESIS) {
+            southEastSpawn = new double[] {17.5, 15.5};
+            southWestSpawn = new double[] {-14.5, 16.5};
+            northWestSpawn = new double[] {-15.5, -14.5};
+            northEastSpawn = new double[] {15.5, -15.5};
+        } else {
+            southEastSpawn = new double[] {11.5, 14.5};
+            southWestSpawn = new double[] {-9.5, 10.5};
+            northWestSpawn = new double[] {-8.5, -8.5};
+            northEastSpawn = new double[] {12.5, -12.5};
+        }
+
+        switch (rng.nextInt(4)) {
+            case 0:
+                player.teleport(new Location(player.getWorld(), southEastSpawn[0], spawnY, southEastSpawn[1], -45, 0));
+                break;
+            case 1:
+                player.teleport(new Location(player.getWorld(), southWestSpawn[0], spawnY, southWestSpawn[1], 45, 0));
+                break;
+            case 2:
+                player.teleport(new Location(player.getWorld(), northWestSpawn[0], spawnY, northWestSpawn[1], 135, 0));
+                break;
+            case 3:
+                player.teleport(new Location(player.getWorld(), northEastSpawn[0], spawnY, northEastSpawn[1], -135, 0));
+                break;
+        }
+    }
+
     /**
      * supposed to be called every time items should be reset <p>
      * ex: dying, selecting a perk, etc <p>

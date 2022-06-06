@@ -121,7 +121,7 @@ public class GeneralListener implements Listener {
         Player p = e.getPlayer();
 
         if (p.getLocation().add(0, -1, 0).getBlock().getType() == BARRIER || !BoundingBox.of(new Location(p.getWorld(), 0, 0, 0), 228, 1000, 228).contains(p.getLocation().toVector())) {
-            deathUtils.teleportToSpawnMethod(p);
+            zl.teleportToSpawnMethod(p);
             p.sendMessage("§cCongrats you went out of the map!");
         }
     }
