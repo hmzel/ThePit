@@ -36,7 +36,6 @@ public final class Main extends JavaPlugin {
     private MongoCollection<Document> playerDataCollection;
     private ZelLogic zelLogic;
     private StorageListener storage;
-    private DeathListener deathListener;
     private KillListener killListener;
     private AssistListener assistListener;
     private AttackListener attackListener;
@@ -55,7 +54,6 @@ public final class Main extends JavaPlugin {
         assistListener = new AssistListener();
         attackListener = new AttackListener();
         killListener = new KillListener();
-        deathListener = new DeathListener();
         scoreboardListener = new ScoreboardListener();
         confirmGUIHandler = new ConfirmGUIHandler();
 
@@ -65,7 +63,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ExpChangeListener(), this);
         getServer().getPluginManager().registerEvents(scoreboardListener, this);
         getServer().getPluginManager().registerEvents(killListener, this);
-        getServer().getPluginManager().registerEvents(deathListener, this);
+        getServer().getPluginManager().registerEvents(new DeathListener(), this);
         getServer().getPluginManager().registerEvents(new PerkListener(), this);
         getServer().getPluginManager().registerEvents(new GeneralListener(), this);
         getServer().getPluginManager().registerEvents(attackListener, this);
@@ -132,10 +130,6 @@ public final class Main extends JavaPlugin {
 
     public ZelLogic getZelLogic() {
         return zelLogic;
-    }
-
-    public DeathListener getDeathUtils() {
-        return deathListener;
     }
 
     public KillListener getKillUtils() {
