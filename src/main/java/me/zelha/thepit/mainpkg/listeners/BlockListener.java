@@ -7,7 +7,6 @@ import me.zelha.thepit.zelenums.Passives;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -28,49 +27,47 @@ public class BlockListener implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
-        if (!placedBlocks.contains(e.getBlock()) && !Main.getInstance().blockPriviledges.contains(e.getPlayer())) e.setCancelled(true);
-
         e.setDropItems(false);
+
+        if (placedBlocks.contains(e.getBlock())) return;
+        if (Main.getInstance().blockPriviledges.contains(e.getPlayer())) return;
+
+        e.setCancelled(true);
     }
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent e) {
-        Material blockType = e.getBlock().getType();
-        Location loc = e.getBlock().getLocation();
-        Player p = e.getPlayer();
-        PlayerData pData = Main.getInstance().getPlayerData(p);
-        double time = 0;
+        Block block = e.getBlock();
+        Location loc = block.getLocation();
+        PlayerData pData = Main.getInstance().getPlayerData(e.getPlayer());
+        double time;
 
-        if (Main.getInstance().blockPriviledges.contains(p)) return;
+        if (Main.getInstance().blockPriviledges.contains(e.getPlayer())) return;
 
-        if (!Arrays.asList(placeable).contains(blockType)) {
+        if (!Arrays.asList(placeable).contains(block.getType())) {
             e.setCancelled(true);
-            return;
         }
 
         if (loc.distance(new Location(loc.getWorld(), 0.5, loc.getY(), 0.5)) < 9) {
             e.setCancelled(true);
-            return;
         }
 
-        if (blockType == OBSIDIAN) time = 2400; else time = 300;
+        if (e.isCancelled()) return;
+        if (block.getType() == OBSIDIAN) time = 2400; else time = 300;
 
         time *= (1 + (pData.getPassiveTier(Passives.BUILD_BATTLER) * 0.6));
 
         if (pData.getMegastreak() == Megastreaks.HERMIT) time *= 2;
 
-        blockPoof(e.getBlock(), e.getBlockReplacedState().getType(), Math.round(time));
-        placedBlocks.add(e.getBlock());
-    }
+        placedBlocks.add(block);
 
-    private void blockPoof(Block block, Material previousBlock, long time) {
         new BukkitRunnable() {
             @Override
             public void run() {
-                block.setType(previousBlock);
+                block.setType(e.getBlockReplacedState().getType());
                 placedBlocks.remove(block);
             }
-        }.runTaskLater(Main.getInstance(), time);
+        }.runTaskLater(Main.getInstance(), Math.round(time));
     }
 }
 
