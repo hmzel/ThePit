@@ -43,10 +43,7 @@ public class AttackListener implements Listener {
                 public void run() {
                     PlayerData pData = Main.getInstance().getPlayerData(uuid);
 
-                    if (pData == null) {
-                        cancel();
-                        return;
-                    }
+                    if (pData == null) return;
 
                     if (!runTracker.hasID(uuid)) {
                         runTracker.setID(uuid, getTaskId());
@@ -125,20 +122,18 @@ public class AttackListener implements Listener {
             Bukkit.getPlayer("hazelis").sendMessage(e.getFinalDamage() + "");
         }
 
-        if (damaged.getHealth() - e.getFinalDamage() > 0) {
-            return;
-        } else {
-            damagedData.setLastDamager(damager);
+        damagedData.setLastDamager(damager);
 
-            if (runTracker2.hasID(damaged.getUniqueId())) runTracker2.stop(damaged.getUniqueId());
+        if (runTracker2.hasID(damaged.getUniqueId())) runTracker2.stop(damaged.getUniqueId());
 
-            runTracker2.setID(damaged.getUniqueId(), new BukkitRunnable() {
-                @Override
-                public void run() {
-                    damagedData.setLastDamager(null);
-                }
-            }.runTaskLater(Main.getInstance(), 300).getTaskId());
-        }
+        runTracker2.setID(damaged.getUniqueId(), new BukkitRunnable() {
+            @Override
+            public void run() {
+                damagedData.setLastDamager(null);
+            }
+        }.runTaskLater(Main.getInstance(), 300).getTaskId());
+
+        if (damaged.getHealth() - e.getFinalDamage() > 0) return;
 
         e.setCancelled(true);
         manager.callEvent(new PitDeathEvent(damaged, false));
