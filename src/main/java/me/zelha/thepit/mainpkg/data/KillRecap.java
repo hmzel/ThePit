@@ -19,7 +19,6 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,6 +36,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.Map.Entry;
 
 public class KillRecap implements CommandExecutor, Listener {
 
@@ -48,6 +48,7 @@ public class KillRecap implements CommandExecutor, Listener {
      * adds a new DamageLog to the given player's kill recap<p>
      * note: must be called before damage is dealt,
      * in case the player is killed by the dealt damage and the death method is called before the log is added
+     *
      * @param player player to add the log to
      * @param log new log to add
      */
@@ -155,17 +156,18 @@ public class KillRecap implements CommandExecutor, Listener {
             int timeBeforeDeath = (MinecraftServer.currentTick - damageLog.time()) / 20;
             NBTTagCompound nbt = (damageLog.item() != null && CraftItemStack.asNMSCopy(damageLog.item()).hasTag()) ? CraftItemStack.asNMSCopy(damageLog.item()).getTag() : new NBTTagCompound();
 
-            raw.add(new ComponentBuilder("§8" + timeBeforeDeath + "s ")
-                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§7Happened " + timeBeforeDeath + " second(s) before death"))).create());
-            raw.add(new ComponentBuilder("§c" + BigDecimal.valueOf(damageLog.damage()).setScale(1, RoundingMode.DOWN) + " ")
-                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§cDamage"))).create());
+            raw.add(new ComponentBuilder("§8" + timeBeforeDeath + "s ").event(
+                    new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§7Happened " + timeBeforeDeath + " second(s) before death"))).create()
+            );
+            raw.add(new ComponentBuilder("§c" + BigDecimal.valueOf(damageLog.damage()).setScale(1, RoundingMode.DOWN) + " ").event(
+                    new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§cDamage"))).create()
+            );
 
             if (zl.itemCheck(damageLog.item())) {
-                raw.add(new ComponentBuilder(damageLog.pitDamageType() + "\n")
-                        .event(new HoverEvent(HoverEvent.Action.SHOW_ITEM
-                                , new Item(damageLog.item().getType().getKey().toString()
-                                , damageLog.item().getAmount()
-                                , ItemTag.ofNbt(nbt.toString())))).create());
+                raw.add(new ComponentBuilder(damageLog.pitDamageType() + "\n").event(
+                                new HoverEvent(HoverEvent.Action.SHOW_ITEM, new Item(damageLog.item().getType().getKey().toString(),
+                                damageLog.item().getAmount(), ItemTag.ofNbt(nbt.toString())))).create()
+                );
             } else {
                 ComponentBuilder builder2 = new ComponentBuilder(damageLog.pitDamageType() + "\n");
 
@@ -185,11 +187,10 @@ public class KillRecap implements CommandExecutor, Listener {
                 raw.add(new ComponentBuilder("§8by ").create());
             }
 
-            raw.add(new ComponentBuilder("§7" + damageLog.mainName() + "\n")
-                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(damageLog.prestigeToShow() + " §7" + damageLog.mainName() + "\n"
-                            + "§7" + damageLog.subName() + " §fHP after: §c"
-                            + Math.max(Double.parseDouble(BigDecimal.valueOf(damageLog.damagedHealth()).setScale(1, RoundingMode.DOWN).toString()), 0.0))))
-                    .create());
+            raw.add(new ComponentBuilder("§7" + damageLog.mainName() + "\n").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(
+                            damageLog.prestigeToShow() + " §7" + damageLog.mainName() + "\n" + "§7" + damageLog.subName() + " §fHP after: §c"
+                            + Math.max(Double.parseDouble(BigDecimal.valueOf(damageLog.damagedHealth()).setScale(1, RoundingMode.DOWN).toString()), 0.0)
+                    ))).create());
             raw.add(new ComponentBuilder("\n").create());
         }
 
@@ -265,28 +266,28 @@ public class KillRecap implements CommandExecutor, Listener {
         StringBuilder builder = new StringBuilder();
         String plus = "";
 
-        for (Pair<String, Double> pair : resources.getExpAdditions()) {
+        for (Entry<String, Double> entry : resources.getExpAdditions().entrySet()) {
             String value;
 
-            if (pair.getValue() == (int) pair.getValue().doubleValue()) {
-                value = (int) pair.getValue().doubleValue() + "";
+            if (entry.getValue() == (int) entry.getValue().doubleValue()) {
+                value = (int) entry.getValue().doubleValue() + "";
             } else {
-                value = BigDecimal.valueOf(pair.getValue()).setScale(2, RoundingMode.HALF_EVEN).toString();
+                value = BigDecimal.valueOf(entry.getValue()).setScale(2, RoundingMode.HALF_EVEN).toString();
 
-                if (Double.valueOf(value).equals(Double.valueOf(BigDecimal.valueOf(pair.getValue()).setScale(1, RoundingMode.HALF_EVEN).toString()))) {
-                    value = BigDecimal.valueOf(pair.getValue()).setScale(1, RoundingMode.HALF_EVEN).toString();
+                if (Double.valueOf(value).equals(Double.valueOf(BigDecimal.valueOf(entry.getValue()).setScale(1, RoundingMode.HALF_EVEN).toString()))) {
+                    value = BigDecimal.valueOf(entry.getValue()).setScale(1, RoundingMode.HALF_EVEN).toString();
                 }
             }
 
-            exp += pair.getValue();
-            builder.append("§f" + pair.getKey() + "§f: §b" + plus + value + "\n");
+            exp += entry.getValue();
+            builder.append("§f" + entry.getKey() + "§f: §b" + plus + value + "\n");
 
             if (plus.equals("")) plus = "+";
         }
 
-        for (Pair<String, Double> pair : resources.getExpModifiers()) {
+        for (Entry<String, Double> entry : resources.getExpModifiers().entrySet()) {
             String operation = "+";
-            int value = (int) (100 * pair.getValue());
+            int value = (int) (100 * entry.getValue());
 
             if (value < 100) {
                 operation = "-";
@@ -295,8 +296,8 @@ public class KillRecap implements CommandExecutor, Listener {
                 value -= 100;
             }
 
-            exp *= pair.getValue();
-            builder.append("§f" + pair.getKey() + "§f: §b" + operation + value + "%\n");
+            exp *= entry.getValue();
+            builder.append("§f" + entry.getKey() + "§f: §b" + operation + value + "%\n");
         }
 
         builder.append("§fRounded up!\n");
@@ -311,26 +312,26 @@ public class KillRecap implements CommandExecutor, Listener {
         StringBuilder builder = new StringBuilder();
         String plus = "";
 
-        for (Pair<String, Double> pair : resources.getGoldAdditions()) {
+        for (Entry<String, Double> entry : resources.getGoldAdditions().entrySet()) {
             String value;
 
-            if (pair.getValue() == (int) pair.getValue().doubleValue()) {
-                value = (int) pair.getValue().doubleValue() + "";
+            if (entry.getValue() == (int) entry.getValue().doubleValue()) {
+                value = (int) entry.getValue().doubleValue() + "";
             } else {
-                value = BigDecimal.valueOf(pair.getValue()).setScale(2, RoundingMode.HALF_EVEN).toString();
+                value = BigDecimal.valueOf(entry.getValue()).setScale(2, RoundingMode.HALF_EVEN).toString();
 
-                if (Double.valueOf(value).equals(Double.valueOf(BigDecimal.valueOf(pair.getValue()).setScale(1, RoundingMode.HALF_EVEN).toString()))) {
-                    value = BigDecimal.valueOf(pair.getValue()).setScale(1, RoundingMode.HALF_EVEN).toString();
+                if (Double.valueOf(value).equals(Double.valueOf(BigDecimal.valueOf(entry.getValue()).setScale(1, RoundingMode.HALF_EVEN).toString()))) {
+                    value = BigDecimal.valueOf(entry.getValue()).setScale(1, RoundingMode.HALF_EVEN).toString();
                 }
             }
 
-            gold += pair.getValue();
-            builder.append("§f" + pair.getKey() + "§f: §6" + plus + value + "\n");
+            gold += entry.getValue();
+            builder.append("§f" + entry.getKey() + "§f: §6" + plus + value + "\n");
 
             if (plus.equals("")) {
-                for (Pair<String, Double> pair2 : resources.getBaseGoldModifiers()) {
+                for (Entry<String, Double> entry2 : resources.getBaseGoldModifiers().entrySet()) {
                     String operation = "+";
-                    int value2 = (int) (100 * pair2.getValue());
+                    int value2 = (int) (100 * entry2.getValue());
 
                     if (value2 < 100) {
                         operation = "-";
@@ -339,17 +340,17 @@ public class KillRecap implements CommandExecutor, Listener {
                         value2 -= 100;
                     }
 
-                    gold *= pair2.getValue();
-                    builder.append("§f" + pair2.getKey() + "§f: §6" + operation + value2 + "%\n");
+                    gold *= entry2.getValue();
+                    builder.append("§f" + entry2.getKey() + "§f: §6" + operation + value2 + "%\n");
                 }
 
                 plus = "+";
             }
         }
 
-        for (Pair<String, Double> pair : resources.getGoldModifiers()) {
+        for (Entry<String, Double> entry : resources.getGoldModifiers().entrySet()) {
             String operation = "+";
-            int value = (int) (100 * pair.getValue());
+            int value = (int) (100 * entry.getValue());
 
             if (value < 100) {
                 operation = "-";
@@ -358,25 +359,25 @@ public class KillRecap implements CommandExecutor, Listener {
                 value -= 100;
             }
 
-            gold *= pair.getValue();
-            builder.append("§f" + pair.getKey() + "§f: §6" + operation + value + "%\n");
+            gold *= entry.getValue();
+            builder.append("§f" + entry.getKey() + "§f: §6" + operation + value + "%\n");
         }
 
-        for (Pair<String, Double> pair : resources.getSecondaryGoldAdditions()) {
+        for (Entry<String, Double> entry : resources.getSecondaryGoldAdditions().entrySet()) {
             String value;
 
-            if (pair.getValue() == (int) pair.getValue().doubleValue()) {
-                value = (int) pair.getValue().doubleValue() + "";
+            if (entry.getValue() == (int) entry.getValue().doubleValue()) {
+                value = (int) entry.getValue().doubleValue() + "";
             } else {
-                value = BigDecimal.valueOf(pair.getValue()).setScale(2, RoundingMode.HALF_EVEN).toString();
+                value = BigDecimal.valueOf(entry.getValue()).setScale(2, RoundingMode.HALF_EVEN).toString();
 
-                if (Double.valueOf(value).equals(Double.valueOf(BigDecimal.valueOf(pair.getValue()).setScale(1, RoundingMode.HALF_EVEN).toString()))) {
-                    value = BigDecimal.valueOf(pair.getValue()).setScale(1, RoundingMode.HALF_EVEN).toString();
+                if (Double.valueOf(value).equals(Double.valueOf(BigDecimal.valueOf(entry.getValue()).setScale(1, RoundingMode.HALF_EVEN).toString()))) {
+                    value = BigDecimal.valueOf(entry.getValue()).setScale(1, RoundingMode.HALF_EVEN).toString();
                 }
             }
 
-            gold += pair.getValue();
-            builder.append("§f" + pair.getKey() + "§f: §6+" + value + "\n");
+            gold += entry.getValue();
+            builder.append("§f" + entry.getKey() + "§f: §6+" + value + "\n");
         }
 
         builder.replace(builder.length() - 1, builder.length(), "");

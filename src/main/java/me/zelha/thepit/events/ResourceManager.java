@@ -1,10 +1,9 @@
 package me.zelha.thepit.events;
 
-import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.event.Event;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public abstract class ResourceManager extends Event {
 
@@ -12,18 +11,18 @@ public abstract class ResourceManager extends Event {
     private int maxExp = 250;
     private int maxGold = 2500;
     //i wish i could use maps here but they were causing weird issues and i couldnt figure out how to fix it
-    private final List<Pair<String, Double>> expAdditions = new ArrayList<>();
-    private final List<Pair<String, Double>> expModifiers = new ArrayList<>();
-    private final List<Pair<String, Double>> baseGoldModifiers = new ArrayList<>();
-    private final List<Pair<String, Double>> goldAdditions = new ArrayList<>();
-    private final List<Pair<String, Double>> goldModifiers = new ArrayList<>();
-    private final List<Pair<String, Double>> secondaryGoldAdditions = new ArrayList<>();
+    private final Map<String, Double> expAdditions = new LinkedHashMap<>();
+    private final Map<String, Double> expModifiers = new LinkedHashMap<>();
+    private final Map<String, Double> baseGoldModifiers = new LinkedHashMap<>();
+    private final Map<String, Double> goldAdditions = new LinkedHashMap<>();
+    private final Map<String, Double> goldModifiers = new LinkedHashMap<>();
+    private final Map<String, Double> secondaryGoldAdditions = new LinkedHashMap<>();
 
     public int calculateEXP() {
         double exp = 0;
 
-        for (Pair<String, Double> pair : expAdditions) exp += pair.getValue();
-        for (Pair<String, Double> pair : expModifiers) exp *= pair.getValue();
+        for (Double value : expAdditions.values()) exp += value;
+        for (Double value : expModifiers.values()) exp *= value;
 
         return (int) Math.min(Math.ceil(exp), maxExp);
     }
@@ -32,21 +31,21 @@ public abstract class ResourceManager extends Event {
         double gold = 0;
         boolean baseGoldModifiersApplied = false;
 
-        for (Pair<String, Double> pair : goldAdditions) {
-            gold += pair.getValue();
+        for (Double value : goldAdditions.values()) {
+            gold += value;
 
             if (!baseGoldModifiersApplied) {
-                for (Pair<String, Double> pair2 : baseGoldModifiers) gold *= pair2.getValue();
+                for (Double value2 : baseGoldModifiers.values()) gold *= value2;
 
                 baseGoldModifiersApplied = true;
             }
         }
 
-        for (Pair<String, Double> pair : goldModifiers) gold *= pair.getValue();
+        for (Double value : goldModifiers.values()) gold *= value;
 
         if (gold > maxGold) gold = maxGold;
 
-        for (Pair<String, Double> pair : secondaryGoldAdditions) gold += pair.getValue();
+        for (Double value : secondaryGoldAdditions.values()) gold += value;
 
         return gold;
     }
@@ -60,50 +59,50 @@ public abstract class ResourceManager extends Event {
     }
 
     public void addExp(double exp, String reason) {
-        expAdditions.add(Pair.of(reason, exp));
+        expAdditions.put(reason, exp);
     }
 
     public void addExpModifier(double modifier, String reason) {
-        expModifiers.add(Pair.of(reason, modifier));
+        expModifiers.put(reason, modifier);
     }
 
     public void addBaseGoldModifier(double modifier, String reason) {
-        baseGoldModifiers.add(Pair.of(reason, modifier));
+        baseGoldModifiers.put(reason, modifier);
     }
 
     public void addGold(double gold, String reason) {
-        goldAdditions.add(Pair.of(reason, gold));
+        goldAdditions.put(reason, gold);
     }
 
     public void addGoldModifier(double modifier, String reason) {
-        goldModifiers.add(Pair.of(reason, modifier));
+        goldModifiers.put(reason, modifier);
     }
 
     public void addSecondaryGold(double gold, String reason) {
-        secondaryGoldAdditions.add(Pair.of(reason, gold));
+        secondaryGoldAdditions.put(reason, gold);
     }
 
-    public List<Pair<String, Double>> getExpAdditions() {
+    public Map<String, Double> getExpAdditions() {
         return expAdditions;
     }
 
-    public List<Pair<String, Double>> getExpModifiers() {
+    public Map<String, Double> getExpModifiers() {
         return expModifiers;
     }
 
-    public List<Pair<String, Double>> getBaseGoldModifiers() {
+    public Map<String, Double> getBaseGoldModifiers() {
         return baseGoldModifiers;
     }
 
-    public List<Pair<String, Double>> getGoldAdditions() {
+    public Map<String, Double> getGoldAdditions() {
         return goldAdditions;
     }
 
-    public List<Pair<String, Double>> getGoldModifiers() {
+    public Map<String, Double> getGoldModifiers() {
         return goldModifiers;
     }
 
-    public List<Pair<String, Double>> getSecondaryGoldAdditions() {
+    public Map<String, Double> getSecondaryGoldAdditions() {
         return secondaryGoldAdditions;
     }
 
