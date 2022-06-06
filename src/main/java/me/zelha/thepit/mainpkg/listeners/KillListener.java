@@ -34,7 +34,7 @@ public class KillListener implements Listener {
     private final RunTracker runTracker3 = new RunTracker();
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerDeath(PitKillEvent e) {
+    public void onKill(PitKillEvent e) {
         Player dead = e.getDead();
         Player killer = e.getKiller();
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
@@ -46,7 +46,15 @@ public class KillListener implements Listener {
         killerData.setExp(killerData.getExp() - calculatedExp);
         killerData.setGold(killerData.getGold() + calculatedGold);
         killerData.setMultiKill(killerData.getMultiKill() + 1);
-        multiKillTimer(killer);
+
+        if (runTracker2.hasID(killer.getUniqueId())) runTracker2.stop(killer.getUniqueId());
+
+        runTracker2.setID(killer.getUniqueId(), new BukkitRunnable() {
+            @Override
+            public void run() {
+                Main.getInstance().getPlayerData(killer).setMultiKill(0);
+            }
+        }.runTaskLater(Main.getInstance(), 60).getTaskId());
 
         if ((Math.floor(killerData.getStreak()) % 10 == 0) || (killerData.getStreak() < 6 && killerData.getStreak() >= 5)) {
             Bukkit.broadcastMessage("§c§lSTREAK! §7of §c" + (int) Math.floor(killerData.getStreak()) + " §7kills by "
@@ -115,17 +123,6 @@ public class KillListener implements Listener {
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
         if (runTracker.hasID(e.getPlayer().getUniqueId())) runTracker.stop(e.getPlayer().getUniqueId());
-    }
-
-    private void multiKillTimer(Player player) {
-        if (runTracker2.hasID(player.getUniqueId())) runTracker2.stop(player.getUniqueId());
-
-        runTracker2.setID(player.getUniqueId(), new BukkitRunnable() {
-            @Override
-            public void run() {
-                Main.getInstance().getPlayerData(player).setMultiKill(0);
-            }
-        }.runTaskLater(Main.getInstance(), 60).getTaskId());
     }
 
 
