@@ -192,12 +192,10 @@ public class GeneralListener implements Listener {
             p.teleport(new Location(Bukkit.getWorld("elementals"), 0.5, 114, 9.5));
         }
 
-        if (Main.getInstance().getPlayerData(p).hasCombatLogged()) {
-            p.sendMessage("§c§lALERT! §r§cInventory/bounty reset for quitting mid-fight!");
-            p.sendMessage("§e§lWARNING! §r§eThis action is logged for moderation.");
-            return;
-        }
+        if (!Main.getInstance().getPlayerData(p).hasCombatLogged()) return;
 
+        p.sendMessage("§c§lALERT! §r§cInventory/bounty reset for quitting mid-fight!");
+        p.sendMessage("§e§lWARNING! §r§eThis action is logged for moderation.");
         Main.getInstance().getPlayerData(p).setCombatLogged(false);
     }
 
