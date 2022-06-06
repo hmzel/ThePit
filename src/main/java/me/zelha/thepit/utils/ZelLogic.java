@@ -469,8 +469,8 @@ public class ZelLogic {//zel
         if (world == null) world = Worlds.ELEMENTALS;
 
         player.setFireTicks(0);
-        Main.getInstance().getPlayerData(player).setStreak(0);
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+        pitReset(player);
 
         double spawnY;
 

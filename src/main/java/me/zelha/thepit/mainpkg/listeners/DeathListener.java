@@ -101,10 +101,7 @@ public class DeathListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (zl.playerCheck(dead)) {
-                    zl.pitReset(dead);
-                    zl.teleportToSpawnMethod(dead);
-                }
+                if (zl.playerCheck(dead)) zl.teleportToSpawnMethod(dead);
             }
         }.runTaskLater(Main.getInstance(), 1);
     }
