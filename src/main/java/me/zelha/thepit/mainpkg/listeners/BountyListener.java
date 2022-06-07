@@ -37,11 +37,12 @@ public class BountyListener implements Listener {
 
         int calculatedBounty = calculateBounty(pData.getStreak(), (long) ((timeTracker.get(killer.getUniqueId()) - System.currentTimeMillis()) * 0.001));
 
+        if (pData.getBounty() + calculatedBounty > pData.getMaxBounty()) calculatedBounty = pData.getMaxBounty() - pData.getBounty();
+
         if (calculatedBounty != 0) {
             String action = "bump";
 
             if (pData.getBounty() == 0) action = "of";
-            if (pData.getBounty() + calculatedBounty > pData.getMaxBounty()) calculatedBounty = pData.getMaxBounty() - pData.getBounty();
 
             pData.setBounty(pData.getBounty() + calculatedBounty);
             Bukkit.broadcastMessage(
@@ -133,7 +134,7 @@ public class BountyListener implements Listener {
     private boolean randomBounty(double streak, long secondsBetweenKills) {
         int rng = (streak <= 0) ? 0 : (this.rng.nextInt((int) Math.round(streak)) + 1) - (int) Math.round(secondsBetweenKills * 0.1);
 
-        return rng > 6;
+        return rng > streak / 2;
     }
 
     private int calculateBounty(double streak, long secondsBetweenKills) {
