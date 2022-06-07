@@ -46,7 +46,6 @@ public final class Main extends JavaPlugin {
     public void onEnable() {
         //Plugin startup logic
         playerDataCollection = MongoClients.create(DatabaseLogin.DATABASE_LOGIN).getDatabase("zelhadb").getCollection("playerdata");
-
         instance = this;
         zelLogic = new ZelLogic();
         KillRecap recap = new KillRecap();
@@ -81,6 +80,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new NPCInteractEventCaller(), this);
         getServer().getPluginManager().registerEvents(new ActionbarListener(), this);
         getServer().getPluginManager().registerEvents(new KillstreakListener(), this);
+        getServer().getPluginManager().registerEvents(new BountyListener(), this);
 
         getCommand("killrecap").setExecutor(recap);
         getCommand("setprestige").setExecutor(new SetPrestigeCommand());
