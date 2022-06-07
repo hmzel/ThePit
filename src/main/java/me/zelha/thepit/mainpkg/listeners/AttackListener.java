@@ -4,6 +4,7 @@ import me.zelha.thepit.Main;
 import me.zelha.thepit.events.PitDamageEvent;
 import me.zelha.thepit.events.PitDeathEvent;
 import me.zelha.thepit.events.PitKillEvent;
+import me.zelha.thepit.mainpkg.DeathHandler;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.utils.RunTracker;
 import me.zelha.thepit.utils.ZelLogic;
@@ -31,6 +32,7 @@ public class AttackListener implements Listener {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final PluginManager manager = Main.getInstance().getServer().getPluginManager();
+    private final DeathHandler deathHandler = Main.getInstance().getDeathHandler();
     private final RunTracker runTracker = new RunTracker();
     private final RunTracker runTracker2 = new RunTracker();
 
@@ -136,11 +138,8 @@ public class AttackListener implements Listener {
         if (damaged.getHealth() - e.getFinalDamage() > 0) return;
 
         e.setCancelled(true);
-        manager.callEvent(new PitDeathEvent(damaged, false));
 
-        if (damaged.getUniqueId().equals(damager.getUniqueId())) return;
-
-        manager.callEvent(new PitKillEvent(damaged, damager, false));
+        handleDeathEvents(damaged, damager, false);
     }
 
     @EventHandler(priority = HIGHEST, ignoreCancelled = true)
@@ -161,13 +160,8 @@ public class AttackListener implements Listener {
         if (e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE) return;
 
         e.setCancelled(true);
-        manager.callEvent(new PitDeathEvent(p, false));
 
-        Player lastDamager = Main.getInstance().getPlayerData(p).getLastDamager();
-
-        if (lastDamager == null) return;
-
-        manager.callEvent(new PitKillEvent(p, lastDamager, false));
+        handleDeathEvents(p, Main.getInstance().getPlayerData(p).getLastDamager(), false);
     }
 
     @EventHandler(priority = LOWEST)
@@ -178,14 +172,20 @@ public class AttackListener implements Listener {
         if (runTracker.hasID(e.getPlayer().getUniqueId())) runTracker.stop(e.getPlayer().getUniqueId());
         if (pData.getStatus().equals("idling") || pData.getStatus().equals("bountied")) return;
 
-        pData.setCombatLogged(true);
-        manager.callEvent(new PitDeathEvent(p, true));
+        handleDeathEvents(p, Main.getInstance().getPlayerData(p).getLastDamager(), true);
+    }
 
-        Player lastDamager = Main.getInstance().getPlayerData(p).getLastDamager();
+    private void handleDeathEvents(Player dead, Player killer, boolean disconnected) {
+        PitDeathEvent deathEvent = new PitDeathEvent(dead, disconnected);
+        PitKillEvent killEvent = new PitKillEvent(dead, killer, disconnected);
 
-        if (lastDamager == null) return;
+        if (disconnected) Main.getInstance().getPlayerData(dead).setCombatLogged(true);
 
-        manager.callEvent(new PitKillEvent(p, lastDamager, true));
+        manager.callEvent(deathEvent);
+
+        if (killer != null && !dead.getUniqueId().equals(killer.getUniqueId())) manager.callEvent(killEvent);
+
+        if (!deathEvent.isCancelled() && !killEvent.isCancelled()) deathHandler.deathHandler(dead);
     }
 }
 

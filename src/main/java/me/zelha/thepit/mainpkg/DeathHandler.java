@@ -1,7 +1,6 @@
-package me.zelha.thepit.mainpkg.listeners;
+package me.zelha.thepit.mainpkg;
 
 import me.zelha.thepit.Main;
-import me.zelha.thepit.events.PitDeathEvent;
 import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.utils.ZelLogic;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -11,9 +10,6 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -23,7 +19,7 @@ import java.util.Random;
 
 import static org.bukkit.Material.*;
 
-public class DeathListener implements Listener {
+public class DeathHandler {
 
     private final ZelLogic zl = Main.getInstance().getZelLogic();
     private final Random rng = new Random();
@@ -34,9 +30,7 @@ public class DeathListener implements Listener {
             BEDROCK, OBSIDIAN, GOLDEN_PICKAXE
     };
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerDeath(PitDeathEvent e) {
-        Player dead = e.getDead();
+    public void deathHandler(Player dead) {
         PlayerData deadData = Main.getInstance().getPlayerData(dead);
         PlayerInventory inv = dead.getInventory();
 

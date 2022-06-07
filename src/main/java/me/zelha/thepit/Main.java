@@ -4,6 +4,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import me.zelha.thepit.admin.commands.*;
 import me.zelha.thepit.events.NPCInteractEventCaller;
+import me.zelha.thepit.mainpkg.DeathHandler;
 import me.zelha.thepit.mainpkg.commands.OofCommand;
 import me.zelha.thepit.mainpkg.commands.RespawnCommand;
 import me.zelha.thepit.mainpkg.data.KillRecap;
@@ -36,6 +37,7 @@ public final class Main extends JavaPlugin {
     private MongoCollection<Document> playerDataCollection;
     private ZelLogic zelLogic;
     private StorageListener storage;
+    private DeathHandler deathHandler;
     private KillListener killListener;
     private AssistListener assistListener;
     private AttackListener attackListener;
@@ -50,6 +52,7 @@ public final class Main extends JavaPlugin {
         zelLogic = new ZelLogic();
         KillRecap recap = new KillRecap();
         storage = new StorageListener();
+        deathHandler = new DeathHandler();
         assistListener = new AssistListener();
         attackListener = new AttackListener();
         killListener = new KillListener();
@@ -62,7 +65,6 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ExpChangeListener(), this);
         getServer().getPluginManager().registerEvents(scoreboardListener, this);
         getServer().getPluginManager().registerEvents(killListener, this);
-        getServer().getPluginManager().registerEvents(new DeathListener(), this);
         getServer().getPluginManager().registerEvents(new PerkListener(), this);
         getServer().getPluginManager().registerEvents(new GeneralListener(), this);
         getServer().getPluginManager().registerEvents(attackListener, this);
@@ -130,6 +132,10 @@ public final class Main extends JavaPlugin {
 
     public ZelLogic getZelLogic() {
         return zelLogic;
+    }
+
+    public DeathHandler getDeathHandler() {
+        return deathHandler;
     }
 
     public KillListener getKillUtils() {

@@ -11,6 +11,7 @@ import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -28,7 +29,7 @@ public class BountyListener implements Listener {
     private final Random rng = new Random();
     private final Map<UUID, Long> timeTracker = new HashMap<>();
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onKill(PitKillEvent e) {
         Player killer = e.getKiller();
         PlayerData pData = Main.getInstance().getPlayerData(killer);
