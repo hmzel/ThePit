@@ -55,12 +55,11 @@ public class BountyHunterPerk extends Perk {
         PlayerInventory inv = player.getInventory();
 
         if (!playerData.hasPerkEquipped(BOUNTY_HUNTER)) {
-            removeAll(inv, bountyHunterItem);
-
             if (zl.itemCheck(inv.getLeggings()) && inv.getLeggings().equals(bountyHunterItem)) {
                 inv.setLeggings(zl.itemBuilder(CHAINMAIL_LEGGINGS, 1));
             }
 
+            removeAll(inv, bountyHunterItem);
             return;
         }
 

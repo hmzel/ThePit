@@ -7,12 +7,14 @@ import me.zelha.thepit.mainpkg.data.PlayerData;
 import me.zelha.thepit.utils.ZelLogic;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import javax.annotation.Nullable;
 
+import static org.bukkit.Material.AIR;
 import static org.bukkit.Material.PLAYER_HEAD;
 
 public class Perk {
@@ -47,6 +49,10 @@ public class Perk {
     protected void removeAll(PlayerInventory inventory, ItemStack item) {
         for (ItemStack items : inventory.all(item.getType()).values()) {
             if (items.isSimilar(item)) inventory.remove(items);
+        }
+
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            if (inventory.getItem(slot).isSimilar(item)) inventory.setItem(slot, new ItemStack(AIR));
         }
     }
 
